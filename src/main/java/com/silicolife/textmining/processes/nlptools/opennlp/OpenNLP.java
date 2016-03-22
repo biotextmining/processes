@@ -52,11 +52,11 @@ import com.silicolife.textmining.processes.nlptools.structure.SyntaxTreeViewerPa
  */
 public class OpenNLP {
 
-	private final static String sentenceModelFile = "nlpmodels/en-sent.bin";
-	private final static String tokeniserModelFile = "nlpmodels/en-token.bin";
-	private final static String postaggingModelFile = "nlpmodels/en-pos-maxent.bin";
-	private final static String parsingModelFile = "nlpmodels/en-parser-chunking.bin";
-	private final static String chunkerModelFile = "nlpmodels/en-chunker.bin";
+	private final static String sentenceModelFile = "src/main/resources/nlpmodels/en-sent.bin";
+	private final static String tokeniserModelFile = "src/main/resources/nlpmodels/en-token.bin";
+	private final static String postaggingModelFile = "src/main/resources/nlpmodels/en-pos-maxent.bin";
+	private final static String parsingModelFile = "src/main/resources/nlpmodels/en-parser-chunking.bin";
+	private final static String chunkerModelFile = "src/main/resources/nlpmodels/en-chunker.bin";
 
 
 	private SentenceModel sentenceModel;

@@ -1,9 +1,6 @@
 package com.silicolife.textmining.processes.nlptools.structure;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,15 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JDialog;
-import javax.swing.JScrollPane;
+import opennlp.tools.util.InvalidFormatException;
 
-import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
-import com.silicolife.textmining.core.datastructures.documents.structure.SentenceImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.SintaticTreeViewException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.nlptools.OffsetEntityComparator;
-import com.silicolife.textmining.core.datastructures.nlptools.OpenNLPSentenceSpliter;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.datastructures.utils.conf.OtherConfigurations;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
@@ -29,8 +22,6 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.IParsin
 import com.silicolife.textmining.core.interfaces.core.document.structure.ISentence;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.processes.nlptools.opennlp.OpenNLP;
-
-import opennlp.tools.util.InvalidFormatException;
 
 public class SimpliedSentenceSyntaxTree {
 	
