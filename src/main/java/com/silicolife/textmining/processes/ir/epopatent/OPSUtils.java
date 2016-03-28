@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,6 +41,7 @@ import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfigu
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.AutenticationHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentClaimsHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentDescriptionHandler;
+import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentIDSearchHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSSearchHandler;
@@ -73,6 +75,17 @@ public class OPSUtils {
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
 		List<IPublication> pubs = client.get(searchURL + query, headers, new OPSSearchHandler());
 		return pubs;
+	}
+	
+	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
+		ClientErrorException, ServerErrorException, ResponseHandlingException {
+		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
+		Set<String> patentIds = client.get(searchURL + query, headers, new OPSPatentIDSearchHandler());
+		return patentIds;
 	}
 
 	public static int getSearchResults(String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
@@ -220,4 +233,51 @@ public class OPSUtils {
 		r.close();
 		return rsult;
 	}
+
+	public static String queryBuilder(String query)
+	{
+		query = tranform(query);
+		query = query.replaceAll("\\?", "%3F");
+		query = query.replaceAll("@", "%40");
+		query = query.replaceAll("#", "%23");
+		query = query.replaceAll("%", "%25");
+		query = query.replaceAll("\\$", "%24");
+		query = query.replaceAll("&", "%26");
+		query = query.replaceAll("\\+", "%2B");
+		query = query.replaceAll(",", "%2C");
+		query = query.replaceAll(":", "%3A");
+		query = query.replaceAll(" ", "%20");
+		query = query.replaceAll("=", "%3D");
+		query = query.replaceAll("\"", "%22");
+		query = query.replaceAll("<", "%3C");
+		query = query.replaceAll(">", "%3E");
+		query = query.replaceAll("\\{", "%7B");
+		query = query.replaceAll("\\}", "%7D");
+		query = query.replaceAll("\\|", "%7C");
+		query = query.replaceAll("\\^", "%5E");
+		query = query.replaceAll("~", "%7E");
+		query = query.replaceAll("\\[", "%5B");
+		query = query.replaceAll("\\]", "%5D");
+		query = query.replaceAll("`", "%60");
+		return query;
+	}
+	
+	private static String tranform(String keywords) {
+		keywords = keywords.trim();
+		String[] keywordsParts = keywords.split("AND|OR");
+		for(String part : keywordsParts)
+		{
+			part = part.trim();
+			if(!part.isEmpty())
+			{
+				keywords = keywords.replace(part, "\""+part+"\"");
+			}
+		}
+		keywords = keywords.replace("AND"," AND ");
+		keywords = keywords.replace("OR"," OR ");
+		keywords = keywords.replace("\"\"", "\"");
+		keywords = keywords.replace("  ", " ");
+		return keywords;
+	}
+
 }

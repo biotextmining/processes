@@ -413,50 +413,10 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	}
 	
 	public static String buildQuery(String keywords,String organism,Properties properties) {
-		String query = new String();
-		query = tranform(keywords);
-		query = query.replaceAll("\\?", "%3F");
-		query = query.replaceAll("@", "%40");
-		query = query.replaceAll("#", "%23");
-		query = query.replaceAll("%", "%25");
-		query = query.replaceAll("\\$", "%24");
-		query = query.replaceAll("&", "%26");
-		query = query.replaceAll("\\+", "%2B");
-		query = query.replaceAll(",", "%2C");
-		query = query.replaceAll(":", "%3A");
-		query = query.replaceAll(" ", "%20");
-		query = query.replaceAll("=", "%3D");
-		query = query.replaceAll("\"", "%22");
-		query = query.replaceAll("<", "%3C");
-		query = query.replaceAll(">", "%3E");
-		query = query.replaceAll("\\{", "%7B");
-		query = query.replaceAll("\\}", "%7D");
-		query = query.replaceAll("\\|", "%7C");
-		query = query.replaceAll("\\^", "%5E");
-		query = query.replaceAll("~", "%7E");
-		query = query.replaceAll("\\[", "%5B");
-		query = query.replaceAll("\\]", "%5D");
-		query = query.replaceAll("`", "%60");
-		return query;
+		return OPSUtils.queryBuilder(keywords);
 	}
 	
-	private static String tranform(String keywords) {
-		keywords = keywords.trim();
-		String[] keywordsParts = keywords.split("AND|OR");
-		for(String part : keywordsParts)
-		{
-			part = part.trim();
-			if(!part.isEmpty())
-			{
-				keywords = keywords.replace(part, "\""+part+"\"");
-			}
-		}
-		keywords = keywords.replace("AND"," AND ");
-		keywords = keywords.replace("OR"," OR ");
-		keywords = keywords.replace("\"\"", "\"");
-		keywords = keywords.replace("  ", " ");
-		return keywords;
-	}
+
 	
 	@Override
 	public IProcessType getType() {
@@ -481,21 +441,6 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	@Override
 	public IProcessOrigin getProcessOrigin() {
 		return new ProcessOriginImpl(-1, "OPS Search");
-	}
-
-	public static void main(String[] args) {
-		String test = "Escherichia";
-		System.out.println(tranform(test));
-		String test2 = "Escherichia coli";
-		System.out.println(tranform(test2));
-		String test3 = "\"Escherichia coli\"";
-		System.out.println(tranform(test3));
-		String test4 = "\"Escherichia coli\" AND stringent";
-		System.out.println(tranform(test4));
-		String test5 = "\"Escherichia coli\" ORstringent response";
-		System.out.println(tranform(test5));
-		String test6 = "\"Escherichia coli\" OR \"stringent respnse\"";
-		System.out.println(tranform(test6));
 	}
 	
 }
