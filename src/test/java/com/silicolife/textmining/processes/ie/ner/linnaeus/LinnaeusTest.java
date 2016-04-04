@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryImpl;
@@ -36,7 +37,7 @@ import com.silicolife.textmining.processes.resources.dictionary.loaders.byocyc.B
 public class LinnaeusTest {
 
 	@Test
-	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException {
+	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		ICorpus corpus = CreateCorpusFromPublicationManagerTest.createCorpus().getCorpus();
 		IDictionary dictionary = createDictionaryAndUpdateditWithByocycFiles();

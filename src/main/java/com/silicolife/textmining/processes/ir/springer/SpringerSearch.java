@@ -20,6 +20,7 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
 import com.silicolife.textmining.core.datastructures.process.IRProcessImpl;
@@ -89,43 +90,45 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 	}
 
 	@Override
-	public IIRSearchProcessReport search(IIRSearchConfiguration configuration)throws ANoteException, InternetConnectionProblemException{
+	public IIRSearchProcessReport search(IIRSearchConfiguration configuration2)throws ANoteException, InternetConnectionProblemException, InvalidConfigurationException{
 		cancel = false;
-		if(configuration instanceof IIRSpringerSearchConfiguration)
+		validateConfiguration(configuration2);
+		IIRSpringerSearchConfiguration configurationSpringSearch = (IIRSpringerSearchConfiguration) configuration2;
+//		if(configurationSpringSearch instanceof IIRSpringerSearchConfiguration)
 		{
-			String autenticationProp = ((IIRSpringerSearchConfiguration) configuration).getAuthentication();
+			String autenticationProp = ((IIRSpringerSearchConfiguration) configuration2).getAuthentication();
 			if(autenticationProp!=null && !autenticationProp.isEmpty())
 			{
 				this.autentication = autenticationProp;
-				configuration.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
+				configurationSpringSearch.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
 			}
 			else
 			{
 				this.autentication = PropertiesManager.getPManager().getProperty(SpringerSearchDefaultSettings.ACCESS_TOKEN).toString();
 				if(!autentication.isEmpty())
 				{
-					configuration.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
+					configurationSpringSearch.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
 				}
 			}
 		}
-		else
-		{
-			this.autentication = PropertiesManager.getPManager().getProperty(SpringerSearchDefaultSettings.ACCESS_TOKEN).toString();
-			if(!autentication.isEmpty())
-			{
-				configuration.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
-			}
-		}
+//		else
+//		{
+//			this.autentication = PropertiesManager.getPManager().getProperty(SpringerSearchDefaultSettings.ACCESS_TOKEN).toString();
+//			if(!autentication.isEmpty())
+//			{
+//				configurationSpringSearch.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
+//			}
+//		}
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		Date date = new Date();
-		String name = generateQueryName(configuration,date);
-		String completeQuery = buildQuery(configuration.getKeywords(), configuration.getOrganism(), configuration.getProperties());
-		query = new QueryImpl(queryOrigin,date,configuration.getKeywords(),configuration.getOrganism(),completeQuery,0,0,
-				name,new String(),new HashMap<Long, IQueryPublicationRelevance>(),configuration.getProperties());		
+		String name = generateQueryName(configurationSpringSearch,date);
+		String completeQuery = buildQuery(configurationSpringSearch.getKeywords(), configurationSpringSearch.getOrganism(), configurationSpringSearch.getProperties());
+		query = new QueryImpl(queryOrigin,date,configurationSpringSearch.getKeywords(),configurationSpringSearch.getOrganism(),completeQuery,0,0,
+				name,new String(),new HashMap<Long, IQueryPublicationRelevance>(),configurationSpringSearch.getProperties());		
 		IIRSearchProcessReport report = new IRSearchReportImpl(query);
 		InitConfiguration.getDataAccess().createQuery(query);
 		try {
-			findDocuments(report,completeQuery,configuration.getProperties());
+			findDocuments(report,completeQuery,configurationSpringSearch.getProperties());
 		} catch (RedirectionException e) {
 			throw new InternetConnectionProblemException(e);
 		} catch (ClientErrorException e) {
@@ -143,7 +146,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 	}
 
 	
-	private String generateQueryName(IIRSearchConfiguration configuration,Date date) {
+	private String generateQueryName(IIRSpringerSearchConfiguration configuration,Date date) {
 		if(configuration.getQueryName()!=null && !configuration.getQueryName().isEmpty())
 		{
 			if(configuration.getQueryName().equals(GlobalOptions.defaulQuerytName))
@@ -426,6 +429,16 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 	@Override
 	public IProcessOrigin getProcessOrigin() {
 		return new ProcessOriginImpl(-1, "Springer Search");
+	}
+
+	@Override
+	public void validateConfiguration(IIRSearchConfiguration configuration)throws InvalidConfigurationException {
+		if(configuration instanceof IIRSpringerSearchConfiguration)
+		{
+			
+		}
+		throw new InvalidConfigurationException("configuration is not a IIRSpringerSearchConfiguration");
+		
 	}
 
 

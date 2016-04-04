@@ -1,8 +1,8 @@
 package com.silicolife.textmining.processes.ir.springer.configuration;
 
-import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IIRPubmedSearchConfiguration;
 
-public interface IIRSpringerSearchConfiguration extends IIRSearchConfiguration{
+public interface IIRSpringerSearchConfiguration extends IIRPubmedSearchConfiguration{
 	
 	public String getAuthentication();
 

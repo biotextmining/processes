@@ -9,6 +9,7 @@ import java.util.Set;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
 import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
@@ -26,6 +27,7 @@ import com.silicolife.textmining.core.interfaces.core.report.processes.ir.IIRCra
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
 import com.silicolife.textmining.core.interfaces.process.IProcessType;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRCrawl;
+import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.core.interfaces.process.utils.ISimpleTimeLeft;
 import com.silicolife.textmining.processes.ir.pubmed.newstretegy.crawl.NewWebConnectionConsole;
@@ -202,6 +204,14 @@ public class NewPubMedCrawl extends IRProcessImpl implements IIRCrawl{
 		this.startRange = startRange;
 		this.endRAnge = endRAnge;
 		this.startTime = startTime;
+	}
+
+
+	@Override
+	public void validateConfiguration(IIRSearchConfiguration configuration)
+			throws InvalidConfigurationException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,8 +1,8 @@
 package com.silicolife.textmining.processes.ir.epopatent.configuration;
 
-import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IIRPubmedSearchConfiguration;
 
-public interface IIREPOSearchConfiguration extends IIRSearchConfiguration{
+public interface IIREPOSearchConfiguration extends IIRPubmedSearchConfiguration{
 	
 	public String getAuthentication();
 

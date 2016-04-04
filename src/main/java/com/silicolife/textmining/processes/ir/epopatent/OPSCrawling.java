@@ -31,6 +31,7 @@ import com.silicolife.textmining.core.interfaces.core.report.processes.ir.IIRCra
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
 import com.silicolife.textmining.core.interfaces.process.IProcessType;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRCrawl;
+import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
 import com.silicolife.textmining.core.interfaces.process.utils.ISimpleTimeLeft;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
@@ -184,5 +185,11 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		this.startRange = startRange;
 		this.endRAnge = endRAnge;
 		this.startTime = startTime;
+	}
+
+	@Override
+	public void validateConfiguration(IIRSearchConfiguration configuration) {
+		// TODO Auto-generated method stub
+		
 	}
 }

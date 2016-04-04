@@ -7,8 +7,8 @@ import java.util.Properties;
 
 import org.junit.Test;
 
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
-import com.silicolife.textmining.core.datastructures.process.ir.configuration.IRSearchConfigurationImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.report.processes.ir.IIRSearchProcessReport;
 import com.silicolife.textmining.core.interfaces.core.report.processes.ir.IIRSearchUpdateReport;
@@ -17,11 +17,12 @@ import com.silicolife.textmining.core.interfaces.process.IR.IQuery;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ir.pubmed.PubMedSearch;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IRPubmedSearchConfigurationImpl;
 
 public class PubmedSearchTest {
 
 	@Test
-	public void simplePubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException {
+	public void simplePubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		PubMedSearch pubmedSearch = new PubMedSearch();
 		Properties propeties = new Properties();
@@ -31,14 +32,14 @@ public class PubmedSearchTest {
 		String organism = "Escherichia coli";
 		// Keywords
 		String keywords = "Stringent response";
-		IIRSearchConfiguration searchConfiguration = new IRSearchConfigurationImpl(keywords , organism , queryName, propeties );
+		IIRSearchConfiguration searchConfiguration = new IRPubmedSearchConfigurationImpl(keywords , organism , queryName, propeties );
 		IIRSearchProcessReport report = pubmedSearch.search(searchConfiguration);
 		assertTrue(report.isFinishing());
 	}
 	
 
 	@Test
-	public void advancedPubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException {
+	public void advancedPubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		IIRSearchProcessReport report = createQuery();
 		assertTrue(report.isFinishing());
@@ -51,7 +52,7 @@ public class PubmedSearchTest {
 	}
 	
 	@Test
-	public void updateQueryUsingPubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException {
+	public void updateQueryUsingPubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		IIRSearchProcessReport report = createQuery();
 		IQuery query = report.getQuery();
@@ -62,7 +63,7 @@ public class PubmedSearchTest {
 
 
 	public static IIRSearchProcessReport createQuery() throws InvalidDatabaseAccess,
-			ANoteException, InternetConnectionProblemException {
+			ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		System.out.println("Create Query");
 		PubMedSearch pubmedSearch = new PubMedSearch();
 		// Properties
@@ -99,13 +100,13 @@ public class PubmedSearchTest {
 		// Article Type
 //		propeties.put("articletype", "Revision");
 
-		IIRSearchConfiguration searchConfiguration = new IRSearchConfigurationImpl(keywords , organism , queryName, propeties );
+		IIRSearchConfiguration searchConfiguration = new IRPubmedSearchConfigurationImpl(keywords , organism , queryName, propeties );
 		IIRSearchProcessReport report = pubmedSearch.search(searchConfiguration);
 		return report;
 	}
 	
 	public static IIRSearchProcessReport createQuery2() throws InvalidDatabaseAccess,
-	ANoteException, InternetConnectionProblemException {
+	ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		PubMedSearch pubmedSearch = new PubMedSearch();
 		// Properties
 		Properties propeties = new Properties();
@@ -141,7 +142,7 @@ public class PubmedSearchTest {
 		// Article Type
 		//propeties.put("articletype", "Revision");
 
-		IIRSearchConfiguration searchConfiguration = new IRSearchConfigurationImpl(keywords , organism , queryName, propeties );
+		IIRSearchConfiguration searchConfiguration = new IRPubmedSearchConfigurationImpl(keywords , organism , queryName, propeties );
 		IIRSearchProcessReport report = pubmedSearch.search(searchConfiguration);
 		return report;
 	}

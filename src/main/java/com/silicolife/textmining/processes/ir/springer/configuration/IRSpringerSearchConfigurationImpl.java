@@ -2,10 +2,13 @@ package com.silicolife.textmining.processes.ir.springer.configuration;
 
 import java.util.Properties;
 
-import com.silicolife.textmining.core.datastructures.process.ir.configuration.IRSearchConfigurationImpl;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IRPubmedSearchConfigurationImpl;
 
-public class IRSpringerSearchConfigurationImpl extends IRSearchConfigurationImpl implements IIRSpringerSearchConfiguration{
+public class IRSpringerSearchConfigurationImpl extends IRPubmedSearchConfigurationImpl implements IIRSpringerSearchConfiguration{
 	
+	
+	public static final String springsearch = "ir.springesearch";
+
 	private String authentication;
 
 	public IRSpringerSearchConfigurationImpl(String keywords, String organism,String queryName,String authentication,Properties propeties) {
@@ -17,5 +20,11 @@ public class IRSpringerSearchConfigurationImpl extends IRSearchConfigurationImpl
 	public String getAuthentication() {
 		return authentication;
 	}
+	
+	@Override
+	public String getConfigurationUID() {
+		return springsearch;
+	}
+
 
 }

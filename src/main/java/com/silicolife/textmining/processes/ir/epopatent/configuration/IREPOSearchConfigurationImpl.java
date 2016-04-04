@@ -2,9 +2,11 @@ package com.silicolife.textmining.processes.ir.epopatent.configuration;
 
 import java.util.Properties;
 
-import com.silicolife.textmining.core.datastructures.process.ir.configuration.IRSearchConfigurationImpl;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IRPubmedSearchConfigurationImpl;
 
-public class IREPOSearchConfigurationImpl extends IRSearchConfigurationImpl implements IIREPOSearchConfiguration{
+public class IREPOSearchConfigurationImpl extends IRPubmedSearchConfigurationImpl implements IIREPOSearchConfiguration{
+	
+	public static final String epopatentsearch = "ir.epopatentsearch";
 	
 	private String authentication;
 
@@ -16,6 +18,12 @@ public class IREPOSearchConfigurationImpl extends IRSearchConfigurationImpl impl
 	@Override
 	public String getAuthentication() {
 		return authentication;
+	}
+	
+
+	@Override
+	public String getConfigurationUID() {
+		return epopatentsearch;
 	}
 
 }

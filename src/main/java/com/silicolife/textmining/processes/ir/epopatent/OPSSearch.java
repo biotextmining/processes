@@ -20,6 +20,7 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
 import com.silicolife.textmining.core.datastructures.process.IRProcessImpl;
@@ -85,38 +86,36 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	}
 	
 	@Override
-	public IIRSearchProcessReport search(IIRSearchConfiguration configuration) throws ANoteException, InternetConnectionProblemException {
+	public IIRSearchProcessReport search(IIRSearchConfiguration configuration) throws ANoteException,InvalidConfigurationException, InternetConnectionProblemException {
 		cancel = false;
-		if(configuration instanceof IIREPOSearchConfiguration)
+		validateConfiguration(configuration);
+		IIREPOSearchConfiguration configurationEPOSearch = (IIREPOSearchConfiguration) configuration;
+		String autentication = configurationEPOSearch.getAuthentication();
+		if(autentication!=null && !autentication.isEmpty())
 		{
-			String autentication = ((IIREPOSearchConfiguration) configuration).getAuthentication();
-			if(autentication!=null && !autentication.isEmpty())
+			this.autentication = Utils.get64Base(autentication);
+			configurationEPOSearch.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, autentication);
+		}
+		else
+		{
+			autentication = PropertiesManager.getPManager().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN).toString();
+			if(!autentication.isEmpty())
 			{
 				this.autentication = Utils.get64Base(autentication);
-				configuration.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, autentication);
+				configurationEPOSearch.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, autentication);
 			}
-			else
-			{
-				autentication = PropertiesManager.getPManager().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN).toString();
-				if(!autentication.isEmpty())
-				{
-					this.autentication = Utils.get64Base(autentication);
-					configuration.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, autentication);
-				}
-			}
-
 		}
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		IQueryOriginType queryOrigin = new QueryOriginTypeImpl(OPSConfiguration.opssearch);
 		Date date = new Date();
-		String name = generateQueryName(configuration,date);
-		String completeQuery = buildQuery(configuration.getKeywords(), configuration.getOrganism(), configuration.getProperties());
-		query = new QueryImpl(queryOrigin,date,configuration.getKeywords(),configuration.getOrganism(),completeQuery,0,0,
-				name,new String(),new HashMap<Long, IQueryPublicationRelevance>(),configuration.getProperties());		
+		String name = generateQueryName(configurationEPOSearch,date);
+		String completeQuery = buildQuery(configurationEPOSearch.getKeywords(), configurationEPOSearch.getOrganism(), configurationEPOSearch.getProperties());
+		query = new QueryImpl(queryOrigin,date,configurationEPOSearch.getKeywords(),configurationEPOSearch.getOrganism(),completeQuery,0,0,
+				name,new String(),new HashMap<Long, IQueryPublicationRelevance>(),configurationEPOSearch.getProperties());		
 		IIRSearchProcessReport report = new IRSearchReportImpl(query);
 		InitConfiguration.getDataAccess().createQuery(query);
 		try {
-			findDocuments(report,completeQuery,configuration.getProperties());
+			findDocuments(report,completeQuery,configurationEPOSearch.getProperties());
 		} catch (RedirectionException e) {
 			throw new InternetConnectionProblemException(e);
 		} catch (ClientErrorException e) {
@@ -133,7 +132,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		return report;
 	}
 	
-	private String generateQueryName(IIRSearchConfiguration configuration,Date date) {
+	private String generateQueryName(IIREPOSearchConfiguration configuration,Date date) {
 		if(configuration.getQueryName()!=null && !configuration.getQueryName().isEmpty())
 		{
 			if(configuration.getQueryName().equals(GlobalOptions.defaulQuerytName))
@@ -441,6 +440,17 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	@Override
 	public IProcessOrigin getProcessOrigin() {
 		return new ProcessOriginImpl(-1, "OPS Search");
+	}
+
+	@Override
+	public void validateConfiguration(IIRSearchConfiguration configuration)throws InvalidConfigurationException {
+		if(configuration instanceof IIREPOSearchConfiguration)
+		{
+			
+		}
+		else
+			throw new InvalidConfigurationException("Configuration is not a IIREPOSearchConfiguration instance");
+		
 	}
 	
 }

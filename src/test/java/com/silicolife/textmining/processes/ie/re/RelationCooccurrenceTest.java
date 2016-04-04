@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
@@ -26,7 +27,7 @@ import com.silicolife.textmining.processes.ie.re.relationcooccurrence.models.REC
 public class RelationCooccurrenceTest {
 
 	@Test
-	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException {
+	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		ICorpus corpus = CreateCorpusFromPublicationManagerTest.createCorpus().getCorpus();
 		IDictionary dictionary = LinnaeusTest.createDictionaryAndUpdateditWithByocycFiles();

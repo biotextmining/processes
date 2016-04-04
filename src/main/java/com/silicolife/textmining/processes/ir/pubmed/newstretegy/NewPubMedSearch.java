@@ -32,6 +32,7 @@ import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.PubmedException;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.process.IRProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
@@ -53,6 +54,7 @@ import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfigurati
 import com.silicolife.textmining.core.interfaces.process.IR.IQuery;
 import com.silicolife.textmining.core.interfaces.process.IR.IQueryOriginType;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
+import com.silicolife.textmining.processes.ir.pubmed.configuration.IIRPubmedSearchConfiguration;
 import com.silicolife.textmining.processes.ir.pubmed.newstretegy.utils.NewESearchContext;
 import com.silicolife.textmining.processes.ir.pubmed.newstretegy.utils.NewPMSearch;
 
@@ -82,7 +84,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 		super();
 	}
 
-	public IIRSearchProcessReport search(IIRSearchConfiguration searchConfiguration) throws ANoteException, InternetConnectionProblemException
+	public IIRSearchProcessReport search(IIRPubmedSearchConfiguration searchConfiguration) throws ANoteException, InternetConnectionProblemException
 	{
 		cancel = false;
 		nAbstracts = 0;
@@ -150,7 +152,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 		return getResultCount(query);
 	}
 	
-	private IIRSearchProcessReport normalSearch(IIRSearchConfiguration configuration) throws ANoteException, InternetConnectionProblemException {
+	private IIRSearchProcessReport normalSearch(IIRPubmedSearchConfiguration configuration) throws ANoteException, InternetConnectionProblemException {
 		String querySTR = buildQuery(configuration.getKeywords(),configuration.getOrganism(),configuration.getProperties());
 		nPubs = getExpectedQueryResults(querySTR);
 		Date date = new Date();
@@ -174,7 +176,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 		return report;
 	}
 	
-	private String generateQueryName(IIRSearchConfiguration configuration,Date date) {
+	private String generateQueryName(IIRPubmedSearchConfiguration configuration,Date date) {
 		if(configuration.getQueryName()!=null && !configuration.getQueryName().isEmpty())
 		{
 			if(configuration.getQueryName().equals(GlobalOptions.defaulQuerytName))
@@ -736,6 +738,21 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 	@Override
 	public IProcessOrigin getProcessOrigin() {
 		return new ProcessOriginImpl(-1, "Pubmed Search");
+	}
+
+	@Override
+	public void validateConfiguration(IIRSearchConfiguration configuration)
+			throws InvalidConfigurationException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IIRSearchProcessReport search(IIRSearchConfiguration query)
+			throws InvalidConfigurationException, ANoteException,
+			InternetConnectionProblemException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

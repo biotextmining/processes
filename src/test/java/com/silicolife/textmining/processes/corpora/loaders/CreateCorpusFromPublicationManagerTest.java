@@ -9,6 +9,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.corpora.CorpusCreateConfigurationImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
 import com.silicolife.textmining.core.interfaces.core.corpora.ICorpusCreateConfiguration;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -23,14 +24,14 @@ import com.silicolife.textmining.processes.ir.PubmedSearchTest;
 public class CreateCorpusFromPublicationManagerTest {
 
 	@Test
-	public void createFromAQuery() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException {
+	public void createFromAQuery() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		ICorpusCreateReport reportCreateCorpus = createCorpus();
 		assertTrue(reportCreateCorpus.isFinishing());
 	}
 
 	public static ICorpusCreateReport createCorpus() throws InvalidDatabaseAccess,
-			ANoteException, InternetConnectionProblemException {
+			ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		IIRSearchProcessReport report = PubmedSearchTest.createQuery();
 		System.out.println("Create Corpus");
 		CorpusCreation creation = new CorpusCreation();
@@ -46,7 +47,7 @@ public class CreateCorpusFromPublicationManagerTest {
 	}
 	
 	@Test
-	public void createFromMultipleQueriesQuery() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException {
+	public void createFromMultipleQueriesQuery() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		IIRSearchProcessReport report = PubmedSearchTest.createQuery();
 		IIRSearchProcessReport report2 = PubmedSearchTest.createQuery2();
