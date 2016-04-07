@@ -10,6 +10,7 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
@@ -35,12 +36,12 @@ public class NERPreProcessingPOSTaggingAndStopWords extends NERPreProcessingPOST
 		this.stopWords = stopWords;
 	}
 
-	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,boolean caseSensitive) throws ANoteException, IOException{
+	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,NERCaseSensativeEnum caseSensitive) throws ANoteException, IOException{
 		
 		Set<String> stopWordsList = new HashSet<String>();
 		if(stopWords!=null && stopWords.getLexicalWords()!=null)
 		{
-			if(caseSensitive)
+			if(caseSensitive.equals(NERCaseSensativeEnum.INALLWORDS))
 			{
 				stopWordsList = stopWords.getLexicalWords().keySet();
 			}
@@ -48,12 +49,16 @@ public class NERPreProcessingPOSTaggingAndStopWords extends NERPreProcessingPOST
 			{
 				for(String sp : stopWords.getLexicalWords().keySet())
 				{
-					stopWordsList.add(sp.toLowerCase());
+					if(caseSensitive.equals(NERCaseSensativeEnum.NONE) 
+							||(caseSensitive.equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) && sp.length()>caseSensitive.getSmallWordSize()))
+						stopWordsList.add(sp.toLowerCase());
+					else if(caseSensitive.equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) && sp.length()<=caseSensitive.getSmallWordSize())
+						stopWordsList.add(sp);
 				}
 			}
 		}
 		AnnotationPositions annotations = new AnnotationPositions();
-		boolean caseSensitiveOption;
+		NERCaseSensativeEnum caseSensitiveOption;
 		AnnotationPosition auxpos;
 		if(stop)
 			return new AnnotationPositions();
@@ -66,14 +71,20 @@ public class NERPreProcessingPOSTaggingAndStopWords extends NERPreProcessingPOST
 			}
 			if(listClassIDCaseSensative.contains(termAnnot.getClassAnnotation().getId()))
 			{
-				caseSensitiveOption = true;
+				if(caseSensitive.equals(NERCaseSensativeEnum.NONE)){
+					caseSensitiveOption = NERCaseSensativeEnum.INALLWORDS;
+				}else{
+					caseSensitiveOption = caseSensitive;
+				}
 			}
 			else
 			{
 				caseSensitiveOption = caseSensitive;
 			}
 			String term = termAnnot.getAnnotationValue();
-			if(!caseSensitive && stopWordsList.contains(term.toLowerCase()))
+			if(caseSensitive.equals(NERCaseSensativeEnum.NONE) && stopWordsList.contains(term.toLowerCase())
+					|| (caseSensitive.equals(NERCaseSensativeEnum.INALLWORDS) && term.length()>caseSensitive.getSmallWordSize()
+					&& stopWordsList.contains(term.toLowerCase())))
 			{
 			}
 			else if(stopWordsList.contains(term))
