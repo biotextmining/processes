@@ -6,7 +6,7 @@ public class NERLinnaeusTaggerDefaultSettings {
 	public static final String RULES_RESOURCE_ID = "NER.LinneausTagger.Ruleset";
 	public static final String USE_ABREVIATION = "NER.LinneausTagger.useAbreviation";
 	public static final String DISAMBIGUATION = "NER.LinneausTagger.disambiguation";
-	public static final String CASE_SENSITIVE = "NER.LinneausTagger.isCaseSensitive";
+	public static final String CASE_SENSITIVE = "NER.LinneausTagger.CaseSensitiveEnum";
 	public static final String NORMALIZATION = "NER.LinneausTagger.Normalization";
 	public static final String NUM_THREADS = "NER.LinneausTagger.numThreads";
 	public static final String PRE_PROCESSING = "NER.LinneausTagger.PreProcessing";

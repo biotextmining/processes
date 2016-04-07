@@ -51,7 +51,8 @@ public class VariantDictionaryMatcher extends Matcher implements Sizeable {
 	/** the identifier for this particular matcher; dictionary terms will only be loaded from the database where this tag matches a tag column */
 	private String tag;
 
-	private final Pattern tokenizationPattern = Pattern.compile("(?:[a-zA-Z]+)|(?:[0-9])|(?:[\\S])");
+//	private final Pattern tokenizationPattern = Pattern.compile("(?:[a-zA-Z]+)|(?:[0-9])|(?:[\\S])"); //original
+	private final Pattern tokenizationPattern = Pattern.compile("(?:[a-zA-Z0-9]+)|(?:[\\S])");
 
 	private boolean ignoreCase;
 

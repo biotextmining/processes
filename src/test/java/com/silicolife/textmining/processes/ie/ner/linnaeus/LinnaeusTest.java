@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.configuration.DictionaryLoaderConfigurationImpl;
@@ -49,7 +50,7 @@ public class LinnaeusTest {
 			IDictionary dictionary) throws ANoteException {
 		boolean useabreviation = true;
 		boolean normalized = true;
-		boolean caseSensitive = true;
+		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.INALLWORDS;
 		ILexicalWords stopwords = null;
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		Disambiguation disambiguation = Disambiguation.OFF;
