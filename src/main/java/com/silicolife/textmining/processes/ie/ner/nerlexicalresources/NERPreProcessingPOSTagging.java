@@ -9,6 +9,7 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
@@ -34,9 +35,9 @@ public class NERPreProcessingPOSTagging extends NER{
 		this.positiveFilterTags = positiveFilterTags;
 	}
 	
-	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,boolean caseSensitive) throws ANoteException, IOException{
+	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,NERCaseSensativeEnum caseSensitive) throws ANoteException, IOException{
 		AnnotationPositions annotations = new AnnotationPositions();
-		boolean caseSensitiveOption;
+		NERCaseSensativeEnum caseSensitiveOption;
 		AnnotationPosition auxpos;
 		if(stop)
 			return new AnnotationPositions();
@@ -50,7 +51,11 @@ public class NERPreProcessingPOSTagging extends NER{
 			String term = termAnnot.getAnnotationValue();
 			if(listClassIDCaseSensative.contains(termAnnot.getClassAnnotation().getId()))
 			{
-				caseSensitiveOption = true;
+				if(caseSensitive.equals(NERCaseSensativeEnum.NONE)){
+					caseSensitiveOption = NERCaseSensativeEnum.INALLWORDS;
+				}else{
+					caseSensitiveOption = caseSensitive;
+				}
 			}
 			else
 			{

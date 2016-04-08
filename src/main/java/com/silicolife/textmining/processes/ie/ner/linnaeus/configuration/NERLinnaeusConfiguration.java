@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
@@ -24,21 +24,21 @@ public class NERLinnaeusConfiguration extends NERConfigurationImpl implements IN
 	private int numThreads;
 	private boolean useabreviation;
 	private Disambiguation disambiguation;
-	private boolean caseSensitive;
+	private NERCaseSensativeEnum caseSensitiveEnum;
 	private boolean normalized;
 	private ILexicalWords stopwords;
 	private NERLinnaeusPreProcessingEnum preprocessing;
 	private boolean usingOtherResourceInfoToImproveRuleAnnotations;
 	
 	public NERLinnaeusConfiguration(ICorpus corpus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
-			Disambiguation disambiguation, boolean caseSensitive,boolean normalized, int numThreads,ILexicalWords stopwords,
+			Disambiguation disambiguation, NERCaseSensativeEnum caseSensitiveEnum,boolean normalized, int numThreads,ILexicalWords stopwords,
 			NERLinnaeusPreProcessingEnum preprocessing,boolean usingOtherResourceInfoToImproveRuleAnnotations) {
 		super(corpus,LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
 		this.patterns = patterns;
 		this.resourceToNER = resourceToNER;
 		this.useabreviation = useabreviation;
 		this.disambiguation = disambiguation;
-		this.caseSensitive = caseSensitive;
+		this.caseSensitiveEnum = caseSensitiveEnum;
 		this.normalized = normalized;
 		this.numThreads = numThreads;
 		this.stopwords = stopwords;
@@ -67,8 +67,8 @@ public class NERLinnaeusConfiguration extends NERConfigurationImpl implements IN
 	}
 
 	@Override
-	public boolean isCaseSensitive() {
-		return caseSensitive;
+	public NERCaseSensativeEnum getCaseSensitiveEnum() {
+		return caseSensitiveEnum;
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class NERLinnaeusConfiguration extends NERConfigurationImpl implements IN
 		properties.put(NERLinnaeusTaggerDefaultSettings.RULES_RESOURCE_ID, String.valueOf(ruleResourceID));
 		properties.put(NERLinnaeusTaggerDefaultSettings.USE_ABREVIATION, String.valueOf(useabreviation));
 		properties.put(NERLinnaeusTaggerDefaultSettings.DISAMBIGUATION, disambiguation.name());
-		properties.put(NERLinnaeusTaggerDefaultSettings.CASE_SENSITIVE, String.valueOf(caseSensitive));
+		properties.put(NERLinnaeusTaggerDefaultSettings.CASE_SENSITIVE, caseSensitiveEnum.name());
 		properties.put(NERLinnaeusTaggerDefaultSettings.NORMALIZATION, String.valueOf(normalized));
 		properties.put(NERLinnaeusTaggerDefaultSettings.NUM_THREADS, String.valueOf(numThreads));
 		properties.put(NERLinnaeusTaggerDefaultSettings.PRE_PROCESSING, preprocessing.name());

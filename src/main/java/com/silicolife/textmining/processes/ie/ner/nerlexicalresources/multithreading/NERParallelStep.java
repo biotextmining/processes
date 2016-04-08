@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.textprocessing.EntitiesDesnormalization;
 import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparator;
 import com.silicolife.textmining.core.datastructures.utils.multithearding.IParallelJob;
@@ -24,11 +25,11 @@ public class NERParallelStep implements IParallelJob<Integer>{
 	private int entitiesAdded=0;
 	private NER ner;
 	private boolean stop = false;
-	private boolean caseSensitive;
+	private NERCaseSensativeEnum caseSensitive;
 	private boolean normalization;
 	
 	
-	public NERParallelStep(NER ner,IPublication doc,IIEProcess process,ICorpus corpus,String text,List<Long> classIdCaseSensative,boolean caseSensitive,boolean normalization)
+	public NERParallelStep(NER ner,IPublication doc,IIEProcess process,ICorpus corpus,String text,List<Long> classIdCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization)
 	{
 		this.ner=ner;
 		this.doc=doc;

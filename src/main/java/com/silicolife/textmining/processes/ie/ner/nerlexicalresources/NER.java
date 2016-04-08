@@ -11,6 +11,7 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
@@ -38,12 +39,12 @@ public class NER {
 	}
 	
 	
-	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,boolean caseSensitive,boolean normalization) throws IOException, ANoteException{
+	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization) throws IOException, ANoteException{
 		if(normalization){
 			text = TermSeparator.termSeparator(text);
 		}
 		AnnotationPositions annotations = new AnnotationPositions();
-		boolean caseSensitiveOption;
+		NERCaseSensativeEnum caseSensitiveOption;
 		if(stop)
 		{
 			return new AnnotationPositions();
@@ -57,7 +58,11 @@ public class NER {
 			String term = termAnnot.getAnnotationValue();
 			if(listClassIDCaseSensative.contains(termAnnot.getClassAnnotation().getId()))
 			{
-				caseSensitiveOption = true;
+				if(caseSensitive.equals(NERCaseSensativeEnum.NONE)){
+					caseSensitiveOption = NERCaseSensativeEnum.INALLWORDS;
+				}else{
+					caseSensitiveOption = caseSensitive;
+				}
 			}
 			else
 			{
@@ -89,11 +94,16 @@ public class NER {
 		return rules;
 	}
 
-	protected List<AnnotationPosition> searchTermInText(String term, String text, boolean caseSensitive){
+	protected List<AnnotationPosition> searchTermInText(String term, String text, NERCaseSensativeEnum caseSensitive){
 		List<AnnotationPosition> positions = new ArrayList<AnnotationPosition>();
 		String termExp = ParsingUtils.textToRegExp(term);
-		
-		Pattern p = caseSensitive ? Pattern.compile(SEPARATOR + "("+termExp+")" + SEPARATOR) : Pattern.compile(SEPARATOR + "("+termExp+")" + SEPARATOR, Pattern.CASE_INSENSITIVE);
+		Pattern p = null;
+		if(caseSensitive.equals(NERCaseSensativeEnum.NONE)||
+				caseSensitive.equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)&& term.length()>caseSensitive.getSmallWordSize()){
+			p = Pattern.compile(SEPARATOR + "("+termExp+")" + SEPARATOR, Pattern.CASE_INSENSITIVE);
+		}else{
+			p = Pattern.compile(SEPARATOR + "("+termExp+")" + SEPARATOR);
+		}
 		Matcher m = p.matcher(text);
 		
 		while(m.find())
@@ -101,8 +111,12 @@ public class NER {
 			AnnotationPosition pos = new AnnotationPosition(m.start(1), m.end(1), term, text.substring(m.start(1), m.end(1)));
 			positions.add(pos);
 		}
-		
-		p = caseSensitive ? Pattern.compile("^" + "("+termExp+")" + SEPARATOR) : Pattern.compile("^" + "("+termExp+")" + SEPARATOR, Pattern.CASE_INSENSITIVE);
+		if(caseSensitive.equals(NERCaseSensativeEnum.NONE)||
+				caseSensitive.equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)&& term.length()>caseSensitive.getSmallWordSize()){
+			p = Pattern.compile("^" + "("+termExp+")" + SEPARATOR, Pattern.CASE_INSENSITIVE);
+		}else{
+			p = Pattern.compile("^" + "("+termExp+")" + SEPARATOR);
+		}
 		m = p.matcher(text);
 		
 		while(m.find())
@@ -137,14 +151,7 @@ public class NER {
 		{
 			prop.put(GlobalNames.normalization,String.valueOf(normalization));
 		}
-		if(resources.isCaseSensitive())
-		{
-			prop.put(GlobalNames.casesensitive,"true");
-		}
-		else
-		{
-			prop.put(GlobalNames.casesensitive,"false");
-		}
+		prop.put(GlobalNames.casesensitive, resources.getCaseSensitive().name());
 		if(resources.isUseOtherResourceInformationInRules())
 		{
 			prop.put(GlobalNames.useOtherResourceInformationInRules,"true");

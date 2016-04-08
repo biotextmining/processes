@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
@@ -20,14 +21,14 @@ public class NERLexicalResourcesConfiguration extends NERConfigurationImpl imple
 	private NERLexicalResourcesPreProssecingEnum preProcessing;
 	private ResourcesToNerAnote resourceToNER;
 	private Set<String> posTags;
-	private boolean caseSensitive;
+	private NERCaseSensativeEnum caseSensitive;
 	private ILexicalWords stopWords;
 	private boolean normalized;
 	private boolean usingOtherResourceInfoToImproveRuleAnnotstions;
 	
 	
 	public NERLexicalResourcesConfiguration(ICorpus corpus,NERLexicalResourcesPreProssecingEnum preProcessing,ResourcesToNerAnote resourceToNER,
-			Set<String> posTgas,ILexicalWords stopWords, boolean caseSensitive,boolean normalized,boolean usingOtherResourceInfoToImproveRuleAnnotstions) {
+			Set<String> posTgas,ILexicalWords stopWords, NERCaseSensativeEnum caseSensitive,boolean normalized,boolean usingOtherResourceInfoToImproveRuleAnnotstions) {
 		super(corpus,NERLexicalResources.nerlexicalresourcesTagger,LanguageProperties.getLanguageStream("pt.uminho.anote2.ner.operations.name"));
 		this.preProcessing = preProcessing;
 		this.resourceToNER = resourceToNER;
@@ -60,7 +61,7 @@ public class NERLexicalResourcesConfiguration extends NERConfigurationImpl imple
 	}
 
 	@Override
-	public boolean isCaseSensitive() {
+	public NERCaseSensativeEnum getCaseSensitive() {
 		return caseSensitive;
 	}
 

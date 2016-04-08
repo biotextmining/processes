@@ -12,6 +12,7 @@ import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ElementToNer;
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -36,11 +37,11 @@ public class NERLexicalResources extends IEProcessImpl implements INERProcess{
 	private NER nerDocumentPipeline;
 	private boolean stop = false;
 	private ThreadProcessManager multi = new ThreadProcessManager(false);
-	private boolean caseSensitive;
+	private NERCaseSensativeEnum caseSensitive;
 	private boolean normalization;
 
 
-	public NERLexicalResources(ElementToNer elementsToNER,boolean normalization,NER nerDocumentPipeline,boolean caseSensitive) {
+	public NERLexicalResources(ElementToNer elementsToNER,boolean normalization,NER nerDocumentPipeline,NERCaseSensativeEnum caseSensitive) {
 		super(null,
 				NERLexicalResources.nerlexicalresourcesTagger  + " " +Utils.SimpleDataFormat.format(new Date()),
 				null,
@@ -136,7 +137,7 @@ public class NERLexicalResources extends IEProcessImpl implements INERProcess{
 		}
 	}
 
-	private void executeNER(ICorpus corpus,ThreadProcessManager multi,List<Long> classIdCaseSensative,IAnnotatedDocument annotDoc,String text,boolean caseSensitive,boolean normalization) {
+	private void executeNER(ICorpus corpus,ThreadProcessManager multi,List<Long> classIdCaseSensative,IAnnotatedDocument annotDoc,String text,NERCaseSensativeEnum caseSensitive,boolean normalization) {
 		IParallelJob<Integer> job = new NERParallelStep(nerDocumentPipeline,annotDoc, this, corpus, text, classIdCaseSensative,caseSensitive,normalization);
 		multi.addJob(job);
 	}

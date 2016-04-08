@@ -2,6 +2,7 @@ package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configura
 
 import java.util.Set;
 
+import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
@@ -14,6 +15,6 @@ public interface INERLexicalResourcesConfiguration extends INERConfiguration{
 	public ILexicalWords getStopWords();
 	public boolean isNormalized();
 	public void setNormalized(boolean newNormalizedOption);
-	public boolean isCaseSensitive();
+	public NERCaseSensativeEnum getCaseSensitive();
 	public boolean usingOtherResourceInfoToImproveRuleAnnotations();
 }
