@@ -1,7 +1,5 @@
 package com.silicolife.textmining.processes.ie.schemas.evaluation;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -13,6 +11,12 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.evaluation.EvaluationException;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
+import com.silicolife.textmining.core.datastructures.process.evaluation.ner.NERSchemasClassEvaluationResultImpl;
+import com.silicolife.textmining.core.datastructures.process.evaluation.ner.NERSchemasEvaluationReportImpl;
+import com.silicolife.textmining.core.datastructures.process.evaluation.ner.NERSchemasEvaluationResultsImpl;
+import com.silicolife.textmining.core.datastructures.process.evaluation.re.RESchemasEvaluationReportImpl;
+import com.silicolife.textmining.core.datastructures.process.evaluation.re.RESchemasEvaluationResultImpl;
+import com.silicolife.textmining.core.datastructures.process.evaluation.re.RESchemasEvaluationResultsImpl;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEventAnnotation;
@@ -22,52 +26,36 @@ import com.silicolife.textmining.core.interfaces.core.document.IDocumentSet;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.report.processes.evaluation.INESchemasEvaluationReport;
 import com.silicolife.textmining.core.interfaces.core.report.processes.evaluation.IRESchemaEvaluationReport;
-import com.silicolife.textmining.core.interfaces.process.IE.INERSchema;
-import com.silicolife.textmining.core.interfaces.process.IE.IRESchema;
-import com.silicolife.textmining.core.interfaces.process.IE.ner.INERSchemaEvaluation;
-import com.silicolife.textmining.core.interfaces.process.IE.re.IRESchemaEvaluation;
-import com.silicolife.textmining.processes.ie.schemas.evaluation.ner.NERSchemasClassEvaluationImpl;
-import com.silicolife.textmining.processes.ie.schemas.evaluation.ner.NERSchemasEvaluationReportImpl;
-import com.silicolife.textmining.processes.ie.schemas.evaluation.ner.NERSchemasEvaluationResultsImpl;
-import com.silicolife.textmining.processes.ie.schemas.evaluation.re.RESchemaEvaluationImpl;
-import com.silicolife.textmining.processes.ie.schemas.evaluation.re.RESchemasEvaluationReportImpl;
-import com.silicolife.textmining.processes.ie.schemas.evaluation.re.RESchemasEvaluationResults;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.eval.INERSchemaEvaluationResult;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.eval.INERSchemasEvaluation;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.eval.INERSchemasEvaluationConfiguration;
+import com.silicolife.textmining.core.interfaces.process.IE.re.eval.IRESchemasEvaluation;
+import com.silicolife.textmining.core.interfaces.process.IE.re.eval.IRESchemasEvaluationConfiguration;
+import com.silicolife.textmining.core.interfaces.process.IE.re.eval.IRESchemasEvaluationResults;
 
 
 
 
-public class SchemasEvaluation {
+public class SchemasEvaluation implements INERSchemasEvaluation,IRESchemasEvaluation{
 
 
 	private boolean stop = false;
-	private boolean allowClueOverlap = true;
-	private boolean synonymsRange = true;
 
 
 	public SchemasEvaluation()
 	{
 
 	}
-	/**
-	 * Evaluation two different INERschemas where one are the goldenStandard and the other the schema to compare
-	 * 
-	 * @param nerSchemaGoldStandard
-	 * @param nerSchemaForComparing
-	 * @return
-	 * @throws SQLException
-	 * @throws DatabaseLoadDriverException
-	 * @throws IOException
-	 * @throws EvaluationException
-	 */
-	public INESchemasEvaluationReport evaluateNERSchemas(INERSchema nerSchemaGoldStandard, INERSchema nerSchemaForComparing) throws ANoteException{
+
+	public INESchemasEvaluationReport evaluateNERSchemas(INERSchemasEvaluationConfiguration configuration) throws ANoteException{
 		stop=false;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		// test if Processes belong to the same corpus 
-		if(nerSchemaGoldStandard.getCorpus().getId() != nerSchemaForComparing.getCorpus().getId())
+		if(configuration.getGoldStandard().getCorpus().getId() != configuration.getToCompare().getCorpus().getId())
 		{
 			throw new EvaluationException(LanguageProperties.getLanguageStream("pt.uminho.anote2.general.re.evaluation.err.notsamecorpus"));
 		}
-		IDocumentSet documentSet = nerSchemaGoldStandard.getCorpus().getArticlesCorpus();
+		IDocumentSet documentSet = configuration.getGoldStandard().getCorpus().getArticlesCorpus();
 		Iterator<IPublication> itDocs = documentSet.iterator();
 		int step=1;
 		int total = documentSet.size();
@@ -80,14 +68,14 @@ public class SchemasEvaluation {
 				break;
 			}
 			IPublication doc = itDocs.next();
-			AnnotatedDocumentImpl goldenStandardDocument = new AnnotatedDocumentImpl(doc,nerSchemaGoldStandard, nerSchemaGoldStandard.getCorpus());
-			AnnotatedDocumentImpl toCompareDocument = new AnnotatedDocumentImpl(doc,nerSchemaForComparing, nerSchemaForComparing.getCorpus());
+			AnnotatedDocumentImpl goldenStandardDocument = new AnnotatedDocumentImpl(doc,configuration.getGoldStandard(), configuration.getGoldStandard().getCorpus());
+			AnnotatedDocumentImpl toCompareDocument = new AnnotatedDocumentImpl(doc,configuration.getToCompare(), configuration.getToCompare().getCorpus());
 			generateResultsbyDocument(goldenStandardDocument, toCompareDocument, results);
 			memoryAndProgressAndTime(step, total, startTime);
 			step++;
 		}
-		INERSchemaEvaluation result = new NERSchemasClassEvaluationImpl(results);
-		INESchemasEvaluationReport report = new NERSchemasEvaluationReportImpl("", result , nerSchemaGoldStandard, nerSchemaForComparing);
+		INERSchemaEvaluationResult result = new NERSchemasClassEvaluationResultImpl(results);
+		INESchemasEvaluationReport report = new NERSchemasEvaluationReportImpl("", result , configuration.getGoldStandard(), configuration.getToCompare());
 		return report;
 	}
 
@@ -130,32 +118,21 @@ public class SchemasEvaluation {
 		return false;
 	}
 
-	/**
-	 * Evaluation two different IREschemas where one are the goldenStandard and the other the schema to compare
-	 * 
-	 * @param goldenStandard
-	 * @param toCompare
-	 * @return
-	 * @throws EvaluationException
-	 * @throws DatabaseLoadDriverException 
-	 * @throws SQLException 
-	 * @throws IOException 
-	 */
-	public IRESchemaEvaluationReport evaluateRESchemas(IRESchema goldenStandard,IRESchema toCompare) throws ANoteException
+	public IRESchemaEvaluationReport evaluateNERSchemas(IRESchemasEvaluationConfiguration configuration) throws ANoteException
 	{
 		stop = false;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		// Test if Process has the same corpus
-		if(goldenStandard.getCorpus().getId() != toCompare.getCorpus().getId())
+		if(configuration.getGoldStandard().getCorpus().getId() != configuration.getToCompare().getCorpus().getId())
 		{
 			throw new EvaluationException(LanguageProperties.getLanguageStream("pt.uminho.anote2.general.re.evaluation.err.notsamecorpus"));
 		}
-		IDocumentSet documentSet = goldenStandard.getCorpus().getArticlesCorpus();
+		IDocumentSet documentSet = configuration.getGoldStandard().getCorpus().getArticlesCorpus();
 		int step=1;
 		int total = documentSet.size();
 		Iterator<IPublication> iterator = documentSet.iterator();
 		// Class to save the results
-		RESchemasEvaluationResults result = new RESchemasEvaluationResults();
+		RESchemasEvaluationResultsImpl result = new RESchemasEvaluationResultsImpl();
 		while(iterator.hasNext())
 		{
 			if(stop)
@@ -163,15 +140,15 @@ public class SchemasEvaluation {
 				break;
 			}
 			IPublication document = iterator.next();
-			IAnnotatedDocument goldenStandardDocument = new AnnotatedDocumentImpl(document,goldenStandard, goldenStandard.getCorpus());
-			IAnnotatedDocument toCompareDocument = new AnnotatedDocumentImpl(document,toCompare, goldenStandard.getCorpus());
+			IAnnotatedDocument goldenStandardDocument = new AnnotatedDocumentImpl(document,configuration.getGoldStandard(), configuration.getGoldStandard().getCorpus());
+			IAnnotatedDocument toCompareDocument = new AnnotatedDocumentImpl(document,configuration.getToCompare(), configuration.getToCompare().getCorpus());
 			// evaluate RE document
-			processDocumetREEvaluation(goldenStandardDocument,toCompareDocument,result);
+			processDocumetREEvaluation(configuration,goldenStandardDocument,toCompareDocument,result);
 			memoryAndProgressAndTime(step, total, startTime);
 			step++;
 		}
-		IRESchemaEvaluation evaluation = new RESchemaEvaluationImpl(result);
-		IRESchemaEvaluationReport report = new RESchemasEvaluationReportImpl(evaluation , goldenStandard, toCompare);
+		IRESchemasEvaluationResults evaluation = new RESchemasEvaluationResultImpl(result);
+		IRESchemaEvaluationReport report = new RESchemasEvaluationReportImpl(evaluation , configuration.getGoldStandard(), configuration.getToCompare());
 		if(stop)
 		{
 			report.setcancel();
@@ -181,7 +158,7 @@ public class SchemasEvaluation {
 		return report;
 	}
 
-	private void processDocumetREEvaluation(IAnnotatedDocument goldenStandardDocument, IAnnotatedDocument toCompareDocument, RESchemasEvaluationResults result) throws ANoteException {
+	private void processDocumetREEvaluation(IRESchemasEvaluationConfiguration configuration,IAnnotatedDocument goldenStandardDocument, IAnnotatedDocument toCompareDocument, RESchemasEvaluationResultsImpl result) throws ANoteException {
 		// Get Golden Standard Events
 		List<IEventAnnotation> goldenEvents = goldenStandardDocument.getEventAnnotations();	
 		// Get ToCompare Events
@@ -194,11 +171,11 @@ public class SchemasEvaluation {
 		for(IEventAnnotation eventGold:goldenEvents)
 		{
 			// Test if entities are present in both Documents
-			if(eventsMissingByEntities(eventGold,toCompareEntitiesSorted))
+			if(eventsMissingByEntities(configuration,eventGold,toCompareEntitiesSorted))
 			{
 				result.addEventMissingForMissingEntities(goldenStandardDocument,eventGold);
 			}
-			else if(eventsMatching(eventGold,toCompareEvents)) // Find Similar Events
+			else if(eventsMatching(configuration,eventGold,toCompareEvents)) // Find Similar Events
 			{
 				result.addEventMatching(goldenStandardDocument,eventGold);
 			}
@@ -218,13 +195,13 @@ public class SchemasEvaluation {
 		return result;
 	}
 
-	private boolean eventsMatching(IEventAnnotation eventGold,List<IEventAnnotation> toCompareStartingInSentence) {
+	private boolean eventsMatching(IRESchemasEvaluationConfiguration configuration,IEventAnnotation eventGold,List<IEventAnnotation> toCompareStartingInSentence) {
 		IEventAnnotation aux = null;
 		boolean result = false;
 		for(IEventAnnotation toCompareEvent:toCompareStartingInSentence)
 		{
 			// Compare Events in pars
-			if(matchingEvents(eventGold,toCompareEvent))
+			if(matchingEvents(configuration,eventGold,toCompareEvent))
 			{
 				result =  true;
 				aux = toCompareEvent;
@@ -237,8 +214,8 @@ public class SchemasEvaluation {
 		return result;
 	}
 
-	private boolean matchingEvents(IEventAnnotation eventGold,IEventAnnotation toCompareEvent) {
-		if(allowClueOverlap)
+	private boolean matchingEvents(IRESchemasEvaluationConfiguration configuration,IEventAnnotation eventGold,IEventAnnotation toCompareEvent) {
+		if(configuration.allowClueOverlap())
 		{
 
 			// Compare clues
@@ -367,7 +344,7 @@ public class SchemasEvaluation {
 		return allEntities;
 	}
 
-	private boolean eventsMissingByEntities(IEventAnnotation eventGold,
+	private boolean eventsMissingByEntities(IRESchemasEvaluationConfiguration configuration,IEventAnnotation eventGold,
 			SortedMap<AnnotationPosition, IEntityAnnotation> toCompareEntities) {
 		List<IEntityAnnotation> entitiesAtLeft = eventGold.getEntitiesAtLeft();
 		List<IEntityAnnotation> entitiesAtRight = eventGold.getEntitiesAtRight();
@@ -376,7 +353,7 @@ public class SchemasEvaluation {
 			AnnotationPosition position = new AnnotationPosition(Integer.valueOf(String.valueOf(entLF.getStartOffset())), Integer.valueOf(String.valueOf(entLF.getEndOffset())));
 			if(!toCompareEntities.containsKey(position))
 			{
-				if(synonymsRange && entLF.getResourceElement() != null)
+				if(configuration.allowsynonymsRange() && entLF.getResourceElement() != null)
 				{
 					if(!getEntitiesSynonyms(toCompareEntities, entLF))
 					{
@@ -393,7 +370,7 @@ public class SchemasEvaluation {
 			AnnotationPosition position = new AnnotationPosition(Integer.valueOf(String.valueOf(entRT.getStartOffset())), Integer.valueOf(String.valueOf(entRT.getEndOffset())));
 			if(!toCompareEntities.containsKey(position))
 			{
-				if(synonymsRange && entRT.getResourceElement()!= null)
+				if(configuration.allowsynonymsRange() && entRT.getResourceElement()!= null)
 				{
 					if(!getEntitiesSynonyms(toCompareEntities, entRT))
 					{
