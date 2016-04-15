@@ -162,14 +162,20 @@ public class PMSearch {
 	}
 	
 	public static List<IPublication> readXMLResultFile(PostMethod post) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException{
-		List<IPublication> publications = new ArrayList<IPublication>();
 		InputStream stream = post.getResponseBodyAsStream();
+		List<IPublication> publications = getPublicationsFromXMLStream(stream);
+		return publications;
+	}
+
+	public static List<IPublication> getPublicationsFromXMLStream(InputStream stream)
+			throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
+		List<IPublication> publications = new ArrayList<IPublication>();
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		NodeList nodes = doc.getElementsByTagName("MedlineCitation");
 		NodeList nodesPubMed = doc.getElementsByTagName("PubmedData");
-		XPathExpression meshExpresion = xpath.compile("MeshHeadingList/MeshHeading/DescriptorName");
+//		XPathExpression meshExpresion = xpath.compile("MeshHeadingList/MeshHeading/DescriptorName");
 		XPathExpression lastNameExpresion = xpath.compile("Article/AuthorList/Author/LastName");
 //		XPathExpression foreNameExpresion = xpath.compile("Article/AuthorList/Author/ForeName");
 		String title,authorList,abstractText,status,journal,pages,volume,issues,date;
