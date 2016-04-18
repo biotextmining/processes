@@ -3,7 +3,6 @@ package com.silicolife.textmining.processes.nlptools.opennlp;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,11 +51,11 @@ import com.silicolife.textmining.processes.nlptools.structure.SyntaxTreeViewerPa
  */
 public class OpenNLP {
 
-	private final static String sentenceModelFile = "src/main/resources/nlpmodels/en-sent.bin";
-	private final static String tokeniserModelFile = "src/main/resources/nlpmodels/en-token.bin";
-	private final static String postaggingModelFile = "src/main/resources/nlpmodels/en-pos-maxent.bin";
-	private final static String parsingModelFile = "src/main/resources/nlpmodels/en-parser-chunking.bin";
-	private final static String chunkerModelFile = "src/main/resources/nlpmodels/en-chunker.bin";
+	private final static String sentenceModelFile = "nlpmodels/en-sent.bin";
+	private final static String tokeniserModelFile = "nlpmodels/en-token.bin";
+	private final static String postaggingModelFile = "nlpmodels/en-pos-maxent.bin";
+	private final static String parsingModelFile = "nlpmodels/en-parser-chunking.bin";
+	private final static String chunkerModelFile = "nlpmodels/en-chunker.bin";
 
 
 	private SentenceModel sentenceModel;
@@ -95,31 +94,36 @@ public class OpenNLP {
 	}
 
 	private void initChunkerModelModel() throws IOException{
-		InputStream modelIn = new FileInputStream(chunkerModelFile);
+		InputStream modelIn = OpenNLP.class.getClassLoader().getResourceAsStream(chunkerModelFile);
+//		InputStream modelIn = new FileInputStream(chunkerModelFile);
 		chunkerModel = new ChunkerModel(modelIn);
 	}
 
 	private void initParserModelModel() throws IOException{
-		InputStream parsingModelIn = new FileInputStream(parsingModelFile);
+		InputStream parsingModelIn = OpenNLP.class.getClassLoader().getResourceAsStream(parsingModelFile);
+//		InputStream parsingModelIn = new FileInputStream(parsingModelFile);
 		parserModel = new ParserModel(parsingModelIn);
 		parser = ParserFactory.create(parserModel);
 	}
 
 	private void initSentenceModel() throws IOException
 	{
-		InputStream modelIn = new FileInputStream(sentenceModelFile);
+		InputStream modelIn = OpenNLP.class.getClassLoader().getResourceAsStream(sentenceModelFile);
+//		InputStream modelIn = new FileInputStream(sentenceModelFile);
 		sentenceModel = new SentenceModel(modelIn);
 	}
 
 	private void initTokenizerModel() throws IOException
 	{
-		InputStream tokenizerFileInput = new FileInputStream(tokeniserModelFile);
+		InputStream tokenizerFileInput = OpenNLP.class.getClassLoader().getResourceAsStream(tokeniserModelFile);
+//		InputStream tokenizerFileInput = new FileInputStream(tokeniserModelFile);
 		tokeniserModel = new TokenizerModel(tokenizerFileInput);
 	}
 
 	private void initPosTagModel() throws IOException
 	{
-		InputStream postaggerFileInput = new FileInputStream(postaggingModelFile);
+		InputStream postaggerFileInput = OpenNLP.class.getClassLoader().getResourceAsStream(postaggingModelFile);
+//		InputStream postaggerFileInput = new FileInputStream(postaggingModelFile);
 		postaggerModel = new POSModel(postaggerFileInput);
 	}
 
