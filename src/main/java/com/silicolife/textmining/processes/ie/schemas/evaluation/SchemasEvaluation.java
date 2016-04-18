@@ -118,7 +118,7 @@ public class SchemasEvaluation implements INERSchemasEvaluation,IRESchemasEvalua
 		return false;
 	}
 
-	public IRESchemaEvaluationReport evaluateNERSchemas(IRESchemasEvaluationConfiguration configuration) throws ANoteException
+	public IRESchemaEvaluationReport evaluateRESchemas(IRESchemasEvaluationConfiguration configuration) throws ANoteException
 	{
 		stop = false;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
