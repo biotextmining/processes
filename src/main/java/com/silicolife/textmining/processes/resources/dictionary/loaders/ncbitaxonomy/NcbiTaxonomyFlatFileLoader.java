@@ -70,6 +70,7 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 				List<IExternalID> externalIDs = new ArrayList<IExternalID>();
 				ISource source = new SourceImpl(GlobalSources.ncbitaxonomy);
 				externalIDs.add(new ExternalIDImpl(String.valueOf(sentenceID), source));
+				termSynomns = addSpecieAbbreviations(term, termSynomns);
 				super.addElementToBatch(term, organism, termSynomns, externalIDs, 0);
 				termSynomns = new HashSet<String>();
 				term = new String();
@@ -110,6 +111,33 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 		br.close();
 		return getReport();
 
+	}
+
+	private Set<String> addSpecieAbbreviations(String term, Set<String> termSynomns) {
+		Set<String> abbreviations = new HashSet<>();
+		for(String synonim : termSynomns){
+			String abbreviation = convertStringToAbbreviation(synonim);
+			if(!abbreviation.isEmpty()){
+				abbreviations.add(abbreviation);
+			}
+		}
+		String abb = convertStringToAbbreviation(term);
+		if(!abb.isEmpty()){
+			abbreviations.add(abb);
+		}
+		termSynomns.addAll(abbreviations);
+		return termSynomns;
+	}
+
+	private String  convertStringToAbbreviation(String specieName) {
+		String result = new String();
+		String[] partsTerm = specieName.trim().split("\\s");
+		if(partsTerm.length==2){
+			String firstChar = partsTerm[0].substring(0, 1);
+			firstChar = firstChar.toUpperCase();
+			result = firstChar + ". "+partsTerm[1];
+		}
+		return result;
 	}
 
 	public boolean checkFile(File file) {
