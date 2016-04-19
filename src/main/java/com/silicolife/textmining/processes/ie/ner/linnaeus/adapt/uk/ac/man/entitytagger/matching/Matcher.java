@@ -254,6 +254,7 @@ public abstract class Matcher {
 
 					if (ncp > -1 && ncp < text.length()){
 						String abb = text.substring(e+2,ncp);
+						abb = abb.trim(); //fix to use abbreviations with normalization activated 
 
 						if (abb.matches(regexp) && abb.length() < 5){
 							Mention a = new Mention(m.getIds(),e+2,ncp,abb);
