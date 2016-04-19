@@ -21,7 +21,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
+import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
 import com.silicolife.textmining.core.datastructures.documents.lables.PublicationLabelImpl;
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
@@ -31,10 +33,8 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublicationExter
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 
-
-
 public class MedLineReader {
-
+	
 	private InputStream stream;
 	public static final String pubmedLink = "http://www.ncbi.nlm.nih.gov/pubmed/";
 	private List<IPublication> publications ;
@@ -171,26 +171,26 @@ public class MedLineReader {
 
 	private List<IPublicationExternalSourceLink> processExternalIds(Element pubElements, String pubmedID) {
 		List<IPublicationExternalSourceLink> externalIDsSource = new ArrayList<IPublicationExternalSourceLink>();
-//		externalIDsSource.add(new PublicationExternalSourceLinkImpl(pubmedID, PublicationSourcesDefault.pubmed));
-//		if(pubElements != null){
-//			NodeList articleIDs = pubElements.getElementsByTagName("ArticleId");
-//			for(int i=0;i<articleIDs.getLength();i++)
-//			{
-//				if (articleIDs.item(i) != null) {
-//
-//					String internalID = articleIDs.item(i).getTextContent().toLowerCase();
-//					String source = articleIDs.item(i).getAttributes().getNamedItem("IdType").getTextContent();
-//					if(internalID.length()>3 && source.equalsIgnoreCase("pmc"))
-//					{
-//						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
-//					}
-//					else if(internalID.startsWith("10.") && source.equalsIgnoreCase("doi"))
-//					{
-//						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
-//					}
-//				}
-//			}
-//		}
+		externalIDsSource.add(new PublicationExternalSourceLinkImpl(pubmedID, PublicationSourcesDefault.pubmed));
+		if(pubElements != null){
+			NodeList articleIDs = pubElements.getElementsByTagName("ArticleId");
+			for(int i=0;i<articleIDs.getLength();i++)
+			{
+				if (articleIDs.item(i) != null) {
+
+					String internalID = articleIDs.item(i).getTextContent().toLowerCase();
+					String source = articleIDs.item(i).getAttributes().getNamedItem("IdType").getTextContent();
+					if(internalID.length()>3 && source.equalsIgnoreCase("pmc"))
+					{
+						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
+					}
+					else if(internalID.startsWith("10.") && source.equalsIgnoreCase("doi"))
+					{
+						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
+					}
+				}
+			}
+		}
 		return externalIDsSource;
 	}
 
