@@ -30,6 +30,7 @@ public class CorpusCreation {
 		
 	}
 	
+
 	public ICorpusCreateReport createCorpus(ICorpusCreateConfiguration configuration) throws ANoteException
 	{
 		try {
@@ -89,7 +90,6 @@ public class CorpusCreation {
 						publication.setFullTextContent(fullTextContent);
 						// update full text context
 						InitConfiguration.getDataAccess().updatePublicationFullTextContent(publication);
-
 					}
 				}
 			}
