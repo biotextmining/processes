@@ -168,7 +168,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 
 	
 	private IIRSearchProcessReport searchMethod(IQuery query) throws ANoteException, InternetConnectionProblemException {
-		InitConfiguration.getDataAccess().createQuery(query);
+		registerQueryOnDatabase(query);
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		IIRSearchProcessReport report = new IRSearchReportImpl(query);
 		searchPubmed(query,report);
@@ -176,6 +176,12 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 		report.setTime(endTime-startTime);
 		return report;
 	}
+
+	protected void registerQueryOnDatabase(IQuery query) throws ANoteException {
+		InitConfiguration.getDataAccess().createQuery(query);
+	}
+	
+	
 	
 	private String generateQueryName(IIRPubmedSearchConfiguration configuration,Date date) {
 		if(configuration.getQueryName()!=null && !configuration.getQueryName().isEmpty())
@@ -231,12 +237,12 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			// Get Block publication from Pubmed
 			List<IPublication> publications = getPubmedArticlesInRange(context.getWebEnv(), context.getQueryKey(), i,step,report);
 			// Previously download the existent documentID for PMID,PMC and DOI documents from System and Query
-			Map<String, Long> pmidsAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pubmed);
-			Set<String> pmidsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pubmed);
-			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.doi);
-			Set<String> doisAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.doi);
-			Map<String, Long> pmcAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pmc);
-			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pmc);
+			Map<String, Long> pmidsAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefault.pubmed);
+			Set<String> pmidsAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefault.pubmed);
+			Map<String, Long> doiAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefault.doi);
+			Set<String> doisAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefault.doi);
+			Map<String, Long> pmcAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefault.pmc);
+			Set<String> pmcsAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefault.pmc);
 			// Block Ids processed
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			documentsToInsert = new ArrayList<IPublication>();
@@ -319,7 +325,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			}
 			// Insert publications in System
 			if(!cancel && documentsToInsert.size()!=0){
-				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
+				insertPublications(documentsToInsert);
 			}
 			
 			
@@ -327,7 +333,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			publicationToAdd.addAll(documentsThatAlreayInDB);
 			publicationToAdd.addAll(documentsToInsert);
 			if(!cancel)
-				InitConfiguration.getDataAccess().addQueryPublications(query, publicationToAdd);
+				insertQueryPublications(query, publicationToAdd);
 			// update Query publication size (In memory)
 			if(!cancel)
 			{
@@ -335,12 +341,13 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 				query.setAvailableAbstracts(nAbstracts);
 				query.setPublicationsSize(nPublicacoes);
 				// Update Query
-				InitConfiguration.getDataAccess().updateQuery(query);
+				updateQueryOnDatabase(query);
 			}
 			memoryAndProgress(i+PubMedConfiguration.blockSearchSize,nPubs);
 		}
 		
 	}
+
 	
 	protected void memoryAndProgress(int step, int total) {
 		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
@@ -569,12 +576,10 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 		List<IPublication> documentsToInsert;
 		this.nPublicacoes = query.getPublicationsSize();
 		this.nAbstracts = query.getAvailableAbstracts();
-		int publicatiosnAvailable = 0;
 		int abstractsAvailable = 0;
 		IIRSearchUpdateReport report = new IRSearchUpdateReportImpl(query);
 		for(int i=0;i<total &&!cancel;i=i+PubMedConfiguration.blockSearchSize)
 		{
-			publicatiosnAvailable = 0;
 			abstractsAvailable = 0;
 			int step = PubMedConfiguration.blockSearchSize;
 			if(i+PubMedConfiguration.blockSearchSize > total)
@@ -583,13 +588,12 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			}
 			// Get Block publication from Pubmed
 			List<IPublication> documents = getPubmedArticlesInRange(context.getWebEnv(), context.getQueryKey(), i,step,report);
-			// Previously download the existent documentID for PMID,PMC and DOI documents from System and Query
-			Map<String, Long> pmidsAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pubmed);
-			Set<String> pmidsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pubmed);
-			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.doi);
-			Set<String> doisAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.doi);
-			Map<String, Long> pmcAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pmc);
-			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pmc);
+			Map<String, Long> pmidsAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefault.pubmed);
+			Set<String> pmidsAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefault.pubmed);
+			Map<String, Long> doiAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefault.doi);
+			Set<String> doisAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefault.doi);
+			Map<String, Long> pmcAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefault.pmc);
+			Set<String> pmcsAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefault.pmc);
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
 			documentsToInsert = new ArrayList<IPublication>();
@@ -619,7 +623,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 						// Update abstract and publication for Query
 						if(!pub.getAbstractSection().isEmpty())
 							abstractsAvailable ++;
-						publicatiosnAvailable++;
 						// Increase report
 						report.incrementDocumentRetrieval(1);
 						// Add publication to blockIds
@@ -638,7 +641,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 						newQueryDocuments.add(pub);
 						if(!pub.getAbstractSection().isEmpty())
 							abstractsAvailable ++;
-						publicatiosnAvailable++;
 						report.incrementDocumentRetrieval(1);
 						alreadyAdded.add(doiAlreadyExistOnDB.get(pubDOI));
 						query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
@@ -654,7 +656,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 						newQueryDocuments.add(pub);
 						if(!pub.getAbstractSection().isEmpty())
 							abstractsAvailable ++;
-						publicatiosnAvailable++;
 						report.incrementDocumentRetrieval(1);
 						alreadyAdded.add(pmcAlreadyExistOnDB.get(pubDOI));
 						query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
@@ -665,7 +666,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 					documentsToInsert.add(pub);
 					if(!pub.getAbstractSection().isEmpty())
 						abstractsAvailable ++;
-					publicatiosnAvailable++;
 					report.incrementDocumentRetrieval(1);
 					pmidsAlreadyExistOnDB.put(pubPMID, pub.getId());
 					if(pubDOI!=null && !pubDOI.isEmpty())
@@ -678,21 +678,20 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			}
 			// Add publications to the system
 			if(!cancel && documentsToInsert.size()>0)
-				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
+				insertPublications(documentsToInsert);
 			List<IPublication> publicationToAdd = new ArrayList<IPublication>();
 			publicationToAdd.addAll(newQueryDocuments);
 			publicationToAdd.addAll(documentsToInsert);
 			// Add Query Publications
 			if(!cancel)
-				InitConfiguration.getDataAccess().addQueryPublications(query, publicationToAdd);
+				insertQueryPublications(query, publicationToAdd);
 			// Update Publication data (In memory)
 			addToCounts(publicationToAdd.size(), abstractsAvailable);
 			query.setPublicationsSize(nPublicacoes);
 			query.setAvailableAbstracts(nAbstracts);
 			// Update date
 			query.setDate(new Date());
-			// Update query main information
-			InitConfiguration.getDataAccess().updateQuery(query);
+			updateQueryOnDatabase(query);
 			memoryAndProgress(i+PubMedConfiguration.blockSearchSize,nPubs);
 		}
 		return report;

@@ -8,8 +8,14 @@ public class IRPubmedSearchConfigurationImpl extends AIRSearchConfigurationImpl 
 	
 	public static final String pubmedsearchUID = "ir.pubmedsearch";
 	
+
 	private String keywords;
 	private String organism;
+	
+	public IRPubmedSearchConfigurationImpl()
+	{
+		super();
+	}
 
 	public IRPubmedSearchConfigurationImpl(String keywords, String organism,String queryName,Properties propeties) {
 		super(queryName, propeties);
@@ -31,5 +37,14 @@ public class IRPubmedSearchConfigurationImpl extends AIRSearchConfigurationImpl 
 	public String getConfigurationUID() {
 		return pubmedsearchUID;
 	}
+	
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	public void setOrganism(String organism) {
+		this.organism = organism;
+	}
+
 
 }
