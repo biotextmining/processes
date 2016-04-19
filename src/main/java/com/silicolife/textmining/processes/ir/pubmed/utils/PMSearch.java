@@ -42,11 +42,13 @@ import com.silicolife.textmining.core.datastructures.exceptions.PubmedException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
+import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
+import com.silicolife.textmining.processes.ir.pubmed.MedLineReader;
 
 public class PMSearch {
 	
@@ -88,16 +90,10 @@ public class PMSearch {
 			try {
 				client.executeMethod(post);
 				return readXMLResultFile(post);
-			} catch (XPathExpressionException e) {
+			} catch (ANoteException e) {
 				retries++;
 				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
-			} catch (SAXException e) {
-				retries++;
-				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
-			} catch (IOException e) {
-				retries++;
-				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
-			} catch (ParserConfigurationException e) {
+			}catch (IOException e) {
 				retries++;
 				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
 			}	
@@ -161,10 +157,10 @@ public class PMSearch {
 		return post;
 	}
 	
-	public static List<IPublication> readXMLResultFile(PostMethod post) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException{
+	public static List<IPublication> readXMLResultFile(PostMethod post) throws ANoteException, IOException{
 		InputStream stream = post.getResponseBodyAsStream();
-		List<IPublication> publications = getPublicationsFromXMLStream(stream);
-		return publications;
+		MedLineReader reader = new MedLineReader(stream);
+		return reader.getMedlinePublications();
 	}
 
 	public static List<IPublication> getPublicationsFromXMLStream(InputStream stream)

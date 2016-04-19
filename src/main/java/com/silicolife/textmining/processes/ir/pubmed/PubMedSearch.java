@@ -124,16 +124,10 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			try {
 				client.executeMethod(post);
 				return PMSearch.readXMLResultFile(post);
-			} catch (XPathExpressionException e) {
+			} catch (ANoteException e) {
 				retries++;
 				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
-			} catch (SAXException e) {
-				retries++;
-				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
-			} catch (IOException e) {
-				retries++;
-				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
-			} catch (ParserConfigurationException e) {
+			}catch (IOException e) {
 				retries++;
 				logger.warn(e.getMessage() + "...Retry:"+(retries+1));
 			}	
