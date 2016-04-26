@@ -34,16 +34,17 @@
 			<version>1.9.6</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.silicolife</groupId>
 			<artifactId>http</artifactId>
 			<scope>system</scope>
 			<version>1.0.0</version>
 			<systemPath>${basedir}/dependencies/silicohttp.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
 		</dependency>
 	</dependencies>
 </project>
