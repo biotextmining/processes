@@ -14,6 +14,7 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
@@ -22,7 +23,9 @@ import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ElementToNer;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
+import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
+import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.EntitiesDesnormalization;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparator;
@@ -34,13 +37,14 @@ import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotati
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
-import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.compthreads.IteratorBasedMaster;
@@ -55,7 +59,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.VariantDictionaryMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
 
-public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
+public class LinnaeusTagger  implements INERProcess{
 
 	public static final String linneausTagger = "Linnaeus Tagger";
 	public static final String abreviation = "Abbreviation";
@@ -63,90 +67,55 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 
 	public static final IProcessOrigin linnausOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),linneausTagger);
 
-	private INERLinnaeusConfiguration configurations;
 	private boolean stop = false;
 
-	public LinnaeusTagger(INERLinnaeusConfiguration configurations) {
-		super(configurations.getCorpus(),
-				LinnaeusTagger.linneausTagger + " " +Utils.SimpleDataFormat.format(new Date()),
-				configurations.getNotes(),
-				ProcessTypeImpl.getNERProcessType(),
-				linnausOrigin,
-				gereateProperties(configurations)
-				);
-		this.configurations = configurations;
+	public LinnaeusTagger() {
+		
 	}
 
-	private static Properties gereateProperties(INERLinnaeusConfiguration configurations) {
-		Properties properties = transformResourcesToOrderMapInProperties(configurations.getResourceToNER());
-		if(configurations.isUseAbreviation()){
-			properties.put(LinnaeusTagger.abreviation, "true");
-		} else {
-			properties.put(LinnaeusTagger.abreviation, "false");
-		}
-		properties.put(LinnaeusTagger.disambiguation, configurations.getDisambiguation().name());
-		properties.put(GlobalNames.casesensitive, configurations.getCaseSensitiveEnum().name());
-		if(configurations.isNormalized()){
-			properties.put(GlobalNames.normalization, "true");
-		} else {
-			properties.put(GlobalNames.normalization, "false");
-		}
-		if(configurations.getStopWords()!=null && configurations.getStopWords().getId() > 0)
-		{
-			properties.put(GlobalNames.nerpreProcessing,GlobalNames.stopWords);
-			properties.put(GlobalNames.stopWordsResourceID,String.valueOf(configurations.getStopWords().getId()));
-		}
-		else
-		{
-			properties.put(GlobalNames.nerpreProcessing,GlobalNames.nerpreProcessingNo);
-		}
-		if(configurations.usingOtherResourceInfoToImproveRuleAnnotations())
-		{
-			properties.put(GlobalNames.useOtherResourceInformationInRules,"true");
-		}
-		return properties;
-	}
+
 
 	@Override
-	public INERProcessReport executeCorpusNER(ICorpus corpus) throws ANoteException 
+	public INERProcessReport executeCorpusNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException 
 	{	
-		setCorpus(corpus);
-		InitConfiguration.getDataAccess().createIEProcess(this);
+		validateConfiguration(configuration);
+		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
+		IIEProcess processToRun = buildIEProcess(configuration,linnauesConfiguration);
+		InitConfiguration.getDataAccess().createIEProcess(processToRun);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-		ElementToNer elementsToNER = new ElementToNer(configurations.getResourceToNER(), configurations.isNormalized());
+		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
 		HandRules rules = new HandRules(elementsToNER);
-		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(configurations.getCaseSensitiveEnum());
+		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
 		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
 		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
 		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
-		Matcher matcher = getMatcher(elements);
-		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", this);
-		DocumentIterator documents = new PublicationIt(corpus,this);
+		Matcher matcher = getMatcher(linnauesConfiguration,elements);
+		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", processToRun);
+		DocumentIterator documents = new PublicationIt(configuration.getCorpus(),processToRun);
 		ConcurrentMatcher tm = new ConcurrentMatcher(matcher,documents);
-		IteratorBasedMaster<TaggedDocument> master = new IteratorBasedMaster<TaggedDocument>(tm,configurations.getNumberOfThreads());
+		IteratorBasedMaster<TaggedDocument> master = new IteratorBasedMaster<TaggedDocument>(tm,linnauesConfiguration.getNumberOfThreads());
 		Thread threadmaster = new Thread(master);
 		threadmaster.start();
 		Set<String> stopwords = new HashSet<String>();
-		if(this.configurations.getStopWords()!=null)
+		if(linnauesConfiguration.getStopWords()!=null)
 		{
-			ILexicalWords st = this.configurations.getStopWords();
+			ILexicalWords st = linnauesConfiguration.getStopWords();
 			Set<String> stopwordsTmp = st.getLexicalWords().keySet();
-			if(this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
+			if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
 				stopwords = stopwordsTmp;
 			}else {
 				for(String word:stopwordsTmp){
-					if(this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE)){
+					if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE)){
 						stopwords.add(word.toLowerCase());
-					}else if(this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)
-							&& word.length()> this.configurations.getCaseSensitiveEnum().getSmallWordSize()){
+					}else if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)
+							&& word.length()> linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize()){
 						stopwords.add(word.toLowerCase());
 					}else{
 						stopwords.add(word);
 					}
 				}
 			}
-
 		}
 		int counter = 0; 
 		while (master.hasNext() && !stop){
@@ -162,14 +131,14 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 
 					String text = men.getText();
 					if(stopwords.isEmpty() 
-							|| this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS) && !stopwords.contains(text) 
-							|| this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE) && !stopwords.contains(text.toLowerCase())
-							|| (this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
-									&& text.length()>this.configurations.getCaseSensitiveEnum().getSmallWordSize() && !stopwords.contains(text.toLowerCase()))
-							||(this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
-									&& text.length()<=this.configurations.getCaseSensitiveEnum().getSmallWordSize() && !stopwords.contains(text)))
+							|| linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS) && !stopwords.contains(text) 
+							|| linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE) && !stopwords.contains(text.toLowerCase())
+							|| (linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
+									&& text.length()>linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize() && !stopwords.contains(text.toLowerCase()))
+							||(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
+									&& text.length()<=linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize() && !stopwords.contains(text)))
 					{
-						if(!this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
+						if(!linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
 							
 							Set<Long> resourceIDs = maplowerCaseToPossibleResourceIDs.get(text.toLowerCase());
 							if(resourceIDs == null){
@@ -218,17 +187,17 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 							publicationFields ,
 							publicationLabels );
 
-					if(configurations.isNormalized()){
+					if(linnauesConfiguration.isNormalized()){
 						Document linnausDocument = td.getOriginal();
 						EntitiesDesnormalization desnormalizer = new EntitiesDesnormalization(linnausDocument.getRawContent(), linnausDocument.getBody(), entityAnnotations);
 						entityAnnotations = desnormalizer.getDesnormalizedAnnotations();
 					}
 
-					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(this, document, entityAnnotations);
+					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(processToRun, document, entityAnnotations);
 				}
 			}
 			counter++;
-			memoryAndProgress(counter,corpus.getArticlesCorpus().size(),startime);		
+			memoryAndProgress(counter,linnauesConfiguration.getCorpus().getArticlesCorpus().size(),startime);		
 		}
 		try {
 			threadmaster.join();
@@ -243,6 +212,44 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 		report.setTime(endTime-startime);
 		return report;
 	}
+	
+	private static Properties gereateProperties(INERLinnaeusConfiguration configurations) {
+		Properties properties = transformResourcesToOrderMapInProperties(configurations.getResourceToNER());
+		if(configurations.isUseAbreviation()){
+			properties.put(LinnaeusTagger.abreviation, "true");
+		} else {
+			properties.put(LinnaeusTagger.abreviation, "false");
+		}
+		properties.put(LinnaeusTagger.disambiguation, configurations.getDisambiguation().name());
+		properties.put(GlobalNames.casesensitive, configurations.getCaseSensitiveEnum().name());
+		if(configurations.isNormalized()){
+			properties.put(GlobalNames.normalization, "true");
+		} else {
+			properties.put(GlobalNames.normalization, "false");
+		}
+		if(configurations.getStopWords()!=null && configurations.getStopWords().getId() > 0)
+		{
+			properties.put(GlobalNames.nerpreProcessing,GlobalNames.stopWords);
+			properties.put(GlobalNames.stopWordsResourceID,String.valueOf(configurations.getStopWords().getId()));
+		}
+		else
+		{
+			properties.put(GlobalNames.nerpreProcessing,GlobalNames.nerpreProcessingNo);
+		}
+		if(configurations.usingOtherResourceInfoToImproveRuleAnnotations())
+		{
+			properties.put(GlobalNames.useOtherResourceInformationInRules,"true");
+		}
+		return properties;
+	}
+
+	private IIEProcess buildIEProcess(INERConfiguration configuration,INERLinnaeusConfiguration linnauesConfiguration) {
+		String description = LinnaeusTagger.linneausTagger  + " " +Utils.SimpleDataFormat.format(new Date());
+		String notes = configuration.getNotes();
+		Properties properties = gereateProperties(linnauesConfiguration);
+		IIEProcess processToRun = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), linnausOrigin, properties);
+		return processToRun;
+	}
 
 
 
@@ -256,24 +263,24 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 	 * @throws DatabaseLoadDriverException 
 	 * @throws SQLException 
 	 */
-	private Matcher getMatcher(List<IEntityAnnotation> elements) throws ANoteException{
+	private Matcher getMatcher(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements) throws ANoteException{
 		List<Matcher> matchers = new ArrayList<Matcher>();
-		if(!this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)){
-			getMatchersForNoneSmallWordCaseSensitive(elements, matchers);
+		if(!linnaeusConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)){
+			getMatchersForNoneSmallWordCaseSensitive(linnaeusConfiguration,elements, matchers);
 		}else{
-			getMatchersForSmallWordCaseSensitive(elements, matchers);
+			getMatchersForSmallWordCaseSensitive(linnaeusConfiguration,elements, matchers);
 		}
 
 		if (matchers.size() == 0){
 			return null;
 		}
 		Matcher matcher = matchers.size() == 1 ? matchers.get(0) : new UnionMatcher(matchers, true);
-		matcher = new MatchPostProcessor(matcher, this.configurations.getDisambiguation(), this.configurations.isUseAbreviation(),null);
+		matcher = new MatchPostProcessor(matcher, linnaeusConfiguration.getDisambiguation(), linnaeusConfiguration.isUseAbreviation(),null);
 		matcher.match("test", new Document("none",null,null,null,null,null,null,null,null,null,null,null,null,null,null));
 		return matcher;
 	}
 
-	private void getMatchersForSmallWordCaseSensitive(List<IEntityAnnotation> elements, List<Matcher> matchers) {
+	private void getMatchersForSmallWordCaseSensitive(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements, List<Matcher> matchers) {
 		List<String[]> biggerTermsToIdsMapList = new ArrayList<>();
 		List<String[]> smallTermsToIdsMapList = new ArrayList<>();
 		List<String> biggerTerms = new ArrayList<>();
@@ -283,16 +290,16 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 			String[] termToIdsMapArray = new String[2];
 			termToIdsMapArray[0] = String.valueOf(elem.getResourceElement().getId());
 			termToIdsMapArray[1] = elem.getAnnotationValue();
-			if(term.length()>this.configurations.getCaseSensitiveEnum().getSmallWordSize()){
+			if(term.length()>linnaeusConfiguration.getCaseSensitiveEnum().getSmallWordSize()){
 				biggerTermsToIdsMapList.add(termToIdsMapArray);
-				if(this.configurations.isNormalized()){
+				if(linnaeusConfiguration.isNormalized()){
 					term = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
 				}
 				term = term.toLowerCase();
 				biggerTerms.add(term);
 			}else{
 				smallTermsToIdsMapList.add(termToIdsMapArray);
-				if(this.configurations.isNormalized()){
+				if(linnaeusConfiguration.isNormalized()){
 					term = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
 				}
 				smallTerms.add(term);
@@ -302,7 +309,7 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 		matchers.add(new VariantDictionaryMatcher(smallTermsToIdsMapList.toArray(new String[0][2]), smallTerms.toArray(new String[0]), false));
 	}
 
-	private void getMatchersForNoneSmallWordCaseSensitive(List<IEntityAnnotation> elements, List<Matcher> matchers) {
+	private void getMatchersForNoneSmallWordCaseSensitive(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements, List<Matcher> matchers) {
 		String[][] termToIdsMapArray = new String[elements.size()][2] ;
 		String[] terms = new String[elements.size()];
 		int i=0;
@@ -310,7 +317,7 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 		{			
 			termToIdsMapArray[i][0] = String.valueOf(elem.getResourceElement().getId());
 			termToIdsMapArray[i][1] = elem.getAnnotationValue();
-			if(this.configurations.isNormalized())
+			if(linnaeusConfiguration.isNormalized())
 			{
 				terms[i] = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
 			}
@@ -318,11 +325,11 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 			{
 				terms[i] = elem.getAnnotationValue();
 			}
-			if(this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE))
+			if(linnaeusConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE))
 				terms[i] = terms[i].toLowerCase();
 			i++;
 		}
-		if(this.configurations.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE)){
+		if(linnaeusConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE)){
 			matchers.add(new VariantDictionaryMatcher(termToIdsMapArray, terms, true));
 		}else{
 			matchers.add(new VariantDictionaryMatcher(termToIdsMapArray, terms, false));
@@ -364,5 +371,33 @@ public class LinnaeusTagger extends IEProcessImpl implements INERProcess{
 	public void stop() {
 		this.stop=true;
 	}
+
+	@Override
+	public void validateConfiguration(INERConfiguration configuration)throws InvalidConfigurationException {
+		if(configuration instanceof INERLinnaeusConfiguration)
+		{
+			INERLinnaeusConfiguration linnaeusConfiguration = (INERLinnaeusConfiguration) configuration;
+			if(linnaeusConfiguration.getCorpus()==null)
+			{
+				throw new InvalidConfigurationException("Corpus can not be null");
+			}
+		}
+		else
+			throw new InvalidConfigurationException("configuration must be INERLexicalResourcesConfiguration isntance");
+	}
+	
+	private static Properties transformResourcesToOrderMapInProperties(ResourcesToNerAnote resources) {
+		Properties prop = new Properties();
+		for(int i=0;i<resources.getList().size();i++)
+		{
+			Set<Long> selected = resources.getList().get(i).getZ();
+			long id = resources.getList().get(i).getX().getId();
+			{
+				prop.put(String.valueOf(id),ResourceImpl.convertClassesToResourceProperties(selected));
+			}
+		}
+		return prop;
+	}
+	
 
 }

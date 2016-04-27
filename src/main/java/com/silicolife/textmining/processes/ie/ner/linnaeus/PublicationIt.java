@@ -11,7 +11,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
-import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.dataholders.Document;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.dataholders.Document.Text_raw_type;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.input.DocumentIterator;
@@ -21,10 +21,10 @@ public class PublicationIt implements DocumentIterator{
 	private Document nextDocument;
 	private Iterator<IPublication> documentIt;
 	private ICorpus corpus;
-	private INERProcess process;
+	private IIEProcess process;
 	
 	
-	public PublicationIt(ICorpus corpus,INERProcess process) throws ANoteException
+	public PublicationIt(ICorpus corpus,IIEProcess process) throws ANoteException
 	{
 		this.corpus = corpus;
 		documentIt = corpus.getArticlesCorpus().iterator();

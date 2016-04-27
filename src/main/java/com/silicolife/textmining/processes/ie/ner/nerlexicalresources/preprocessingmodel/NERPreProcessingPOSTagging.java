@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ie.ner.nerlexicalresources;
+package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.preprocessingmodel;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,15 +10,15 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
-import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.structure.ITextSegment;
+import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration.INERLexicalResourcesConfiguration;
 import com.silicolife.textmining.processes.nlptools.opennlp.OpenNLP;
 
-public class NERPreProcessingPOSTagging extends NER{
+public class NERPreProcessingPOSTagging extends NERSimple{
 
 	private Set<String> positiveFilterTags;
 	private boolean stop = false;
@@ -105,8 +105,8 @@ public class NERPreProcessingPOSTagging extends NER{
 		return false;
 	}
 
-	public Properties getProperties(ResourcesToNerAnote resources,boolean normalization) {
-		Properties prop = super.getProperties(resources, normalization);
+	public Properties getProperties(INERLexicalResourcesConfiguration configuration) {
+		Properties prop = super.getProperties(configuration);
 		Properties other = tagProperties();
 		prop.putAll(other);
 		return prop;

@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ie.ner.nerlexicalresources;
+package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.preprocessingmodel;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,14 +10,14 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
-import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
+import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration.INERLexicalResourcesConfiguration;
 
-public class NERPreProcessingStopWords extends NER {
+public class NERPreProcessingStopWords extends NERSimple {
 	
 	private ILexicalWords stopWords;
 	private boolean stop = false;
@@ -112,8 +112,8 @@ public class NERPreProcessingStopWords extends NER {
 		stop = true;		
 	}
 
-	public Properties getProperties(ResourcesToNerAnote resources,boolean normalization) {
-		Properties prop = super.getProperties(resources, normalization);
+	public Properties getProperties(INERLexicalResourcesConfiguration configuration) {
+		Properties prop = super.getProperties(configuration);
 		Properties other = stopWordsProperties();
 		prop.putAll(other);
 		return prop;

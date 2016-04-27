@@ -1,6 +1,5 @@
 package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.multithreading;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
@@ -14,7 +13,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
-import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.NER;
+import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration.INERLexicalResourcesPreProcessingModel;
 
 public class NERParallelStep implements IParallelJob<Integer>{
 
@@ -23,15 +22,15 @@ public class NERParallelStep implements IParallelJob<Integer>{
 	private IPublication doc;
 	private IIEProcess process;
 	private int entitiesAdded=0;
-	private NER ner;
+	private INERLexicalResourcesPreProcessingModel preprocessingmodel;
 	private boolean stop = false;
 	private NERCaseSensativeEnum caseSensitive;
 	private boolean normalization;
 	
 	
-	public NERParallelStep(NER ner,IPublication doc,IIEProcess process,ICorpus corpus,String text,List<Long> classIdCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization)
+	public NERParallelStep(INERLexicalResourcesPreProcessingModel preprocessingmodel,IPublication doc,IIEProcess process,ICorpus corpus,String text,List<Long> classIdCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization)
 	{
-		this.ner=ner;
+		this.preprocessingmodel=preprocessingmodel;
 		this.doc=doc;
 		this.process=process;
 		this.text=text;
@@ -43,7 +42,7 @@ public class NERParallelStep implements IParallelJob<Integer>{
 	public void run() {
 		AnnotationPositions annotationsPositions = new AnnotationPositions();
 		try {
-			annotationsPositions = ner.executeNer(text,classIdCaseSensative,caseSensitive,normalization);
+			annotationsPositions = preprocessingmodel.executeNer(text,classIdCaseSensative,caseSensitive,normalization);
 			if(!stop)
 			{
 				List<IEntityAnnotation> entityAnnotations = annotationsPositions.getEntitiesFromAnnoattionPositions();
@@ -53,9 +52,7 @@ public class NERParallelStep implements IParallelJob<Integer>{
 				}
 				InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(process, doc, entityAnnotations);
 			}
-		} catch (IOException e) {
-//			TreatExceptionForAIbench.treatExcepion(e);
-		} catch (ANoteException e) {
+		}catch (ANoteException e) {
 //			TreatExceptionForAIbench.treatExcepion(e);
 		}
 		entitiesAdded = annotationsPositions.getAnnotations().size();
@@ -70,7 +67,7 @@ public class NERParallelStep implements IParallelJob<Integer>{
 	@Override
 	public void kill() {
 		stop = true;
-		ner.stop();	
+		preprocessingmodel.stop();	
 	}
 
 }

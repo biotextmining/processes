@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ie.ner.nerlexicalresources;
+package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.preprocessingmodel;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -18,6 +18,7 @@ import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotati
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.structure.ITextSegment;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
+import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration.INERLexicalResourcesConfiguration;
 import com.silicolife.textmining.processes.nlptools.opennlp.OpenNLP;
 
 public class NERPreProcessingPOSTaggingAndStopWords extends NERPreProcessingPOSTagging{
@@ -122,8 +123,8 @@ public class NERPreProcessingPOSTaggingAndStopWords extends NERPreProcessingPOST
 		return annotations;
 	}
 	
-	public Properties getProperties(ResourcesToNerAnote resources,boolean normalization) {
-		Properties prop = super.getProperties(resources, normalization);
+	public Properties getProperties(INERLexicalResourcesConfiguration configuration) {
+		Properties prop = super.getProperties(configuration);
 		Properties other = stopWordsProperties();
 		prop.putAll(other);
 		return prop;

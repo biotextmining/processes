@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ie.ner.nerlexicalresources;
+package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.preprocessingmodel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,26 +20,28 @@ import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparato
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration.INERLexicalResourcesConfiguration;
+import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration.INERLexicalResourcesPreProcessingModel;
 
-public class NER {
+public class NERSimple implements INERLexicalResourcesPreProcessingModel{
 
 	private List<IEntityAnnotation> elements;	
 	private HandRules rules;
 	private static final String SEPARATOR = "[ '<>/(),\n\\.]+";
 	private boolean stop = false;
 		
-	public NER(List<IEntityAnnotation> termAnnotations){
+	public NERSimple(List<IEntityAnnotation> termAnnotations){
 		this.elements = termAnnotations;
 		this.rules = null;
 	}
 	
-	public NER(List<IEntityAnnotation> termAnnotations, HandRules rules){
+	public NERSimple(List<IEntityAnnotation> termAnnotations, HandRules rules){
 		this.elements = termAnnotations;
 		this.rules = rules;
 	}
 	
 	
-	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization) throws IOException, ANoteException{
+	public AnnotationPositions executeNer(String text,List<Long> listClassIDCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization) throws  ANoteException{
 		if(normalization){
 			text = TermSeparator.termSeparator(text);
 		}
@@ -140,8 +142,8 @@ public class NER {
 		stop = true;		
 	}
 
-	public Properties getProperties(ResourcesToNerAnote resources,boolean normalization) {
-		return configureProperties(resources,normalization) ;
+	public Properties getProperties(INERLexicalResourcesConfiguration configuration) {
+		return configureProperties(configuration.getResourceToNER(),configuration.isNormalized()) ;
 	}
 	
 	
