@@ -63,7 +63,7 @@ public class LinnaeusTest {
 	}
 
 	public static INERProcessReport executeLinnaeus(ICorpus corpus,
-			IDictionary dictionary) throws ANoteException {
+			IDictionary dictionary) throws ANoteException, InvalidConfigurationException {
 		boolean useabreviation = true;
 		boolean normalized = true;
 		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.INALLWORDS;
@@ -76,14 +76,14 @@ public class LinnaeusTest {
 		int numThreads = 4;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
 		INERLinnaeusConfiguration configurations = new NERLinnaeusConfiguration(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
-		LinnaeusTagger linnaues = new LinnaeusTagger(configurations );
+		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
-		INERProcessReport report = linnaues.executeCorpusNER(corpus);
+		INERProcessReport report = linnaues.executeCorpusNER(configurations);
 		return report;
 	}
 	
 	public static INERProcessReport executeLinnaeusWithLexicalStopWords(ICorpus corpus,
-			IDictionary dictionary, ILexicalWords stopwords) throws ANoteException {
+			IDictionary dictionary, ILexicalWords stopwords) throws ANoteException, InvalidConfigurationException {
 		boolean useabreviation = true;
 		boolean normalized = true;
 		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.NONE;
@@ -95,9 +95,9 @@ public class LinnaeusTest {
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		int numThreads = 4;
 		INERLinnaeusConfiguration configurations = new NERLinnaeusConfiguration(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
-		LinnaeusTagger linnaues = new LinnaeusTagger(configurations );
+		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
-		INERProcessReport report = linnaues.executeCorpusNER(corpus);
+		INERProcessReport report = linnaues.executeCorpusNER(configurations);
 		corpus.registerProcess(report.getNERProcess());
 		return report;
 	}
