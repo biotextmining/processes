@@ -9,9 +9,11 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,7 +21,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
+import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
 import com.silicolife.textmining.core.datastructures.documents.lables.PublicationLabelImpl;
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
@@ -49,11 +53,11 @@ public class MedLineReader {
 		try{
 			
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(getInputStream());
-//			XPathFactory factory = XPathFactory.newInstance();
-//			XPath xpath = factory.newXPath();
+			XPathFactory factory = XPathFactory.newInstance();
+			XPath xpath = factory.newXPath();
 			NodeList nodes = doc.getElementsByTagName("MedlineCitation");
 			NodeList nodesPubMed = doc.getElementsByTagName("PubmedData");
-//			XPathExpression lastNameExpresion = xpath.compile("Article/AuthorList/Author/LastName");
+			XPathExpression lastNameExpresion = xpath.compile("Article/AuthorList/Author/LastName");
 
 			for (int j = 0; j < nodes.getLength(); j++) {
 				
@@ -64,8 +68,8 @@ public class MedLineReader {
 				List<IPublicationExternalSourceLink> externalIDsSource = processExternalIds(pubElements, pubmedID);
 
 				String title = processArticleTitle(elements);
-				String authorList = "";
-//				String authorList = processAuthorList(nodes, lastNameExpresion, j, elements);
+//				String authorList = "";
+				String authorList = processAuthorList(nodes, lastNameExpresion, j, elements);
 
 				List<IPublicationField> fullTextfields = new ArrayList<IPublicationField>();
 				String abstractText = processAbstract(fullTextfields, elements);
@@ -91,7 +95,7 @@ public class MedLineReader {
 				addPublication(pub);
 			}
 			return getPublications();
-		}catch(SAXException | IOException | ParserConfigurationException e){
+		}catch(SAXException | IOException | ParserConfigurationException | XPathExpressionException e){
 			throw new ANoteException(e);
 		}
 
@@ -116,7 +120,11 @@ public class MedLineReader {
 				int startindex = abstractText.length();
 				String abstractParagraph = node.item(i).getTextContent();
 				abstractParagraph = NormalizationForm.removeOffsetProblemSituation(abstractParagraph);
-				abstractText = abstractText + abstractParagraph;
+				if(abstractText.isEmpty() || Character.isWhitespace(abstractText.charAt(abstractText.length()-1))){
+					abstractText = abstractText + abstractParagraph;
+				}else{
+					abstractText = abstractText +" "+ abstractParagraph;
+				}
 				int endindex = abstractText.length();
 				if(node.item(i).getAttributes().getNamedItem("Label")!=null)
 				{
@@ -169,26 +177,26 @@ public class MedLineReader {
 
 	private List<IPublicationExternalSourceLink> processExternalIds(Element pubElements, String pubmedID) {
 		List<IPublicationExternalSourceLink> externalIDsSource = new ArrayList<IPublicationExternalSourceLink>();
-//		externalIDsSource.add(new PublicationExternalSourceLinkImpl(pubmedID, PublicationSourcesDefault.pubmed));
-//		if(pubElements != null){
-//			NodeList articleIDs = pubElements.getElementsByTagName("ArticleId");
-//			for(int i=0;i<articleIDs.getLength();i++)
-//			{
-//				if (articleIDs.item(i) != null) {
-//
-//					String internalID = articleIDs.item(i).getTextContent().toLowerCase();
-//					String source = articleIDs.item(i).getAttributes().getNamedItem("IdType").getTextContent();
-//					if(internalID.length()>3 && source.equalsIgnoreCase("pmc"))
-//					{
-//						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
-//					}
-//					else if(internalID.startsWith("10.") && source.equalsIgnoreCase("doi"))
-//					{
-//						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
-//					}
-//				}
-//			}
-//		}
+		externalIDsSource.add(new PublicationExternalSourceLinkImpl(pubmedID, PublicationSourcesDefault.pubmed));
+		if(pubElements != null){
+			NodeList articleIDs = pubElements.getElementsByTagName("ArticleId");
+			for(int i=0;i<articleIDs.getLength();i++)
+			{
+				if (articleIDs.item(i) != null) {
+
+					String internalID = articleIDs.item(i).getTextContent().toLowerCase();
+					String source = articleIDs.item(i).getAttributes().getNamedItem("IdType").getTextContent();
+					if(internalID.length()>3 && source.equalsIgnoreCase("pmc"))
+					{
+						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
+					}
+					else if(internalID.startsWith("10.") && source.equalsIgnoreCase("doi"))
+					{
+						externalIDsSource.add(new PublicationExternalSourceLinkImpl(internalID.toLowerCase(), source));
+					}
+				}
+			}
+		}
 		return externalIDsSource;
 	}
 

@@ -243,7 +243,11 @@ public class PMSearch {
 					int startindex = abstractText.length();
 					String abstractParagraph = node.item(i).getTextContent();
 					abstractParagraph = NormalizationForm.removeOffsetProblemSituation(abstractParagraph);
-					abstractText = abstractText + abstractParagraph;
+					if(abstractText.isEmpty() || Character.isWhitespace(abstractText.charAt(abstractText.length()-1))){
+						abstractText = abstractText + abstractParagraph;
+					}else{
+						abstractText = abstractText +" "+ abstractParagraph;
+					}
 					int endindex = abstractText.length();
 					if(node.item(i).getAttributes().getNamedItem("Label")!=null)
 					{
