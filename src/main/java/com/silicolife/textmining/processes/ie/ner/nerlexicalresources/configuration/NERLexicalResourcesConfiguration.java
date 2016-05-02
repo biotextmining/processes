@@ -18,6 +18,8 @@ import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.NERLexical
 
 public class NERLexicalResourcesConfiguration extends NERConfigurationImpl implements INERLexicalResourcesConfiguration{
 
+	public static String nerLexicalResourcesUID = "ner.lexicalresources";
+
 	private NERLexicalResourcesPreProssecingEnum preProcessing;
 	private ResourcesToNerAnote resourceToNER;
 	private Set<String> posTags;
@@ -116,6 +118,19 @@ public class NERLexicalResourcesConfiguration extends NERConfigurationImpl imple
 				}
 			}
 		}
+	}
+
+
+	@Override
+	public String getConfigurationUID() {
+		return NERLexicalResourcesConfiguration.nerLexicalResourcesUID;
+	}
+
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		NERLexicalResourcesConfiguration.nerLexicalResourcesUID = uid;
+		
 	}
 
 }

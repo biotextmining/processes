@@ -11,6 +11,8 @@ import com.silicolife.textmining.processes.ie.re.relationcooccurrence.models.IRE
 
 public class RECooccurrenceConfiguration extends REConfigurationImpl implements IRECooccurrenceConfiguration{
 
+	public static String reRelationCooccurrenceUID = "re.relationcooccurrence";
+
 	private IRECooccurrenceSentenceModel model;
 	
 	public RECooccurrenceConfiguration(ICorpus corpus, IIEProcess entityProcess,IRECooccurrenceSentenceModel model,boolean useManualCurationFromOtherProcess,
@@ -28,6 +30,17 @@ public class RECooccurrenceConfiguration extends REConfigurationImpl implements 
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put(RECooccurrenceDefaultSettings.MODEL, model.getUID());
 		return properties;
+	}
+
+	@Override
+	public String getConfigurationUID() {
+		return RECooccurrenceConfiguration.reRelationCooccurrenceUID;
+	}
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		RECooccurrenceConfiguration.reRelationCooccurrenceUID = uid;
+		
 	}
 
 

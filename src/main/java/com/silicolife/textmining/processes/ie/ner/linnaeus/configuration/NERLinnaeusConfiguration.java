@@ -18,6 +18,8 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
 
 public class NERLinnaeusConfiguration extends NERConfigurationImpl implements INERLinnaeusConfiguration{
+	
+	public static String nerLinnaeusUID = "ner.linnaeus";
 
 	private Map<String, Pattern> patterns;
 	private ResourcesToNerAnote resourceToNER;
@@ -136,6 +138,17 @@ public class NERLinnaeusConfiguration extends NERConfigurationImpl implements IN
 				}
 			}
 		}
+	}
+
+	@Override
+	public String getConfigurationUID() {
+		return NERLinnaeusConfiguration.nerLinnaeusUID;
+	}
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		NERLinnaeusConfiguration.nerLinnaeusUID=uid;
+		
 	}
 
 }
