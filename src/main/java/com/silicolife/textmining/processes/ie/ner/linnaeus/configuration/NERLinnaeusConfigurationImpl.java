@@ -17,9 +17,9 @@ import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalW
 import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
 
-public class NERLinnaeusConfiguration extends NERConfigurationImpl implements INERLinnaeusConfiguration{
+public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implements INERLinnaeusConfiguration{
 	
-	public static String nerLinnaeusUID = "ner.linnaeus";
+	public static final String nerLinnaeusUID = "ner.linnaeus";
 
 	private Map<String, Pattern> patterns;
 	private ResourcesToNerAnote resourceToNER;
@@ -32,7 +32,7 @@ public class NERLinnaeusConfiguration extends NERConfigurationImpl implements IN
 	private NERLinnaeusPreProcessingEnum preprocessing;
 	private boolean usingOtherResourceInfoToImproveRuleAnnotations;
 	
-	public NERLinnaeusConfiguration(ICorpus corpus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
+	public NERLinnaeusConfigurationImpl(ICorpus corpus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
 			Disambiguation disambiguation, NERCaseSensativeEnum caseSensitiveEnum,boolean normalized, int numThreads,ILexicalWords stopwords,
 			NERLinnaeusPreProcessingEnum preprocessing,boolean usingOtherResourceInfoToImproveRuleAnnotations) {
 		super(corpus,LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
@@ -142,13 +142,7 @@ public class NERLinnaeusConfiguration extends NERConfigurationImpl implements IN
 
 	@Override
 	public String getConfigurationUID() {
-		return NERLinnaeusConfiguration.nerLinnaeusUID;
-	}
-
-	@Override
-	public void setConfigurationUID(String uid) {
-		NERLinnaeusConfiguration.nerLinnaeusUID=uid;
-		
+		return NERLinnaeusConfigurationImpl.nerLinnaeusUID;
 	}
 
 }
