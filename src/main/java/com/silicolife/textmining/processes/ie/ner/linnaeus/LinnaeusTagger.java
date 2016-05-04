@@ -81,7 +81,7 @@ public class LinnaeusTagger  implements INERProcess{
 		validateConfiguration(configuration);
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
 		IIEProcess processToRun = buildIEProcess(configuration,linnauesConfiguration);
-		InitConfiguration.getDataAccess().createIEProcess(processToRun);
+		createIEProcessONDataAccess(processToRun);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
 		HandRules rules = new HandRules(elementsToNER);
@@ -192,8 +192,8 @@ public class LinnaeusTagger  implements INERProcess{
 						EntitiesDesnormalization desnormalizer = new EntitiesDesnormalization(linnausDocument.getRawContent(), linnausDocument.getBody(), entityAnnotations);
 						entityAnnotations = desnormalizer.getDesnormalizedAnnotations();
 					}
-
-					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(processToRun, document, entityAnnotations);
+					// Add Document Entity Annotations
+					addAnnotatedDocumentEntities(processToRun,entityAnnotations, document);
 				}
 			}
 			counter++;
@@ -211,6 +211,18 @@ public class LinnaeusTagger  implements INERProcess{
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startime);
 		return report;
+	}
+
+
+
+	protected void addAnnotatedDocumentEntities(IIEProcess processToRun,List<IEntityAnnotation> entityAnnotations, IPublication document)throws ANoteException {
+		InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(processToRun, document, entityAnnotations);
+	}
+
+
+
+	protected void createIEProcessONDataAccess(IIEProcess processToRun) throws ANoteException {
+		InitConfiguration.getDataAccess().createIEProcess(processToRun);
 	}
 	
 	private static Properties gereateProperties(INERLinnaeusConfiguration configurations) {
@@ -236,7 +248,7 @@ public class LinnaeusTagger  implements INERProcess{
 		{
 			properties.put(GlobalNames.nerpreProcessing,GlobalNames.nerpreProcessingNo);
 		}
-		if(configurations.usingOtherResourceInfoToImproveRuleAnnotations())
+		if(configurations.isUsingOtherResourceInfoToImproveRuleAnnotations())
 		{
 			properties.put(GlobalNames.useOtherResourceInformationInRules,"true");
 		}
@@ -245,7 +257,7 @@ public class LinnaeusTagger  implements INERProcess{
 
 	private IIEProcess buildIEProcess(INERConfiguration configuration,INERLinnaeusConfiguration linnauesConfiguration) {
 		String description = LinnaeusTagger.linneausTagger  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = configuration.getNotes();
+		String notes = configuration.getProcessNotes();
 		Properties properties = gereateProperties(linnauesConfiguration);
 		IIEProcess processToRun = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), linnausOrigin, properties);
 		return processToRun;

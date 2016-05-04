@@ -6,9 +6,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
+import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.resource.IResource;
@@ -23,14 +26,20 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 
 	private Map<String, Pattern> patterns;
 	private ResourcesToNerAnote resourceToNER;
-	private int numThreads;
-	private boolean useabreviation;
+
+	private int numberOfThreads;
+	private boolean useAbreviation;
 	private Disambiguation disambiguation;
 	private NERCaseSensativeEnum caseSensitiveEnum;
 	private boolean normalized;
-	private ILexicalWords stopwords;
-	private NERLinnaeusPreProcessingEnum preprocessing;
+	private ILexicalWords stopWords;
+	private NERLinnaeusPreProcessingEnum preProcessing;
 	private boolean usingOtherResourceInfoToImproveRuleAnnotations;
+	
+	public NERLinnaeusConfigurationImpl()
+	{
+		super();
+	}
 	
 	public NERLinnaeusConfigurationImpl(ICorpus corpus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
 			Disambiguation disambiguation, NERCaseSensativeEnum caseSensitiveEnum,boolean normalized, int numThreads,ILexicalWords stopwords,
@@ -38,85 +47,115 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		super(corpus,LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
 		this.patterns = patterns;
 		this.resourceToNER = resourceToNER;
-		this.useabreviation = useabreviation;
+		this.useAbreviation = useabreviation;
 		this.disambiguation = disambiguation;
 		this.caseSensitiveEnum = caseSensitiveEnum;
 		this.normalized = normalized;
-		this.numThreads = numThreads;
-		this.stopwords = stopwords;
+		this.numberOfThreads = numThreads;
+		this.stopWords = stopwords;
 		this.usingOtherResourceInfoToImproveRuleAnnotations = usingOtherResourceInfoToImproveRuleAnnotations;
-		this.preprocessing = preprocessing;
+		this.preProcessing = preprocessing;
 	}
 
-	@Override
 	public Map<String, Pattern> getPatterns() {
 		return patterns;
 	}
+	
+	public void setPatterns(Map<String, Pattern> patterns) {
+		this.patterns = patterns;
+	}
 
-	@Override
+
 	public ResourcesToNerAnote getResourceToNER() {
 		return resourceToNER;
 	}
 	
-	@Override
+	public void setResourceToNER(ResourcesToNerAnote resourceToNER) {
+		this.resourceToNER = resourceToNER;
+	}
+	
 	public int getNumberOfThreads() {
-		return numThreads;
+		return numberOfThreads;
 	}
 
-	@Override
+	public void setNumberOfThreads(int numberOfThreads) {
+		this.numberOfThreads = numberOfThreads;
+	}
+
 	public boolean isUseAbreviation() {
-		return useabreviation;
+		return useAbreviation;
 	}
 
-	@Override
+	public void setUseAbreviation(boolean useAbreviation) {
+		this.useAbreviation = useAbreviation;
+	}
+
 	public NERCaseSensativeEnum getCaseSensitiveEnum() {
 		return caseSensitiveEnum;
 	}
+	
+	
+	public void setCaseSensitiveEnum(NERCaseSensativeEnum caseSensitiveEnum) {
+		this.caseSensitiveEnum = caseSensitiveEnum;
+	}
 
-	@Override
 	public boolean isNormalized() {
 		return normalized;
 	}
 
-	@Override
+	public void setNormalized(boolean newNormalizedOption) {
+		normalized = newNormalizedOption;
+	}
+	
 	public Disambiguation getDisambiguation() {
 		return disambiguation;
 	}
 	
-	@Override
-	public void setNormalized(boolean newNormalizedOption) {
-		normalized = newNormalizedOption;
+	public void setDisambiguation(Disambiguation disambiguation) {
+		this.disambiguation = disambiguation;
 	}
 
-	@Override
+	@JsonDeserialize(as=LexicalWordsImpl.class)
 	public ILexicalWords getStopWords() {
-		return stopwords;
+		return stopWords;
 	}
 
-	@Override
-	public boolean usingOtherResourceInfoToImproveRuleAnnotations() {
+	public void setStopWords(ILexicalWords stopWords) {
+		this.stopWords = stopWords;
+	}
+
+	public boolean isUsingOtherResourceInfoToImproveRuleAnnotations() {
 		return usingOtherResourceInfoToImproveRuleAnnotations;
 	}
-
-	public NERLinnaeusPreProcessingEnum getPreProcessingOption() {
-		return preprocessing;
+	
+	public void setUsingOtherResourceInfoToImproveRuleAnnotations(
+			boolean usingOtherResourceInfoToImproveRuleAnnotations) {
+		this.usingOtherResourceInfoToImproveRuleAnnotations = usingOtherResourceInfoToImproveRuleAnnotations;
 	}
 
-	@Override
+	public NERLinnaeusPreProcessingEnum getPreProcessing() {
+		return preProcessing;
+	}
+
+	public void setPreProcessing(NERLinnaeusPreProcessingEnum preProcessing) {
+		this.preProcessing = preProcessing;
+	}
+
+	@JsonIgnore
 	public Map<String, String> getNERProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put(NERLinnaeusTaggerDefaultSettings.USE_PARTIAL_MATCH_WITH_DICTIONARIES, String.valueOf(usingOtherResourceInfoToImproveRuleAnnotations));
 		long ruleResourceID = 0;
 		properties.put(NERLinnaeusTaggerDefaultSettings.RULES_RESOURCE_ID, String.valueOf(ruleResourceID));
-		properties.put(NERLinnaeusTaggerDefaultSettings.USE_ABREVIATION, String.valueOf(useabreviation));
+		properties.put(NERLinnaeusTaggerDefaultSettings.USE_ABREVIATION, String.valueOf(useAbreviation));
 		properties.put(NERLinnaeusTaggerDefaultSettings.DISAMBIGUATION, disambiguation.name());
 		properties.put(NERLinnaeusTaggerDefaultSettings.CASE_SENSITIVE, caseSensitiveEnum.name());
 		properties.put(NERLinnaeusTaggerDefaultSettings.NORMALIZATION, String.valueOf(normalized));
-		properties.put(NERLinnaeusTaggerDefaultSettings.NUM_THREADS, String.valueOf(numThreads));
-		properties.put(NERLinnaeusTaggerDefaultSettings.PRE_PROCESSING, preprocessing.name());
+		properties.put(NERLinnaeusTaggerDefaultSettings.NUM_THREADS, String.valueOf(numberOfThreads));
+		properties.put(NERLinnaeusTaggerDefaultSettings.PRE_PROCESSING, preProcessing.name());
 		long stopwordsID = 0;
-		if(stopwords!=null)
-			stopwordsID =stopwords.getId();
+		if(stopWords!=null)
+			stopwordsID =stopWords.getId();
 		properties.put(NERLinnaeusTaggerDefaultSettings.LEXICAL_RESOURCE_STOPWORDS_ID, String.valueOf(stopwordsID));
 		int lookuptable = 0;
 		properties.put(NERLinnaeusTaggerDefaultSettings.LOOKUPTABLE_RESOURCE_ID, String.valueOf(lookuptable));
@@ -125,6 +164,7 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		return properties;
 	}
 	
+	@JsonIgnore
 	public void setConfiguration(Object obj) {
 		if(obj instanceof ResourcesToNerAnote && resourceToNER!=null)
 		{
@@ -140,7 +180,6 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		}
 	}
 
-	@Override
 	public String getConfigurationUID() {
 		return NERLinnaeusConfigurationImpl.nerLinnaeusUID;
 	}

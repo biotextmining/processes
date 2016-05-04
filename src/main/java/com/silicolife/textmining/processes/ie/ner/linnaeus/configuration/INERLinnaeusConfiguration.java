@@ -23,8 +23,8 @@ public interface INERLinnaeusConfiguration extends INERConfiguration{
 	public boolean isNormalized();
 	public void setNormalized( boolean newNormalizedOption );
 	public ILexicalWords getStopWords();
-	public boolean usingOtherResourceInfoToImproveRuleAnnotations();
-	public NERLinnaeusPreProcessingEnum getPreProcessingOption();
+	public boolean isUsingOtherResourceInfoToImproveRuleAnnotations();
+	public NERLinnaeusPreProcessingEnum getPreProcessing();
 
 
 }

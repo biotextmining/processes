@@ -71,7 +71,7 @@ public class NERLexicalResources implements INERProcess{
 	private IIEProcess getIEProcess(INERLexicalResourcesConfiguration lexicalResurcesConfiguration,INERLexicalResourcesPreProcessingModel model) {
 
 		String description = NERLexicalResources.nerlexicalresourcesTagger  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = lexicalResurcesConfiguration.getNotes();
+		String notes = lexicalResurcesConfiguration.getProcessNotes();
 		IIEProcess processToRun = new IEProcessImpl(lexicalResurcesConfiguration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerlexicalresourcesOrigin, model.getProperties(lexicalResurcesConfiguration));
 		return processToRun;
 	}

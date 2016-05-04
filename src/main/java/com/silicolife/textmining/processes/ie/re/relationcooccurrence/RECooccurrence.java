@@ -46,7 +46,7 @@ public class RECooccurrence extends IEProcessImpl implements IREProcess{
 	{
 		super(configuration.getCorpus(),
 				relationCooccurrence+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getNotes(),
+				configuration.getProcessNotes(),
 				ProcessTypeImpl.getREProcessType(),
 				relationCooccurrenceProcessType,
 				gerateProperties(configuration));
