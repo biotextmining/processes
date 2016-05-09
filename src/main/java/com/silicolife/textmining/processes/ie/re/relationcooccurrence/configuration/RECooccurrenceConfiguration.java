@@ -7,28 +7,28 @@ import com.silicolife.textmining.core.datastructures.process.re.REConfigurationI
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.processes.ie.re.relationcooccurrence.RECooccurrence;
-import com.silicolife.textmining.processes.ie.re.relationcooccurrence.models.IRECooccurrenceSentenceModel;
+import com.silicolife.textmining.processes.ie.re.relationcooccurrence.models.RECooccurrenceModelEnum;
 
 public class RECooccurrenceConfiguration extends REConfigurationImpl implements IRECooccurrenceConfiguration{
 
 	public static String reRelationCooccurrenceUID = "re.relationcooccurrence";
 
-	private IRECooccurrenceSentenceModel model;
+	private RECooccurrenceModelEnum model;
 	
-	public RECooccurrenceConfiguration(ICorpus corpus, IIEProcess entityProcess,IRECooccurrenceSentenceModel model,boolean useManualCurationFromOtherProcess,
+	public RECooccurrenceConfiguration(ICorpus corpus, IIEProcess entityProcess,RECooccurrenceModelEnum model,boolean useManualCurationFromOtherProcess,
 			IIEProcess manualCurationFromOtherProcess) {
 		super(RECooccurrence.relationCooccurrence,corpus, entityProcess,useManualCurationFromOtherProcess,manualCurationFromOtherProcess);
 		this.model = model;
 	}
 
-	public IRECooccurrenceSentenceModel getCooccurrenceModel() {
+	public RECooccurrenceModelEnum getCooccurrenceModelEnum() {
 		return model;
 	}
 
 	@Override
 	public Map<String, String> getREProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put(RECooccurrenceDefaultSettings.MODEL, model.getUID());
+		properties.put(RECooccurrenceDefaultSettings.MODEL, model.getRelationCooccurrenceModel().getUID());
 		return properties;
 	}
 

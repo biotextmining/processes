@@ -121,6 +121,25 @@ public class LinnaeusTest {
 		return dictionary;
 	}
 	
+	public static IDictionary createSimpleDictionaryAndUpdateditWithByocycFiles()
+			throws ANoteException, IOException {
+		System.out.println("Create Dictionary");
+		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc");
+		IDictionary dictionary = new DictionaryImpl(resource);
+		BioMetaEcoCycFlatFileLoader loader = new BioMetaEcoCycFlatFileLoader();
+		String byocycFolder = "src/test/resources/BioCyc/small";
+		File file = new File(byocycFolder);
+		if(loader.checkFile(file))
+		{
+			Properties properties = new Properties();
+			String loaderUID = "";
+			boolean loadExtendalIDds = true;
+			IDictionaryLoaderConfiguration configuration = new DictionaryLoaderConfigurationImpl(loaderUID , dictionary, file, properties , loadExtendalIDds );
+			loader.loadTerms(configuration );
+		}
+		return dictionary;
+	}
+	
 	
 
 }
