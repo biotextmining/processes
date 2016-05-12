@@ -36,7 +36,9 @@ public class CorpusCreation {
 			Properties properties = configuration.getProperties();
 			properties.put(GlobalNames.textType, CorpusTextType.convertCorpusTetTypeToString(configuration.getCorpusTextType()));
 			ICorpus newCorpus = new CorpusImpl(configuration.getCorpusName(), configuration.getCorpusNotes(), configuration.getProperties());
-			createCorpusOnDatabase(newCorpus);
+			if (!verifyCorpusExistanceOnDatabase(newCorpus)){
+				createCorpusOnDatabase(newCorpus);
+			}
 			Set<IPublication> documents = configuration.getDocuments();
 			int step = 0;
 			int total = documents.size();
@@ -83,6 +85,7 @@ public class CorpusCreation {
 			}
 			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocuments().size());
 			return report;
+
 		} catch (IOException e) {
 			throw new ANoteException(e);
 		}
@@ -119,6 +122,19 @@ public class CorpusCreation {
 	protected void createCorpusOnDatabase(ICorpus newCorpus)throws ANoteException {
 		InitConfiguration.getDataAccess().createCorpus(newCorpus);
 	}
+
+	protected boolean verifyCorpusExistanceOnDatabase(ICorpus newCorpus) throws ANoteException{
+		List<ICorpus> allCorpus = InitConfiguration.getDataAccess().getAllCorpus();
+		boolean existentCorpus = false;
+		for (ICorpus corpus:allCorpus){
+			if (newCorpus.getCorpusStatistics().getDocumentNumber()==corpus.getCorpusStatistics().getDocumentNumber()
+					||newCorpus.getCorpusStatistics().getProcessesNumber()==corpus.getCorpusStatistics().getProcessesNumber()){
+				existentCorpus=true;	
+			}
+		}
+		return existentCorpus;
+	}
+
 
 	protected void memoryAndProgress(int step, int total) {
 		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
