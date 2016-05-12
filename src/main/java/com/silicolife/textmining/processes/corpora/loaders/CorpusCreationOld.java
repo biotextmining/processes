@@ -22,9 +22,9 @@ import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusText
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.corpora.ICorpusCreateReport;
 
-public class CorpusCreation {
+public class CorpusCreationOld {
 
-	public CorpusCreation()
+	public CorpusCreationOld()
 	{
 
 	}
@@ -50,29 +50,45 @@ public class CorpusCreation {
 					documentToadd.add(publication);
 					// Add Publication to system
 					addPublicationToDatabase(documentToadd);
+					// Test if Corpus is full text
+					if(configuration.getCorpusTextType().equals(CorpusTextType.Hybrid) || 
+							configuration.getCorpusTextType().equals(CorpusTextType.FullText))
+					{
+						// IF PDF is nt available and source URL is a file put file in directory and update Full text COntent
+						if(publication.getSourceURL()!=null)
+						{
+							publication.addPDFFile(new File(publication.getSourceURL()));
+							// update relative path
+							InitConfiguration.getDataAccess().updatePublication(publication);
+
+						}
+						// update full text context
+						if(publication.getFullTextContent().isEmpty())
+							updatePublicationFullTextOnfDatabase(publication);
+					}
+
 				}
-				if(configuration.getCorpusTextType().equals(CorpusTextType.Hybrid) || 
-						configuration.getCorpusTextType().equals(CorpusTextType.FullText))
+				else // Already Exist publication
 				{
-					// IF PDF is not available and source URL is a file put file in directory and update Full text COntent
-					if(publication.getSourceURL()!=null && !publication.isPDFAvailable())
+					if(configuration.getCorpusTextType().equals(CorpusTextType.Hybrid) || 
+							configuration.getCorpusTextType().equals(CorpusTextType.FullText))
 					{
-						publication.addPDFFile(new File(publication.getSourceURL()));
-						// update relative path
-						InitConfiguration.getDataAccess().updatePublication(publication);
-					}
-					// PDF is availbale and Full text are not available yet
-					if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty())
-					{
-						String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
-						// Get PDF to text from PDF file
-						String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
-						publication.setFullTextContent(fullTextContent);
-						updatePublicationFullTextOnfDatabase(publication);
-					}
-					// If pub don't have fulltext and publication has a full text inserted from other system. Then it will be added
-					else if(changefulltext(publication, pub)){
-						updatePublicationFullTextOnfDatabase(publication);
+						// IF PDF is not available and source URL is a file put file in directory and update Full text COntent
+						if(publication.getSourceURL()!=null && !publication.isPDFAvailable())
+						{
+							publication.addPDFFile(new File(publication.getSourceURL()));
+							// update relative path
+							InitConfiguration.getDataAccess().updatePublication(publication);
+						}
+						// PDF is availbale and Full text are not available yet
+						else if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty())
+						{
+							String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
+							// Get PDF to text from PDF file
+							String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
+							publication.setFullTextContent(fullTextContent);
+							updatePublicationFullTextOnfDatabase(publication);
+						}
 					}
 				}
 
@@ -86,18 +102,6 @@ public class CorpusCreation {
 		} catch (IOException e) {
 			throw new ANoteException(e);
 		}
-	}
-	
-	private boolean changefulltext(IPublication publication, IPublication pub){
-		if(publication.getFullTextContent() == null || publication.getFullTextContent().isEmpty()){
-			return false;
-		}
-		if(pub != null){
-			if(pub.getFullTextContent() != null && !pub.getFullTextContent().isEmpty()){
-				return false;
-			}
-		}
-		return true;
 	}
 
 
