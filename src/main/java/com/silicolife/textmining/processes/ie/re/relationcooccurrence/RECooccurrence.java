@@ -53,7 +53,7 @@ public class RECooccurrence implements IREProcess{
 	
 	private static Properties gerateProperties(IRECooccurrenceConfiguration configuration) {
 		Properties prop = new Properties();
-		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getIEProcess().getID()));
+		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getEntityBasedProcess().getID()));
 		prop.put(GlobalNames.recooccurrenceModel, configuration.getCooccurrenceModelEnum().getRelationCooccurrenceModel().getDescription());
 		return prop;
 	}
@@ -68,7 +68,7 @@ public class RECooccurrence implements IREProcess{
 				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationCooccurrenceProcessType, gerateProperties(reCooccurrence));
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 		IRECooccurrenceSentenceModel model = reCooccurrence.getCooccurrenceModelEnum().getRelationCooccurrenceModel();
-		REProcessReportImpl report = new REProcessReportImpl(relationCooccurrence,configuration.getIEProcess(),reProcess,false);
+		REProcessReportImpl report = new REProcessReportImpl(relationCooccurrence,configuration.getEntityBasedProcess(),reProcess,false);
 		ICorpus corpus = configuration.getCorpus();
 		long start = GregorianCalendar.getInstance().getTimeInMillis();
 		int size = corpus.getArticlesCorpus().getAllDocuments().size();
@@ -85,7 +85,7 @@ public class RECooccurrence implements IREProcess{
 				break;
 			}
 			IPublication doc = itDocs.next();
-			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,configuration.getIEProcess(), corpus);
+			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,configuration.getEntityBasedProcess(), corpus);
 			List<IEntityAnnotation> allDoucmentSemanticLayer = annotDoc.getEntitiesAnnotations();
 			List<IEventAnnotation> relations = model.processDocumetAnnotations(annotDoc,allDoucmentSemanticLayer);
 			// Insert Entities and Relations in Database
