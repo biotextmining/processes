@@ -87,7 +87,7 @@ public class WebConnectionConsole {
 		// si no hay url's a descargar se finaliza
 		String[] urls = art.getEnlacesPDF();
 		if (urls == null||urls.length==0) {
-			return true;
+			return false;
 		}
 		
 		// si no se dispone del abstract o el titulo del articulo se termina
