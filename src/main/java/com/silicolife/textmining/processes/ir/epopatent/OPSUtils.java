@@ -157,7 +157,8 @@ public class OPSUtils {
 		String epodoc = PublicationImpl.getPublicationExternalIDForSource(pub, OPSConfiguration.epodoc);
 		String urlPatentImages = publicationDetails + epodoc + "/images";
 		GenericPairImpl<Integer, String> pagesLink = client.get(urlPatentImages, headers, new OPSPatentImageHandler());
-
+		if(pagesLink==null)
+			return null;
 		Path docPath = Paths.get(path +"/" + "/tmp_" + epodoc);
 		if (!Files.exists(docPath))
 			Files.createDirectories(docPath);
@@ -265,12 +266,15 @@ public class OPSUtils {
 	private static String tranform(String keywords) {
 		keywords = keywords.trim();
 		String[] keywordsParts = keywords.split("AND|OR");
-		for(String part : keywordsParts)
+		if(keywordsParts.length > 1)
 		{
-			part = part.trim();
-			if(!part.isEmpty())
+			for(String part : keywordsParts)
 			{
-				keywords = keywords.replace(part, "\""+part+"\"");
+				part = part.trim();
+				if(!part.isEmpty())
+				{
+					keywords = keywords.replace(part, "\""+part+"\"");
+				}
 			}
 		}
 		keywords = keywords.replace("AND"," AND ");
