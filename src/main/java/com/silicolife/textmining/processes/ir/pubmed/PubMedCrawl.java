@@ -120,7 +120,7 @@ public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 	}
 
 
-	private Set<String> getAllFreeFullTextPMID(List<IPublication> publications) throws ANoteException, InternetConnectionProblemException {
+	public static Set<String> getAllFreeFullTextPMID(List<IPublication> publications) throws ANoteException, InternetConnectionProblemException {
 		String query = "(free full text[sb]) AND (";
 		Set<String> toSearch = new HashSet<>();
 		for(IPublication pub:publications)
