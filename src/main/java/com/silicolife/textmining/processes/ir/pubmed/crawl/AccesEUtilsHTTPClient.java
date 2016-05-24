@@ -2,6 +2,8 @@ package com.silicolife.textmining.processes.ir.pubmed.crawl;
 
 import java.io.IOException;
 import java.net.Proxy.Type;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,7 +29,7 @@ import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 public class AccesEUtilsHTTPClient {
   //Obtiene los enlaces a partir de los que buscar el pdf
   //de un articulo de PubMed dado su pmid usando HTTPClient
-  static public String [] getLinksWithHTTPClient(String id) throws HttpException, IOException, SAXException, ParserConfigurationException, XPathExpressionException
+  static public Set<String> getLinksWithHTTPClient(String id) throws HttpException, IOException, SAXException, ParserConfigurationException, XPathExpressionException
   {
 //	try
 //	{
@@ -51,32 +53,29 @@ public class AccesEUtilsHTTPClient {
 	  XPathFactory factory = XPathFactory.newInstance();
 	  XPath xpath = factory.newXPath();
 	  NodeList datos_enlaces=getXPathNodes(xpath,doc,"//ObjUrl");
-	  String [] urls=new String[datos_enlaces.getLength()];
+	  Set<String> urls=new HashSet<>();
 	  
-	  int aux=0;
 	  for(int i=0;i<datos_enlaces.getLength();i++)
 	  {
 		NodeList datos_enlace=datos_enlaces.item(i).getChildNodes();
 		NodeList atributos_enlace=getXPathNodes(xpath,datos_enlace,"Attribute");
 		for(int j=0;j<atributos_enlace.getLength();j++)
 		{
-		  String atributo=atributos_enlace.item(j).getTextContent();
+		  String atributo=atributos_enlace.item(j).getTextContent().toLowerCase();
+		  String candidateURL = getXPathNode(xpath,datos_enlace,"Url");
 		  //interesan las urls con el atributo "full-text online" o "full-text PDF" o
 		  //"author manuscript" porque son las que llevan al texto completo en PDF o
 		  //al manuscrito del autor
-		  if(atributo.equals("full-text online") || atributo.equals("full-text PDF") || 
-			atributo.equals("author manuscript"))
+		  if(atributo.equals("full-text online") || atributo.equals("full-text pdf") || 
+			atributo.equals("author manuscript") || atributo.equals("free resource"))
 		  {
-			urls[aux]=getXPathNode(xpath,datos_enlace,"Url");
-			aux++;
-			break;
+			  urls.add(candidateURL);
+//			break;
 		  }
 		}
 	  }
 	  
-	  String [] arr=new String[aux];
-	  System.arraycopy(urls, 0, arr, 0, aux);
-	  return arr;
+	  return urls;
 //	}catch(Exception e)
 //	{
 //	  System.err.println("No se ha podido iniciar la bsqueda para el art�culo con pmid "+id);

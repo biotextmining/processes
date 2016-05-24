@@ -42,6 +42,7 @@ public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 	private Integer startRange;
 	private Integer endRAnge;
 	private Long startTime;
+	public boolean ignoreTextConten = false;
 
 	public PubMedCrawl()
 	{
@@ -97,7 +98,7 @@ public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 			}
 			else
 			{
-				File file = downloadPDF(pub,pmid,saveDocDirectoty);
+				File file = downloadPDF(pub,pmid,saveDocDirectoty,ignoreTextConten);
 				if(file != null)
 				{
 					report.addFileDownloaded(pub);
@@ -175,11 +176,11 @@ public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 		cancel = true;		
 	}
 
-	public static File downloadPDF(IPublication pub, String pmid, String path) {
+	public static File downloadPDF(IPublication pub, String pmid, String path,boolean ignoretextcontent) {
 		if (!path.endsWith("/")) {
 			path += "/";
 		}
-		if (WebConnectionConsole.buscarPDF(pub,path, pmid)) {
+		if (WebConnectionConsole.buscarPDF(pub,path, pmid,ignoretextcontent)) {
 			return new File(path + "/" + pmid + "/" + pub.getId() + ".pdf");
 		} else {
 			return null;

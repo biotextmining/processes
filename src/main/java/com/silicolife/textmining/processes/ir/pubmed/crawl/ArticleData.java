@@ -1,6 +1,7 @@
 package com.silicolife.textmining.processes.ir.pubmed.crawl;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -13,7 +14,7 @@ import org.xml.sax.SAXException;
 public class ArticleData
 {
   private String pmid; //pmid del articulo
-  private String [] enlacesPDF; //url's iniciales a partir de las que buscar el pdf
+  private Set<String> enlacesPDF; //url's iniciales a partir de las que buscar el pdf
   private ArticleBody trozo_texto; //abstract o t�tulo del articulo
   private String publicationID;
   
@@ -38,7 +39,7 @@ public class ArticleData
 	return pmid;
   }
   
-  public String[] getEnlacesPDF() {
+  public Set<String> getEnlacesPDF() {
 	return enlacesPDF;
   }
 

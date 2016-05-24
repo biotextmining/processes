@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy.Type;
 import java.net.URL;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -21,6 +22,7 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 
@@ -62,10 +64,10 @@ public class WebConnectionConsole {
 //		return WebConnectionConsole.buscarPDF(WebConnectionConsole.DEFAULT_DOWNLOAD_DIR, idArticulo);
 //	}
 	
-	public static boolean buscarPDF(IPublication pub, String ruta_descarga, String idArticulo) {
+	public static boolean buscarPDF(IPublication pub, String ruta_descarga, String idArticulo,boolean ignorePDFArticleContent) {
 		try {
 			ArticleData datosArticulo = new ArticleData(pub.getId(),idArticulo);
-			return WebConnectionConsole.buscarPDF(ruta_descarga, datosArticulo);
+			return WebConnectionConsole.buscarPDF(ruta_descarga, datosArticulo,ignorePDFArticleContent);
 		} catch (Exception e) {
 			return false;
 		}
@@ -73,20 +75,20 @@ public class WebConnectionConsole {
 
 	// busca el pdf (y lo descarga si es posible) a partir de los datos del
 	// articulo dados (indicando finalmente si se ha encontrado o no el pdf)
-	public static boolean buscarPDF(ArticleData artic) {
-		return WebConnectionConsole.buscarPDF(WebConnectionConsole.DEFAULT_DOWNLOAD_DIR, artic);
+	public static boolean buscarPDF(ArticleData artic,boolean ignorePDFArticleContent) {
+		return WebConnectionConsole.buscarPDF(WebConnectionConsole.DEFAULT_DOWNLOAD_DIR, artic,ignorePDFArticleContent);
 	}
 
 	// busca el pdf (y lo descarga si es posible sobre la ruta indicada) a partir de los
 	// datos del articulo dados (indicando finalmente si se ha encontrado o no el pdf)
-	public static synchronized boolean buscarPDF(String ruta_descargas, ArticleData artic) {
+	public static synchronized boolean buscarPDF(String ruta_descargas, ArticleData artic,boolean ignorePDFArticleContent) {
 		if (ruta_descargas == null) ruta_descargas = WebConnectionConsole.DEFAULT_DOWNLOAD_DIR;
 		
 		art = artic;
 		
 		// si no hay url's a descargar se finaliza
-		String[] urls = art.getEnlacesPDF();
-		if (urls == null||urls.length==0) {
+		Set<String> urls = art.getEnlacesPDF();
+		if (urls.isEmpty()) {
 			return false;
 		}
 		
@@ -111,11 +113,10 @@ public class WebConnectionConsole {
 			// crea la carpeta en la que se almacenar�n las descargas
 			Comun.crear_carpeta(dir);
 
-			String url;
+			
 			// para cada url de partida se busca el pdf del art�culo
-			for (int i = 0; i < urls.length; i++) {
+			for (String url:urls) {
 				try {
-					url = urls[i];
 					WebPageAnnalyses.getUrls_a_mirar().clear();
 					// las url's que muestran listas de webs que contienen el
 					// pdf
@@ -128,7 +129,7 @@ public class WebConnectionConsole {
 						profundidad_max = 2;
 					url = Comun.sustituir(url, "&amp;", "&");
 					// si se ha encontrado el pdf se para
-					if (algoritmo(new URL(url))) {
+					if (algoritmo(new URL(url),ignorePDFArticleContent)) {
 						return true;
 					}
 				} catch (Exception e) {
@@ -150,7 +151,7 @@ public class WebConnectionConsole {
 	// dada la url inicial realiza la bsqueda y descarga de ficheros para
 	// obtener el pdf
 	// (devuelve true o false segan haya encontrado o no el pdf del art�culo)
-	private static boolean algoritmo(URL url_inicial) throws Exception {
+	private static boolean algoritmo(URL url_inicial,boolean ignorePDFArticleContent) throws Exception {
 		int profundidad = 0; // profundidad actual
 		int nuevo_nivel = 1; // n de urls que faltan por descargar en la
 								// profundidad actual
@@ -210,7 +211,7 @@ public class WebConnectionConsole {
 							// si el trozo de texto disponible est� contenido en
 							// el pdf descargado
 							// se ha encontrado el texto completo y se finaliza
-							if (tieneTrozoTexto(fich)) {
+							if (tieneTrozoTexto(fich,ignorePDFArticleContent)) {
 								return true;
 							}
 						}
@@ -307,12 +308,23 @@ public class WebConnectionConsole {
 	// comprueba si el trozo de texto disponible est� contenido en el texto del
 	// fichero pdf
 	// indicado dada la ruta en la que se encuentra almacenado localmente
-	private static boolean tieneTrozoTexto(String archivo) {
+	private static boolean tieneTrozoTexto(String archivo,	boolean ignoretextcontn) {
 		String cad = art.getTrozo_texto().getTexto();
 		String text = TryPDFBox.getTextoPDF(archivo);
-		
-		if (text == null) return false;
-		
+
+		if (text == null || text.isEmpty())
+		{
+			try {
+				text =  PDFtoText.fileOCR(archivo);
+			} catch (Exception e) {
+			}
+		}
+		if((text == null || text.isEmpty()) && ignoretextcontn)
+		{
+			System.out.print("... ignore text content..");
+			return true;
+		}
+
 		// si se dispone del abstract se buscar� dicho abstract en los 10000
 		// primeros
 		// caracteres del texto (que es aproximadamente lo que mide la primera
