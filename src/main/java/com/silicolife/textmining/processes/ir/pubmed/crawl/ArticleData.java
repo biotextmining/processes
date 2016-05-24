@@ -13,41 +13,41 @@ import org.xml.sax.SAXException;
 
 public class ArticleData
 {
-  private String pmid; //pmid del articulo
-  private Set<String> enlacesPDF; //url's iniciales a partir de las que buscar el pdf
-  private ArticleBody trozo_texto; //abstract o t�tulo del articulo
-  private String publicationID;
-  
-  //obtiene los datos del articulo a partir de su pmid
-  public ArticleData(long publicationID,String pmid) throws HttpException, XPathExpressionException, IOException, SAXException, ParserConfigurationException 
-  {
-	this.setPublicationID(String.valueOf(publicationID));
-	this.pmid=pmid;
-	enlacesPDF=AccesEUtilsHTTPClient.getLinksWithHTTPClient(pmid);
-	trozo_texto=AccesEUtilsHTTPClient.getAbstractOrTitleWithHTTPClient(pmid);
-  }
-  
-  public boolean tieneTrozoTexto() {
-	return (trozo_texto!=null && trozo_texto.getTexto()!=null);
-  }
-  
-  public ArticleBody getTrozo_texto() {
-	return trozo_texto;
-  }
-  
-  public String getPmid() {
-	return pmid;
-  }
-  
-  public Set<String> getEnlacesPDF() {
-	return enlacesPDF;
-  }
+	private String pmid; //pmid del articulo
+	private Set<String> enlacesPDF; //url's iniciales a partir de las que buscar el pdf
+	private ArticleBody trozo_texto; //abstract o t�tulo del articulo
+	private String publicationID;
 
-public String getPublicationID() {
-	return publicationID;
-}
+	//obtiene los datos del articulo a partir de su pmid
+	public ArticleData(long publicationID,String pmid) throws HttpException, XPathExpressionException, IOException, SAXException, ParserConfigurationException 
+	{
+		this.setPublicationID(String.valueOf(publicationID));
+		this.pmid=pmid;
+		enlacesPDF=AccesEUtilsHTTPClient.getLinksWithHTTPClient(pmid);
+		trozo_texto=AccesEUtilsHTTPClient.getAbstractOrTitleWithHTTPClient(pmid);
+	}
 
-public void setPublicationID(String publicationID) {
-	this.publicationID = publicationID;
-}
+	public boolean tieneTrozoTexto() {
+		return (trozo_texto!=null && trozo_texto.getTexto()!=null);
+	}
+
+	public ArticleBody getTrozo_texto() {
+		return trozo_texto;
+	}
+
+	public String getPmid() {
+		return pmid;
+	}
+
+	public Set<String> getEnlacesPDF() {
+		return enlacesPDF;
+	}
+
+	public String getPublicationID() {
+		return publicationID;
+	}
+
+	public void setPublicationID(String publicationID) {
+		this.publicationID = publicationID;
+	}
 }

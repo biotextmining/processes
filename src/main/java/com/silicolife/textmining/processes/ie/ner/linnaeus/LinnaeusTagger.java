@@ -70,10 +70,8 @@ public class LinnaeusTagger  implements INERProcess{
 	private boolean stop = false;
 
 	public LinnaeusTagger() {
-		
+
 	}
-
-
 
 	@Override
 	public INERProcessReport executeCorpusNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException 
@@ -81,7 +79,6 @@ public class LinnaeusTagger  implements INERProcess{
 		validateConfiguration(configuration);
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
 		IIEProcess processToRun = buildIEProcess(configuration,linnauesConfiguration);
-		createIEProcessONDataAccess(processToRun);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
 		HandRules rules = new HandRules(elementsToNER);
@@ -97,6 +94,41 @@ public class LinnaeusTagger  implements INERProcess{
 		IteratorBasedMaster<TaggedDocument> master = new IteratorBasedMaster<TaggedDocument>(tm,linnauesConfiguration.getNumberOfThreads());
 		Thread threadmaster = new Thread(master);
 		threadmaster.start();
+		Set<String> stopwords = loadStopWords(linnauesConfiguration);
+		int counter = 0; 
+		while (master.hasNext() && !stop){
+			TaggedDocument td = master.next();
+			report.incrementDocument();
+			if (td != null && !stop)
+			{
+				String strid = td.getOriginal().getID();
+				Long id = Long.valueOf(strid);
+				AnnotationPositions positions = new AnnotationPositions();
+				addMatchesToAnnotationPositions(linnauesConfiguration, resourceMapClass, resourceIDMapResource,
+						maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, stopwords, td,
+						positions);
+				applyHandRulesToAnnotationPositions(elementsToNER, rules, td, positions);
+				saveAnnotatedDocumentWithAnnotationPositions(linnauesConfiguration, processToRun, report, td, id,
+						positions);
+			}
+			counter++;
+			memoryAndProgress(counter,linnauesConfiguration.getCorpus().getArticlesCorpus().size(),startime);		
+		}
+		try {
+			threadmaster.join();
+		} catch (InterruptedException e) {
+			throw new ANoteException(e);
+		}
+		if(stop)
+		{
+			report.setcancel();
+		}
+		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(endTime-startime);
+		return report;
+	}
+
+	private Set<String> loadStopWords(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		Set<String> stopwords = new HashSet<String>();
 		if(linnauesConfiguration.getStopWords()!=null)
 		{
@@ -117,100 +149,130 @@ public class LinnaeusTagger  implements INERProcess{
 				}
 			}
 		}
-		int counter = 0; 
-		while (master.hasNext() && !stop){
-			TaggedDocument td = master.next();
-			report.incrementDocument();
-			if (td != null && !stop)
-			{
-				String strid = td.getOriginal().getID();
-				Long id = Long.valueOf(strid);
-				List<Mention> matches = td.getAllMatches();
-				AnnotationPositions positions = new AnnotationPositions();
-				for(Mention men:matches){
+		return stopwords;
+	}
 
-					String text = men.getText();
-					if(stopwords.isEmpty() 
-							|| linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS) && !stopwords.contains(text) 
-							|| linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE) && !stopwords.contains(text.toLowerCase())
-							|| (linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
-									&& text.length()>linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize() && !stopwords.contains(text.toLowerCase()))
-							||(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
-									&& text.length()<=linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize() && !stopwords.contains(text)))
-					{
-						if(!linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
-							
-							Set<Long> resourceIDs = maplowerCaseToPossibleResourceIDs.get(text.toLowerCase());
-							if(resourceIDs == null){
-								resourceIDs = maplowerCaseToPossibleResourceIDs.get(men.getIds()[1].toLowerCase());
-							}
-							if(resourceIDs == null){
-								resourceIDs = maplowerCaseToPossibleResourceIDs.get(text);
-							}
-							if(resourceIDs == null){
-								resourceIDs = maplowerCaseToPossibleResourceIDs.get(men.getIds()[1]);
-							}
-							for(Long resourceID : resourceIDs){
-								Long classID = resourceMapClass.get(resourceID);
-								String dictTerm = mapPossibleResourceIDsToTermString.get(resourceID);
-								IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
-								IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(resourceID), text, NormalizationForm.getNormalizationForm(text), new Properties());
-								positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
-							}
-						}else{
-							long dicEntityID = Long.valueOf(men.getIds()[0]);
-							Long classID = resourceMapClass.get(dicEntityID);
-							String dictTerm = men.getIds()[1];
-							IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
-							IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(dicEntityID), text, NormalizationForm.getNormalizationForm(text), new Properties());
-							positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
-						}
-					}
-				}
-				if(!stop && elementsToNER.getRules()!=null && !elementsToNER.getRules().isEmpty())
-				{
-					if(rules != null && !stop)
-						rules.applyRules(td.getOriginal().getBody(), positions);	
-				}
-				if(!stop)
-				{
-					report.incrementEntitiesAnnotated(positions.getAnnotations().size());
-					List<IEntityAnnotation> entityAnnotations = positions.getEntitiesFromAnnoattionPositions();
-					List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<IPublicationExternalSourceLink>();
-					List<IPublicationField> publicationFields = new ArrayList<>();
-					List<IPublicationLabel> publicationLabels = new ArrayList<>();
-					IPublication document =  new PublicationImpl(id,
-							"", "", "", "", "",
-							"", "", "", "", "", "",
-							"", false, "", "",
-							publicationExternalIDSource ,
-							publicationFields ,
-							publicationLabels );
-
-					if(linnauesConfiguration.isNormalized()){
-						Document linnausDocument = td.getOriginal();
-						EntitiesDesnormalization desnormalizer = new EntitiesDesnormalization(linnausDocument.getRawContent(), linnausDocument.getBody(), entityAnnotations);
-						entityAnnotations = desnormalizer.getDesnormalizedAnnotations();
-					}
-					// Add Document Entity Annotations
-					addAnnotatedDocumentEntities(processToRun,entityAnnotations, document);
+	private void addMatchesToAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
+			Map<Long, Long> resourceMapClass, Map<Long, IResourceElement> resourceIDMapResource,
+			Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
+			Map<Long, String> mapPossibleResourceIDsToTermString, Set<String> stopwords, TaggedDocument td,
+			AnnotationPositions positions) throws ANoteException {
+		List<Mention> matches = td.getAllMatches();
+		for(Mention men:matches){
+			String text = men.getText();
+			if(!isInStopWords(stopwords, text, linnauesConfiguration)){
+				if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
+					addAnnotationWithCaseSensitive(resourceMapClass, resourceIDMapResource, positions, men, text);
+				}else{
+					addAnnotationWithoutCaseSensitive(resourceMapClass, resourceIDMapResource,
+							maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, positions, men,
+							text);
 				}
 			}
-			counter++;
-			memoryAndProgress(counter,linnauesConfiguration.getCorpus().getArticlesCorpus().size(),startime);		
 		}
-		try {
-			threadmaster.join();
-		} catch (InterruptedException e) {
-			throw new ANoteException(e);
+	}
+
+	private void addAnnotationWithCaseSensitive(Map<Long, Long> resourceMapClass,
+			Map<Long, IResourceElement> resourceIDMapResource, AnnotationPositions positions, Mention men, String text)
+					throws ANoteException {
+		long dicEntityID = Long.valueOf(men.getIds()[0]);
+		Long classID = resourceMapClass.get(dicEntityID);
+		String dictTerm = men.getIds()[1];
+		IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
+		IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(dicEntityID), text, NormalizationForm.getNormalizationForm(text), new Properties());
+		positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
+	}
+
+
+
+	private void addAnnotationWithoutCaseSensitive(Map<Long, Long> resourceMapClass,
+			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
+			Map<Long, String> mapPossibleResourceIDsToTermString, AnnotationPositions positions, Mention men,
+			String text) throws ANoteException {
+		Set<Long> resourceIDs = maplowerCaseToPossibleResourceIDs.get(text.toLowerCase());
+		if(resourceIDs == null){
+			resourceIDs = maplowerCaseToPossibleResourceIDs.get(men.getIds()[1].toLowerCase());
 		}
-		if(stop)
+		if(resourceIDs == null){
+			resourceIDs = maplowerCaseToPossibleResourceIDs.get(text);
+		}
+		if(resourceIDs == null){
+			resourceIDs = maplowerCaseToPossibleResourceIDs.get(men.getIds()[1]);
+		}
+		for(Long resourceID : resourceIDs){
+			Long classID = resourceMapClass.get(resourceID);
+			String dictTerm = mapPossibleResourceIDsToTermString.get(resourceID);
+			IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
+			IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(resourceID), text, NormalizationForm.getNormalizationForm(text), new Properties());
+			positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
+		}
+	}
+
+	private boolean isInStopWords(Set<String> stopwords, String text, INERLinnaeusConfiguration linnauesConfiguration){
+		if(!stopwords.isEmpty()){
+			if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS) ||
+					(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
+							&& text.length()<=linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize())){
+				if(stopwords.contains(text)){
+					return true;
+				}
+			}else if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE) ||
+					linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
+					&& text.length()>linnauesConfiguration.getCaseSensitiveEnum().getSmallWordSize()){
+				if(stopwords.contains(text.toLowerCase())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	private void applyHandRulesToAnnotationPositions(ElementToNer elementsToNER, HandRules rules, TaggedDocument td,
+			AnnotationPositions positions) throws ANoteException {
+		if(!stop && elementsToNER.getRules()!=null && !elementsToNER.getRules().isEmpty())
 		{
-			report.setcancel();
+			if(rules != null && !stop)
+				rules.applyRules(td.getOriginal().getBody(), positions);	
 		}
-		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
-		report.setTime(endTime-startime);
-		return report;
+	}
+
+
+
+	private void saveAnnotatedDocumentWithAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
+			IIEProcess processToRun, INERProcessReport report, TaggedDocument td, Long id,
+			AnnotationPositions positions) throws ANoteException {
+		if(!stop)
+		{
+			report.incrementEntitiesAnnotated(positions.getAnnotations().size());
+			List<IEntityAnnotation> entityAnnotations = positions.getEntitiesFromAnnoattionPositions();
+			List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<IPublicationExternalSourceLink>();
+			List<IPublicationField> publicationFields = new ArrayList<>();
+			List<IPublicationLabel> publicationLabels = new ArrayList<>();
+			IPublication document =  new PublicationImpl(id,
+					"", "", "", "", "",
+					"", "", "", "", "", "",
+					"", false, "", "",
+					publicationExternalIDSource ,
+					publicationFields ,
+					publicationLabels );
+
+			entityAnnotations = correctEntitiesAfterNormalization(linnauesConfiguration, td, entityAnnotations);
+			// Add Document Entity Annotations
+			addAnnotatedDocumentEntities(processToRun,entityAnnotations, document);
+		}
+	}
+
+
+
+	private List<IEntityAnnotation> correctEntitiesAfterNormalization(INERLinnaeusConfiguration linnauesConfiguration,
+			TaggedDocument td, List<IEntityAnnotation> entityAnnotations) {
+		if(linnauesConfiguration.isNormalized()){
+			Document linnausDocument = td.getOriginal();
+			EntitiesDesnormalization desnormalizer = new EntitiesDesnormalization(linnausDocument.getRawContent(), linnausDocument.getBody(), entityAnnotations);
+			entityAnnotations = desnormalizer.getDesnormalizedAnnotations();
+		}
+		return entityAnnotations;
 	}
 
 
@@ -224,7 +286,7 @@ public class LinnaeusTagger  implements INERProcess{
 	protected void createIEProcessONDataAccess(IIEProcess processToRun) throws ANoteException {
 		InitConfiguration.getDataAccess().createIEProcess(processToRun);
 	}
-	
+
 	private static Properties gereateProperties(INERLinnaeusConfiguration configurations) {
 		Properties properties = transformResourcesToOrderMapInProperties(configurations.getResourceToNER());
 		if(configurations.isUseAbreviation()){
@@ -255,15 +317,14 @@ public class LinnaeusTagger  implements INERProcess{
 		return properties;
 	}
 
-	private IIEProcess buildIEProcess(INERConfiguration configuration,INERLinnaeusConfiguration linnauesConfiguration) {
+	private IIEProcess buildIEProcess(INERConfiguration configuration,INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		String description = LinnaeusTagger.linneausTagger  + " " +Utils.SimpleDataFormat.format(new Date());
 		String notes = configuration.getProcessNotes();
 		Properties properties = gereateProperties(linnauesConfiguration);
 		IIEProcess processToRun = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), linnausOrigin, properties);
+		createIEProcessONDataAccess(processToRun);
 		return processToRun;
 	}
-
-
 
 	/**
 	 * returns a entity recognition Matcher based on the input parameters in ap (provided by the user on the command-line or in a configuration file)
@@ -302,18 +363,15 @@ public class LinnaeusTagger  implements INERProcess{
 			String[] termToIdsMapArray = new String[2];
 			termToIdsMapArray[0] = String.valueOf(elem.getResourceElement().getId());
 			termToIdsMapArray[1] = elem.getAnnotationValue();
+			if(linnaeusConfiguration.isNormalized()){
+				term = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
+			}
 			if(term.length()>linnaeusConfiguration.getCaseSensitiveEnum().getSmallWordSize()){
 				biggerTermsToIdsMapList.add(termToIdsMapArray);
-				if(linnaeusConfiguration.isNormalized()){
-					term = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
-				}
 				term = term.toLowerCase();
 				biggerTerms.add(term);
 			}else{
 				smallTermsToIdsMapList.add(termToIdsMapArray);
-				if(linnaeusConfiguration.isNormalized()){
-					term = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
-				}
 				smallTerms.add(term);
 			}
 		}
@@ -325,18 +383,12 @@ public class LinnaeusTagger  implements INERProcess{
 		String[][] termToIdsMapArray = new String[elements.size()][2] ;
 		String[] terms = new String[elements.size()];
 		int i=0;
-		for(IEntityAnnotation elem : elements)
-		{			
+		for(IEntityAnnotation elem : elements){			
 			termToIdsMapArray[i][0] = String.valueOf(elem.getResourceElement().getId());
 			termToIdsMapArray[i][1] = elem.getAnnotationValue();
+			terms[i] = elem.getAnnotationValue();
 			if(linnaeusConfiguration.isNormalized())
-			{
 				terms[i] = TermSeparator.termSeparator(elem.getAnnotationValue()).trim();
-			}
-			else
-			{
-				terms[i] = elem.getAnnotationValue();
-			}
 			if(linnaeusConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.NONE))
 				terms[i] = terms[i].toLowerCase();
 			i++;
@@ -353,8 +405,6 @@ public class LinnaeusTagger  implements INERProcess{
 		Runtime.getRuntime().gc();
 		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");		
 	}
-
-
 
 	public static TaggedDocument matchDocument(Matcher matcher, Document doc){
 		String rawText = doc.toString();
@@ -397,7 +447,7 @@ public class LinnaeusTagger  implements INERProcess{
 		else
 			throw new InvalidConfigurationException("configuration must be INERLexicalResourcesConfiguration isntance");
 	}
-	
+
 	private static Properties transformResourcesToOrderMapInProperties(ResourcesToNerAnote resources) {
 		Properties prop = new Properties();
 		for(int i=0;i<resources.getList().size();i++)
@@ -410,6 +460,6 @@ public class LinnaeusTagger  implements INERProcess{
 		}
 		return prop;
 	}
-	
+
 
 }
