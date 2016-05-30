@@ -84,6 +84,12 @@ public class MedLineReader {
 				String journal = processSimpleElementTagName(elements,"Title");
 				String pages = processSimpleElementTagName(elements, "MedlinePgn");
 				String volume = processSimpleElementTagName(elements, "Volume");
+				if(volume.length()>128)
+				{
+					System.out.println("Volume more that 128 characteres "+pubmedID);
+					System.out.println("Volume : "+volume);
+					volume = new String();
+				}
 				String issues = processSimpleElementTagName(elements, "Issue");
 				String date = processPublicationDate(elements);
 
