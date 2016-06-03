@@ -315,7 +315,7 @@ public class WebConnectionConsole {
 		if (text == null || text.isEmpty())
 		{
 			try {
-				text =  PDFtoText.fileOCR(archivo);
+				text =  PDFtoText.convertPDFDocument(archivo);
 			} catch (Exception e) {
 			}
 		}
