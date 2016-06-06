@@ -17,6 +17,7 @@ import com.silicolife.http.exceptions.RedirectionException;
 import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
@@ -219,8 +220,8 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 		abstractAvailable = queryInfo.getAvailableAbstracts();
 		for(int step=1;step<=results && !cancel;step = step + SpringerConfiguration.STEP)
 		{
-			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(SpringerConfiguration.doi);
-			Set<String> doiSet = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(queryInfo,SpringerConfiguration.doi);
+			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
+			Set<String> doiSet = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(queryInfo,PublicationSourcesDefaultEnum.DOI.name());
 			List<IPublication> pubs = SpringerSearchUtils.getSearchRange(autentication, query.getCompleteQuery(), step);
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
 			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
@@ -228,7 +229,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 
 			for(IPublication pub:pubs)
 			{
-				String pubDOI = PublicationImpl.getPublicationExternalIDForSource(pub,SpringerConfiguration.doi);
+				String pubDOI = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.DOI.name());
 				if(doiSet.contains(pubDOI))
 				{
 
@@ -289,7 +290,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 		for(int step=1;step<=results && !cancel;step = step + SpringerConfiguration.STEP)
 		{
 			// Get All DOI ID in System
-			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(SpringerConfiguration.doi);
+			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
 			// Documents to Insert into databse 
 			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
 			// Documents already present in DB - Just to add to Query
@@ -298,7 +299,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 			List<IPublication> pubs = getSpringerResults(report,autentication,query.getCompleteQuery(),step);
 			for(IPublication pub:pubs)
 			{
-				String epoDocPMID = PublicationImpl.getPublicationExternalIDForSource(pub,SpringerConfiguration.doi);
+				String epoDocPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.DOI.name());
 				if(doiAlreadyExistOnDB.containsKey(epoDocPMID))
 				{
 					pub.setId(doiAlreadyExistOnDB.get(epoDocPMID));

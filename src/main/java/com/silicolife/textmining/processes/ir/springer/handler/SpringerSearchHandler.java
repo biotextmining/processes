@@ -23,12 +23,12 @@ import com.silicolife.http.ResponseHandler;
 import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
-import com.silicolife.textmining.processes.ir.springer.configuration.SpringerConfiguration;
 
 public class SpringerSearchHandler  implements ResponseHandler<List<IPublication>>{
 
@@ -100,7 +100,7 @@ public class SpringerSearchHandler  implements ResponseHandler<List<IPublication
 		String issue = getIssue(item);
 		boolean openAcess = getOpenAcess(item);
 		List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<IPublicationExternalSourceLink>();
-		IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(docID, SpringerConfiguration.doi);
+		IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(docID, PublicationSourcesDefaultEnum.DOI.name());
 		publicationExternalIDSource.add(externalID);
 		List<IPublicationField> publicationFields = new ArrayList<IPublicationField>();
 		List<IPublicationLabel> publicationLabels = new ArrayList<IPublicationLabel>();
