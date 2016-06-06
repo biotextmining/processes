@@ -31,8 +31,8 @@ import com.silicolife.http.exceptions.RedirectionException;
 import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairImpl;
@@ -44,6 +44,7 @@ import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentClai
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentDescriptionHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentIDSearchHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
+import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentUpdateHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSSearchHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSSearchResultHandler;
@@ -76,6 +77,18 @@ public class OPSUtils {
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
 		List<IPublication> pubs = client.get(searchURL + query, headers, new OPSSearchHandler());
 		return pubs;
+	}
+	
+	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
+	{
+		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		String urlPatentDescritpion = publicationDetails + patentID + "/biblio";
+		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
+		// Try to add claims and description to abstract
+		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
 	
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
