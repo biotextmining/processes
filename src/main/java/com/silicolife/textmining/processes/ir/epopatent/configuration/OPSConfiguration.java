@@ -1,7 +1,6 @@
 package com.silicolife.textmining.processes.ir.epopatent.configuration;
 
 public class OPSConfiguration {
-	public static final String epodoc = "epodoc";
 	public static final String opssearch = "open patent search";
 	public static int MAX_RESULTS = 2000;
 	public static int STEP = 100;

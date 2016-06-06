@@ -16,6 +16,7 @@ import com.silicolife.http.exceptions.ConnectionException;
 import com.silicolife.http.exceptions.RedirectionException;
 import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.http.exceptions.ServerErrorException;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
@@ -207,27 +208,27 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		for(int step=1;step<=results && !cancel;step = step + OPSConfiguration.STEP)
 		{
 			// Get EPO document in Datbase
-			Map<String, Long> epodocAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(OPSConfiguration.epodoc);
+			Map<String, Long> patentIDAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.patent.name());
 			// Get EPO document in Query
-			Set<String> epoDocs = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(queryInfo,OPSConfiguration.epodoc);
+			Set<String> patentsIds = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(queryInfo,PublicationSourcesDefaultEnum.patent.name());
 			List<IPublication> pubs = OPSUtils.getSearch(tokenaccess,queryInfo.getCompleteQuery(),step);
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
 			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			for(IPublication pub:pubs)
 			{
-				String epoDoc = PublicationImpl.getPublicationExternalIDForSource(pub,OPSConfiguration.epodoc);
+				String patentID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
 				// If Query already contains document
-				if(epoDocs.contains(epoDoc))
+				if(patentsIds.contains(patentID))
 				{
 	
 				}
 				// If DataBase already contains document
-				else if(epodocAlreadyExistOnDB.containsKey(epoDoc))
+				else if(patentIDAlreadyExistOnDB.containsKey(patentID))
 				{
-					long oldID = epodocAlreadyExistOnDB.get(epoDoc);
+					long oldID = patentIDAlreadyExistOnDB.get(patentID);
 					// Test if Publication already exists in the block
-					if(!alreadyAdded.contains(epodocAlreadyExistOnDB.get(epoDoc)))
+					if(!alreadyAdded.contains(patentIDAlreadyExistOnDB.get(patentID)))
 					{
 						pub.setId(oldID);
 						newQueryDocuments.add(pub);
@@ -245,14 +246,14 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 					if(!pub.getAbstractSection().isEmpty())
 						abstractAvailable ++;
 					queryInfo.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
-					epodocAlreadyExistOnDB.put(epoDoc, pub.getId());
+					patentIDAlreadyExistOnDB.put(patentID, pub.getId());
 					report.incrementDocumentRetrieval(1);
-					epoDocs.add(epoDoc);
+					patentsIds.add(patentID);
 				}
 			}
 			if( !cancel && documentsToInsert.size()!=0)
 			{
-				getPatentDetails(report, epodocAlreadyExistOnDB, documentsToInsert);
+				getPatentDetails(report, patentIDAlreadyExistOnDB, documentsToInsert);
 				nPubs = nPubs +documentsToInsert.size();
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
 			}
@@ -301,7 +302,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		for(int step=1;step<=results && !cancel;step = step + OPSConfiguration.STEP)
 		{
 			// Get All EPO ID in Dtabase
-			Map<String, Long> epodocAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(OPSConfiguration.epodoc);
+			Map<String, Long> epodocAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.patent.name());
 			// Documents to Insert into databse 
 			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
 			// Documents already present in DB - Just to add to Query
@@ -310,7 +311,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			List<IPublication> pubs  = OPSUtils.getSearch(tokenaccess,query,step);
 			for(IPublication pub:pubs)
 			{
-				String epoDocPMID = PublicationImpl.getPublicationExternalIDForSource(pub,OPSConfiguration.epodoc);
+				String epoDocPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
 				if(epodocAlreadyExistOnDB.containsKey(epoDocPMID))
 				{
 					pub.setId(epodocAlreadyExistOnDB.get(epoDocPMID));
@@ -367,7 +368,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 
 	}
 
-	private void getPatentDetails(IIRSearchProcessReport report,Map<String, Long> epodocAlreadyExistOnDB,
+	private void getPatentDetails(IIRSearchProcessReport report,Map<String, Long> patentIDAlreadyExistOnDB,
 			List<IPublication> pubs) throws ANoteException, InternetConnectionProblemException
 	{
 		{

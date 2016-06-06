@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import com.silicolife.http.ResponseHandler;
 import com.silicolife.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
@@ -72,7 +73,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 		abstractSection = NormalizationForm.removeOffsetProblemSituation(abstractSection);
 		String extenalLink = getExternalLink(item);
 		List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<IPublicationExternalSourceLink>();
-		IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(epodocID, OPSConfiguration.epodoc);
+		IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(epodocID, PublicationSourcesDefaultEnum.patent.name());
 		publicationExternalIDSource.add(externalID);
 		List<IPublicationField> publicationFields = new ArrayList<IPublicationField>();
 		List<IPublicationLabel> publicationLabels = new ArrayList<IPublicationLabel>();

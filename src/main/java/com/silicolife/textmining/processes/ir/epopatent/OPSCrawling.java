@@ -14,6 +14,7 @@ import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
 import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
@@ -33,12 +34,11 @@ import com.silicolife.textmining.core.interfaces.process.IProcessType;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRCrawl;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
 import com.silicolife.textmining.core.interfaces.process.utils.ISimpleTimeLeft;
-import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
 
 public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	
-	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",OPSConfiguration.epodoc);
+	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.patent.name());
 	private boolean cancel ;
 	private ISimpleTimeLeft progress;
 	private Integer startRange;
@@ -84,7 +84,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
 		for(IPublication pub:publications)
 		{
-			String epodoc = PublicationImpl.getPublicationExternalIDForSource(pub, OPSConfiguration.epodoc);
+			String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
 			String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
 			if(saveDocDirectoty==null)
 			{
@@ -99,7 +99,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			{
 				report.addFileAlreadyDownloaded(pub);
 			}
-			else if(epodoc==null)
+			else if(patentID==null)
 			{
 				report.addFileNotDownloaded(pub);
 			}

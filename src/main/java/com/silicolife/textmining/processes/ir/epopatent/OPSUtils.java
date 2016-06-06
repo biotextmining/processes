@@ -31,6 +31,7 @@ import com.silicolife.http.exceptions.RedirectionException;
 import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
@@ -100,8 +101,8 @@ public class OPSUtils {
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
-		String epodoc = PublicationImpl.getPublicationExternalIDForSource(pub, OPSConfiguration.epodoc);
-		String urlPatentDescritpion = publicationDetails + epodoc + "/description";
+		String patent = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
+		String urlPatentDescritpion = publicationDetails + patent + "/description";
 		String description = null;
 		try {
 			description = client.get(urlPatentDescritpion, headers, new OPSPatentDescriptionHandler());
@@ -123,7 +124,7 @@ public class OPSUtils {
 			IPublicationField publicationFieldDescription = new PublicationFieldImpl(startdescritpion, enddescritpion, "Description", PublicationFieldTypeEnum.abstracttext);
 			pub.getPublicationFields().add(publicationFieldDescription);
 		}
-		String urlPatentClains = publicationDetails + epodoc + "/claims";
+		String urlPatentClains = publicationDetails + patent + "/claims";
 		String claims = null;
 		try {
 			claims = client.get(urlPatentClains, headers, new OPSPatentClaimsHandler());
@@ -154,7 +155,7 @@ public class OPSUtils {
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
-		String epodoc = PublicationImpl.getPublicationExternalIDForSource(pub, OPSConfiguration.epodoc);
+		String epodoc = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
 		String urlPatentImages = publicationDetails + epodoc + "/images";
 		GenericPairImpl<Integer, String> pagesLink = client.get(urlPatentImages, headers, new OPSPatentImageHandler());
 		if(pagesLink==null)
