@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
@@ -157,7 +157,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 		nPubs = getExpectedQueryResults(querySTR);
 		Date date = new Date();
 		String name = generateQueryName(configuration,date);
-		IQueryOriginType queryType = new QueryOriginTypeImpl(PublicationSourcesDefault.pubmed);
+		IQueryOriginType queryType = new QueryOriginTypeImpl(PublicationSourcesDefaultEnum.PUBMED.name());
 		query = new QueryImpl(queryType, date , configuration.getKeywords(),configuration.getOrganism(), querySTR, 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), configuration.getProperties());
 		IIRSearchProcessReport report = searchMethod(query);
 		if(cancel)
@@ -230,12 +230,12 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			// Get Block publication from Pubmed
 			List<IPublication> publications = getPubmedArticlesInRange(context.getWebEnv(), context.getQueryKey(), i,step,report);
 			// Previously download the existent documentID for PMID,PMC and DOI documents from System and Query
-			Map<String, Long> pmidsAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pubmed);
-			Set<String> pmidsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pubmed);
-			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.doi);
-			Set<String> doisAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.doi);
-			Map<String, Long> pmcAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pmc);
-			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pmc);
+			Map<String, Long> pmidsAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
+			Set<String> pmidsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.PUBMED.name());
+			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
+			Set<String> doisAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.DOI.name());
+			Map<String, Long> pmcAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.pmc.name());
+			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.pmc.name());
 			// Block Ids processed
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			documentsToInsert = new ArrayList<IPublication>();
@@ -243,9 +243,9 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			for(IPublication pub:publications)
 			{
 				// Get ID from publication
-				String pubPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefault.pubmed);
-				String pubDOI = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefault.doi);
-				String pubPMC = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefault.pmc);
+				String pubPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.PUBMED.name());
+				String pubDOI = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.DOI.name());
+				String pubPMC = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.pmc.name());
 				if(pmidsAlreadyExistOnQuery.contains(pubPMID) ||
 						pubDOI!=null && !pubDOI.isEmpty() && doisAlreadyExistOnQuery.contains(pubDOI) ||
 						pubPMC!=null && !pubPMC.isEmpty() && pmcsAlreadyExistOnQuery.contains(pubPMC))
@@ -583,21 +583,21 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			// Get Block publication from Pubmed
 			List<IPublication> documents = getPubmedArticlesInRange(context.getWebEnv(), context.getQueryKey(), i,step,report);
 			// Previously download the existent documentID for PMID,PMC and DOI documents from System and Query
-			Map<String, Long> pmidsAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pubmed);
-			Set<String> pmidsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pubmed);
-			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.doi);
-			Set<String> doisAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.doi);
-			Map<String, Long> pmcAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pmc);
-			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefault.pmc);
+			Map<String, Long> pmidsAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
+			Set<String> pmidsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.PUBMED.name());
+			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
+			Set<String> doisAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.DOI.name());
+			Map<String, Long> pmcAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.pmc.name());
+			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.pmc.name());
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
 			documentsToInsert = new ArrayList<IPublication>();
 			for(IPublication pub:documents)
 			{
 				// Get ID's from publication
-				String pubPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefault.pubmed);
-				String pubDOI = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefault.doi);
-				String pubPMC = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefault.pmc);
+				String pubPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.PUBMED.name());
+				String pubDOI = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.DOI.name());
+				String pubPMC = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.pmc.name());
 				// Test if publication already in Query
 				if(pmidsAlreadyExistOnQuery.contains(pubPMID) ||
 						pubDOI!=null && !pubDOI.isEmpty() && doisAlreadyExistOnQuery.contains(pubDOI) ||

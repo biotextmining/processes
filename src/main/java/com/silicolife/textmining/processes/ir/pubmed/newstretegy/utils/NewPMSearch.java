@@ -19,7 +19,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -36,7 +35,7 @@ import org.xml.sax.SAXException;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.lables.PublicationLabelImpl;
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.PubmedException;
@@ -188,7 +187,7 @@ public class NewPMSearch {
 			node = elements.getElementsByTagName("PMID");
 			String pubmedID = node.item(0).getTextContent();
 			List<IPublicationExternalSourceLink> externalIDsSource = new ArrayList<IPublicationExternalSourceLink>();
-			externalIDsSource.add(new PublicationExternalSourceLinkImpl(pubmedID, PublicationSourcesDefault.pubmed));
+			externalIDsSource.add(new PublicationExternalSourceLinkImpl(pubmedID, PublicationSourcesDefaultEnum.PUBMED.name()));
 			
 			// External IDs 
 

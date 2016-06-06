@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
@@ -35,7 +35,7 @@ import com.silicolife.textmining.processes.ir.pubmed.utils.PMSearch;
 
 public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 
-	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefault.pubmed);
+	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.PUBMED.name());
 	private boolean cancel ;
 	private boolean onlyFreeFullText;
 	private ISimpleTimeLeft progress;
@@ -73,7 +73,7 @@ public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 		Set<String> pmidFreeFullTExt = getAllFreeFullTextPMID(publications);
 		for(IPublication pub:publications)
 		{
-			String pmid = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefault.pubmed);
+			String pmid = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.PUBMED.name());
 			String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
 			if(saveDocDirectoty==null)
 			{
@@ -126,7 +126,7 @@ public class PubMedCrawl extends IRProcessImpl implements IIRCrawl{
 		Set<String> toSearch = new HashSet<>();
 		for(IPublication pub:publications)
 		{
-			String pmid = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefault.pubmed);
+			String pmid = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.PUBMED.name());
 			if(pmid!=null)
 			{
 				toSearch.add(pmid);

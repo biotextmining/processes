@@ -17,7 +17,7 @@ import org.apache.http.conn.params.ConnRoutePNames;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
@@ -42,7 +42,7 @@ import com.silicolife.textmining.processes.ir.pubmed.utils.OAPMCReader;
 
 public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 	
-	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefault.pmc);
+	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.pmc.name());
 	private static HttpClient client;
 	private static String url = "http://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi";
 //	private static String url = "http://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?id=";
@@ -95,7 +95,7 @@ public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
 		for(IPublication pub:publications)
 		{
-			String pmc = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefault.pmc);
+			String pmc = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.pmc.name());
 			String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
 			if(saveDocDirectoty==null)
 			{
