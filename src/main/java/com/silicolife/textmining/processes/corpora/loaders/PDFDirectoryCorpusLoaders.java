@@ -11,7 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.interfaces.core.corpora.loaders.ICorpusPDFDirectory;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -53,7 +53,7 @@ public class PDFDirectoryCorpusLoaders implements ICorpusPDFDirectory{
 							Boolean.valueOf(properties.getProperty(CorpusLoadersUtils.useNameAsOtherID)))
 					{
 						String filenameWithouExtention = FilenameUtils.removeExtension(pdfFile.getName());
-						IPublicationExternalSourceLink arg0 = new PublicationExternalSourceLinkImpl(filenameWithouExtention, PublicationSourcesDefault.pubmed);
+						IPublicationExternalSourceLink arg0 = new PublicationExternalSourceLinkImpl(filenameWithouExtention, PublicationSourcesDefaultEnum.PUBMED.name());
 						publicationExternalIDSource.add(arg0);
 					}
 					if(properties!=null &&
@@ -69,7 +69,7 @@ public class PDFDirectoryCorpusLoaders implements ICorpusPDFDirectory{
 						{
 							pmid = map.get(pdfFile.getAbsolutePath().replace("\\", "/"));
 						}
-						IPublicationExternalSourceLink arg0 = new PublicationExternalSourceLinkImpl(pmid, PublicationSourcesDefault.pubmed);
+						IPublicationExternalSourceLink arg0 = new PublicationExternalSourceLinkImpl(pmid, PublicationSourcesDefaultEnum.PUBMED.name());
 						publicationExternalIDSource.add(arg0);
 					}
 					document.setSourceURL(pdfFile.getAbsolutePath());

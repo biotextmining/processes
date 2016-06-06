@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationEditableImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -50,14 +50,14 @@ public class PublictionMetaInfoFinder {
 		if(useDatabseInformation && !stop)
 		{
 			try {
-				Map<String, Long> pmidDocID = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.pubmed);
-				Map<String, Long> doiDocID = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefault.doi);
+				Map<String, Long> pmidDocID = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
+				Map<String, Long> doiDocID = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
 
 				// Searching in database for already exist PMIDs
-				List<IPublicationEditable> listDocumentPMID = searchInformationOnDatabase(documentSet,PublicationSourcesDefault.pubmed,pmidDocID,max);
+				List<IPublicationEditable> listDocumentPMID = searchInformationOnDatabase(documentSet,PublicationSourcesDefaultEnum.PUBMED.name(),pmidDocID,max);
 				listDocuments.addAll(listDocumentPMID);
 				// Searching in database for already exist DOI
-				List<IPublicationEditable> listDocumentDOI= searchInformationOnDatabase(documentSet,PublicationSourcesDefault.doi,doiDocID,max);
+				List<IPublicationEditable> listDocumentDOI= searchInformationOnDatabase(documentSet,PublicationSourcesDefaultEnum.DOI.name(),doiDocID,max);
 				listDocuments.addAll(listDocumentDOI);
 			} catch (ANoteException e) {
 			} 

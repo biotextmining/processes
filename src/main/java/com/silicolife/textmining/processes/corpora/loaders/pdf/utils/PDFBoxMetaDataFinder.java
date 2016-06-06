@@ -13,7 +13,7 @@ import org.apache.pdfbox.util.PDFTextStripper;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationEditable;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
@@ -36,7 +36,7 @@ public class PDFBoxMetaDataFinder {
 	public static void getPublicationMetaInformation(IPublicationEditable pubEdit) throws InternetConnectionProblemException, IOException
 	{
 		updatePublicationUsingHeuristics(pubEdit);
-		String doi = PublicationImpl.getPublicationExternalIDForSource(pubEdit, PublicationSourcesDefault.doi);
+		String doi = PublicationImpl.getPublicationExternalIDForSource(pubEdit, PublicationSourcesDefaultEnum.DOI.name());
 		if(doi!=null && !doi.isEmpty())
 		{
 			List<IPublication> list = NewPMSearch.getPublicationByQuery(doi+"[doi] ");
@@ -105,7 +105,7 @@ public class PDFBoxMetaDataFinder {
 		}
 		if(!doi.isEmpty())
 		{
-			IPublicationExternalSourceLink source = new PublicationExternalSourceLinkImpl(doi, PublicationSourcesDefault.doi);
+			IPublicationExternalSourceLink source = new PublicationExternalSourceLinkImpl(doi, PublicationSourcesDefaultEnum.DOI.name());
 			pub.getPublicationExternalIDSource().add(source);
 		}
 		doc.close();

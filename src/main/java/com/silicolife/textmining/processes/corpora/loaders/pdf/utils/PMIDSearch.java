@@ -3,7 +3,7 @@ package com.silicolife.textmining.processes.corpora.loaders.pdf.utils;
 import java.util.List;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefault;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationEditable;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
@@ -12,7 +12,7 @@ import com.silicolife.textmining.processes.ir.pubmed.newstretegy.utils.NewPMSear
 public class PMIDSearch {
 
 	public static void getPublicationByPMID(IPublicationEditable pub) throws InternetConnectionProblemException {
-		String PMID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefault.pubmed);
+		String PMID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.PUBMED.name());
 		List<IPublication> list = NewPMSearch.getPublicationByQuery(PMID+"[uid]");
 		if(list!=null && !list.isEmpty())
 			updatePublicationInformation(pub,list);
