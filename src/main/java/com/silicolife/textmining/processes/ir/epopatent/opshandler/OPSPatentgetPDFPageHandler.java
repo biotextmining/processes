@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
-import com.silicolife.http.ResponseHandler;
-import com.silicolife.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.ResponseHandler;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
 public class OPSPatentgetPDFPageHandler implements ResponseHandler<File> {
 

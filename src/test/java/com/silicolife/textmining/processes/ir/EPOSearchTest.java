@@ -2,16 +2,16 @@ package com.silicolife.textmining.processes.ir;
 
 import org.junit.Test;
 
-import com.silicolife.http.exceptions.ClientErrorException;
-import com.silicolife.http.exceptions.ConnectionException;
-import com.silicolife.http.exceptions.RedirectionException;
-import com.silicolife.http.exceptions.ResponseHandlingException;
-import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
+import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
+import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
+import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class EPOSearchTest {
 

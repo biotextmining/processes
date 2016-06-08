@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import com.silicolife.http.ResponseHandler;
-import com.silicolife.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.ResponseHandler;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
 public class AutenticationHandler implements ResponseHandler<String>{
 

@@ -12,9 +12,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.silicolife.http.ResponseHandler;
-import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.textmining.processes.ir.springer.SpringerSearchUtils;
+import com.silicolife.textmining.utils.http.ResponseHandler;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
 public class SpringerSearchResultHandler implements ResponseHandler<Integer>{
 

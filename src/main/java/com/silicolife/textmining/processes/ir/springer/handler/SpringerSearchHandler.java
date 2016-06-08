@@ -19,8 +19,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.silicolife.http.ResponseHandler;
-import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
@@ -29,6 +27,8 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
+import com.silicolife.textmining.utils.http.ResponseHandler;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
 public class SpringerSearchHandler  implements ResponseHandler<List<IPublication>>{
 

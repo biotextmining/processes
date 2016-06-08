@@ -7,11 +7,6 @@ import java.util.List;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 
-import com.silicolife.http.exceptions.ClientErrorException;
-import com.silicolife.http.exceptions.ConnectionException;
-import com.silicolife.http.exceptions.RedirectionException;
-import com.silicolife.http.exceptions.ResponseHandlingException;
-import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
@@ -35,6 +30,11 @@ import com.silicolife.textmining.core.interfaces.process.IR.IIRCrawl;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
 import com.silicolife.textmining.core.interfaces.process.utils.ISimpleTimeLeft;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
+import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
+import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
+import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	

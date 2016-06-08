@@ -24,12 +24,6 @@ import org.apache.pdfbox.util.PDFMergerUtility;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.silicolife.http.HTTPClient;
-import com.silicolife.http.exceptions.ClientErrorException;
-import com.silicolife.http.exceptions.ConnectionException;
-import com.silicolife.http.exceptions.RedirectionException;
-import com.silicolife.http.exceptions.ResponseHandlingException;
-import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
@@ -48,6 +42,12 @@ import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentUpda
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSSearchHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSSearchResultHandler;
+import com.silicolife.textmining.utils.http.HTTPClient;
+import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
+import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
+import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSUtils {
 
@@ -86,6 +86,7 @@ public class OPSUtils {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		String urlPatentDescritpion = publicationDetails + patentID + "/biblio";
+		// Get Biblio Info
 		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);

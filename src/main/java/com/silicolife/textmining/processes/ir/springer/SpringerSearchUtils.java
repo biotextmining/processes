@@ -15,16 +15,16 @@ import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.silicolife.http.HTTPClient;
-import com.silicolife.http.exceptions.ClientErrorException;
-import com.silicolife.http.exceptions.ConnectionException;
-import com.silicolife.http.exceptions.RedirectionException;
-import com.silicolife.http.exceptions.ResponseHandlingException;
-import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.processes.ir.springer.configuration.SpringerConfiguration;
 import com.silicolife.textmining.processes.ir.springer.handler.SpringerSearchHandler;
 import com.silicolife.textmining.processes.ir.springer.handler.SpringerSearchResultHandler;
+import com.silicolife.textmining.utils.http.HTTPClient;
+import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
+import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
+import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class SpringerSearchUtils {
 	

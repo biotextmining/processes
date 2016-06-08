@@ -14,8 +14,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.silicolife.http.ResponseHandler;
-import com.silicolife.http.exceptions.ResponseHandlingException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
@@ -26,6 +24,8 @@ import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicati
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
+import com.silicolife.textmining.utils.http.ResponseHandler;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
 public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 

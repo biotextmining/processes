@@ -11,11 +11,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.silicolife.http.exceptions.ClientErrorException;
-import com.silicolife.http.exceptions.ConnectionException;
-import com.silicolife.http.exceptions.RedirectionException;
-import com.silicolife.http.exceptions.ResponseHandlingException;
-import com.silicolife.http.exceptions.ServerErrorException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
@@ -47,6 +42,11 @@ import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetCo
 import com.silicolife.textmining.processes.ir.epopatent.configuration.IIREPOSearchConfiguration;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
+import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
+import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
+import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
+import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
+import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 /**
  * Properties
