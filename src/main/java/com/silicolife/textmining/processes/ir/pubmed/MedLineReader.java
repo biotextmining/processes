@@ -81,17 +81,36 @@ public class MedLineReader {
 				processMeshTerms(elements, labels, "NameOfSubstance");
 
 				String status = processSimpleElementTagName(elements, "PublicationStatus");
+				if(status.length()>25){
+					System.out.println("Status more that 25 characteres "+pubmedID);
+					System.out.println("Status : " + status);
+					status = status.substring(0,24);
+				}
 				String journal = processSimpleElementTagName(elements,"Title");
 				String pages = processSimpleElementTagName(elements, "MedlinePgn");
+				if(pages.length()>128){
+					System.out.println("Pages more that 128 characteres "+pubmedID);
+					System.out.println("Pages : " + pages);
+					pages = pages.substring(0,127);
+				}
 				String volume = processSimpleElementTagName(elements, "Volume");
-				if(volume.length()>128)
-				{
+				if(volume.length()>128){
 					System.out.println("Volume more that 128 characteres "+pubmedID);
 					System.out.println("Volume : "+volume);
-					volume = new String();
+					volume = volume.substring(0, 127);
 				}
 				String issues = processSimpleElementTagName(elements, "Issue");
+				if(issues.length()>128){
+					System.out.println("Issue more that 128 characteres "+pubmedID);
+					System.out.println("Issue : "+issues);
+					issues = issues.substring(0, 127);
+				}
 				String date = processPublicationDate(elements);
+				if(date.length()>25){
+					System.out.println("Date more that 25 characteres "+pubmedID);
+					System.out.println("Date : "+date);
+					date = date.substring(0, 24);
+				}
 
 				String yearDate = new String();
 				if(date.length()>3)
