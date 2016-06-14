@@ -67,6 +67,7 @@ public class RECooccurrence implements IREProcess{
 		IIEProcess reProcess = new IEProcessImpl(configuration.getCorpus(), relationCooccurrence+" "+Utils.SimpleDataFormat.format(new Date()),
 				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationCooccurrenceProcessType, gerateProperties(reCooccurrence));
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
+		InitConfiguration.getDataAccess().registerCorpusProcess(configuration.getCorpus(), reProcess);
 		IRECooccurrenceSentenceModel model = reCooccurrence.getCooccurrenceModelEnum().getRelationCooccurrenceModel();
 		REProcessReportImpl report = new REProcessReportImpl(relationCooccurrence,configuration.getEntityBasedProcess(),reProcess,false);
 		ICorpus corpus = configuration.getCorpus();

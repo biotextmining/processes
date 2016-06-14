@@ -80,6 +80,8 @@ public class DuplicateNERSchema {
 		IIEProcess newNERProcess = new IEProcessImpl(nerSchematocopy.getCorpus(), nerSchematocopy.getName() + " (Duplicated)", nerSchematocopy.getNotes(), nerSchematocopy.getType(), nerSchematocopy.getProcessOrigin(), properties);
 		// Saves it in the DB
 		InitConfiguration.getDataAccess().createIEProcess(newNERProcess);
+		// Associates the NER process to Corpus in DB
+		InitConfiguration.getDataAccess().registerCorpusProcess(nerSchematocopy.getCorpus(), newNERProcess);
 		// Converts to NERSchema
 		INERSchema nerSchema = new NERSchemaImpl(newNERProcess);
 		return nerSchema;

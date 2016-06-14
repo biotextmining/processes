@@ -23,7 +23,6 @@ import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.IAnnotation;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
-import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.DaemonException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERMergeProcess;
@@ -98,7 +97,7 @@ public class MergeNERSchemas {
 				}
 				i++;
 			}
-			corpus.registerProcess(newProcess);
+			InitConfiguration.getDataAccess().registerCorpusProcess(corpus, newProcess);
 			long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 			report.setTime(endTime-startTime);
 			return report;
