@@ -13,6 +13,7 @@ import java.util.Set;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
+import com.silicolife.textmining.core.datastructures.documents.CorpusPublicationPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
@@ -35,8 +36,11 @@ import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.core.interfaces.core.document.ICorpusPublicationPaginator;
+import com.silicolife.textmining.core.interfaces.core.document.IDocumentSet;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
+import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
@@ -89,13 +93,44 @@ public class LinnaeusTagger  implements INERProcess{
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
 		Matcher matcher = getMatcher(linnauesConfiguration,elements);
 		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", processToRun);
-		DocumentIterator documents = new PublicationIt(configuration.getCorpus(),processToRun);
+		
+		ICorpusPublicationPaginator publicationsPaginator = getPublicationsPaginator(configuration.getCorpus());
+		int size = (int) (long) publicationsPaginator.getPublicationsCount();
+		int counter = 0; 
+		while(publicationsPaginator.hasNextDocumentSetPage()){
+			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
+			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, processToRun);
+			
+			counter = executeLinneausForDocumentSet(linnauesConfiguration, processToRun, startime, elementsToNER, rules,
+					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
+					mapPossibleResourceIDsToTermString, matcher, report, documents, size, counter);
+		}
+
+		if(stop)
+		{
+			report.setcancel();
+		}
+		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(endTime-startime);
+		return report;
+	}
+
+	protected ICorpusPublicationPaginator getPublicationsPaginator(ICorpus corpus) throws ANoteException {
+		return new CorpusPublicationPaginatorImpl(corpus);
+	}
+
+	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,
+			long startime, ElementToNer elementsToNER, HandRules rules, Map<Long, Long> resourceMapClass,
+			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
+			Map<Long, String> mapPossibleResourceIDsToTermString, Matcher matcher, INERProcessReport report,
+			DocumentIterator documents, Integer publicationsSize, Integer counter) throws ANoteException {
+		
 		ConcurrentMatcher tm = new ConcurrentMatcher(matcher,documents);
 		IteratorBasedMaster<TaggedDocument> master = new IteratorBasedMaster<TaggedDocument>(tm,linnauesConfiguration.getNumberOfThreads());
 		Thread threadmaster = new Thread(master);
 		threadmaster.start();
 		Set<String> stopwords = loadStopWords(linnauesConfiguration);
-		int counter = 0; 
+		
 		while (master.hasNext() && !stop){
 			TaggedDocument td = master.next();
 			report.incrementDocument();
@@ -112,20 +147,14 @@ public class LinnaeusTagger  implements INERProcess{
 						positions);
 			}
 			counter++;
-			memoryAndProgress(counter,linnauesConfiguration.getCorpus().getArticlesCorpus().size(),startime);		
+			memoryAndProgress(counter,publicationsSize,startime);		
 		}
 		try {
 			threadmaster.join();
 		} catch (InterruptedException e) {
 			throw new ANoteException(e);
 		}
-		if(stop)
-		{
-			report.setcancel();
-		}
-		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
-		report.setTime(endTime-startime);
-		return report;
+		return counter;
 	}
 
 	private Set<String> loadStopWords(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
@@ -286,6 +315,10 @@ public class LinnaeusTagger  implements INERProcess{
 	protected void createIEProcessONDataAccess(IIEProcess processToRun) throws ANoteException {
 		InitConfiguration.getDataAccess().createIEProcess(processToRun);
 	}
+	
+	protected void associateIEProcessToCorpusONDataAccess(ICorpus corpus, IIEProcess processToRun)throws ANoteException {
+		InitConfiguration.getDataAccess().registerCorpusProcess(corpus, processToRun);
+	}
 
 	private static Properties gereateProperties(INERLinnaeusConfiguration configurations) {
 		Properties properties = transformResourcesToOrderMapInProperties(configurations.getResourceToNER());
@@ -323,6 +356,7 @@ public class LinnaeusTagger  implements INERProcess{
 		Properties properties = gereateProperties(linnauesConfiguration);
 		IIEProcess processToRun = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), linnausOrigin, properties);
 		createIEProcessONDataAccess(processToRun);
+		associateIEProcessToCorpusONDataAccess(configuration.getCorpus(), processToRun);
 		return processToRun;
 	}
 
