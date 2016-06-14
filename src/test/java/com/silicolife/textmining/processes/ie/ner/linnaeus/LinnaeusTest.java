@@ -41,40 +41,41 @@ import com.silicolife.textmining.processes.resources.dictionary.loaders.byocyc.B
 
 public class LinnaeusTest {
 
-	@Test
+//	@Test
 	public void test() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, InvalidConfigurationException {
-		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
+		DatabaseConnectionInit.init("localhost","3306","testdaemon","root","admin");
 		ICorpus corpus = CreateCorpusFromPublicationManagerTest.createCorpus().getCorpus();
 		IDictionary dictionary = createDictionaryAndUpdateditWithByocycFiles();
 		INERProcessReport report = executeLinnaeus(corpus, dictionary);
 		assertTrue(report.isFinishing());
 	}
 	
+	@Test
 	public void test2() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, InvalidConfigurationException {
-		DatabaseConnectionInit.init("localhost","3306","metabolites_anote","root","admin");
+		DatabaseConnectionInit.init("localhost","3306","testdaemon","root","admin");
 //		long corpusID = 4050288017084732744L;
-		long corpusID = 8067254056691520104L;
-		long keggResourceID = 7309043514906886773L;
-		long metacycResourceID = 8943458235895149470L;
+		long corpusID = 1379968013776571154L;
+		long keggResourceID = 97025469966245317L;
+//		long metacycResourceID = 8943458235895149470L;
 //		long chebiResourceID = 4976336839593779118L;
 //		long bioDBID = 6866333013075336357L;
-		long lexicalStopwordID = 2537673202633729523L;
+//		long lexicalStopwordID = 2537673202633729523L;
 		List<IDictionary> dictionaries = new ArrayList<>();
 		ICorpus corpus = InitConfiguration.getDataAccess().getCorpusByID(corpusID);
 		IResource<IResourceElement> keggResource = InitConfiguration.getDataAccess().getResourceByID(keggResourceID);
 		IDictionary keggDictionary = new DictionaryImpl(keggResource);
 		dictionaries.add(keggDictionary);
-		IResource<IResourceElement> metacycResource = InitConfiguration.getDataAccess().getResourceByID(metacycResourceID);
-		IDictionary metacycDictionary = new DictionaryImpl(metacycResource);
-		dictionaries.add(metacycDictionary);
+//		IResource<IResourceElement> metacycResource = InitConfiguration.getDataAccess().getResourceByID(metacycResourceID);
+//		IDictionary metacycDictionary = new DictionaryImpl(metacycResource);
+//		dictionaries.add(metacycDictionary);
 //		IResource<IResourceElement> chebiResource = InitConfiguration.getDataAccess().getResourceByID(chebiResourceID);
 //		IDictionary chebiDictionary = new DictionaryImpl(chebiResource);
 //		dictionaries.add(chebiDictionary);
 //		IResource<IResourceElement> biodbResource = InitConfiguration.getDataAccess().getResourceByID(bioDBID);
 //		IDictionary biodbDictionary = new DictionaryImpl(biodbResource);
 //		dictionaries.add(biodbDictionary);
-		IResource<IResourceElement> stopWordsResource = InitConfiguration.getDataAccess().getResourceByID(lexicalStopwordID);
-		ILexicalWords stopwords = new LexicalWordsImpl(stopWordsResource);
+//		IResource<IResourceElement> stopWordsResource = InitConfiguration.getDataAccess().getResourceByID(lexicalStopwordID);
+		ILexicalWords stopwords = null;//new LexicalWordsImpl(stopWordsResource);
 		INERProcessReport report = executeLinnaeusWithLexicalStopWords(corpus, dictionaries, stopwords);
 		assertTrue(report.isFinishing());
 	}
@@ -83,7 +84,7 @@ public class LinnaeusTest {
 			List<IDictionary> dictionaries, ILexicalWords stopwords) throws ANoteException, InvalidConfigurationException {
 		boolean useabreviation = true;
 		boolean normalized = true;
-		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.ONLYINSMALLWORDS;
+		NERCaseSensativeEnum caseSensitive = NERCaseSensativeEnum.INALLWORDS;
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		Disambiguation disambiguation = Disambiguation.OFF;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
@@ -98,7 +99,6 @@ public class LinnaeusTest {
 		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);
-		corpus.registerProcess(report.getNERProcess());
 		return report;
 	}
 
@@ -138,7 +138,6 @@ public class LinnaeusTest {
 		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);
-		corpus.registerProcess(report.getNERProcess());
 		return report;
 	}
 

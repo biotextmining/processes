@@ -106,6 +106,8 @@ public class DuplicateRESchema  {
 		IEProcessImpl newREProcess = new IEProcessImpl(reSchematocopy.getCorpus(), reSchematocopy.getName() + " (Duplicated)", reSchematocopy.getNotes(), reSchematocopy.getType(), reSchematocopy.getProcessOrigin(), addDuplicatedProperty(reSchematocopy));
 		// Saves it in the DB
 		InitConfiguration.getDataAccess().createIEProcess(newREProcess);
+		// Associates the RE process to Corpus in DB
+		InitConfiguration.getDataAccess().registerCorpusProcess(reSchematocopy.getCorpus(), newREProcess);
 		// Converts to RESchema
 		IRESchema reProcess = new RESchemaImpl(newREProcess);
 		return reProcess;

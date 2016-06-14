@@ -55,6 +55,7 @@ public class NERLexicalResources implements INERProcess{
 		IIEProcess processToRun = getIEProcess(lexicalResurcesConfiguration,model);
 		multi = new ThreadProcessManager(false);
 		InitConfiguration.getDataAccess().createIEProcess(processToRun);
+		InitConfiguration.getDataAccess().registerCorpusProcess(configuration.getCorpus(), processToRun);
 		NERProcessReportImpl report = new NERProcessReportImpl(nerlexicalresourcesTagger,processToRun);
 		stop = false;
 		if(!stop)
