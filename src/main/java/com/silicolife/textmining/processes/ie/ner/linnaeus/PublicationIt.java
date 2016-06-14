@@ -9,6 +9,7 @@ import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparato
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
+import com.silicolife.textmining.core.interfaces.core.document.IDocumentSet;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
@@ -28,6 +29,14 @@ public class PublicationIt implements DocumentIterator{
 	{
 		this.corpus = corpus;
 		documentIt = corpus.getArticlesCorpus().iterator();
+		this.process = process;
+		fetchNext();
+	}
+	
+	public PublicationIt(ICorpus corpus, IDocumentSet documentSet, IIEProcess process) throws ANoteException
+	{
+		this.corpus = corpus;
+		documentIt = documentSet.iterator();
 		this.process = process;
 		fetchNext();
 	}
