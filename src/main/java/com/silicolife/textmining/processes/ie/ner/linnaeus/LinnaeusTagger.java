@@ -84,7 +84,7 @@ public class LinnaeusTagger  implements INERProcess{
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
 		IIEProcess processToRun = buildIEProcess(configuration,linnauesConfiguration);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
+		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
 		HandRules rules = new HandRules(elementsToNER);
 		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
 		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
@@ -117,6 +117,12 @@ public class LinnaeusTagger  implements INERProcess{
 
 	protected ICorpusPublicationPaginator getPublicationsPaginator(ICorpus corpus) throws ANoteException {
 		return new CorpusPublicationPaginatorImpl(corpus);
+	}
+	
+	protected ElementToNer getElementsToNER(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
+		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
+		elementsToNER.processingINfo();
+		return elementsToNER;
 	}
 
 	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,
@@ -207,12 +213,15 @@ public class LinnaeusTagger  implements INERProcess{
 		long dicEntityID = Long.valueOf(men.getIds()[0]);
 		Long classID = resourceMapClass.get(dicEntityID);
 		String dictTerm = men.getIds()[1];
-		IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
+		IAnoteClass klass = getIAnoteClass(classID);
 		IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(dicEntityID), text, NormalizationForm.getNormalizationForm(text), new Properties());
 		positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
 	}
 
-
+	protected IAnoteClass getIAnoteClass(Long classID) throws ANoteException {
+		IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
+		return klass;
+	}
 
 	private void addAnnotationWithoutCaseSensitive(Map<Long, Long> resourceMapClass,
 			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
@@ -231,7 +240,7 @@ public class LinnaeusTagger  implements INERProcess{
 		for(Long resourceID : resourceIDs){
 			Long classID = resourceMapClass.get(resourceID);
 			String dictTerm = mapPossibleResourceIDsToTermString.get(resourceID);
-			IAnoteClass klass = ClassPropertiesManagement.getClassGivenClassID(classID);
+			IAnoteClass klass = getIAnoteClass(classID);
 			IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(resourceID), text, NormalizationForm.getNormalizationForm(text), new Properties());
 			positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
 		}
@@ -486,8 +495,8 @@ public class LinnaeusTagger  implements INERProcess{
 		Properties prop = new Properties();
 		for(int i=0;i<resources.getList().size();i++)
 		{
-			Set<Long> selected = resources.getList().get(i).getZ();
-			long id = resources.getList().get(i).getX().getId();
+			Set<Long> selected = resources.getList().get(i).getSelectedClassesID();
+			long id = resources.getList().get(i).getResource().getId();
 			{
 				prop.put(String.valueOf(id),ResourceImpl.convertClassesToResourceProperties(selected));
 			}

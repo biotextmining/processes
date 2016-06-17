@@ -3,19 +3,16 @@ package com.silicolife.textmining.processes.ie.ner.linnaeus.configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
+import com.silicolife.textmining.core.datastructures.process.ner.ResourceSelectedClassesMap;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
-import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
-import com.silicolife.textmining.core.interfaces.resource.IResource;
-import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
@@ -169,12 +166,12 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		if(obj instanceof ResourcesToNerAnote && resourceToNER!=null)
 		{
 			ResourcesToNerAnote resourceToNER = (ResourcesToNerAnote) obj;
-			List<GenericTriple<IResource<IResourceElement>, Set<Long>, Set<Long>>> listResources = resourceToNER.getList();
-			for(GenericTriple<IResource<IResourceElement>, Set<Long>, Set<Long>> res:listResources)
+			List<ResourceSelectedClassesMap> listResources = resourceToNER.getList();
+			for(ResourceSelectedClassesMap res:listResources)
 			{
-				if(!this.resourceToNER.containsResource(res.getX()))
+				if(!this.resourceToNER.containsResource(res.getResource()))
 				{
-					this.resourceToNER.add(res.getX(), res.getY(), res.getZ());
+					this.resourceToNER.add(res.getResource(), res.getAllClassesID(), res.getSelectedClassesID());
 				}
 			}
 		}
