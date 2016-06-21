@@ -69,7 +69,7 @@ public class OPSUtils {
 	}
 
 	public static List<IPublication> getSearch(String tokenaccess, String query, int step) throws ConnectionException, RedirectionException, ClientErrorException,
-			ServerErrorException, ResponseHandlingException {
+	ServerErrorException, ResponseHandlingException {
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
@@ -78,7 +78,7 @@ public class OPSUtils {
 		List<IPublication> pubs = client.get(searchURL + query, headers, new OPSSearchHandler());
 		return pubs;
 	}
-	
+
 	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
@@ -91,9 +91,9 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
-	
+
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
-		ClientErrorException, ServerErrorException, ResponseHandlingException {
+	ClientErrorException, ServerErrorException, ResponseHandlingException {
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
@@ -108,7 +108,7 @@ public class OPSUtils {
 		Integer result = client.get(searchURL + query, headers, new OPSSearchResultHandler());
 		return result;
 	}
-	
+
 	public static void updateAbstractwithDescritionandclaims(String tokenaccess, IPublication pub)
 	{
 		Map<String, String> headers = new HashMap<String, String>();
@@ -164,7 +164,7 @@ public class OPSUtils {
 	}
 
 	public static File getPatentFullTextPDF(String tokenaccess, IPublication pub,String path) throws COSVisitorException, IOException, RedirectionException, ClientErrorException,
-			ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException {
+	ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException {
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
@@ -277,19 +277,16 @@ public class OPSUtils {
 		query = query.replaceAll("`", "%60");
 		return query;
 	}
-	
+
 	private static String tranform(String keywords) {
 		keywords = keywords.trim();
 		String[] keywordsParts = keywords.split("AND|OR");
-		if(keywordsParts.length > 1)
+		for(String part : keywordsParts)
 		{
-			for(String part : keywordsParts)
+			part = part.trim();
+			if(!part.isEmpty())
 			{
-				part = part.trim();
-				if(!part.isEmpty())
-				{
-					keywords = keywords.replace(part, "\""+part+"\"");
-				}
+				keywords = keywords.replace(part, "\""+part+"\"");
 			}
 		}
 		keywords = keywords.replace("AND"," AND ");
