@@ -185,11 +185,10 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		return report;
 	}
 
-	private void updateDocuments(IIRSearchProcessReport report,IQuery queryInfo) throws ANoteException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InternetConnectionProblemException, DaemonException {
-		this.query = queryInfo;
-		if(queryInfo.getProperties().stringPropertyNames().contains(PatentSearchDefaultSettings.ACCESS_TOKEN))
+	private void updateDocuments(IIRSearchProcessReport report,IQuery query) throws ANoteException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InternetConnectionProblemException, DaemonException {
+		if(query.getProperties().stringPropertyNames().contains(PatentSearchDefaultSettings.ACCESS_TOKEN))
 		{
-			this.autentication = Utils.get64Base(queryInfo.getProperties().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN));
+			this.autentication = Utils.get64Base(query.getProperties().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN));
 		}
 		else
 		{
@@ -199,9 +198,9 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		{
 			tokenacess();
 		}
-		nPubs = queryInfo.getPublicationsSize();
-		abstractAvailable = queryInfo.getAvailableAbstracts();
-		int results = getExpectedQueryResults(queryInfo.getCompleteQuery());
+		nPubs = query.getPublicationsSize();
+		abstractAvailable = query.getAvailableAbstracts();
+		int results = getExpectedQueryResults(query.getCompleteQuery());
 		if(results > OPSConfiguration.MAX_RESULTS)
 			results = OPSConfiguration.MAX_RESULTS;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
@@ -210,8 +209,8 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			// Get EPO document in Datbase
 			Map<String, Long> patentIDAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.patent.name());
 			// Get EPO document in Query
-			Set<String> patentsIds = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(queryInfo,PublicationSourcesDefaultEnum.patent.name());
-			List<IPublication> pubs = OPSUtils.getSearch(tokenaccess,queryInfo.getCompleteQuery(),step);
+			Set<String> patentsIds = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query,PublicationSourcesDefaultEnum.patent.name());
+			List<IPublication> pubs = OPSUtils.getSearch(tokenaccess,query.getCompleteQuery(),step);
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
 			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
@@ -234,7 +233,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 						newQueryDocuments.add(pub);
 						if(!pub.getAbstractSection().isEmpty())
 							abstractAvailable ++;
-						queryInfo.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
+						query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
 						report.incrementDocumentRetrieval(1);
 						// Add publication to blockIds
 						alreadyAdded.add(oldID);
@@ -245,7 +244,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 					documentsToInsert.add(pub);
 					if(!pub.getAbstractSection().isEmpty())
 						abstractAvailable ++;
-					queryInfo.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
+					query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
 					patentIDAlreadyExistOnDB.put(patentID, pub.getId());
 					report.incrementDocumentRetrieval(1);
 					patentsIds.add(patentID);
@@ -261,9 +260,9 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			publicationToAdd.addAll(newQueryDocuments);
 			publicationToAdd.addAll(documentsToInsert);
 			InitConfiguration.getDataAccess().addQueryPublications(query, publicationToAdd );
-			queryInfo.setPublicationsSize(nPubs);
-			queryInfo.setAvailableAbstracts(abstractAvailable);
-			queryInfo.setDate(new Date());
+			query.setPublicationsSize(nPubs);
+			query.setAvailableAbstracts(abstractAvailable);
+			query.setDate(new Date());
 			InitConfiguration.getDataAccess().updateQuery(query);
 			try {
 				if(autentication==null && !cancel)
@@ -278,12 +277,12 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 		if(!cancel)
 		{
-			InitConfiguration.getDataAccess().updateQuery(this.query);
+			InitConfiguration.getDataAccess().updateQuery(query);
 		}
 		else
 		{
 			report.setcancel();
-			InitConfiguration.getDataAccess().inactiveQuery(this.query);
+			InitConfiguration.getDataAccess().inactiveQuery(query);
 		}
 
 	}
