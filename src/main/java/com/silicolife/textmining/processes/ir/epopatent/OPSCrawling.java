@@ -134,8 +134,11 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 
 		}
 		Set<IPublication> listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
+		System.out.println(listPublicationsNotDownloaded.size());
+		
 		if (listPublicationsNotDownloaded.size()>0){
-			for (IPublication pub:listPublicationsNotDownloaded){
+			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
+				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
 				String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
 				String newPatentID=deleteSectionNumbers(patentID);
 				File fileDownloaded = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
@@ -154,7 +157,8 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		}
 		listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
 		if (listPublicationsNotDownloaded.size()>0){
-			for (IPublication pub:listPublicationsNotDownloaded){
+			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
+				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
 				report=tryAlternativePDFDownload(pub, report, tokenaccess, saveDocDirectory, false, false);//without delete section numbers neither transform date
 				if(!report.getListPublicationsNotDownloaded().contains(pub)){
 					memoryAndProgress(start,step+1,total);
@@ -164,7 +168,8 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		}
 		listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
 		if (listPublicationsNotDownloaded.size()>0){
-			for (IPublication pub:listPublicationsNotDownloaded){
+			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
+				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
 				report=tryAlternativePDFDownload(pub, report, tokenaccess, saveDocDirectory, true, false);//with deletion of section numbers only
 				if(!report.getListPublicationsNotDownloaded().contains(pub)){
 					memoryAndProgress(start,step+1,total);
@@ -175,7 +180,8 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 
 		listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
 		if (listPublicationsNotDownloaded.size()>0){
-			for (IPublication pub:listPublicationsNotDownloaded){
+			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
+				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
 				report=tryAlternativePDFDownload(pub, report, tokenaccess, saveDocDirectory, true, true);//with deletion of section numbers and date transformation
 				if(!report.getListPublicationsNotDownloaded().contains(pub)){
 					memoryAndProgress(start,step+1,total);
