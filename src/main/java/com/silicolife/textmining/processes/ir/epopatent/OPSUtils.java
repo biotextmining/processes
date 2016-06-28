@@ -91,6 +91,21 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
+	
+	public static void updatePatentMetaInformationWithClientError(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
+	{
+		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		String urlPatentDescritpion = "http://ops.epo.org/3.1/rest-services/published-data/search/biblio/?q=" + patentID;
+		// Get Biblio Info
+		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
+		// Try to add claims and description to abstract
+		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
+	}
+	
+	
 
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
@@ -205,6 +220,50 @@ public class OPSUtils {
 
 		return new File(docPDFFinal);
 	}
+	
+	
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
+			Map<String, String> headers = new HashMap<String, String>();
+			if (tokenaccess != null) {
+				headers.put("Authorization", "Bearer " + tokenaccess);
+			}
+			String urlPatentImages = publicationDetails + patentID + "/images";
+			GenericPairImpl<Integer, String> pagesLink = client.get(urlPatentImages, headers, new OPSPatentImageHandler());
+			if(pagesLink==null)
+				return null;
+			Path docPath = Paths.get(path +"/" + "/tmp_" + patentID);
+			if (!Files.exists(docPath))
+				Files.createDirectories(docPath);
+
+			// -- API to merge PDF
+			PDFMergerUtility merger = new PDFMergerUtility();
+
+			Integer numberPages = pagesLink.getX();
+			for (int x = 1; x <= numberPages; x++) {
+				String urlpages = generalURL + pagesLink.getY() + ".pdf?" + "Range=" + x;
+				File pdfOnePage = client.get(urlpages, headers, new OPSPatentgetPDFPageHandler(docPath.toString()));
+				// -- Add source to merge
+				merger.addSource(pdfOnePage);
+				if(x%5 == 0 && tokenaccess==null)
+				{
+					if(tokenaccess==null)
+					{
+						System.out.println("sleeping...62 seconds");
+						Thread.sleep(62000);
+					}
+				}
+			}
+
+			String docPDFFinal = path +"/" + pubID + ".pdf";
+			merger.setDestinationFileName(docPDFFinal);
+			merger.mergeDocuments();
+
+			recursiveDelete(docPath.toFile());
+
+			return new File(docPDFFinal);
+	}
+	
+	
 
 	private static void recursiveDelete(File file) {
 		if (file.isDirectory()) {
