@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 
@@ -99,7 +98,6 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		{
 			String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
 
-
 			if(cancel)
 			{
 				report.setcancel();
@@ -124,198 +122,228 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 				}
 				else
 				{
-					report.addFileNotDownloaded(pub);
+					int sectionNumbers = verifySectionNumbers(patentID);
+					if (sectionNumbers!=0){
+						String newPatentID=deleteSectionNumbers(patentID);
+						File newfile = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+						if(newfile != null){
+							report.addFileDownloaded(pub);
+							report.getListPublicationsNotDownloaded().remove(pub);
+							pub.setRelativePath(newfile.getName());
+							//					InitConfiguration.getDataAccess().updatePublication(pub);
+						}
+						else{
+							boolean zeroOnTheMiddle = verify0OnTheMiddle(patentID);
+							if (zeroOnTheMiddle){
+								newPatentID=deleteChar0(patentID,true,sectionNumbers);
+								File fileWithoutZero = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+								if(fileWithoutZero != null){
+									report.addFileDownloaded(pub);
+									report.getListPublicationsNotDownloaded().remove(pub);
+									pub.setRelativePath(fileWithoutZero.getName());
+									//					InitConfiguration.getDataAccess().updatePublication(pub);
+								}
+								else{
+									newPatentID=deleteSectionNumbers(newPatentID);
+									File fileWithoutZeroAndSection = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+									if(fileWithoutZeroAndSection != null){
+										report.addFileDownloaded(pub);
+										report.getListPublicationsNotDownloaded().remove(pub);
+										pub.setRelativePath(fileWithoutZeroAndSection.getName());
+										//					InitConfiguration.getDataAccess().updatePublication(pub);
+									}
+									else{
+										boolean yearPresence=verifyYearPresence(newPatentID);
+										if (yearPresence){
+											try {
+												newPatentID=transformYear(newPatentID);
+												File fileWithoutZeroSectionAndYear = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+												if(fileWithoutZeroSectionAndYear != null){
+													report.addFileDownloaded(pub);
+													report.getListPublicationsNotDownloaded().remove(pub);
+													pub.setRelativePath(fileWithoutZeroSectionAndYear.getName());
+													//					InitConfiguration.getDataAccess().updatePublication(pub);
+												}
+												else{
+													String newPatW0 = deleteChar0(patentID, true, sectionNumbers-1);//WO1995006739A1
+													String newPatW0S = deleteSectionNumbers(newPatW0);
+													String newPAtW0SYear = transformYear(newPatW0S);
+													File fileWithoutZeroSectionAndYear2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPAtW0SYear, saveDocDirectory, pub.getId());
+													if(fileWithoutZeroSectionAndYear2 != null){
+														report.addFileDownloaded(pub);
+														report.getListPublicationsNotDownloaded().remove(pub);
+														pub.setRelativePath(fileWithoutZeroSectionAndYear2.getName());
+														//					InitConfiguration.getDataAccess().updatePublication(pub);
+													}
+													else{
+														report.addFileNotDownloaded(pub);
+													}										
+												}
+											} catch (ParseException e) {
+												throw new ANoteException(e);
+											}
+
+										}
+										else{
+											report.addFileNotDownloaded(pub);
+										}
+									}
+								}
+							}
+							else{
+								boolean yearPresence=verifyYearPresence(newPatentID);
+								if (yearPresence){
+									try {
+										String newPat = transformYear(newPatentID);
+										File fileYearandSection = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPat, saveDocDirectory, pub.getId());
+										if(fileYearandSection != null){
+											report.addFileDownloaded(pub);
+											report.getListPublicationsNotDownloaded().remove(pub);
+											pub.setRelativePath(fileYearandSection.getName());
+											//					InitConfiguration.getDataAccess().updatePublication(pub);
+										}
+										else{
+											report.addFileNotDownloaded(pub);
+										}
+
+									}catch (ParseException e) {
+										throw new ANoteException(e);
+									}
+
+
+								}
+								else{
+									report.addFileNotDownloaded(pub);
+								}
+							}
+						}
+					}
+					else{
+						boolean zeroOnTheMiddle = verify0OnTheMiddle(patentID);
+						if (zeroOnTheMiddle){
+							String newPatentID = deleteChar0(patentID,false,sectionNumbers);
+							File fileWithoutZero = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+							if(fileWithoutZero != null){
+								report.addFileDownloaded(pub);
+								report.getListPublicationsNotDownloaded().remove(pub);
+								pub.setRelativePath(fileWithoutZero.getName());
+								//					InitConfiguration.getDataAccess().updatePublication(pub);
+							}
+							else{
+								boolean yearPresence=verifyYearPresence(newPatentID);
+								if (yearPresence){
+									try {
+										newPatentID=transformYear(newPatentID);
+										File fileWithoutZeroAndYear = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+										if(fileWithoutZeroAndYear != null){
+											report.addFileDownloaded(pub);
+											report.getListPublicationsNotDownloaded().remove(pub);
+											pub.setRelativePath(fileWithoutZeroAndYear.getName());
+											//					InitConfiguration.getDataAccess().updatePublication(pub);
+										}
+										else{
+											newPatentID=deleteChar0(patentID, true, sectionNumbers-1);
+											File fileWithoutZero2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
+											if(fileWithoutZero2 != null){
+												report.addFileDownloaded(pub);
+												report.getListPublicationsNotDownloaded().remove(pub);
+												pub.setRelativePath(fileWithoutZero2.getName());
+												//					InitConfiguration.getDataAccess().updatePublication(pub);
+											}
+											else{
+												report.addFileNotDownloaded(pub);
+											}
+										}
+									} catch (ParseException e) {
+										throw new ANoteException(e);
+									}
+								}
+								else{
+									report.addFileNotDownloaded(pub);
+								}
+
+							}
+						}
+						else{
+							report.addFileNotDownloaded(pub);
+						}
+
+
+					}
+
+
+
+
 				}
-			}		
-			if(!report.getListPublicationsNotDownloaded().contains(pub)){
-				memoryAndProgress(start,step+1,total);
-				step++;
 			}
 
-		}
-		Set<IPublication> listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
-		System.out.println(listPublicationsNotDownloaded.size());
-		
-		if (listPublicationsNotDownloaded.size()>0){
-			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
-				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
-				String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
-				String newPatentID=deleteSectionNumbers(patentID);
-				File fileDownloaded = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-				if(fileDownloaded != null)
-				{
-					report.addFileDownloaded(pub);
-					report.getListPublicationsNotDownloaded().remove(pub);
-					pub.setRelativePath(fileDownloaded.getName());
-					//					InitConfiguration.getDataAccess().updatePublication(pub);
-				}
-				if(!report.getListPublicationsNotDownloaded().contains(pub)){
-					memoryAndProgress(start,step+1,total);
-					step++;
-				}
-			}
-		}
-		listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
-		if (listPublicationsNotDownloaded.size()>0){
-			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
-				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
-				report=tryAlternativePDFDownload(pub, report, tokenaccess, saveDocDirectory, false, false);//without delete section numbers neither transform date
-				if(!report.getListPublicationsNotDownloaded().contains(pub)){
-					memoryAndProgress(start,step+1,total);
-					step++;
-				}
-			}
-		}
-		listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
-		if (listPublicationsNotDownloaded.size()>0){
-			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
-				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
-				report=tryAlternativePDFDownload(pub, report, tokenaccess, saveDocDirectory, true, false);//with deletion of section numbers only
-				if(!report.getListPublicationsNotDownloaded().contains(pub)){
-					memoryAndProgress(start,step+1,total);
-					step++;
-				}
-			}
+			memoryAndProgress(start,step+1,total);
+			step++;
 		}
 
-		listPublicationsNotDownloaded = report.getListPublicationsNotDownloaded();
-		if (listPublicationsNotDownloaded.size()>0){
-			for (int publication = 0; publication < listPublicationsNotDownloaded.size(); publication++) {
-				IPublication pub = (IPublication) listPublicationsNotDownloaded.toArray()[publication];
-				report=tryAlternativePDFDownload(pub, report, tokenaccess, saveDocDirectory, true, true);//with deletion of section numbers and date transformation
-				if(!report.getListPublicationsNotDownloaded().contains(pub)){
-					memoryAndProgress(start,step+1,total);
-					step++;
-				}
-			}
-		}
 		if(cancel)
 			report.setcancel();
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-start);
 		System.out.println("Downloaded: " + report.getDocumentsRetrieval() + " of " + total);
-		return report;
-	}
-
-
-	private IIRCrawlingProcessReport tryAlternativePDFDownload(IPublication pub,IIRCrawlingProcessReport report,String tokenaccess, String saveDocDirectory, boolean deleteSectionNumbers, boolean transformData) throws ANoteException{
-		String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
-		String newPatentID;
-		try {
-			newPatentID = rearrangePatentID(patentID,deleteSectionNumbers,transformData);
-			if (!patentID.equals(newPatentID)){
-				File fileDownloaded = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-				if(fileDownloaded != null)
-				{
-					report.addFileDownloaded(pub);
-					report.getListPublicationsNotDownloaded().remove(pub);
-					pub.setRelativePath(fileDownloaded.getName());
-					//					InitConfiguration.getDataAccess().updatePublication(pub);
-				}
-
-			}
-		} catch (ParseException e) {
-			throw new ANoteException(e);
+		for (int pat = 0; pat <report.getListPublicationsNotDownloaded().size(); pat++) {
+			IPublication pub = (IPublication) report.getListPublicationsNotDownloaded().toArray()[pat];
+			String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
+			System.out.println("Id not retrieved: "+ patentID);
 		}
 		return report;
-
 	}
 
 
 
+	public int verifySectionNumbers(String patentID){
+		if(Character.isLetter(patentID.charAt(patentID.length()-2))){
+			return 2;
+		}
+		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+	}
 
 
-	public String rearrangePatentID(String patentID,boolean deleteSectionNumbers, boolean transformData) throws ParseException{
-		String newPatentID = patentID;
-		if(deleteSectionNumbers==false){
-			if (Character.isLetter(patentID.charAt(patentID.length()-2))){
-				if(transformData==false){
-					newPatentID=deleteChar0(newPatentID, true, 2);
-				}
-				else{
-					String newPatentIDChar = deleteChar0(newPatentID, true, 2);
-					if (Character.isLetter(newPatentIDChar.charAt(0))){
-						if (Character.isLetter(newPatentIDChar.charAt(1))){
-							String year=newPatentIDChar.substring(2,6);//year
-							String newYear = transformYear(year);
-							newPatentID=newPatentIDChar.substring(0, 2)+newYear+newPatentIDChar.substring(6, newPatentIDChar.length());
-						}
-						else{
-							String year=newPatentIDChar.substring(1,5);//year
-							String newYear = transformYear(year);
-							newPatentID=newPatentIDChar.substring(0, 1)+newYear+newPatentIDChar.substring(5, newPatentIDChar.length());
+	public boolean verify0OnTheMiddle(String patentID){
 
-						}
-					}
-				}
-			}
-			else if (Character.isLetter(patentID.charAt(patentID.length()-1))){
-				if(transformData==false){
-					newPatentID=deleteChar0(newPatentID, true, 1);
-				}
-				else{
-					String newPatentIDChar = deleteChar0(newPatentID, true, 1);
-					if (Character.isLetter(newPatentIDChar.charAt(0))){
-						if (Character.isLetter(newPatentIDChar.charAt(1))){
-							String year=newPatentIDChar.substring(2,6);//year
-							String newYear = transformYear(year);
-							newPatentID=newPatentIDChar.substring(0, 2)+newYear+newPatentIDChar.substring(6, newPatentIDChar.length());
-						}
-						else{
-							String year=newPatentIDChar.substring(1,5);//year
-							String newYear = transformYear(year);
-							newPatentID=newPatentIDChar.substring(0, 1)+newYear+newPatentIDChar.substring(5, newPatentIDChar.length());
-						}
-					}
-				}
-			}
-			else{
-				if(transformData==false){
-					newPatentID=deleteChar0(newPatentID, false, 0);
-				}
-				else{
-					String newPatentIDChar = deleteChar0(newPatentID, true, 1);
-					if (Character.isLetter(newPatentIDChar.charAt(0))){
-						if (Character.isLetter(newPatentIDChar.charAt(1))){
-							String year=newPatentIDChar.substring(2,6);//year
-							String newYear = transformYear(year);
-							newPatentID=newPatentIDChar.substring(0, 2)+newYear+newPatentIDChar.substring(6, newPatentIDChar.length());
-						}
-						else{
-							String year=newPatentIDChar.substring(1,5);//year
-							String newYear = transformYear(year);
-							newPatentID=newPatentIDChar.substring(0, 1)+newYear+newPatentIDChar.substring(5, newPatentIDChar.length());
-						}
-					}
-				}
+		if (verifySectionNumbers(patentID)==0){
+			if(patentID.charAt(patentID.length()-7)=='0'){//some patents have a "0" on middle with 6 numbers after
+				return true;
 			}
 		}
 		else{
-			if(transformData==false){
-				String newPatentIDDeletion = deleteSectionNumbers(newPatentID);
-				newPatentID=deleteChar0(newPatentIDDeletion, false, 0);
+			int lettersOfSection = verifySectionNumbers(patentID);
+			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean verifyYearPresence(String patentID){
+		if (Character.isLetter(patentID.charAt(0))){
+			if (Character.isLetter(patentID.charAt(1))){
+				String year=patentID.substring(2,6);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					return true;
+				}
 			}
 			else{
-				String newPatentIDDeletion = deleteSectionNumbers(newPatentID);
-				String newPatentIDChar = deleteChar0(newPatentIDDeletion, false, 0);
-				if (Character.isLetter(newPatentIDChar.charAt(0))){
-					if (Character.isLetter(newPatentIDChar.charAt(1))){
-						String year=newPatentIDChar.substring(2,6);//year
-						String newYear = transformYear(year);
-						newPatentID=newPatentIDChar.substring(0, 2)+newYear+newPatentIDChar.substring(6, newPatentIDChar.length());
-					}
-					else{
-						String year=newPatentIDChar.substring(1,5);//year
-						String newYear = transformYear(year);
-						newPatentID=newPatentIDChar.substring(0, 1)+newYear+newPatentIDChar.substring(5, newPatentIDChar.length());
-
-					}
+				String year=patentID.substring(1,5);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					return true;
 				}
 			}
 		}
-		return newPatentID;
+		return false;
 	}
-
 
 	private String deleteChar0(String patentID,boolean haveSectionNumbers,int lettersOfSection){
 		String newPatentID = patentID;
@@ -333,16 +361,33 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	}
 
 
-	private String transformYear(String date) throws ParseException{
-		int year=Integer.parseInt(date);
-		String newDate=date;
-		if (year>=1900 && year<=Calendar.getInstance().get(Calendar.YEAR)){
-			SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
-			SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
-			Date dateParsering = dateParser.parse(date);
-			newDate = dateFormatter.format(dateParsering);
+	private String transformYear(String patentID) throws ParseException{
+		String newPatentID = new String();
+		if (Character.isLetter(patentID.charAt(0))){
+			if (Character.isLetter(patentID.charAt(1))){
+				String year=patentID.substring(2,6);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
+					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
+					Date dateParsering = dateParser.parse(year);
+					String newYear = dateFormatter.format(dateParsering);
+					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+				}
+			}
+			else{
+				String year=patentID.substring(1,5);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
+					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
+					Date dateParsering = dateParser.parse(year);
+					String newYear = dateFormatter.format(dateParsering);
+					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+				}
+			}
 		}
-		return newDate;
+		return newPatentID;
 	}
 
 
