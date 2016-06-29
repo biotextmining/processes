@@ -242,7 +242,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 											//					InitConfiguration.getDataAccess().updatePublication(pub);
 										}
 										else{
-											newPatentID=deleteChar0(patentID, true, sectionNumbers-1);
+											newPatentID=deleteChar0(newPatentID, true, sectionNumbers-1);
 											File fileWithoutZero2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 											if(fileWithoutZero2 != null){
 												report.addFileDownloaded(pub);
