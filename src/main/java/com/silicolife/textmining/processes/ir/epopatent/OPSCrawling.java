@@ -267,13 +267,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 						else{
 							report.addFileNotDownloaded(pub);
 						}
-
-
 					}
-
-
-
-
 				}
 			}
 
@@ -295,7 +289,6 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	}
 
 
-
 	public int verifySectionNumbers(String patentID){
 		if(Character.isLetter(patentID.charAt(patentID.length()-2))){
 			return 2;
@@ -312,13 +305,13 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	public boolean verify0OnTheMiddle(String patentID){
 
 		if (verifySectionNumbers(patentID)==0){
-			if(patentID.charAt(patentID.length()-7)=='0'){//some patents have a "0" on middle with 6 numbers after
+			if(patentID.charAt(patentID.length()-7)=='0'||patentID.charAt(patentID.length()-6)=='0'){//some patents have a "0" on middle with 6 or 5 numbers after
 				return true;
 			}
 		}
 		else{
 			int lettersOfSection = verifySectionNumbers(patentID);
-			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'||patentID.charAt(patentID.length()-6-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
 				return true;
 			}
 		}
