@@ -78,8 +78,7 @@ public class CorpusCreation {
 
 				InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
 				step++;
-				if(step%10==0)
-					memoryAndProgress(step,total);
+				memoryAndProgress(step,total);
 			}
 			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocuments().size());
 			return report;
@@ -121,9 +120,10 @@ public class CorpusCreation {
 	}
 
 	protected void memoryAndProgress(int step, int total) {
-		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+		if(step%10==0)
+		{
+			System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
+		}
 	}
 
 }
