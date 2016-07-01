@@ -118,7 +118,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 				{
 					report.addFileDownloaded(pub);
 					pub.setRelativePath(fileDownloaded.getName());
-					//					InitConfiguration.getDataAccess().updatePublication(pub);
+					InitConfiguration.getDataAccess().updatePublication(pub);
 				}
 				else
 				{
@@ -130,7 +130,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 							report.addFileDownloaded(pub);
 							report.getListPublicationsNotDownloaded().remove(pub);
 							pub.setRelativePath(newfile.getName());
-							//					InitConfiguration.getDataAccess().updatePublication(pub);
+							InitConfiguration.getDataAccess().updatePublication(pub);
 						}
 						else{
 							boolean zeroOnTheMiddle = verify0OnTheMiddle(patentID);
@@ -141,7 +141,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 									report.addFileDownloaded(pub);
 									report.getListPublicationsNotDownloaded().remove(pub);
 									pub.setRelativePath(fileWithoutZero.getName());
-									//					InitConfiguration.getDataAccess().updatePublication(pub);
+									InitConfiguration.getDataAccess().updatePublication(pub);
 								}
 								else{
 									newPatentID=deleteSectionNumbers(newPatentID);
@@ -150,7 +150,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 										report.addFileDownloaded(pub);
 										report.getListPublicationsNotDownloaded().remove(pub);
 										pub.setRelativePath(fileWithoutZeroAndSection.getName());
-										//					InitConfiguration.getDataAccess().updatePublication(pub);
+										InitConfiguration.getDataAccess().updatePublication(pub);
 									}
 									else{
 										boolean yearPresence=verifyYearPresence(newPatentID);
@@ -173,7 +173,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 														report.addFileDownloaded(pub);
 														report.getListPublicationsNotDownloaded().remove(pub);
 														pub.setRelativePath(fileWithoutZeroSectionAndYear2.getName());
-														//					InitConfiguration.getDataAccess().updatePublication(pub);
+														InitConfiguration.getDataAccess().updatePublication(pub);
 													}
 													else{
 														report.addFileNotDownloaded(pub);
@@ -200,7 +200,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 											report.addFileDownloaded(pub);
 											report.getListPublicationsNotDownloaded().remove(pub);
 											pub.setRelativePath(fileYearandSection.getName());
-											//					InitConfiguration.getDataAccess().updatePublication(pub);
+											InitConfiguration.getDataAccess().updatePublication(pub);
 										}
 										else{
 											report.addFileNotDownloaded(pub);
@@ -227,7 +227,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 								report.addFileDownloaded(pub);
 								report.getListPublicationsNotDownloaded().remove(pub);
 								pub.setRelativePath(fileWithoutZero.getName());
-								//					InitConfiguration.getDataAccess().updatePublication(pub);
+								InitConfiguration.getDataAccess().updatePublication(pub);
 							}
 							else{
 								boolean yearPresence=verifyYearPresence(newPatentID);
@@ -239,7 +239,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 											report.addFileDownloaded(pub);
 											report.getListPublicationsNotDownloaded().remove(pub);
 											pub.setRelativePath(fileWithoutZeroAndYear.getName());
-											//					InitConfiguration.getDataAccess().updatePublication(pub);
+											InitConfiguration.getDataAccess().updatePublication(pub);
 										}
 										else{
 											newPatentID=deleteChar0(newPatentID, true, sectionNumbers-1);
@@ -248,7 +248,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 												report.addFileDownloaded(pub);
 												report.getListPublicationsNotDownloaded().remove(pub);
 												pub.setRelativePath(fileWithoutZero2.getName());
-												//					InitConfiguration.getDataAccess().updatePublication(pub);
+												InitConfiguration.getDataAccess().updatePublication(pub);
 											}
 											else{
 												report.addFileNotDownloaded(pub);

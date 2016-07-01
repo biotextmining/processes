@@ -334,7 +334,7 @@ public class OPSUtils {
 		query = query.replaceAll("\\[", "%5B");
 		query = query.replaceAll("\\]", "%5D");
 		query = query.replaceAll("`", "%60");
-		return query;
+		return query.toLowerCase();
 	}
 
 	private static String tranform(String keywords) {
@@ -342,7 +342,7 @@ public class OPSUtils {
 		String[] keywordsParts = keywords.split("AND|OR");
 		for(String part : keywordsParts)
 		{
-			part = part.trim();
+			part = part.trim().toLowerCase();
 			if(!part.isEmpty())
 			{
 				keywords = keywords.replace(part, "\""+part+"\"");
