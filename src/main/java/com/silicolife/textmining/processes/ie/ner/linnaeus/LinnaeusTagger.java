@@ -444,9 +444,15 @@ public class LinnaeusTagger  implements INERProcess{
 	}
 
 	protected void memoryAndProgress(int step, int total,long startime) {
-		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-		Runtime.getRuntime().gc();
-		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");		
+		if(step%50==0)
+		{
+			System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
+			if(step%1000==0)
+			{
+				Runtime.getRuntime().gc();
+				System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+			}
+		}
 	}
 
 	public static TaggedDocument matchDocument(Matcher matcher, Document doc){
