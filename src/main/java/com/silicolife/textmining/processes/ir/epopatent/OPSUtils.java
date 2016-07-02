@@ -9,6 +9,10 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -334,7 +338,7 @@ public class OPSUtils {
 		query = query.replaceAll("\\[", "%5B");
 		query = query.replaceAll("\\]", "%5D");
 		query = query.replaceAll("`", "%60");
-		return query.toLowerCase();
+		return query;
 	}
 
 	private static String tranform(String keywords) {
@@ -342,10 +346,11 @@ public class OPSUtils {
 		String[] keywordsParts = keywords.split("AND|OR");
 		for(String part : keywordsParts)
 		{
-			part = part.trim().toLowerCase();
+			part = part.trim();
+			String partLower = part.toLowerCase();
 			if(!part.isEmpty())
 			{
-				keywords = keywords.replace(part, "\""+part+"\"");
+				keywords = keywords.replace(part, "\""+partLower+"\"");
 			}
 		}
 		keywords = keywords.replace("AND"," AND ");
@@ -355,4 +360,118 @@ public class OPSUtils {
 		return keywords;
 	}
 
+	public static int verifySectionNumbers(String patentID){
+		if(Character.isLetter(patentID.charAt(patentID.length()-2))){
+			return 2;
+		}
+		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+	}
+
+
+	public static boolean verify0OnTheMiddle(String patentID){
+
+		if (verifySectionNumbers(patentID)==0){
+			if(patentID.charAt(patentID.length()-7)=='0'||patentID.charAt(patentID.length()-6)=='0'){//some patents have a "0" on middle with 6 or 5 numbers after
+				return true;
+			}
+		}
+		else{
+			int lettersOfSection = verifySectionNumbers(patentID);
+			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'||patentID.charAt(patentID.length()-6-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean verifyYearPresence(String patentID){
+		if (Character.isLetter(patentID.charAt(0))){
+			if (Character.isLetter(patentID.charAt(1))){
+				String year=patentID.substring(2,6);//year
+				try{
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					return true;
+				}
+				}catch(NumberFormatException e){
+					return false;				
+				}
+			}
+			else{
+				String year=patentID.substring(1,5);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static String deleteChar0(String patentID,boolean haveSectionNumbers,int lettersOfSection){
+		String newPatentID = patentID;
+		if (haveSectionNumbers==false){
+			if(patentID.charAt(patentID.length()-7)=='0'){//some patents have a "0" on middle with 6 numbers after
+				newPatentID=patentID.substring(0,patentID.length()-7).concat(patentID.substring(patentID.length()-6,patentID.length()));
+			}
+		}
+		else{
+			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+				newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
+			}
+		}
+		return newPatentID;
+	}
+
+
+	public static String transformYear(String patentID) throws ParseException{
+		String newPatentID = new String();
+		if (Character.isLetter(patentID.charAt(0))){
+			if (Character.isLetter(patentID.charAt(1))){
+				String year=patentID.substring(2,6);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
+					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
+					Date dateParsering = dateParser.parse(year);
+					String newYear = dateFormatter.format(dateParsering);
+					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+				}
+			}
+			else{
+				String year=patentID.substring(1,5);//year
+				int date=Integer.parseInt(year);
+				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
+					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
+					Date dateParsering = dateParser.parse(year);
+					String newYear = dateFormatter.format(dateParsering);
+					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+				}
+			}
+		}
+		return newPatentID;
+	}
+
+
+	public static String deleteSectionNumbers(String patentID){
+
+		//char[] array = patentID.toCharArray();
+		String newPatentID = patentID;
+		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
+			newPatentID=patentID.substring(0, patentID.length()-1);
+		}
+		else{
+			if(Character.isLetter(patentID.charAt(patentID.length()-2))){
+				newPatentID=patentID.substring(0,patentID.length()-2);
+			}
+		}
+		return newPatentID;
+	}
+	
 }

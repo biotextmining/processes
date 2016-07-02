@@ -3,9 +3,6 @@ package com.silicolife.textmining.processes.ir.epopatent;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -122,59 +119,43 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 				}
 				else
 				{
-					int sectionNumbers = verifySectionNumbers(patentID);
+					int sectionNumbers = OPSUtils.verifySectionNumbers(patentID);
 					if (sectionNumbers!=0){
-						String newPatentID=deleteSectionNumbers(patentID);
+						String newPatentID=OPSUtils.deleteSectionNumbers(patentID);
 						File newfile = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 						if(newfile != null){
-							report.addFileDownloaded(pub);
-							report.getListPublicationsNotDownloaded().remove(pub);
-							pub.setRelativePath(newfile.getName());
-							InitConfiguration.getDataAccess().updatePublication(pub);
+							report=addPubToReportAndUpdateDatabase(report, pub, newfile);
 						}
 						else{
-							boolean zeroOnTheMiddle = verify0OnTheMiddle(patentID);
+							boolean zeroOnTheMiddle = OPSUtils.verify0OnTheMiddle(patentID);
 							if (zeroOnTheMiddle){
-								newPatentID=deleteChar0(patentID,true,sectionNumbers);
+								newPatentID=OPSUtils.deleteChar0(patentID,true,sectionNumbers);
 								File fileWithoutZero = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 								if(fileWithoutZero != null){
-									report.addFileDownloaded(pub);
-									report.getListPublicationsNotDownloaded().remove(pub);
-									pub.setRelativePath(fileWithoutZero.getName());
-									InitConfiguration.getDataAccess().updatePublication(pub);
+									report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZero);
 								}
 								else{
-									newPatentID=deleteSectionNumbers(newPatentID);
+									newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);
 									File fileWithoutZeroAndSection = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 									if(fileWithoutZeroAndSection != null){
-										report.addFileDownloaded(pub);
-										report.getListPublicationsNotDownloaded().remove(pub);
-										pub.setRelativePath(fileWithoutZeroAndSection.getName());
-										InitConfiguration.getDataAccess().updatePublication(pub);
+										report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroAndSection);
 									}
 									else{
-										boolean yearPresence=verifyYearPresence(newPatentID);
+										boolean yearPresence=OPSUtils.verifyYearPresence(newPatentID);
 										if (yearPresence){
 											try {
-												newPatentID=transformYear(newPatentID);
+												newPatentID=OPSUtils.transformYear(newPatentID);
 												File fileWithoutZeroSectionAndYear = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 												if(fileWithoutZeroSectionAndYear != null){
-													report.addFileDownloaded(pub);
-													report.getListPublicationsNotDownloaded().remove(pub);
-													pub.setRelativePath(fileWithoutZeroSectionAndYear.getName());
-													//					InitConfiguration.getDataAccess().updatePublication(pub);
+													report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroSectionAndYear);
 												}
 												else{
-													String newPatW0 = deleteChar0(patentID, true, sectionNumbers-1);//WO1995006739A1
-													String newPatW0S = deleteSectionNumbers(newPatW0);
-													String newPAtW0SYear = transformYear(newPatW0S);
+													String newPatW0 = OPSUtils.deleteChar0(patentID, true, sectionNumbers-1);//WO1995006739A1
+													String newPatW0S = OPSUtils.deleteSectionNumbers(newPatW0);
+													String newPAtW0SYear = OPSUtils.transformYear(newPatW0S);
 													File fileWithoutZeroSectionAndYear2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPAtW0SYear, saveDocDirectory, pub.getId());
 													if(fileWithoutZeroSectionAndYear2 != null){
-														report.addFileDownloaded(pub);
-														report.getListPublicationsNotDownloaded().remove(pub);
-														pub.setRelativePath(fileWithoutZeroSectionAndYear2.getName());
-														InitConfiguration.getDataAccess().updatePublication(pub);
-													}
+														report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroSectionAndYear2);												}
 													else{
 														report.addFileNotDownloaded(pub);
 													}										
@@ -191,16 +172,13 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 								}
 							}
 							else{
-								boolean yearPresence=verifyYearPresence(newPatentID);
+								boolean yearPresence=OPSUtils.verifyYearPresence(newPatentID);
 								if (yearPresence){
 									try {
-										String newPat = transformYear(newPatentID);
+										String newPat = OPSUtils.transformYear(newPatentID);
 										File fileYearandSection = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPat, saveDocDirectory, pub.getId());
 										if(fileYearandSection != null){
-											report.addFileDownloaded(pub);
-											report.getListPublicationsNotDownloaded().remove(pub);
-											pub.setRelativePath(fileYearandSection.getName());
-											InitConfiguration.getDataAccess().updatePublication(pub);
+											report=addPubToReportAndUpdateDatabase(report, pub, fileYearandSection);
 										}
 										else{
 											report.addFileNotDownloaded(pub);
@@ -219,37 +197,26 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 						}
 					}
 					else{
-						boolean zeroOnTheMiddle = verify0OnTheMiddle(patentID);
+						boolean zeroOnTheMiddle = OPSUtils.verify0OnTheMiddle(patentID);
 						if (zeroOnTheMiddle){
-							String newPatentID = deleteChar0(patentID,false,sectionNumbers);
+							String newPatentID = OPSUtils.deleteChar0(patentID,false,sectionNumbers);
 							File fileWithoutZero = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 							if(fileWithoutZero != null){
-								report.addFileDownloaded(pub);
-								report.getListPublicationsNotDownloaded().remove(pub);
-								pub.setRelativePath(fileWithoutZero.getName());
-								InitConfiguration.getDataAccess().updatePublication(pub);
+								report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZero);
 							}
 							else{
-								boolean yearPresence=verifyYearPresence(newPatentID);
+								boolean yearPresence=OPSUtils.verifyYearPresence(newPatentID);
 								if (yearPresence){
 									try {
-										newPatentID=transformYear(newPatentID);
+										newPatentID=OPSUtils.transformYear(newPatentID);
 										File fileWithoutZeroAndYear = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 										if(fileWithoutZeroAndYear != null){
-											report.addFileDownloaded(pub);
-											report.getListPublicationsNotDownloaded().remove(pub);
-											pub.setRelativePath(fileWithoutZeroAndYear.getName());
-											InitConfiguration.getDataAccess().updatePublication(pub);
-										}
+											report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroAndYear);										}
 										else{
-											newPatentID=deleteChar0(newPatentID, true, sectionNumbers-1);
+											newPatentID=OPSUtils.deleteChar0(newPatentID, true, sectionNumbers-1);
 											File fileWithoutZero2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
 											if(fileWithoutZero2 != null){
-												report.addFileDownloaded(pub);
-												report.getListPublicationsNotDownloaded().remove(pub);
-												pub.setRelativePath(fileWithoutZero2.getName());
-												InitConfiguration.getDataAccess().updatePublication(pub);
-											}
+												report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZero2);										}
 											else{
 												report.addFileNotDownloaded(pub);
 											}
@@ -289,117 +256,13 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	}
 
 
-	public int verifySectionNumbers(String patentID){
-		if(Character.isLetter(patentID.charAt(patentID.length()-2))){
-			return 2;
-		}
-		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
-			return 1;
-		}
-		else{
-			return 0;
-		}
+	private IIRCrawlingProcessReport addPubToReportAndUpdateDatabase(IIRCrawlingProcessReport report,IPublication pub, File fileDownloaded) throws ANoteException{
+		report.addFileDownloaded(pub);
+		report.getListPublicationsNotDownloaded().remove(pub);
+		pub.setRelativePath(fileDownloaded.getName());
+		InitConfiguration.getDataAccess().updatePublication(pub);
+		return report;
 	}
-
-
-	public boolean verify0OnTheMiddle(String patentID){
-
-		if (verifySectionNumbers(patentID)==0){
-			if(patentID.charAt(patentID.length()-7)=='0'||patentID.charAt(patentID.length()-6)=='0'){//some patents have a "0" on middle with 6 or 5 numbers after
-				return true;
-			}
-		}
-		else{
-			int lettersOfSection = verifySectionNumbers(patentID);
-			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'||patentID.charAt(patentID.length()-6-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean verifyYearPresence(String patentID){
-		if (Character.isLetter(patentID.charAt(0))){
-			if (Character.isLetter(patentID.charAt(1))){
-				String year=patentID.substring(2,6);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					return true;
-				}
-			}
-			else{
-				String year=patentID.substring(1,5);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private String deleteChar0(String patentID,boolean haveSectionNumbers,int lettersOfSection){
-		String newPatentID = patentID;
-		if (haveSectionNumbers==false){
-			if(patentID.charAt(patentID.length()-7)=='0'){//some patents have a "0" on middle with 6 numbers after
-				newPatentID=patentID.substring(0,patentID.length()-7).concat(patentID.substring(patentID.length()-6,patentID.length()));
-			}
-		}
-		else{
-			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
-				newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
-			}
-		}
-		return newPatentID;
-	}
-
-
-	private String transformYear(String patentID) throws ParseException{
-		String newPatentID = new String();
-		if (Character.isLetter(patentID.charAt(0))){
-			if (Character.isLetter(patentID.charAt(1))){
-				String year=patentID.substring(2,6);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
-					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
-					Date dateParsering = dateParser.parse(year);
-					String newYear = dateFormatter.format(dateParsering);
-					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
-				}
-			}
-			else{
-				String year=patentID.substring(1,5);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
-					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
-					Date dateParsering = dateParser.parse(year);
-					String newYear = dateFormatter.format(dateParsering);
-					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
-				}
-			}
-		}
-		return newPatentID;
-	}
-
-
-	private String deleteSectionNumbers(String patentID){
-
-		//char[] array = patentID.toCharArray();
-		String newPatentID = patentID;
-		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
-			newPatentID=patentID.substring(0, patentID.length()-1);
-		}
-		else{
-			if(Character.isLetter(patentID.charAt(patentID.length()-2))){
-				newPatentID=patentID.substring(0,patentID.length()-2);
-			}
-		}
-		return newPatentID;
-	}
-
-
 
 	protected File getPDFAndUpdateReport(String tokenaccess,IPublication pub,String saveDocDirectoty) throws ANoteException{
 		File file = null;
