@@ -11,6 +11,8 @@ import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
 import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
+import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
 import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
@@ -23,11 +25,23 @@ import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 
 public class CorpusCreationInBatch {
 
+	private Map<String, Long> pmidsAlreadyExistOnDB;
+
 	public CorpusCreationInBatch(){
-		
+		pmidsAlreadyExistOnDB = new HashMap<>();
 	}
 	
+	private Map<String, Long> getPmidsAlreadyExistOnDB() {
+		return pmidsAlreadyExistOnDB;
+	}
+
+	private void setPmidsAlreadyExistOnDB(Map<String, Long> pmidsAlreadyExistOnDB) {
+		this.pmidsAlreadyExistOnDB = pmidsAlreadyExistOnDB;
+	}
+
 	public ICorpus startCorpusCreation(ICorpusCreateConfiguration configuration) throws ANoteException{
+		
+		setPmidsAlreadyExistOnDB(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name()));
 		
 		Properties properties = configuration.getProperties();
 		CorpusTextType corpusType = configuration.getCorpusTextType();
@@ -40,6 +54,8 @@ public class CorpusCreationInBatch {
 		return corpus;
 	}
 	
+
+
 	public void addPublications(ICorpus corpus, Set<IPublication> publications) throws ANoteException, IOException{
 		
 		CorpusTextType corpusType = null;
@@ -87,6 +103,10 @@ public class CorpusCreationInBatch {
 		List<IPublication> documentToadd = new ArrayList<IPublication>();
 		Map<Long, IPublication> documentsInDatabase = new HashMap<>();
 		for(IPublication publication:publications){
+			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
+			if(getPmidsAlreadyExistOnDB().containsKey(pubPMID)){
+				publication.setId(getPmidsAlreadyExistOnDB().get(pubPMID));
+			}
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
 				documentToadd.add(publication);
@@ -135,5 +155,9 @@ public class CorpusCreationInBatch {
 
 	protected void associatePublicationToCorpusOnDatabase(ICorpus corpus, IPublication publication) throws ANoteException {
 		InitConfiguration.getDataAccess().addCorpusPublication(corpus, publication);
+	}
+	
+	protected Map<String, Long> getAllPublicationExternalIdFromSource(String source) throws ANoteException {
+		return InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(source);
 	}
 }
