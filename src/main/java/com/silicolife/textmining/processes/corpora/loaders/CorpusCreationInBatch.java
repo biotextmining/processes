@@ -22,10 +22,12 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusTextType;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 
 public class CorpusCreationInBatch {
 
 	private Map<String, Long> pmidsAlreadyExistOnDB;
+	private boolean rmovepublicationlabels = true;
 
 	public CorpusCreationInBatch(){
 		pmidsAlreadyExistOnDB = new HashMap<>();
@@ -68,7 +70,9 @@ public class CorpusCreationInBatch {
 		
 
 		for(IPublication publication:publications){
-			
+			// remove publication lables
+			if(rmovepublicationlabels )
+				publication.setPublicationLabels(new ArrayList<IPublicationLabel>());
 			if(corpusType  != null && 
 					(corpusType.equals(CorpusTextType.Hybrid) || corpusType.equals(CorpusTextType.FullText)))
 			{
