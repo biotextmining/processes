@@ -70,9 +70,7 @@ public class CorpusCreationInBatch {
 		
 
 		for(IPublication publication:publications){
-			// remove publication lables
-			if(rmovepublicationlabels )
-				publication.setPublicationLabels(new ArrayList<IPublicationLabel>());
+
 			if(corpusType  != null && 
 					(corpusType.equals(CorpusTextType.Hybrid) || corpusType.equals(CorpusTextType.FullText)))
 			{
@@ -113,6 +111,9 @@ public class CorpusCreationInBatch {
 			}
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
+				// remove publication lables
+				if(rmovepublicationlabels )
+					publication.setPublicationLabels(new ArrayList<IPublicationLabel>());
 				documentToadd.add(publication);
 			}else{
 				documentsInDatabase.put(pub.getId(),pub);
