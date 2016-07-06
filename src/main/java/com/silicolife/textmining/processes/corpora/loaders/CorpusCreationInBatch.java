@@ -108,6 +108,8 @@ public class CorpusCreationInBatch {
 			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
 			if(getPmidsAlreadyExistOnDB().containsKey(pubPMID)){
 				publication.setId(getPmidsAlreadyExistOnDB().get(pubPMID));
+			}else{
+				getPmidsAlreadyExistOnDB().put(pubPMID, publication.getId());
 			}
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
