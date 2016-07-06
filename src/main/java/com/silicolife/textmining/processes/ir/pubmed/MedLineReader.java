@@ -156,6 +156,8 @@ public class MedLineReader {
 					String field = node.item(i).getAttributes().getNamedItem("Label").getTextContent();
 					if(!field.isEmpty() && !publicationFiledsAlreayAdded.contains(field))
 					{
+						if(field.length()>250)
+							field = field.substring(0,250);
 						IPublicationField publicationField = new PublicationFieldImpl(startindex, endindex, field, PublicationFieldTypeEnum.abstracttext);
 						fullTextfields.add(publicationField);
 						publicationFiledsAlreayAdded.add(field);
