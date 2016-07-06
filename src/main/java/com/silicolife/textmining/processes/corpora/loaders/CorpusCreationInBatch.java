@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -27,10 +28,12 @@ import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicati
 public class CorpusCreationInBatch {
 
 	private Map<String, Long> pmidsAlreadyExistOnDB;
-	private boolean rmovepublicationlabels = true;
+	private Set<String> pmidsAlreadyExistOnCorpus;
+	private boolean removepublicationlabels = true;
 
 	public CorpusCreationInBatch(){
 		pmidsAlreadyExistOnDB = new HashMap<>();
+		pmidsAlreadyExistOnCorpus = new HashSet<>();
 	}
 	
 	private Map<String, Long> getPmidsAlreadyExistOnDB() {
@@ -41,9 +44,15 @@ public class CorpusCreationInBatch {
 		this.pmidsAlreadyExistOnDB = pmidsAlreadyExistOnDB;
 	}
 
+	protected Set<String> getPmidsAlreadyExistOnCorpus() {
+		return pmidsAlreadyExistOnCorpus;
+	}
+
+	protected void setPmidsAlreadyExistOnCorpus(Set<String> pmidsAlreadyExistOnCorpus) {
+		this.pmidsAlreadyExistOnCorpus = pmidsAlreadyExistOnCorpus;
+	}
+
 	public ICorpus startCorpusCreation(ICorpusCreateConfiguration configuration) throws ANoteException{
-		
-		setPmidsAlreadyExistOnDB(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name()));
 		
 		Properties properties = configuration.getProperties();
 		CorpusTextType corpusType = configuration.getCorpusTextType();
@@ -59,6 +68,14 @@ public class CorpusCreationInBatch {
 
 
 	public void addPublications(ICorpus corpus, Set<IPublication> publications) throws ANoteException, IOException{
+		
+		if(getPmidsAlreadyExistOnDB().isEmpty()){
+			setPmidsAlreadyExistOnDB(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name()));
+		}
+		
+		if(getPmidsAlreadyExistOnCorpus().isEmpty()){
+			setPmidsAlreadyExistOnCorpus(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.PUBMED.name()));
+		}
 		
 		CorpusTextType corpusType = null;
 		Properties corpusProperties = corpus.getProperties();
@@ -96,7 +113,11 @@ public class CorpusCreationInBatch {
 				}
 			}
 
-			associatePublicationToCorpusOnDatabase(corpus, publication);
+			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
+			if(!getPmidsAlreadyExistOnCorpus().contains(pubPMID)){
+				associatePublicationToCorpusOnDatabase(corpus, publication);
+				getPmidsAlreadyExistOnCorpus().add(pubPMID);
+			}
 		}
 	}
 
@@ -114,7 +135,7 @@ public class CorpusCreationInBatch {
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
 				// remove publication lables
-				if(rmovepublicationlabels )
+				if(removepublicationlabels )
 					publication.setPublicationLabels(new ArrayList<IPublicationLabel>());
 				documentToadd.add(publication);
 			}else{
@@ -166,5 +187,9 @@ public class CorpusCreationInBatch {
 	
 	protected Map<String, Long> getAllPublicationExternalIdFromSource(String source) throws ANoteException {
 		return InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(source);
+	}
+	
+	protected Set<String> getAllCorpusPublicationExternalIdFromSource(ICorpus corpus, String source) throws ANoteException {
+		return InitConfiguration.getDataAccess().getCorpusPublicationsExternalIDFromSource(corpus, source);
 	}
 }
