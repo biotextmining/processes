@@ -110,136 +110,35 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			}
 			else
 			{
-				File fileDownloaded = getPDFAndUpdateReport(tokenaccess, pub, saveDocDirectory);
-				if(fileDownloaded != null)
-				{
-					report.addFileDownloaded(pub);
-					pub.setRelativePath(fileDownloaded.getName());
-					InitConfiguration.getDataAccess().updatePublication(pub);
-				}
-				else
-				{
-					int sectionNumbers = OPSUtils.verifySectionNumbers(patentID);
-					if (sectionNumbers!=0){
-						String newPatentID=OPSUtils.deleteSectionNumbers(patentID);
-						File newfile = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-						if(newfile != null){
-							report=addPubToReportAndUpdateDatabase(report, pub, newfile);
-						}
-						else{
-							boolean zeroOnTheMiddle = OPSUtils.verify0OnTheMiddle(patentID);
-							if (zeroOnTheMiddle){
-								newPatentID=OPSUtils.deleteChar0(patentID,true,sectionNumbers);
-								File fileWithoutZero = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-								if(fileWithoutZero != null){
-									report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZero);
-								}
-								else{
-									newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);
-									File fileWithoutZeroAndSection = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-									if(fileWithoutZeroAndSection != null){
-										report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroAndSection);
-									}
-									else{
-										boolean yearPresence=OPSUtils.verifyYearPresence(newPatentID);
-										if (yearPresence){
-											try {
-												newPatentID=OPSUtils.transformYear(newPatentID);
-												File fileWithoutZeroSectionAndYear = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-												if(fileWithoutZeroSectionAndYear != null){
-													report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroSectionAndYear);
-												}
-												else{
-													String newPatW0 = OPSUtils.deleteChar0(patentID, true, sectionNumbers-1);//WO1995006739A1
-													String newPatW0S = OPSUtils.deleteSectionNumbers(newPatW0);
-													String newPAtW0SYear = OPSUtils.transformYear(newPatW0S);
-													File fileWithoutZeroSectionAndYear2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPAtW0SYear, saveDocDirectory, pub.getId());
-													if(fileWithoutZeroSectionAndYear2 != null){
-														report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroSectionAndYear2);												}
-													else{
-														report.addFileNotDownloaded(pub);
-													}										
-												}
-											} catch (ParseException e) {
-												throw new ANoteException(e);
-											}
-
-										}
-										else{
-											report.addFileNotDownloaded(pub);
-										}
-									}
-								}
-							}
-							else{
-								boolean yearPresence=OPSUtils.verifyYearPresence(newPatentID);
-								if (yearPresence){
-									try {
-										String newPat = OPSUtils.transformYear(newPatentID);
-										File fileYearandSection = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPat, saveDocDirectory, pub.getId());
-										if(fileYearandSection != null){
-											report=addPubToReportAndUpdateDatabase(report, pub, fileYearandSection);
-										}
-										else{
-											report.addFileNotDownloaded(pub);
-										}
-
-									}catch (ParseException e) {
-										throw new ANoteException(e);
-									}
-
-
-								}
-								else{
-									report.addFileNotDownloaded(pub);
-								}
-							}
-						}
-					}
-					else{
-						boolean zeroOnTheMiddle = OPSUtils.verify0OnTheMiddle(patentID);
-						if (zeroOnTheMiddle){
-							String newPatentID = OPSUtils.deleteChar0(patentID,false,sectionNumbers);
-							File fileWithoutZero = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-							if(fileWithoutZero != null){
-								report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZero);
-							}
-							else{
-								boolean yearPresence=OPSUtils.verifyYearPresence(newPatentID);
-								if (yearPresence){
-									try {
-										newPatentID=OPSUtils.transformYear(newPatentID);
-										File fileWithoutZeroAndYear = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-										if(fileWithoutZeroAndYear != null){
-											report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZeroAndYear);										}
-										else{
-											newPatentID=OPSUtils.deleteChar0(newPatentID, true, sectionNumbers-1);
-											File fileWithoutZero2 = getPDFAndUpdateReportUsingPatentID(tokenaccess, newPatentID, saveDocDirectory, pub.getId());
-											if(fileWithoutZero2 != null){
-												report=addPubToReportAndUpdateDatabase(report, pub, fileWithoutZero2);										}
-											else{
-												report.addFileNotDownloaded(pub);
-											}
-										}
-									} catch (ParseException e) {
-										throw new ANoteException(e);
-									}
-								}
-								else{
-									report.addFileNotDownloaded(pub);
-								}
-
+				List<String> possiblePatentIDs;
+				try {
+					possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
+					File fileDownloaded=null;
+					boolean stop = false;
+					for (String id:possiblePatentIDs){
+						if (!stop){
+							fileDownloaded =getPDFAndUpdateReportUsingPatentID(tokenaccess, id, saveDocDirectory, pub.getId());
+							if(fileDownloaded != null)
+							{
+								report.addFileDownloaded(pub);
+								pub.setRelativePath(fileDownloaded.getName());
+								InitConfiguration.getDataAccess().updatePublication(pub);
+								stop=true;	
 							}
 						}
 						else{
-							report.addFileNotDownloaded(pub);
+							break;//if a stop order is found it means that the PDF was already downloaded;
 						}
 					}
+					if (!stop){
+						report.addFileNotDownloaded(pub);
+					}
+				} catch (ParseException e) {
+					throw new ANoteException(e);
 				}
+				memoryAndProgress(start,step+1,total);
+				step++;
 			}
-
-			memoryAndProgress(start,step+1,total);
-			step++;
 		}
 
 		if(cancel)
@@ -248,21 +147,14 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		report.setTime(endTime-start);
 		System.out.println("Downloaded: " + report.getDocumentsRetrieval() + " of " + total);
 		for (int pat = 0; pat <report.getListPublicationsNotDownloaded().size(); pat++) {
-			IPublication pub = (IPublication) report.getListPublicationsNotDownloaded().toArray()[pat];
-			String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
-			System.out.println("Id not retrieved: "+ patentID);
+			IPublication pub1 = (IPublication) report.getListPublicationsNotDownloaded().toArray()[pat];
+			String patentID1 = PublicationImpl.getPublicationExternalIDForSource(pub1, PublicationSourcesDefaultEnum.patent.name());
+			System.out.println("Id not retrieved: "+ patentID1);
 		}
+
 		return report;
 	}
 
-
-	private IIRCrawlingProcessReport addPubToReportAndUpdateDatabase(IIRCrawlingProcessReport report,IPublication pub, File fileDownloaded) throws ANoteException{
-		report.addFileDownloaded(pub);
-		report.getListPublicationsNotDownloaded().remove(pub);
-		pub.setRelativePath(fileDownloaded.getName());
-		InitConfiguration.getDataAccess().updatePublication(pub);
-		return report;
-	}
 
 	protected File getPDFAndUpdateReport(String tokenaccess,IPublication pub,String saveDocDirectoty) throws ANoteException{
 		File file = null;
@@ -291,8 +183,6 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		}
 		return file;
 	}
-
-
 
 	protected void memoryAndProgress(long start, int step, int total) {
 		if(this.progress!=null)

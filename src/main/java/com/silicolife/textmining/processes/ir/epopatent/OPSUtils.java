@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,7 +96,7 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
-	
+
 	public static void updatePatentMetaInformationWithClientError(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
@@ -108,8 +109,7 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
-	
-	
+
 
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
@@ -224,50 +224,50 @@ public class OPSUtils {
 
 		return new File(docPDFFinal);
 	}
-	
-	
+
+
 	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
-			Map<String, String> headers = new HashMap<String, String>();
-			if (tokenaccess != null) {
-				headers.put("Authorization", "Bearer " + tokenaccess);
-			}
-			String urlPatentImages = publicationDetails + patentID + "/images";
-			GenericPairImpl<Integer, String> pagesLink = client.get(urlPatentImages, headers, new OPSPatentImageHandler());
-			if(pagesLink==null)
-				return null;
-			Path docPath = Paths.get(path +"/" + "/tmp_" + patentID);
-			if (!Files.exists(docPath))
-				Files.createDirectories(docPath);
+		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		String urlPatentImages = publicationDetails + patentID + "/images";
+		GenericPairImpl<Integer, String> pagesLink = client.get(urlPatentImages, headers, new OPSPatentImageHandler());
+		if(pagesLink==null)
+			return null;
+		Path docPath = Paths.get(path +"/" + "/tmp_" + pubID);
+		if (!Files.exists(docPath))
+			Files.createDirectories(docPath);
 
-			// -- API to merge PDF
-			PDFMergerUtility merger = new PDFMergerUtility();
+		// -- API to merge PDF
+		PDFMergerUtility merger = new PDFMergerUtility();
 
-			Integer numberPages = pagesLink.getX();
-			for (int x = 1; x <= numberPages; x++) {
-				String urlpages = generalURL + pagesLink.getY() + ".pdf?" + "Range=" + x;
-				File pdfOnePage = client.get(urlpages, headers, new OPSPatentgetPDFPageHandler(docPath.toString()));
-				// -- Add source to merge
-				merger.addSource(pdfOnePage);
-				if(x%5 == 0 && tokenaccess==null)
+		Integer numberPages = pagesLink.getX();
+		for (int x = 1; x <= numberPages; x++) {
+			String urlpages = generalURL + pagesLink.getY() + ".pdf?" + "Range=" + x;
+			File pdfOnePage = client.get(urlpages, headers, new OPSPatentgetPDFPageHandler(docPath.toString()));
+			// -- Add source to merge
+			merger.addSource(pdfOnePage);
+			if(x%5 == 0 && tokenaccess==null)
+			{
+				if(tokenaccess==null)
 				{
-					if(tokenaccess==null)
-					{
-						System.out.println("sleeping...62 seconds");
-						Thread.sleep(62000);
-					}
+					System.out.println("sleeping...62 seconds");
+					Thread.sleep(62000);
 				}
 			}
+		}
 
-			String docPDFFinal = path +"/" + pubID + ".pdf";
-			merger.setDestinationFileName(docPDFFinal);
-			merger.mergeDocuments();
+		String docPDFFinal = path +"/" + pubID + ".pdf";
+		merger.setDestinationFileName(docPDFFinal);
+		merger.mergeDocuments();
 
-			recursiveDelete(docPath.toFile());
+		recursiveDelete(docPath.toFile());
 
-			return new File(docPDFFinal);
+		return new File(docPDFFinal);
 	}
-	
-	
+
+
 
 	private static void recursiveDelete(File file) {
 		if (file.isDirectory()) {
@@ -361,43 +361,35 @@ public class OPSUtils {
 	}
 
 	public static int verifySectionNumbers(String patentID){
-		if(Character.isLetter(patentID.charAt(patentID.length()-2))){
-			return 2;
-		}
-		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
+		if(patentID.matches(".*[A-Z]{1}")){
 			return 1;
 		}
-		else{
-			return 0;
+		if(patentID.matches(".*[A-Z]{1}[1-9]{1}")){
+			return 2;
 		}
+		return 0;
 	}
 
 
 	public static boolean verify0OnTheMiddle(String patentID){
+		int lettersOfSection = verifySectionNumbers(patentID);
+		if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'||patentID.charAt(patentID.length()-6-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+			return true;
+		}
 
-		if (verifySectionNumbers(patentID)==0){
-			if(patentID.charAt(patentID.length()-7)=='0'||patentID.charAt(patentID.length()-6)=='0'){//some patents have a "0" on middle with 6 or 5 numbers after
-				return true;
-			}
-		}
-		else{
-			int lettersOfSection = verifySectionNumbers(patentID);
-			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'||patentID.charAt(patentID.length()-6-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
-				return true;
-			}
-		}
 		return false;
 	}
+	
 
 	public static boolean verifyYearPresence(String patentID){
 		if (Character.isLetter(patentID.charAt(0))){
 			if (Character.isLetter(patentID.charAt(1))){
 				String year=patentID.substring(2,6);//year
 				try{
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					return true;
-				}
+					int date=Integer.parseInt(year);
+					if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+						return true;
+					}
 				}catch(NumberFormatException e){
 					return false;				
 				}
@@ -413,17 +405,10 @@ public class OPSUtils {
 		return false;
 	}
 
-	public static String deleteChar0(String patentID,boolean haveSectionNumbers,int lettersOfSection){
+	public static String deleteChar0(String patentID,int lettersOfSection){
 		String newPatentID = patentID;
-		if (haveSectionNumbers==false){
-			if(patentID.charAt(patentID.length()-7)=='0'){//some patents have a "0" on middle with 6 numbers after
-				newPatentID=patentID.substring(0,patentID.length()-7).concat(patentID.substring(patentID.length()-6,patentID.length()));
-			}
-		}
-		else{
-			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
-				newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
-			}
+		if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+			newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
 		}
 		return newPatentID;
 	}
@@ -437,7 +422,7 @@ public class OPSUtils {
 				int date=Integer.parseInt(year);
 				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
 					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
-					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
+					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //date output
 					Date dateParsering = dateParser.parse(year);
 					String newYear = dateFormatter.format(dateParsering);
 					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
@@ -463,15 +448,46 @@ public class OPSUtils {
 
 		//char[] array = patentID.toCharArray();
 		String newPatentID = patentID;
-		if (Character.isLetter(patentID.charAt(patentID.length()-1))){
+		if(patentID.matches(".*[A-Z]{1}")){
 			newPatentID=patentID.substring(0, patentID.length()-1);
 		}
 		else{
-			if(Character.isLetter(patentID.charAt(patentID.length()-2))){
+			if(patentID.matches(".*[A-Z]{1}[1-9]{1}")){
 				newPatentID=patentID.substring(0,patentID.length()-2);
 			}
 		}
 		return newPatentID;
 	}
-	
+
+	public static List<String> createPatentIDPossibilities (String patentID) throws ParseException{
+		List<String> patentIDs=new ArrayList<>();
+		patentIDs.add(patentID);//the patentID itself
+		String newPatentID=OPSUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
+		if (!patentIDs.contains(newPatentID)){//only add if no exist
+			patentIDs.add(newPatentID);
+		}
+		newPatentID=OPSUtils.deleteChar0(newPatentID, 0);//uses the previous transformation and delete the central 0.
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		if(OPSUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
+			newPatentID=OPSUtils.transformYear(newPatentID);
+			String newPatOnlyWithouYear=OPSUtils.transformYear(patentID);//year transformation only 
+			patentIDs.add(newPatentID);
+			if (!patentIDs.contains(newPatOnlyWithouYear)){
+				patentIDs.add(newPatOnlyWithouYear);
+			}
+		}
+		newPatentID=OPSUtils.deleteChar0(newPatentID, -1);//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
+		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		return patentIDs;
+	}
+
 }
