@@ -482,6 +482,10 @@ public class OPSUtils {
 		if (!patentIDs.contains(newPatentID)){
 			patentIDs.add(newPatentID);
 		}
+		newPatentID=OPSUtils.deleteChar0(patentID, -1);//special case with five numbers after 0 without year association
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
 		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
 		if (!patentIDs.contains(newPatentID)){
