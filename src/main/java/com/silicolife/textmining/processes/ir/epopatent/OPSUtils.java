@@ -482,16 +482,32 @@ public class OPSUtils {
 		if (!patentIDs.contains(newPatentID)){
 			patentIDs.add(newPatentID);
 		}
-		newPatentID=OPSUtils.deleteChar0(patentID, -1);//special case with five numbers after 0 without year association
+		
+		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
+		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
 		if (!patentIDs.contains(newPatentID)){
 			patentIDs.add(newPatentID);
 		}
-		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
-		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
+		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection-1);//special case with five numbers after 0 without year association
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);//delete section numbers on special case (last chance)
 		if (!patentIDs.contains(newPatentID)){
 			patentIDs.add(newPatentID);
 		}
 		return patentIDs;
 	}
 
+	
+	public static String loginOPS(String authentication){
+		String tokenaccess=null;
+		try {
+			tokenaccess = OPSUtils.postAuth(authentication);
+		} catch (RedirectionException | ClientErrorException| ServerErrorException | ConnectionException
+				| ResponseHandlingException e) {
+			tokenaccess = null;
+		}
+		return tokenaccess;
+	}
 }
