@@ -58,12 +58,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		if(autentication!=null)
 		{
 			autentication = Utils.get64Base(autentication);
-			try {
-				tokenaccess = OPSUtils.postAuth(autentication);
-			} catch (RedirectionException | ClientErrorException| ServerErrorException | ConnectionException
-					| ResponseHandlingException e) {
-				tokenaccess = null;
-			}
+			tokenaccess=OPSUtils.loginOPS(autentication);
 		}
 		else{
 			throw new ANoteException("To Add a document user needs to configure ACCESS_TOKEN (PatentSearchDefaultSettings.ACCESS_TOKEN)");
@@ -91,6 +86,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		{
 			throw new ANoteException("To Add A document user needs to configure Docs Directory (General.PDFDirectoryDocuments) in settings");
 		}
+		long startControlTime = System.currentTimeMillis();
 		for(IPublication pub:publications)
 		{
 			String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
@@ -110,7 +106,18 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			}
 			else
 			{
+				long actualControlTime=System.currentTimeMillis();
 				List<String> possiblePatentIDs;
+				if(((float)(actualControlTime-startControlTime)/1000)>=900){//15min
+					try {
+						System.out.println("sleeping...5 seconds");
+						Thread.sleep(5000);
+						tokenaccess=OPSUtils.loginOPS(autentication);
+						startControlTime=System.currentTimeMillis();
+					} catch (InterruptedException e) {
+						throw new ANoteException(e);
+					}
+				}
 				try {
 					possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
 					File fileDownloaded=null;
