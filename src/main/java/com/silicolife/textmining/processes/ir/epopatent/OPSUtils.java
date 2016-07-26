@@ -11,10 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,20 +96,6 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
-
-	public static void updatePatentMetaInformationWithClientError(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
-	{
-		Map<String, String> headers = new HashMap<String, String>();
-		if (tokenaccess != null) {
-			headers.put("Authorization", "Bearer " + tokenaccess);
-		}
-		String urlPatentDescritpion = "http://ops.epo.org/3.1/rest-services/published-data/search/biblio/?q=" + patentID;
-		// Get Biblio Info
-		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
-		// Try to add claims and description to abstract
-		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
-	}
-
 
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
@@ -369,51 +355,44 @@ public class OPSUtils {
 		}
 		return 0;
 	}
-	
 
-	public static List<String> createPatentIDPossibilities(String patentID){
-		List<String> patentIDs=new ArrayList<>();
+
+	public static Set<String> createPatentIDPossibilities(String patentID){
+		Set<String> patentIDs=new HashSet<>();
 		//the patentID itself
 		patentIDs.add(patentID);
 		String newPatentID=OPSUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
-		if (!patentIDs.contains(newPatentID)){//only add if no exist
-			patentIDs.add(newPatentID);
-		}
+		patentIDs.add(newPatentID);
+
 		newPatentID=OPSUtils.deleteChar0(newPatentID, 0);//uses the previous transformation and delete the central 0.
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
+		patentIDs.add(newPatentID);
+
 		if(OPSUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
 			try {
 				newPatentID=OPSUtils.transformYear(newPatentID);
 				String newPatOnlyWithouYear=OPSUtils.transformYear(patentID);//year transformation only 
 				patentIDs.add(newPatentID);
-				if (!patentIDs.contains(newPatOnlyWithouYear)){
-					patentIDs.add(newPatOnlyWithouYear);
-				}
+				patentIDs.add(newPatOnlyWithouYear);
 			} catch (ParseException e) {
 			}
 		}
+
 		newPatentID=OPSUtils.deleteChar0(newPatentID, -1);//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-		
+		patentIDs.add(newPatentID);
+
 		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
 		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
+		patentIDs.add(newPatentID);
+
 		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection-1);//special case with five numbers after 0 without year association
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
+		patentIDs.add(newPatentID);
+
 		newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);//delete section numbers on special case (last chance)
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
+		patentIDs.add(newPatentID);
+
 		return patentIDs;
 	}
+
 
 	private static boolean verifyYearPresence(String patentID){
 		if (Character.isLetter(patentID.charAt(0))){
@@ -494,7 +473,7 @@ public class OPSUtils {
 	}
 
 
-	
+
 	public static String loginOPS(String authentication){
 		String tokenaccess=null;
 		try {

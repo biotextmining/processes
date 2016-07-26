@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 
@@ -85,7 +86,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			total = endRAnge;
 		}
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
-		List<String> possiblePatentIDs;
+		Set<String> possiblePatentIDs;
 		long startControlTime = System.currentTimeMillis();
 		for(IPublication pub:publications)
 		{
@@ -118,7 +119,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 				}
 
 				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
-				File fileDownloaded = searchINallpatentIds(saveDocDirectory, tokenaccess, report, possiblePatentIDs, pub);
+				File fileDownloaded = searchINallpatentIds(saveDocDirectory, tokenaccess, possiblePatentIDs, pub);
 				if (fileDownloaded==null){
 					report.addFileNotDownloaded(pub);
 				}
@@ -135,18 +136,12 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			report.setcancel();
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-start);
-//		System.out.println("Downloaded: " + report.getDocumentsRetrieval() + " of " + total);
-//		for (int pat = 0; pat <report.getListPublicationsNotDownloaded().size(); pat++) {
-//			IPublication pub1 = (IPublication) report.getListPublicationsNotDownloaded().toArray()[pat];
-//			String patentID1 = PublicationImpl.getPublicationExternalIDForSource(pub1, PublicationSourcesDefaultEnum.patent.name());
-//			System.out.println("Id not retrieved: "+ patentID1);
-//		}
 
 		return report;
 	}
 
-	private File searchINallpatentIds(String saveDocDirectory, String tokenaccess, IIRCrawlingProcessReport report,
-			List<String> possiblePatentIDs, IPublication pub) throws ANoteException {
+	private File searchINallpatentIds(String saveDocDirectory, String tokenaccess,
+			Set<String> possiblePatentIDs, IPublication pub) throws ANoteException {
 		File fileDownloaded;
 		for (String id:possiblePatentIDs){
 			fileDownloaded =getPDFAndUpdateReportUsingPatentID(tokenaccess, id, saveDocDirectory, pub.getId());
