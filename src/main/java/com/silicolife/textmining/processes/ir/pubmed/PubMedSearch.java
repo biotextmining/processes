@@ -564,8 +564,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 		ESearchContext context = PMSearch.query(querySTR);
 		this.lastQuery = System.currentTimeMillis();
 		List<IPublication> documentsToInsert;
-		this.nPublicacoes = query.getPublicationsSize();
-		this.nAbstracts = query.getAvailableAbstracts();
 		int abstractsAvailable = 0;
 		IIRSearchUpdateReport report = new IRSearchUpdateReportImpl(query);
 		for(int i=0;i<total &&!cancel;i=i+PubMedConfiguration.blockSearchSize)
@@ -676,12 +674,15 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			if(!cancel)
 				insertQueryPublications(query, publicationToAdd);
 			// Update Publication data (In memory)
+			System.out.println(publicationToAdd.size()+ " " + abstractsAvailable);
 			addToCounts(publicationToAdd.size(), abstractsAvailable);
-			query.setPublicationsSize(nPublicacoes);
-			query.setAvailableAbstracts(nAbstracts);
+			query.setPublicationsSize(query.getPublicationsSize()+publicationToAdd.size());
+			query.setAvailableAbstracts(query.getAvailableAbstracts()+abstractsAvailable);
+			query.getPublications().addAll(publicationToAdd);
 			// Update date
 			query.setDate(new Date());
 			updateQueryOnDatabase(query);
+			System.out.println(query.getPublicationsSize());
 			memoryAndProgress(i+PubMedConfiguration.blockSearchSize,nPubs);
 		}
 		return report;

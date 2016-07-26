@@ -360,7 +360,7 @@ public class OPSUtils {
 		return keywords;
 	}
 
-	public static int verifySectionNumbers(String patentID){
+	private static int verifySectionNumbers(String patentID){
 		if(patentID.matches(".*[A-Z]{1}")){
 			return 1;
 		}
@@ -369,19 +369,53 @@ public class OPSUtils {
 		}
 		return 0;
 	}
-
-
-	public static boolean verify0OnTheMiddle(String patentID){
-		int lettersOfSection = verifySectionNumbers(patentID);
-		if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'||patentID.charAt(patentID.length()-6-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
-			return true;
-		}
-
-		return false;
-	}
 	
 
-	public static boolean verifyYearPresence(String patentID){
+	public static List<String> createPatentIDPossibilities(String patentID){
+		List<String> patentIDs=new ArrayList<>();
+		//the patentID itself
+		patentIDs.add(patentID);
+		String newPatentID=OPSUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
+		if (!patentIDs.contains(newPatentID)){//only add if no exist
+			patentIDs.add(newPatentID);
+		}
+		newPatentID=OPSUtils.deleteChar0(newPatentID, 0);//uses the previous transformation and delete the central 0.
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		if(OPSUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
+			try {
+				newPatentID=OPSUtils.transformYear(newPatentID);
+				String newPatOnlyWithouYear=OPSUtils.transformYear(patentID);//year transformation only 
+				patentIDs.add(newPatentID);
+				if (!patentIDs.contains(newPatOnlyWithouYear)){
+					patentIDs.add(newPatOnlyWithouYear);
+				}
+			} catch (ParseException e) {
+			}
+		}
+		newPatentID=OPSUtils.deleteChar0(newPatentID, -1);//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		
+		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
+		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection-1);//special case with five numbers after 0 without year association
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);//delete section numbers on special case (last chance)
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
+		return patentIDs;
+	}
+
+	private static boolean verifyYearPresence(String patentID){
 		if (Character.isLetter(patentID.charAt(0))){
 			if (Character.isLetter(patentID.charAt(1))){
 				String year=patentID.substring(2,6);//year
@@ -405,7 +439,7 @@ public class OPSUtils {
 		return false;
 	}
 
-	public static String deleteChar0(String patentID,int lettersOfSection){
+	private static String deleteChar0(String patentID,int lettersOfSection){
 		String newPatentID = patentID;
 		if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
 			newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
@@ -414,7 +448,7 @@ public class OPSUtils {
 	}
 
 
-	public static String transformYear(String patentID) throws ParseException{
+	private static String transformYear(String patentID) throws ParseException{
 		String newPatentID = new String();
 		if (Character.isLetter(patentID.charAt(0))){
 			if (Character.isLetter(patentID.charAt(1))){
@@ -444,7 +478,7 @@ public class OPSUtils {
 	}
 
 
-	public static String deleteSectionNumbers(String patentID){
+	private static String deleteSectionNumbers(String patentID){
 
 		//char[] array = patentID.toCharArray();
 		String newPatentID = patentID;
@@ -459,45 +493,6 @@ public class OPSUtils {
 		return newPatentID;
 	}
 
-	public static List<String> createPatentIDPossibilities (String patentID) throws ParseException{
-		List<String> patentIDs=new ArrayList<>();
-		patentIDs.add(patentID);//the patentID itself
-		String newPatentID=OPSUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
-		if (!patentIDs.contains(newPatentID)){//only add if no exist
-			patentIDs.add(newPatentID);
-		}
-		newPatentID=OPSUtils.deleteChar0(newPatentID, 0);//uses the previous transformation and delete the central 0.
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-		if(OPSUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
-			newPatentID=OPSUtils.transformYear(newPatentID);
-			String newPatOnlyWithouYear=OPSUtils.transformYear(patentID);//year transformation only 
-			patentIDs.add(newPatentID);
-			if (!patentIDs.contains(newPatOnlyWithouYear)){
-				patentIDs.add(newPatOnlyWithouYear);
-			}
-		}
-		newPatentID=OPSUtils.deleteChar0(newPatentID, -1);//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-		
-		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
-		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection-1);//special case with five numbers after 0 without year association
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-		newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);//delete section numbers on special case (last chance)
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-		return patentIDs;
-	}
 
 	
 	public static String loginOPS(String authentication){
