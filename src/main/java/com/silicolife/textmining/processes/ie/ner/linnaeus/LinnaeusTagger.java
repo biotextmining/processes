@@ -15,6 +15,7 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.documents.CorpusPublicationPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.UnprocessedPublicationsPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
@@ -64,6 +65,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.UnionMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.VariantDictionaryMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
+import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusConfigurationImpl;
 
 public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
@@ -513,17 +515,60 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 	}
 
 	@Override
-	public INERProcessReport resumeNER(INERResumeConfiguration configuration)
-			throws ANoteException, InvalidConfigurationException {
-		// TODO Auto-generated method stub
-		return null;
+	public INERProcessReport resumeNER(INERResumeConfiguration configuration) throws ANoteException, InvalidConfigurationException {
+		validateConfiguration(configuration);
+		INERLinnaeusConfiguration linnauesConfiguration = new NERLinnaeusConfigurationImpl(configuration.getIEProcess());
+		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
+		HandRules rules = new HandRules(elementsToNER);
+		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
+		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
+		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
+		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
+		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
+		Matcher matcher = getMatcher(linnauesConfiguration,elements);
+		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", configuration.getIEProcess());
+		
+		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess());
+		int size = (int) (long) publicationsPaginator.getPublicationsCount();
+		int counter = 0; 
+		while(publicationsPaginator.hasNextDocumentSetPage()){
+			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
+			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, configuration.getIEProcess());
+			
+			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), startime, elementsToNER, rules,
+					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
+					mapPossibleResourceIDsToTermString, matcher, report, documents, size, counter);
+		}
+
+		if(stop)
+		{
+			report.setcancel();
+		}
+		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(endTime-startime);
+		return report;
+	}
+	
+	protected IIEProcess getProcessInDatabase(IIEProcess process) throws ANoteException{
+		return InitConfiguration.getDataAccess().getProcessByID(process.getID());
+	}
+	
+	protected ICorpusPublicationPaginator getUnprocessedPublicationsPaginator(IIEProcess process) throws ANoteException {
+		return new UnprocessedPublicationsPaginatorImpl(process);
 	}
 
 	@Override
 	public void validateConfiguration(INERResumeConfiguration configuration) throws InvalidConfigurationException {
-		// TODO Auto-generated method stub
+		try {
+			IIEProcess process = getProcessInDatabase(configuration.getIEProcess());
+			if(process == null){
+				throw new InvalidConfigurationException("The given process is not present in the database!");
+			}
+		} catch (ANoteException e) {
+			throw new InvalidConfigurationException("The process cannot be resumed!");
+		}
 		
 	}
-
 
 }
