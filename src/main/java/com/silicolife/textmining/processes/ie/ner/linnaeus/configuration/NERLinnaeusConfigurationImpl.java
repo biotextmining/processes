@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourceSelectedClassesMap;
@@ -41,8 +40,6 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 	private ILexicalWords stopWords;
 	private NERLinnaeusPreProcessingEnum preProcessing;
 	private boolean usingOtherResourceInfoToImproveRuleAnnotations;
-
-	private IIEProcess processToResume;
 	
 	public NERLinnaeusConfigurationImpl()
 	{
@@ -68,7 +65,6 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 	public NERLinnaeusConfigurationImpl(IIEProcess processToResume){
 		super(processToResume.getCorpus(),LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
 		convertProcessPropertiesIntoConfiguration(processToResume);
-		this.processToResume = processToResume;
 	}
 
 	private void convertProcessPropertiesIntoConfiguration(IIEProcess processToResume) {
@@ -253,12 +249,6 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 
 	public String getConfigurationUID() {
 		return NERLinnaeusConfigurationImpl.nerLinnaeusUID;
-	}
-
-	@Override
-	@JsonDeserialize(as=IEProcessImpl.class)
-	public IIEProcess getProcessToResume() {
-		return processToResume;
 	}
 
 }

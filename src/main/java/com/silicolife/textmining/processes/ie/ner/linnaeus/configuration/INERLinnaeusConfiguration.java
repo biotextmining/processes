@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
-import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
@@ -26,7 +25,5 @@ public interface INERLinnaeusConfiguration extends INERConfiguration{
 	public ILexicalWords getStopWords();
 	public boolean isUsingOtherResourceInfoToImproveRuleAnnotations();
 	public NERLinnaeusPreProcessingEnum getPreProcessing();
-	public IIEProcess getProcessToResume();
-
 
 }
