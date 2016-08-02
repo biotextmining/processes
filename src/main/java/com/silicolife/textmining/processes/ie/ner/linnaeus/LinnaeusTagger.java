@@ -48,7 +48,9 @@ import com.silicolife.textmining.core.interfaces.core.report.processes.INERProce
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
+import com.silicolife.textmining.core.interfaces.process.IE.INERProcessResume;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
+import com.silicolife.textmining.core.interfaces.process.IE.ner.INERResumeConfiguration;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.compthreads.IteratorBasedMaster;
@@ -63,7 +65,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.VariantDictionaryMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
 
-public class LinnaeusTagger  implements INERProcess{
+public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
 	public static final String linneausTagger = "Linnaeus Tagger";
 	public static final String abreviation = "Abbreviation";
@@ -508,6 +510,19 @@ public class LinnaeusTagger  implements INERProcess{
 			}
 		}
 		return prop;
+	}
+
+	@Override
+	public INERProcessReport resumeNER(INERResumeConfiguration configuration)
+			throws ANoteException, InvalidConfigurationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void validateConfiguration(INERResumeConfiguration configuration) throws InvalidConfigurationException {
+		// TODO Auto-generated method stub
+		
 	}
 
 
