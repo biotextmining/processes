@@ -4,11 +4,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
@@ -28,6 +30,7 @@ import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativ
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
+import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.EntitiesDesnormalization;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparator;
@@ -52,6 +55,7 @@ import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcessResume;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERResumeConfiguration;
+import com.silicolife.textmining.core.interfaces.resource.IResource;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.compthreads.IteratorBasedMaster;
@@ -60,12 +64,14 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.docum
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.Mention;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.doc.TaggedDocument;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher;
+import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.ConcurrentMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.MatchPostProcessor;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.UnionMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.VariantDictionaryMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusConfigurationImpl;
+import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusPreProcessingEnum;
 
 public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
@@ -517,7 +523,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 	@Override
 	public INERProcessReport resumeNER(INERResumeConfiguration configuration) throws ANoteException, InvalidConfigurationException {
 		validateConfiguration(configuration);
-		INERLinnaeusConfiguration linnauesConfiguration = new NERLinnaeusConfigurationImpl(configuration.getIEProcess());
+		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess());
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
 		HandRules rules = new HandRules(elementsToNER);
@@ -569,6 +575,78 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 			throw new InvalidConfigurationException("The process cannot be resumed!");
 		}
 		
+	}
+	
+	private INERConfiguration convertProcessToConfiguration(IIEProcess ieprocess) throws ANoteException{
+		ICorpus corpus = ieprocess.getCorpus();
+		Map<String, Pattern> patterns = null;
+		boolean useabreviation = false;
+		Disambiguation disambiguationEnum = Disambiguation.OFF;
+		NERCaseSensativeEnum caseSensitiveEnum = NERCaseSensativeEnum.NONE;
+		boolean normalized = false;
+		int numThreads = 2;
+		ILexicalWords stopwords = null;
+		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
+		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
+
+		Properties propertiesToConvert = ieprocess.getProperties();
+		Map<Long, Set<Long>> mapResourceIDToClassesID = new HashMap<>();
+		for( Object key : propertiesToConvert.keySet()){
+			String keyString = String.valueOf(key);
+			Long resourceID = null;
+			try{
+				resourceID = Long.valueOf(keyString);
+			}catch(Exception e){}
+			if(resourceID != null){
+				Object classes = propertiesToConvert.get(key);
+				String classesString = String.valueOf(classes);
+				String[] classesIdString = classesString.split(",");
+				Set<Long> klassIDs = new HashSet<>();
+				for(String klassID : classesIdString){
+					klassIDs.add(Long.valueOf(klassID));
+				}
+				mapResourceIDToClassesID.put(resourceID, klassIDs);
+			}else{
+				Object value = propertiesToConvert.get(key);
+				if(keyString.equals(LinnaeusTagger.abreviation))
+					useabreviation = Boolean.valueOf(String.valueOf(value));
+				
+				if(keyString.equals(LinnaeusTagger.disambiguation))
+					disambiguationEnum = Disambiguation.valueOf(String.valueOf(value));
+
+				if(keyString.equals(GlobalNames.casesensitive))
+					caseSensitiveEnum = NERCaseSensativeEnum.valueOf(String.valueOf(value));
+				
+				if(keyString.equals(GlobalNames.normalization))
+					normalized = Boolean.valueOf(String.valueOf(value));
+				
+				if(keyString.equals(GlobalNames.useOtherResourceInformationInRules))
+					usingOtherResourceInfoToImproveRuleAnnotations = true;
+
+				if(keyString.equals(GlobalNames.stopWordsResourceID))
+					stopwords = new LexicalWordsImpl(getResourceFromDatabase(Long.valueOf(String.valueOf(value))));
+			}
+		}
+		
+		ResourcesToNerAnote resourceToNER = getResourcesToNERForConfiguration(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, mapResourceIDToClassesID);
+		return new NERLinnaeusConfigurationImpl(corpus, patterns, resourceToNER, useabreviation, disambiguationEnum, caseSensitiveEnum, normalized, numThreads, stopwords, preprocessing, usingOtherResourceInfoToImproveRuleAnnotations);
+	}
+
+	private ResourcesToNerAnote getResourcesToNERForConfiguration(NERCaseSensativeEnum caseSensitiveEnum,
+			boolean usingOtherResourceInfoToImproveRuleAnnotations, Map<Long, Set<Long>> mapResourceIDToClassesID) throws ANoteException {
+		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations);
+		for(Long resource : mapResourceIDToClassesID.keySet()){
+			
+			IResource<IResourceElement> resElem = getResourceFromDatabase(resource);
+			Set<Long> selectedClass = mapResourceIDToClassesID.get(resource);
+			Set<Long> classContent = selectedClass;
+			resourceToNER.add(resElem, classContent, selectedClass);
+		}
+		return resourceToNER;
+	}
+	
+	protected IResource<IResourceElement> getResourceFromDatabase(Long resourceId) throws ANoteException{
+		return InitConfiguration.getDataAccess().getResourceByID(resourceId);
 	}
 
 }

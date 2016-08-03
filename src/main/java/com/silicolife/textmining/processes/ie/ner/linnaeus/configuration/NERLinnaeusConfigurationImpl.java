@@ -1,11 +1,8 @@
 package com.silicolife.textmining.processes.ie.ner.linnaeus.configuration;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,13 +11,8 @@ import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativ
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourceSelectedClassesMap;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
-import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
 import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
-import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
-import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
-import com.silicolife.textmining.core.interfaces.resource.IResource;
-import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
@@ -60,68 +52,6 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		this.stopWords = stopwords;
 		this.usingOtherResourceInfoToImproveRuleAnnotations = usingOtherResourceInfoToImproveRuleAnnotations;
 		this.preProcessing = preprocessing;
-	}
-	
-	public NERLinnaeusConfigurationImpl(IIEProcess processToResume){
-		super(processToResume.getCorpus(),LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
-		convertProcessPropertiesIntoConfiguration(processToResume);
-	}
-
-	private void convertProcessPropertiesIntoConfiguration(IIEProcess processToResume) {
-		this.usingOtherResourceInfoToImproveRuleAnnotations = false;
-		Properties propertiesToConvert = processToResume.getProperties();
-		Map<Long, Set<Long>> mapResourceIDToClassesID = new HashMap<>();
-		for( Object key : propertiesToConvert.keySet()){
-			String keyString = String.valueOf(key);
-			convertPropertyIntoConfiguration(propertiesToConvert, mapResourceIDToClassesID, key, keyString);
-		}
-		
-		this.resourceToNER = new ResourcesToNerAnote(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations);
-		for(Long resource : mapResourceIDToClassesID.keySet()){
-			
-			IResource<IResourceElement> resElem = new ResourceImpl(resource, "", "", "", true);
-			Set<Long> selectedClass = mapResourceIDToClassesID.get(resource);
-			Set<Long> classContent = selectedClass;
-			resourceToNER.add(resElem, classContent, selectedClass);
-		}
-		
-	}
-
-	private void convertPropertyIntoConfiguration(Properties propertiesToConvert,
-			Map<Long, Set<Long>> mapResourceIDToClassesID, Object key, String keyString) {
-		Long resourceID = null;
-		try{
-			resourceID = Long.valueOf(keyString);
-		}catch(Exception e){}
-		if(resourceID != null){
-			Object classes = propertiesToConvert.get(key);
-			String classesString = String.valueOf(classes);
-			String[] classesIdString = classesString.split(",");
-			Set<Long> klassIDs = new HashSet<>();
-			for(String klassID : classesIdString){
-				klassIDs.add(Long.valueOf(klassID));
-			}
-			mapResourceIDToClassesID.put(resourceID, klassIDs);
-		}else{
-			Object value = propertiesToConvert.get(key);
-			if(keyString.equals(LinnaeusTagger.abreviation))
-				this.useAbreviation = Boolean.valueOf(String.valueOf(value));
-			
-			if(keyString.equals(LinnaeusTagger.disambiguation))
-				this.disambiguation = Disambiguation.valueOf(String.valueOf(value));
-
-			if(keyString.equals(GlobalNames.casesensitive))
-				this.caseSensitiveEnum = NERCaseSensativeEnum.valueOf(String.valueOf(value));
-			
-			if(keyString.equals(GlobalNames.normalization))
-				this.normalized = Boolean.valueOf(String.valueOf(value));
-			
-			if(keyString.equals(GlobalNames.useOtherResourceInformationInRules))
-				this.usingOtherResourceInfoToImproveRuleAnnotations = true;
-
-			if(keyString.equals(GlobalNames.stopWordsResourceID))
-				this.stopWords = new LexicalWordsImpl(Long.valueOf(String.valueOf(value)), "", "", true);
-		}
 	}
 
 	public Map<String, Pattern> getPatterns() {
