@@ -12,6 +12,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
@@ -78,6 +81,8 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 	public static final String linneausTagger = "Linnaeus Tagger";
 	public static final String abreviation = "Abbreviation";
 	public static final String disambiguation = "Disambiguation";
+	
+	final static Logger nerlogger = LoggerFactory.getLogger(LinnaeusTagger.class);
 
 	public static final IProcessOrigin linnausOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),linneausTagger);
 
@@ -93,7 +98,9 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		validateConfiguration(configuration);
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
 		IIEProcess processToRun = buildIEProcess(configuration,linnauesConfiguration);
+		nerlogger.info("Created the Linneaus NER process on DB");
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		nerlogger.info("Start to get resources elements on DB");
 		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
 		HandRules rules = new HandRules(elementsToNER);
 		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
@@ -101,6 +108,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
 		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
+		nerlogger.info("Finished to get resources elements on DB");
 		Matcher matcher = getMatcher(linnauesConfiguration,elements);
 		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", processToRun);
 		
@@ -457,11 +465,12 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		if(step%50==0)
 		{
 			System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-			if(step%1000==0)
-			{
-				Runtime.getRuntime().gc();
-				System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
-			}
+			nerlogger.info((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
+//			if(step%1000==0)
+//			{
+//				Runtime.getRuntime().gc();
+//				System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+//			}
 		}
 	}
 
