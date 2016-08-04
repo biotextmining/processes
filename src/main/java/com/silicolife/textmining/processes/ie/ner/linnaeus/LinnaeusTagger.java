@@ -185,7 +185,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Set<String> stopwords = new HashSet<String>();
 		if(linnauesConfiguration.getStopWords()!=null)
 		{
-			ILexicalWords st = linnauesConfiguration.getStopWords();
+			ILexicalWords st = getStopWords(linnauesConfiguration);
 			Set<String> stopwordsTmp = st.getLexicalWords().keySet();
 			if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
 				stopwords = stopwordsTmp;
@@ -203,6 +203,10 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 			}
 		}
 		return stopwords;
+	}
+	
+	protected ILexicalWords getStopWords(INERLinnaeusConfiguration linnauesConfiguration){
+		return linnauesConfiguration.getStopWords();
 	}
 
 	private void addMatchesToAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
