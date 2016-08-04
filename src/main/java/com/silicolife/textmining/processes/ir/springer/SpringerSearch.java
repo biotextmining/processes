@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -223,8 +224,8 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
 			Set<String> doiSet = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(queryInfo,PublicationSourcesDefaultEnum.DOI.name());
 			List<IPublication> pubs = SpringerSearchUtils.getSearchRange(autentication, query.getCompleteQuery(), step);
-			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
-			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
+			Set<IPublication> newQueryDocuments = new HashSet<>();
+			Set<IPublication> documentsToInsert = new HashSet<>();
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 
 			for(IPublication pub:pubs)
@@ -264,7 +265,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 			if(!cancel)
 			{
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
-				List<IPublication> publicationToAdd = new ArrayList<IPublication>();
+				Set<IPublication> publicationToAdd = new HashSet<>();
 				publicationToAdd.addAll(newQueryDocuments);
 				publicationToAdd.addAll(documentsToInsert);
 				InitConfiguration.getDataAccess().addQueryPublications(queryInfo, publicationToAdd);
@@ -292,9 +293,9 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 			// Get All DOI ID in System
 			Map<String, Long> doiAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.DOI.name());
 			// Documents to Insert into databse 
-			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
+			Set<IPublication> documentsToInsert = new HashSet<>();
 			// Documents already present in DB - Just to add to Query
-			List<IPublication> documentsThatAlreayInDB = new ArrayList<IPublication>();
+			Set<IPublication> documentsThatAlreayInDB = new HashSet<>();
 			// Step Document retrieved
 			List<IPublication> pubs = getSpringerResults(report,autentication,query.getCompleteQuery(),step);
 			for(IPublication pub:pubs)
@@ -321,7 +322,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 			{
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
 			}
-			List<IPublication> publications = new ArrayList<>();
+			Set<IPublication> publications = new HashSet<>();
 			publications.addAll(documentsToInsert);
 			publications.addAll(documentsThatAlreayInDB);
 			if(!cancel)

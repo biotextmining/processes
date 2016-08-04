@@ -1,9 +1,9 @@
 package com.silicolife.textmining.processes.ir.epopatent;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
@@ -211,8 +211,8 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			// Get EPO document in Query
 			Set<String> patentsIds = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query,PublicationSourcesDefaultEnum.patent.name());
 			List<IPublication> pubs = OPSUtils.getSearch(tokenaccess,query.getCompleteQuery(),step);
-			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
-			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
+			Set<IPublication> newQueryDocuments = new HashSet<>();
+			Set<IPublication> documentsToInsert = new HashSet<>();
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			for(IPublication pub:pubs)
 			{
@@ -256,7 +256,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 				nPubs = nPubs +documentsToInsert.size();
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
 			}
-			List<IPublication> publicationToAdd = new ArrayList<IPublication>();
+			Set<IPublication> publicationToAdd = new HashSet<>();
 			publicationToAdd.addAll(newQueryDocuments);
 			publicationToAdd.addAll(documentsToInsert);
 			InitConfiguration.getDataAccess().addQueryPublications(query, publicationToAdd );
@@ -303,9 +303,9 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			// Get All EPO ID in Dtabase
 			Map<String, Long> epodocAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.patent.name());
 			// Documents to Insert into databse 
-			List<IPublication> documentsToInsert = new ArrayList<IPublication>();
+			Set<IPublication> documentsToInsert = new HashSet<>();
 			// Documents already present in DB - Just to add to Query
-			List<IPublication> documentsThatAlreayInDB = new ArrayList<IPublication>();
+			Set<IPublication> documentsThatAlreayInDB = new HashSet<>();
 			// Step Document retrieved
 			List<IPublication> pubs  = OPSUtils.getSearch(tokenaccess,query,step);
 			for(IPublication pub:pubs)
@@ -336,7 +336,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
 			}
 			
-			List<IPublication> publications = new ArrayList<>();
+			Set<IPublication> publications = new HashSet<>();
 			publications.addAll(documentsToInsert);
 			publications.addAll(documentsThatAlreayInDB);
 			if(!cancel)
@@ -368,7 +368,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	}
 
 	private void getPatentDetails(IIRSearchProcessReport report,Map<String, Long> patentIDAlreadyExistOnDB,
-			List<IPublication> pubs) throws ANoteException, InternetConnectionProblemException
+			Set<IPublication> pubs) throws ANoteException, InternetConnectionProblemException
 	{
 		{
 			for(IPublication pub:pubs)

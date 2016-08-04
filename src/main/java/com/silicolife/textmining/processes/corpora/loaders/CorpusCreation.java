@@ -2,8 +2,7 @@ package com.silicolife.textmining.processes.corpora.loaders;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -46,7 +45,7 @@ public class CorpusCreation {
 				IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 				if(pub==null)
 				{		
-					List<IPublication> documentToadd = new ArrayList<IPublication>();
+					Set<IPublication> documentToadd = new HashSet<>();
 					documentToadd.add(publication);
 					// Add Publication to system
 					addPublicationToDatabase(documentToadd);
@@ -105,7 +104,7 @@ public class CorpusCreation {
 	}
 
 
-	protected void addPublicationToDatabase(List<IPublication> documentToadd)throws ANoteException {
+	protected void addPublicationToDatabase(Set<IPublication> documentToadd)throws ANoteException {
 		InitConfiguration.getDataAccess().addPublications(documentToadd );
 	}
 

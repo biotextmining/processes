@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -212,7 +213,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 		NewESearchContext context = NewPMSearch.query(query.getCompleteQuery());
 		this.lastQuery = System.currentTimeMillis();
 		long startQuery = System.currentTimeMillis();
-		List<IPublication> documentsToInsert,documentsThatAlreayInDB;
+		Set<IPublication> documentsToInsert,documentsThatAlreayInDB;
 		int abs_count;
 		for(int i=0;i<total &&!cancel;i=i+NewPubMedConfiguration.blockSearchSize)
 		{
@@ -238,8 +239,8 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.pmc.name());
 			// Block Ids processed
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
-			documentsToInsert = new ArrayList<IPublication>();
-			documentsThatAlreayInDB = new ArrayList<IPublication>();
+			documentsToInsert = new HashSet<>();
+			documentsThatAlreayInDB = new HashSet<>();
 			for(IPublication pub:publications)
 			{
 				// Get ID from publication
@@ -322,7 +323,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			}
 			
 			
-			List<IPublication> publicationToAdd = new ArrayList<IPublication>();
+			Set<IPublication> publicationToAdd = new HashSet<>();
 			publicationToAdd.addAll(documentsThatAlreayInDB);
 			publicationToAdd.addAll(documentsToInsert);
 			if(!cancel)
@@ -565,7 +566,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 		int total = getExpectedQueryResults(querySTR);
 		NewESearchContext context = NewPMSearch.query(querySTR);
 		this.lastQuery = System.currentTimeMillis();
-		List<IPublication> documentsToInsert;
+		Set<IPublication> documentsToInsert;
 		this.nPublicacoes = query.getPublicationsSize();
 		this.nAbstracts = query.getAvailableAbstracts();
 		int publicatiosnAvailable = 0;
@@ -591,7 +592,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			Set<String> pmcsAlreadyExistOnQuery = InitConfiguration.getDataAccess().getQueryPublicationsExternalIDFromSource(query, PublicationSourcesDefaultEnum.pmc.name());
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
-			documentsToInsert = new ArrayList<IPublication>();
+			documentsToInsert = new HashSet<>();
 			for(IPublication pub:documents)
 			{
 				// Get ID's from publication
@@ -678,7 +679,7 @@ public class NewPubMedSearch extends IRProcessImpl implements IIRSearch{
 			// Add publications to the system
 			if(!cancel && documentsToInsert.size()>0)
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
-			List<IPublication> publicationToAdd = new ArrayList<IPublication>();
+			Set<IPublication> publicationToAdd = new HashSet<>();
 			publicationToAdd.addAll(newQueryDocuments);
 			publicationToAdd.addAll(documentsToInsert);
 			// Add Query Publications

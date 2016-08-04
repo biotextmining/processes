@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -209,7 +210,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 		ESearchContext context = PMSearch.query(query.getCompleteQuery());
 		this.lastQuery = System.currentTimeMillis();
 		long startQuery = System.currentTimeMillis();
-		List<IPublication> documentsToInsert,documentsThatAlreayInDB;
+		Set<IPublication> documentsToInsert,documentsThatAlreayInDB;
 		int abs_count;
 		for(int i=0;i<total &&!cancel;i=i+PubMedConfiguration.blockSearchSize)
 		{
@@ -235,8 +236,8 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			Set<String> pmcsAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefaultEnum.pmc.name());
 			// Block Ids processed
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
-			documentsToInsert = new ArrayList<IPublication>();
-			documentsThatAlreayInDB = new ArrayList<IPublication>();
+			documentsToInsert = new HashSet<>();
+			documentsThatAlreayInDB = new HashSet<>();
 			for(IPublication pub:publications)
 			{
 				// Get ID from publication
@@ -319,7 +320,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			}
 			
 			
-			List<IPublication> publicationToAdd = new ArrayList<IPublication>();
+			Set<IPublication> publicationToAdd = new HashSet<>();
 			publicationToAdd.addAll(documentsThatAlreayInDB);
 			publicationToAdd.addAll(documentsToInsert);
 			if(!cancel)
@@ -563,7 +564,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 		int total = getExpectedQueryResults(querySTR);
 		ESearchContext context = PMSearch.query(querySTR);
 		this.lastQuery = System.currentTimeMillis();
-		List<IPublication> documentsToInsert;
+		Set<IPublication> documentsToInsert;
 		int abstractsAvailable = 0;
 		IIRSearchUpdateReport report = new IRSearchUpdateReportImpl(query);
 		for(int i=0;i<total &&!cancel;i=i+PubMedConfiguration.blockSearchSize)
@@ -584,7 +585,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			Set<String> pmcsAlreadyExistOnQuery = getQueryPublicationIDWithGivenSource(query, PublicationSourcesDefaultEnum.pmc.name());
 			Set<Long> alreadyAdded = new java.util.HashSet<>();
 			List<IPublication> newQueryDocuments = new ArrayList<IPublication>();
-			documentsToInsert = new ArrayList<IPublication>();
+			documentsToInsert = new HashSet<>();
 			for(IPublication pub:documents)
 			{
 				// Get ID's from publication
@@ -667,7 +668,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			// Add publications to the system
 			if(!cancel && documentsToInsert.size()>0)
 				insertPublications(documentsToInsert);
-			List<IPublication> publicationToAdd = new ArrayList<IPublication>();
+			Set<IPublication> publicationToAdd = new HashSet<>();
 			publicationToAdd.addAll(newQueryDocuments);
 			publicationToAdd.addAll(documentsToInsert);
 			// Add Query Publications
@@ -688,11 +689,11 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 		return report;
 	}
 	
-	public List<IPublication> searchPublicationMetaInfoUsingPMID(List<String> pmids) throws InternetConnectionProblemException
+	public Set<IPublication> searchPublicationMetaInfoUsingPMID(List<String> pmids) throws InternetConnectionProblemException
 	{
 		this.cancel = false;
 		int total = pmids.size();
-		List<IPublication> listAll = new ArrayList<IPublication>();
+		Set<IPublication> listAll = new HashSet<>();
 		String query = new String();
 		for(int i=0;i<total &&!cancel;i++)
 		{

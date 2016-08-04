@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -123,7 +122,7 @@ public class CorpusCreationInBatch {
 
 
 	private Map<Long, IPublication> addPublicationsToDatabase(Set<IPublication> publications) throws ANoteException {
-		List<IPublication> documentToadd = new ArrayList<IPublication>();
+		Set<IPublication> documentToadd = new HashSet<>();
 		Map<Long, IPublication> documentsInDatabase = new HashMap<>();
 		for(IPublication publication:publications){
 			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
@@ -168,7 +167,7 @@ public class CorpusCreationInBatch {
 	}
 
 
-	protected void addPublicationToDatabase(List<IPublication> documentToadd)throws ANoteException {
+	protected void addPublicationToDatabase(Set<IPublication> documentToadd)throws ANoteException {
 		InitConfiguration.getDataAccess().addPublications(documentToadd );
 	}
 
