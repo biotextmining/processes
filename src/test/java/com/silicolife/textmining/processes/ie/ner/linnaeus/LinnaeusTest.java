@@ -20,7 +20,6 @@ import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativ
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.configuration.DictionaryLoaderConfigurationImpl;
-import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
@@ -52,10 +51,10 @@ public class LinnaeusTest {
 	
 	@Test
 	public void test2() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, IOException, InvalidConfigurationException {
-		DatabaseConnectionInit.init("localhost","3306","testdaemon","root","admin");
+		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 //		long corpusID = 4050288017084732744L;
-		long corpusID = 1379968013776571154L;
-		long keggResourceID = 97025469966245317L;
+		long corpusID = 2334324709253224511L;
+		long keggResourceID = 8976153089388760683L;
 //		long metacycResourceID = 8943458235895149470L;
 //		long chebiResourceID = 4976336839593779118L;
 //		long bioDBID = 6866333013075336357L;
@@ -88,14 +87,15 @@ public class LinnaeusTest {
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		Disambiguation disambiguation = Disambiguation.OFF;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
-		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitive, usingOtherResourceInfoToImproveRuleAnnotations);
+		int sizeOfSmallWordsToBeNotAnnotated = 2;
+		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitive, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
 		for(IDictionary dictionary : dictionaries){
 			resourceToNER.addUsingAnoteClasses(dictionary, dictionary.getResourceClassContent(), dictionary.getResourceClassContent());
 
 		}
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		int numThreads = 4;
-		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
+		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
 		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);
@@ -115,7 +115,8 @@ public class LinnaeusTest {
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		int numThreads = 4;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
-		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
+		int sizeOfSmallWordsToBeNotAnnotated = 0;
+		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated );
 		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);
@@ -130,11 +131,12 @@ public class LinnaeusTest {
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		Disambiguation disambiguation = Disambiguation.ON_WHOLE;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
-		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitive, usingOtherResourceInfoToImproveRuleAnnotations);
+		int sizeOfSmallWordsToBeNotAnnotated = 0;
+		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitive, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
 		resourceToNER.addUsingAnoteClasses(dictionary, dictionary.getResourceClassContent(), dictionary.getResourceClassContent());
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		int numThreads = 4;
-		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations );
+		INERLinnaeusConfiguration configurations = new NERLinnaeusConfigurationImpl(corpus, patterns , resourceToNER, useabreviation , disambiguation , caseSensitive , normalized , numThreads , stopwords , preprocessing , usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
 		LinnaeusTagger linnaues = new LinnaeusTagger();
 		System.out.println("Execute Linnaeus");
 		INERProcessReport report = linnaues.executeCorpusNER(configurations);

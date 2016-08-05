@@ -32,6 +32,7 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 	private ILexicalWords stopWords;
 	private NERLinnaeusPreProcessingEnum preProcessing;
 	private boolean usingOtherResourceInfoToImproveRuleAnnotations;
+	private int sizeOfSmallWordsToBeNotAnnotated;
 	
 	public NERLinnaeusConfigurationImpl()
 	{
@@ -40,7 +41,7 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 	
 	public NERLinnaeusConfigurationImpl(ICorpus corpus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
 			Disambiguation disambiguation, NERCaseSensativeEnum caseSensitiveEnum,boolean normalized, int numThreads,ILexicalWords stopwords,
-			NERLinnaeusPreProcessingEnum preprocessing,boolean usingOtherResourceInfoToImproveRuleAnnotations) {
+			NERLinnaeusPreProcessingEnum preprocessing,boolean usingOtherResourceInfoToImproveRuleAnnotations, int sizeOfSmallWordsToBeNotAnnotated) {
 		super(corpus,LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
 		this.patterns = patterns;
 		this.resourceToNER = resourceToNER;
@@ -52,6 +53,7 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		this.stopWords = stopwords;
 		this.usingOtherResourceInfoToImproveRuleAnnotations = usingOtherResourceInfoToImproveRuleAnnotations;
 		this.preProcessing = preprocessing;
+		this.sizeOfSmallWordsToBeNotAnnotated =sizeOfSmallWordsToBeNotAnnotated;
 	}
 
 	public Map<String, Pattern> getPatterns() {
@@ -138,6 +140,14 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		this.preProcessing = preProcessing;
 	}
 
+	public int getSizeOfSmallWordsToBeNotAnnotated() {
+		return sizeOfSmallWordsToBeNotAnnotated;
+	}
+
+	public void setSizeOfSmallWordsToBeNotAnnotated(int sizeOfSmallWordsToBeNotAnnotated) {
+		this.sizeOfSmallWordsToBeNotAnnotated = sizeOfSmallWordsToBeNotAnnotated;
+	}
+
 	@JsonIgnore
 	public Map<String, String> getNERProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
@@ -158,6 +168,7 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		properties.put(NERLinnaeusTaggerDefaultSettings.LOOKUPTABLE_RESOURCE_ID, String.valueOf(lookuptable));
 		int ontology = 0;
 		properties.put(NERLinnaeusTaggerDefaultSettings.ONTOLOGY_RESOURCE_ID, String.valueOf(ontology));
+		properties.put(NERLinnaeusTaggerDefaultSettings.SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED, String.valueOf(sizeOfSmallWordsToBeNotAnnotated));
 		return properties;
 	}
 	

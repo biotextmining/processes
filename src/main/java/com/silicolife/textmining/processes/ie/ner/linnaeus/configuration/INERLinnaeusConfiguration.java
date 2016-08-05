@@ -25,5 +25,5 @@ public interface INERLinnaeusConfiguration extends INERConfiguration{
 	public ILexicalWords getStopWords();
 	public boolean isUsingOtherResourceInfoToImproveRuleAnnotations();
 	public NERLinnaeusPreProcessingEnum getPreProcessing();
-
+	public int getSizeOfSmallWordsToBeNotAnnotated();
 }

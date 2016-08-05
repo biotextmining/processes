@@ -378,6 +378,9 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		{
 			properties.put(GlobalNames.useOtherResourceInformationInRules,"true");
 		}
+		if(configurations.getSizeOfSmallWordsToBeNotAnnotated()>0){
+			properties.put(GlobalNames.sizeOfNonAnnotatedSmallWords, String.valueOf(configurations.getSizeOfSmallWordsToBeNotAnnotated()));
+		}
 		return properties;
 	}
 
@@ -601,6 +604,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		ILexicalWords stopwords = null;
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
+		int sizeOfSmallWordsToBeNotAnnotated = 0;
 
 		Properties propertiesToConvert = ieprocess.getProperties();
 		Map<Long, Set<Long>> mapResourceIDToClassesID = new HashMap<>();
@@ -638,16 +642,18 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
 				if(keyString.equals(GlobalNames.stopWordsResourceID))
 					stopwords = new LexicalWordsImpl(getResourceFromDatabase(Long.valueOf(String.valueOf(value))));
+				if(keyString.equals(GlobalNames.sizeOfNonAnnotatedSmallWords))
+					sizeOfSmallWordsToBeNotAnnotated = Integer.valueOf(String.valueOf(value));
 			}
 		}
 		
-		ResourcesToNerAnote resourceToNER = getResourcesToNERForConfiguration(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, mapResourceIDToClassesID);
-		return new NERLinnaeusConfigurationImpl(corpus, patterns, resourceToNER, useabreviation, disambiguationEnum, caseSensitiveEnum, normalized, numThreads, stopwords, preprocessing, usingOtherResourceInfoToImproveRuleAnnotations);
+		ResourcesToNerAnote resourceToNER = getResourcesToNERForConfiguration(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated, mapResourceIDToClassesID);
+		return new NERLinnaeusConfigurationImpl(corpus, patterns, resourceToNER, useabreviation, disambiguationEnum, caseSensitiveEnum, normalized, numThreads, stopwords, preprocessing, usingOtherResourceInfoToImproveRuleAnnotations,sizeOfSmallWordsToBeNotAnnotated);
 	}
 
 	private ResourcesToNerAnote getResourcesToNERForConfiguration(NERCaseSensativeEnum caseSensitiveEnum,
-			boolean usingOtherResourceInfoToImproveRuleAnnotations, Map<Long, Set<Long>> mapResourceIDToClassesID) throws ANoteException {
-		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations);
+			boolean usingOtherResourceInfoToImproveRuleAnnotations, int sizeOfSmallWordsToBeNotAnnotated, Map<Long, Set<Long>> mapResourceIDToClassesID) throws ANoteException {
+		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
 		for(Long resource : mapResourceIDToClassesID.keySet()){
 			
 			IResource<IResourceElement> resElem = getResourceFromDatabase(resource);
