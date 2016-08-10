@@ -13,7 +13,6 @@ import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.textprocessing.ParsingUtils;
 import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparator;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
@@ -75,9 +74,8 @@ public class NERSimple implements INERLexicalResourcesPreProcessingModel{
 			{
 				
 				String element = text.substring(pos.getStart(), pos.getEnd());
-				String annotationValueNormalized = NormalizationForm.getNormalizationForm(element);
 				IEntityAnnotation entity = new EntityAnnotationImpl(pos.getStart(), pos.getEnd(), termAnnot.getClassAnnotation(),
-						termAnnot.getResourceElement(), element, annotationValueNormalized, null);
+						termAnnot.getResourceElement(), element, false, null);
 				annotations.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(pos,entity);
 			}
 		}

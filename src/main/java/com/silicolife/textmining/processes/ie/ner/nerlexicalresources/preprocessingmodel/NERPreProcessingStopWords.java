@@ -10,7 +10,6 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -95,9 +94,8 @@ public class NERPreProcessingStopWords extends NERSimple {
 				for(AnnotationPosition pos : positions)
 				{
 					String element = text.substring(pos.getStart(), pos.getEnd());
-					String annotationValueNormalized = NormalizationForm.getNormalizationForm(element);
 					IEntityAnnotation entity = new EntityAnnotationImpl(pos.getStart(), pos.getEnd(), termAnnot.getClassAnnotation(),
-							termAnnot.getResourceElement(), element, annotationValueNormalized, null);
+							termAnnot.getResourceElement(), element, false, null);
 					annotations.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(pos,entity);
 				}
 			}

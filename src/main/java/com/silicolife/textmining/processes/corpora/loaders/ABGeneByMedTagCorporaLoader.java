@@ -31,7 +31,6 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationExtern
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.corpora.loaders.ICorpusEntityLoader;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -227,8 +226,7 @@ public class ABGeneByMedTagCorporaLoader implements ICorpusEntityLoader{
 					end = start + (long)trimedEntity.length();
 				}
 			}
-			String entityStringNormalized = NormalizationForm.getNormalizationForm(trimedEntity);
-			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, trimedEntity, entityStringNormalized, null);
+			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, trimedEntity, false, null);
 			entities.add(entity);
 		}
 		return entities;

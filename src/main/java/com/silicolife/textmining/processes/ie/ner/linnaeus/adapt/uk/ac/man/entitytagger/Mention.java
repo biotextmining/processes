@@ -35,6 +35,9 @@ public class Mention implements Comparable<Mention>, Serializable {
 	private String docid="";
 	private Double[] probabilities;
 	private String[] idLines;
+	private boolean abbreviation;
+
+
 
 	private class IDPair{
 		private String id;
@@ -664,5 +667,13 @@ public class Mention implements Comparable<Mention>, Serializable {
 		int e2 = n.getEnd();
 
 		return (s1 >= s2 && s1 < e2) || (s2 >= s1 && s2 < e1);		
+	}
+	
+	public boolean isAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(boolean abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 }

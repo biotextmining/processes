@@ -35,7 +35,6 @@ import com.silicolife.textmining.core.datastructures.report.processes.NERProcess
 import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
 import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.EntitiesDesnormalization;
-import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparator;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -236,7 +235,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Long classID = resourceMapClass.get(dicEntityID);
 		String dictTerm = men.getIds()[1];
 		IAnoteClass klass = getIAnoteClass(classID);
-		IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(dicEntityID), text, NormalizationForm.getNormalizationForm(text), new Properties());
+		IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(dicEntityID), text,men.isAbbreviation() , new Properties());
 		positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
 	}
 
@@ -263,7 +262,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 			Long classID = resourceMapClass.get(resourceID);
 			String dictTerm = mapPossibleResourceIDsToTermString.get(resourceID);
 			IAnoteClass klass = getIAnoteClass(classID);
-			IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(resourceID), text, NormalizationForm.getNormalizationForm(text), new Properties());
+			IEntityAnnotation entityAnnotation = new EntityAnnotationImpl(men.getStart(), men.getEnd(), klass , resourceIDMapResource.get(resourceID), text, men.isAbbreviation(), new Properties());
 			positions.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(new AnnotationPosition(men.getStart(), men.getEnd(), dictTerm, text), entityAnnotation);
 		}
 	}
