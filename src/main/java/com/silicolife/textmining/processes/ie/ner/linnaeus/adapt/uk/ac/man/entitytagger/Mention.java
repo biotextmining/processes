@@ -35,7 +35,7 @@ public class Mention implements Comparable<Mention>, Serializable {
 	private String docid="";
 	private Double[] probabilities;
 	private String[] idLines;
-	private boolean abbreviation;
+	private boolean abbreviation = false;
 
 
 
@@ -131,6 +131,7 @@ public class Mention implements Comparable<Mention>, Serializable {
 		m.setProbabilities(probabilities != null ? probabilities.clone() : null);
 		m.setComment(comment);
 		m.setDocid(docid);
+		m.setAbbreviation(abbreviation);
 		return m;
 	}
 

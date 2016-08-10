@@ -260,6 +260,7 @@ public abstract class Matcher {
 							Mention a = new Mention(m.getIds(),e+2,ncp,abb);
 							a.setComment("abbrev main (" + m.getText() + ")");
 							a.setDocid(m.getDocid());
+							a.setAbbreviation(true);
 
 							boolean overlaps = false;
 
@@ -287,6 +288,7 @@ public abstract class Matcher {
 					Mention nm = new Mention(m.getIds(),s,e,text.substring(s,e));
 					nm.setComment("abbrev sec");
 					nm.setDocid(m.getDocid());
+					nm.setAbbreviation(true);
 					boolean add = true;
 
 					for (int i = 0; i < matches.size(); i++){
