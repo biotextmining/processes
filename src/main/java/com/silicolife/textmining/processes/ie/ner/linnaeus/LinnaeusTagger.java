@@ -107,6 +107,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
 		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
+		Set<String> stopwords = loadStopWords(linnauesConfiguration);
 		nerlogger.info("Finished to get resources elements on DB");
 		Matcher matcher = getMatcher(linnauesConfiguration,elements);
 		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", processToRun);
@@ -120,7 +121,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 			
 			counter = executeLinneausForDocumentSet(linnauesConfiguration, processToRun, startime, elementsToNER, rules,
 					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
-					mapPossibleResourceIDsToTermString, matcher, report, documents, size, counter);
+					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
 		}
 
 		if(stop)
@@ -144,15 +145,14 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
 	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,
 			long startime, ElementToNer elementsToNER, HandRules rules, Map<Long, Long> resourceMapClass,
-			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
-			Map<Long, String> mapPossibleResourceIDsToTermString, Matcher matcher, INERProcessReport report,
+			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs, 
+			Map<Long, String> mapPossibleResourceIDsToTermString, Set<String> stopwords, Matcher matcher, INERProcessReport report,
 			DocumentIterator documents, Integer publicationsSize, Integer counter) throws ANoteException {
 		
 		ConcurrentMatcher tm = new ConcurrentMatcher(matcher,documents);
 		IteratorBasedMaster<TaggedDocument> master = new IteratorBasedMaster<TaggedDocument>(tm,linnauesConfiguration.getNumberOfThreads());
 		Thread threadmaster = new Thread(master);
 		threadmaster.start();
-		Set<String> stopwords = loadStopWords(linnauesConfiguration);
 		
 		while (master.hasNext() && !stop){
 			TaggedDocument td = master.next();
@@ -540,6 +540,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		validateConfiguration(configuration);
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess());
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		nerlogger.info("Start to get resources elements on DB");
 		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
 		HandRules rules = new HandRules(elementsToNER);
 		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
@@ -547,7 +548,9 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
 		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
+		Set<String> stopwords = loadStopWords(linnauesConfiguration);
 		Matcher matcher = getMatcher(linnauesConfiguration,elements);
+		nerlogger.info("Finished to get resources elements on DB");
 		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", configuration.getIEProcess());
 		
 		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess());
@@ -559,7 +562,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 			
 			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), startime, elementsToNER, rules,
 					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
-					mapPossibleResourceIDsToTermString, matcher, report, documents, size, counter);
+					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
 		}
 
 		if(stop)
