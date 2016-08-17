@@ -20,7 +20,7 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
 import com.silicolife.textmining.core.datastructures.documents.CorpusPublicationPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.UnprocessedPublicationsPaginatorImpl;
+import com.silicolife.textmining.core.datastructures.documents.UnprocessedPublicationsStackPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
@@ -579,7 +579,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 	}
 	
 	protected ICorpusPublicationPaginator getUnprocessedPublicationsPaginator(IIEProcess process) throws ANoteException {
-		return new UnprocessedPublicationsPaginatorImpl(process);
+		return new UnprocessedPublicationsStackPaginatorImpl(process);
 	}
 
 	@Override
