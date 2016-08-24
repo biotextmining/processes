@@ -30,7 +30,7 @@ public class DictionaryCSVLoaderTest {
 	@Test
 	public void test() throws InvalidDatabaseAccess, ANoteException, IOException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
-		IResource<IResourceElement> dictionary = CreateDictionaryTest.createDictionary("Brenda - fdadsf");
+		IResource<IResourceElement> dictionary = CreateDictionaryTest.createDictionary("Brenda - fdadsf","");
 		DictionaryStandardCSVLoader dictionaryCSVLoader = new DictionaryStandardCSVLoader();
 		boolean hasHeaders = true;
 		Map<String, ColumnParameters> columnNameColumnParameters = new HashMap<String, ColumnParameters>();

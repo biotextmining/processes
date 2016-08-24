@@ -17,14 +17,21 @@ public class CreateDictionaryTest {
 	@Test
 	public void createDictionarytest() throws InvalidDatabaseAccess, ANoteException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
-		createDictionary("Dictionary Name");
+		createDictionary("Dictionary Name","put notes");
 		assertTrue(true);
 
 	}
 
-	public static IResource<IResourceElement> createDictionary(String name) throws ANoteException {
-		String info = "put notes";
+	public static IResource<IResourceElement> createDictionary(String name,String notes) throws ANoteException {
+		String info = notes;
 		IResource<IResourceElement> newDictionary = new DictionaryImpl(name, info, true);
+		InitConfiguration.getDataAccess().createResource(newDictionary);
+		return newDictionary;
+	}
+	
+	public static IResource<IResourceElement> createDictionary(long id,String name,String notes) throws ANoteException {
+		String info = notes;
+		IResource<IResourceElement> newDictionary = new DictionaryImpl(id,name, info, true);
 		InitConfiguration.getDataAccess().createResource(newDictionary);
 		return newDictionary;
 	}

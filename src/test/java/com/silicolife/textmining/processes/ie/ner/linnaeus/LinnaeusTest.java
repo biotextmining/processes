@@ -146,7 +146,7 @@ public class LinnaeusTest {
 	public static IDictionary createDictionaryAndUpdateditWithByocycFiles()
 			throws ANoteException, IOException {
 		System.out.println("Create Dictionary");
-		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc");
+		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc","");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		BioMetaEcoCycFlatFileLoader loader = new BioMetaEcoCycFlatFileLoader();
 		String byocycFolder = "src/test/resources/BioCyc/data";
@@ -165,7 +165,7 @@ public class LinnaeusTest {
 	public static IDictionary createSimpleDictionaryAndUpdateditWithByocycFiles()
 			throws ANoteException, IOException {
 		System.out.println("Create Dictionary");
-		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc");
+		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc","");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		BioMetaEcoCycFlatFileLoader loader = new BioMetaEcoCycFlatFileLoader();
 		String byocycFolder = "src/test/resources/BioCyc/small";

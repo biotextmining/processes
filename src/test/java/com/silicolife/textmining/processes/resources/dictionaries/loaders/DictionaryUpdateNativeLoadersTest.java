@@ -25,7 +25,7 @@ public class DictionaryUpdateNativeLoadersTest {
 	@Test
 	public void updateDictionaryBiocyc() throws InvalidDatabaseAccess, ANoteException, IOException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
-		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc");
+		IResource<IResourceElement> resource = CreateDictionaryTest.createDictionary("Biocyc","");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		BioMetaEcoCycFlatFileLoader loader = new BioMetaEcoCycFlatFileLoader();
 		String byocycFolder = "src/test/resources/BioCyc/small";
