@@ -1,6 +1,7 @@
 package com.silicolife.textmining.processes.ir;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -15,8 +16,9 @@ public class PMCReaderTest {
 	public void test() throws ANoteException {
 		File nxml = new File("src//test//resources//pmc//testenxml.xml");
 		PMCReader pmcreader = new PMCReader();
-		IPublication pub = pmcreader.getPublications(nxml);
-		System.out.println(PublicationImpl.getPublicationExternalIDsStream(pub));
+		List<IPublication> pubs = pmcreader.getPublications(nxml);
+		for(IPublication pub : pubs)
+			System.out.println(PublicationImpl.getPublicationExternalIDsStream(pub));
 	}
 
 }
