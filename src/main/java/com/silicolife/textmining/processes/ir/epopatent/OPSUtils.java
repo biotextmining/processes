@@ -333,10 +333,10 @@ public class OPSUtils {
 		for(String part : keywordsParts)
 		{
 			part = part.trim();
-			String partLower = part.toLowerCase();
+//			String partLower = part.toLowerCase();
 			if(!part.isEmpty())
 			{
-				keywords = keywords.replace(part, "\""+partLower+"\"");
+				keywords = keywords.replace(part, "\""+part+"\"");
 			}
 		}
 		keywords = keywords.replace("AND"," AND ");
