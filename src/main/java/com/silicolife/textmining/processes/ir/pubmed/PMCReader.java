@@ -94,11 +94,16 @@ public class PMCReader {
 					date = date.substring(0, 24);
 				}
 
-
-
 				String yearDate = new String();
-				if(date.length()>3)
-					yearDate = date.substring(0,4);
+				if(date.length()>3){
+					String[] dateparts = date.split("-");
+					for(String part : dateparts){
+						if(part.length()>3)
+							yearDate = part;
+							break;
+					}
+					
+				}
 
 				String fullTextContent = processFullText(fullTextfields, elements);
 
@@ -137,6 +142,8 @@ public class PMCReader {
 				externalIdsList.add(new PublicationExternalSourceLinkImpl(externalID, PublicationSourcesDefaultEnum.PUBMED.toString()));
 				break;
 			case "pmc" :
+				if(!externalID.startsWith("pmc"))
+					externalID = "pmc"+externalID;
 				externalIdsList.add(new PublicationExternalSourceLinkImpl(externalID, PublicationSourcesDefaultEnum.pmc.toString()));
 				break;
 			case "doi" :

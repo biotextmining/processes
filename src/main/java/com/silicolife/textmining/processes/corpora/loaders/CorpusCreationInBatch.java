@@ -26,29 +26,29 @@ import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicati
 
 public class CorpusCreationInBatch {
 
-	private Map<String, Long> pmidsAlreadyExistOnDB;
-	private Set<String> pmidsAlreadyExistOnCorpus;
+	private Map<String, Long> externalIDAlreadyExistOnDB;
+	private Set<String> externalIDAlreadyExistOnCorpus;
 	private boolean removepublicationlabels = true;
 
 	public CorpusCreationInBatch(){
-		pmidsAlreadyExistOnDB = new HashMap<>();
-		pmidsAlreadyExistOnCorpus = new HashSet<>();
-	}
-	
-	private Map<String, Long> getPmidsAlreadyExistOnDB() {
-		return pmidsAlreadyExistOnDB;
+		externalIDAlreadyExistOnDB = new HashMap<>();
+		externalIDAlreadyExistOnCorpus = new HashSet<>();
 	}
 
-	private void setPmidsAlreadyExistOnDB(Map<String, Long> pmidsAlreadyExistOnDB) {
-		this.pmidsAlreadyExistOnDB = pmidsAlreadyExistOnDB;
+	private Map<String, Long> getExternalIDAlreadyExistOnDB() {
+		return externalIDAlreadyExistOnDB;
 	}
 
-	protected Set<String> getPmidsAlreadyExistOnCorpus() {
-		return pmidsAlreadyExistOnCorpus;
+	private Set<String> getExternalIDAlreadyExistOnCorpus() {
+		return externalIDAlreadyExistOnCorpus;
 	}
 
-	protected void setPmidsAlreadyExistOnCorpus(Set<String> pmidsAlreadyExistOnCorpus) {
-		this.pmidsAlreadyExistOnCorpus = pmidsAlreadyExistOnCorpus;
+	private void setExternalIDAlreadyExistOnDB(Map<String, Long> externalIDAlreadyExistOnDB) {
+		this.externalIDAlreadyExistOnDB = externalIDAlreadyExistOnDB;
+	}
+
+	private void setExternalIDAlreadyExistOnCorpus(Set<String> externalIDAlreadyExistOnCorpus) {
+		this.externalIDAlreadyExistOnCorpus = externalIDAlreadyExistOnCorpus;
 	}
 
 	public ICorpus startCorpusCreation(ICorpusCreateConfiguration configuration) throws ANoteException{
@@ -68,17 +68,21 @@ public class CorpusCreationInBatch {
 
 	public void addPublications(ICorpus corpus, Set<IPublication> publications) throws ANoteException, IOException{
 		
-		if(getPmidsAlreadyExistOnDB().isEmpty()){
-			setPmidsAlreadyExistOnDB(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name()));
+		if(getExternalIDAlreadyExistOnDB().isEmpty()){
+			Map<String, Long> alreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
+			alreadyExistOnDB.putAll(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.pmc.name()));
+			setExternalIDAlreadyExistOnDB(alreadyExistOnDB);
 		}
 		
-		if(getPmidsAlreadyExistOnCorpus().isEmpty()){
-			setPmidsAlreadyExistOnCorpus(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.PUBMED.name()));
+		if(getExternalIDAlreadyExistOnCorpus().isEmpty()){
+			Set<String> alreadyExistOnCorpus = getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.PUBMED.name());
+			alreadyExistOnCorpus.addAll(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.pmc.name()));
+			setExternalIDAlreadyExistOnCorpus(alreadyExistOnCorpus);
 		}
 		
-		CorpusTextType corpusType = null;
+		CorpusTextType corpusType = corpus.getCorpusTextType();
 		Properties corpusProperties = corpus.getProperties();
-		if(corpusProperties.containsKey(GlobalNames.textType)){
+		if(corpusType == null && corpusProperties.containsKey(GlobalNames.textType)){
 			corpusType = CorpusTextType.convertStringToCorpusType(corpusProperties.getProperty(GlobalNames.textType));
 		}
 		
@@ -98,7 +102,7 @@ public class CorpusCreationInBatch {
 					InitConfiguration.getDataAccess().updatePublication(publication);
 				}
 				// PDF is availbale and Full text are not available yet
-				if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty())
+				if(publication.isPDFAvailable() && getPublicationFullTextOnDatabase(publication).isEmpty())
 				{
 					String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
 					// Get PDF to text from PDF file
@@ -113,10 +117,18 @@ public class CorpusCreationInBatch {
 			}
 
 			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
-			if(!getPmidsAlreadyExistOnCorpus().contains(pubPMID)){
+			String pmcID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.pmc.name());
+			if(!getExternalIDAlreadyExistOnCorpus().contains(pubPMID) 
+					&& !getExternalIDAlreadyExistOnCorpus().contains(pmcID)){
 				associatePublicationToCorpusOnDatabase(corpus, publication);
-				getPmidsAlreadyExistOnCorpus().add(pubPMID);
+				if(pubPMID != null && !pubPMID.isEmpty()){
+					getExternalIDAlreadyExistOnCorpus().add(pubPMID);
+				}
+				if(pmcID != null && !pmcID.isEmpty()){
+					getExternalIDAlreadyExistOnCorpus().add(pmcID);
+				}
 			}
+			
 		}
 	}
 
@@ -126,11 +138,19 @@ public class CorpusCreationInBatch {
 		Map<Long, IPublication> documentsInDatabase = new HashMap<>();
 		for(IPublication publication:publications){
 			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
-			if(getPmidsAlreadyExistOnDB().containsKey(pubPMID)){
-				publication.setId(getPmidsAlreadyExistOnDB().get(pubPMID));
+			String pmcID =  PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.pmc.name());
+			if(getExternalIDAlreadyExistOnDB().containsKey(pubPMID)){
+				publication.setId(getExternalIDAlreadyExistOnDB().get(pubPMID));
+			}else if(getExternalIDAlreadyExistOnDB().containsKey(pmcID)){
+				publication.setId(getExternalIDAlreadyExistOnDB().get(pmcID));
 			}else{
-				getPmidsAlreadyExistOnDB().put(pubPMID, publication.getId());
+				if(pubPMID!= null && !pubPMID.isEmpty())
+					getExternalIDAlreadyExistOnDB().put(pubPMID, publication.getId());
+				if(pmcID!= null && !pmcID.isEmpty())
+					getExternalIDAlreadyExistOnDB().put(pmcID, publication.getId());
 			}
+			
+
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
 				// remove publication lables
@@ -155,11 +175,21 @@ public class CorpusCreationInBatch {
 			pub = alreadyExistentPublications.get(publication.getId());
 		}
 		if(pub  != null){
-			if(pub.getFullTextContent() != null && !pub.getFullTextContent().isEmpty()){
+			String fulltext;
+			try {
+				fulltext = getPublicationFullTextOnDatabase(pub);
+			} catch (ANoteException e) {
+				fulltext = null;
+			}
+			if(fulltext != null && !fulltext.isEmpty()){
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	protected String getPublicationFullTextOnDatabase(IPublication publication) throws ANoteException{
+		return InitConfiguration.getDataAccess().getPublicationFullText(publication);
 	}
 	
 	protected void updatePublicationFullTextOnfDatabase(IPublication publication) throws ANoteException {
