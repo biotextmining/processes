@@ -87,6 +87,11 @@ public class MedLineReader {
 					status = status.substring(0,24);
 				}
 				String journal = processSimpleElementTagName(elements,"Title");
+				if(journal.length()>500){
+					System.out.println("Pages more that 128 characteres "+pubmedID);
+					System.out.println("Journal : " + journal);
+					journal = journal.substring(0,499);
+				}
 				String pages = processSimpleElementTagName(elements, "MedlinePgn");
 				if(pages.length()>128){
 					System.out.println("Pages more that 128 characteres "+pubmedID);
