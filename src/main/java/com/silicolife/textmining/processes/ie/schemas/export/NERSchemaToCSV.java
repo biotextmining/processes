@@ -23,7 +23,10 @@ import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERSchemaExportReport;
 import com.silicolife.textmining.core.interfaces.process.IE.INERSchema;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.export.INERCSVExporterConfiguration;
+import com.silicolife.textmining.core.interfaces.resource.IResource;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
+
+
 
 public class NERSchemaToCSV {
 	
@@ -41,7 +44,7 @@ public class NERSchemaToCSV {
 		writeHeaderLine(configuration,pw);
 		
 		Map<Long,String> externalIdsSTr = new HashMap<>();
-		Map<Long,String> resourceIdsSTr = new HashMap<>();
+		Map<Long, IResource<IResourceElement>> resourceIdsSTr = new HashMap<>();
 		INERSchema nerSchema = configuration.getNERSchema();
 		IDocumentSet docs = nerSchema.getCorpus().getArticlesCorpus();
 		Iterator<IPublication> itDocs = docs.iterator();
@@ -83,7 +86,7 @@ public class NERSchemaToCSV {
 		pw.println();
 	}
 	
-	private void writeline(INERCSVExporterConfiguration configuration, PrintWriter pw,IAnnotatedDocument docID, IEntityAnnotation entAnnot, Map<Long, String> externalIdsSTr, Map<Long, String> resourceIdsSTr) throws ANoteException, IOException {
+	private void writeline(INERCSVExporterConfiguration configuration, PrintWriter pw,IAnnotatedDocument docID, IEntityAnnotation entAnnot, Map<Long, String> externalIdsSTr, Map<Long, IResource<IResourceElement>> resourceIdsResource) throws ANoteException, IOException {
 	String[] toWrite = new String[10];
 	toWrite[configuration.getColumnConfiguration().getAnnotationIDColumn()] = configuration.getTextDelimiter().getValue() + entAnnot.getId() + configuration.getTextDelimiter().getValue();
 	String extenalLinks = PublicationImpl.getPublicationExternalIDsStream(docID);
@@ -104,38 +107,44 @@ public class NERSchemaToCSV {
 		toWrite[configuration.getColumnConfiguration().getResourceIDColumn()] = configuration.getTextDelimiter().getValue() + entAnnot.getResourceElement() + configuration.getTextDelimiter().getValue();
 		if(configuration.exportResourceInformation())
 		{
-			if(!resourceIdsSTr.containsKey(entAnnot.getResourceElement()))
+			
+			if(!resourceIdsResource.containsKey(entAnnot.getResourceElement().getId()))
 			{
-
-				resourceIdsSTr.put(entAnnot.getResourceElement().getId(), entAnnot.getResourceElement().toString());
+				IResource<IResourceElement> resourceID = InitConfiguration.getDataAccess().getResourceFromResourceElementByID(entAnnot.getResourceElement().getId());
+				resourceIdsResource.put(entAnnot.getResourceElement().getId(), resourceID);
 			}
-			toWrite[configuration.getColumnConfiguration().getResourceInformation()] = resourceIdsSTr.get(entAnnot.getResourceElement());
+			toWrite[configuration.getColumnConfiguration().getResourceInformation()] = resourceIdsResource.get(entAnnot.getResourceElement().getId()).toString();
+			toWrite[configuration.getColumnConfiguration().getResourceIDColumn()] = String.valueOf(resourceIdsResource.get(entAnnot.getResourceElement().getId()).getId());
+
+			if(configuration.exportResourceExternalID())
+			{
+				if(!externalIdsSTr.containsKey(entAnnot.getResourceElement().getId()))
+				{
+					String strExternalIds = null;
+					IResourceElement resourceElement = InitConfiguration.getDataAccess().getResourceElementByID(entAnnot.getResourceElement().getId());
+					List<IExternalID> extIDs = resourceElement.getExtenalIDs();
+					if(extIDs.size() > 0)
+					{
+						strExternalIds = new String();
+						for(IExternalID extID: extIDs)
+						{
+							strExternalIds = strExternalIds + configuration.getExternalIDDelimiter().getValue() + extID.getExternalID() + configuration.getIntraExtenalIDdelimiter().getValue() + extID.getSource();
+						}
+						strExternalIds = strExternalIds.substring(1);
+						strExternalIds = configuration.getTextDelimiter().getValue() + strExternalIds  + configuration.getTextDelimiter().getValue();
+					}
+					externalIdsSTr.put(entAnnot.getResourceElement().getId(), strExternalIds);
+				}
+			}
+			toWrite[configuration.getColumnConfiguration().getResourceExternalIDs()] = externalIdsSTr.get(entAnnot.getResourceElement().getId());
 		}
 		else
 		{
 			toWrite[configuration.getColumnConfiguration().getResourceInformation()] = null;
+			toWrite[configuration.getColumnConfiguration().getResourceIDColumn()] = null;
+			toWrite[configuration.getColumnConfiguration().getResourceExternalIDs()] = null;
 		}
-		if(configuration.exportResourceExternalID())
-		{
-			if(!externalIdsSTr.containsKey(entAnnot.getResourceElement().getId()))
-			{
-				String strExternalIds = null;
-				IResourceElement resourceElement = InitConfiguration.getDataAccess().getResourceElementByID(entAnnot.getResourceElement().getId());
-				List<IExternalID> extIDs = resourceElement.getExtenalIDs();
-				if(extIDs.size() > 0)
-				{
-					strExternalIds = new String();
-					for(IExternalID extID: extIDs)
-					{
-						strExternalIds = strExternalIds + configuration.getExternalIDDelimiter().getValue() + extID.getExternalID() + configuration.getIntraExtenalIDdelimiter().getValue() + extID.getSource();
-					}
-					strExternalIds = strExternalIds.substring(1);
-					strExternalIds = configuration.getTextDelimiter().getValue() + strExternalIds  + configuration.getTextDelimiter().getValue();
-				}
-				externalIdsSTr.put(entAnnot.getResourceElement().getId(), strExternalIds);
-			}
-		}
-		toWrite[configuration.getColumnConfiguration().getResourceExternalIDs()] = externalIdsSTr.get(entAnnot.getResourceElement());
+		
 	}
 	else
 	{
