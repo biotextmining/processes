@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -13,6 +14,7 @@ import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
 import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
+import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
 import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
@@ -23,6 +25,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusTextType;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
+import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 
 public class CorpusCreationInBatch {
 
@@ -68,23 +71,11 @@ public class CorpusCreationInBatch {
 
 	public void addPublications(ICorpus corpus, Set<IPublication> publications) throws ANoteException, IOException{
 		
-		if(getExternalIDAlreadyExistOnDB().isEmpty()){
-			Map<String, Long> alreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
-			alreadyExistOnDB.putAll(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.pmc.name()));
-			setExternalIDAlreadyExistOnDB(alreadyExistOnDB);
-		}
+		loadPublicationExternalIdsFromCorpusOnDB(corpus);
 		
-		if(getExternalIDAlreadyExistOnCorpus().isEmpty()){
-			Set<String> alreadyExistOnCorpus = getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.PUBMED.name());
-			alreadyExistOnCorpus.addAll(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.pmc.name()));
-			setExternalIDAlreadyExistOnCorpus(alreadyExistOnCorpus);
-		}
+		CorpusTextType corpusType = getCorpusType(corpus);
 		
-		CorpusTextType corpusType = corpus.getCorpusTextType();
-		Properties corpusProperties = corpus.getProperties();
-		if(corpusType == null && corpusProperties.containsKey(GlobalNames.textType)){
-			corpusType = CorpusTextType.convertStringToCorpusType(corpusProperties.getProperty(GlobalNames.textType));
-		}
+		fixPossiblePublicationDuplicationFields(publications);
 		
 		Map<Long, IPublication> alreadyExistentPublications = addPublicationsToDatabase(publications);
 		
@@ -94,12 +85,14 @@ public class CorpusCreationInBatch {
 			if(corpusType  != null && 
 					(corpusType.equals(CorpusTextType.Hybrid) || corpusType.equals(CorpusTextType.FullText)))
 			{
+				boolean alreadyUpdated = false;
 				// IF PDF is not available and source URL is a file put file in directory and update Full text COntent
 				if(publication.getSourceURL()!=null && !publication.isPDFAvailable())
 				{
 					publication.addPDFFile(new File(publication.getSourceURL()));
 					// update relative path
-					InitConfiguration.getDataAccess().updatePublication(publication);
+					updatePublicationOnDatabase(publication);
+					alreadyUpdated = true;
 				}
 				// PDF is availbale and Full text are not available yet
 				if(publication.isPDFAvailable() && getPublicationFullTextOnDatabase(publication).isEmpty())
@@ -113,6 +106,10 @@ public class CorpusCreationInBatch {
 				// If pub don't have fulltext and publication has a full text inserted from other system. Then it will be added
 				else if(changefulltext(publication, alreadyExistentPublications)){
 					updatePublicationFullTextOnfDatabase(publication);
+				}
+				// if publication was in db and the fields have changed by the loader this will update it.
+				if(!alreadyUpdated && publicationFieldsChanged(publication, alreadyExistentPublications)){
+					updatePublicationOnDatabase(publication);
 				}
 			}
 
@@ -129,6 +126,56 @@ public class CorpusCreationInBatch {
 				}
 			}
 			
+		}
+	}
+
+	private void fixPossiblePublicationDuplicationFields(Set<IPublication> publications) {
+		for(IPublication publication : publications){
+			List<IPublicationField> fields = publication.getPublicationFields();
+			Map<String, IPublicationField> fieldStringMap = new HashMap<>();
+			for(IPublicationField field : fields){
+				
+				if(!fieldStringMap.containsKey(field.getName())){
+					fieldStringMap.put(field.getName(), field);
+				}else{
+					IPublicationField duplField = fieldStringMap.get(field.getName());
+					
+					IPublicationField newField1 = new PublicationFieldImpl(duplField.getStart(), duplField.getEnd(), 
+							duplField.getName()+" ("+duplField.getFieldType().toString()+")", duplField.getFieldType());
+					IPublicationField newField2 = new PublicationFieldImpl(field.getStart(), field.getEnd(), 
+							field.getName()+" ("+field.getFieldType().toString()+")", field.getFieldType());
+					
+					if(!newField2.getName().equals(newField1.getName())){
+						fieldStringMap.remove(field.getName());
+						fieldStringMap.put(newField1.getName(), newField1);
+						fieldStringMap.put(newField2.getName(), newField2);
+					}
+				}
+			}
+			publication.setPublicationFields(new ArrayList<>(fieldStringMap.values()));
+		}
+	}
+
+	private CorpusTextType getCorpusType(ICorpus corpus) {
+		CorpusTextType corpusType = corpus.getCorpusTextType();
+		Properties corpusProperties = corpus.getProperties();
+		if(corpusType == null && corpusProperties.containsKey(GlobalNames.textType)){
+			corpusType = CorpusTextType.convertStringToCorpusType(corpusProperties.getProperty(GlobalNames.textType));
+		}
+		return corpusType;
+	}
+
+	private void loadPublicationExternalIdsFromCorpusOnDB(ICorpus corpus) throws ANoteException {
+		if(getExternalIDAlreadyExistOnDB().isEmpty()){
+			Map<String, Long> alreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
+			alreadyExistOnDB.putAll(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.pmc.name()));
+			setExternalIDAlreadyExistOnDB(alreadyExistOnDB);
+		}
+		
+		if(getExternalIDAlreadyExistOnCorpus().isEmpty()){
+			Set<String> alreadyExistOnCorpus = getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.PUBMED.name());
+			alreadyExistOnCorpus.addAll(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.pmc.name()));
+			setExternalIDAlreadyExistOnCorpus(alreadyExistOnCorpus);
 		}
 	}
 
@@ -150,7 +197,6 @@ public class CorpusCreationInBatch {
 					getExternalIDAlreadyExistOnDB().put(pmcID, publication.getId());
 			}
 			
-
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
 				// remove publication lables
@@ -164,6 +210,21 @@ public class CorpusCreationInBatch {
 		addPublicationToDatabase(documentToadd);
 		documentToadd.clear();
 		return documentsInDatabase;
+	}
+	
+	private boolean publicationFieldsChanged(IPublication publication, Map<Long, IPublication> alreadyExistentPublications){
+		if(!alreadyExistentPublications.containsKey(publication.getId())){
+			return false;
+		}
+		IPublication pub = alreadyExistentPublications.get(publication.getId());
+		if(pub != null){
+			List<IPublicationField> fieldsInDb = pub.getPublicationFields();
+			for(IPublicationField field : publication.getPublicationFields()){
+				if(!fieldsInDb.contains(field))
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	private boolean changefulltext(IPublication publication, Map<Long, IPublication> alreadyExistentPublications){
@@ -192,15 +253,18 @@ public class CorpusCreationInBatch {
 		return InitConfiguration.getDataAccess().getPublicationFullText(publication);
 	}
 	
+	protected void updatePublicationOnDatabase(IPublication publication) throws ANoteException {
+		InitConfiguration.getDataAccess().updatePublication(publication);
+	}
+	
 	protected void updatePublicationFullTextOnfDatabase(IPublication publication) throws ANoteException {
 		InitConfiguration.getDataAccess().updatePublicationFullTextContent(publication);
 	}
 
 
 	protected void addPublicationToDatabase(Set<IPublication> documentToadd)throws ANoteException {
-		InitConfiguration.getDataAccess().addPublications(documentToadd );
+		InitConfiguration.getDataAccess().addPublications(documentToadd);
 	}
-
 
 	protected IPublication getPublicationOnDatabaseByID(Long publictionID)throws ANoteException {
 		return InitConfiguration.getDataAccess().getPublication(publictionID);
