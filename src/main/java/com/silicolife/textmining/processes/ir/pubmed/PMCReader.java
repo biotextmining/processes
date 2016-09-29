@@ -22,6 +22,7 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
+import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
@@ -98,7 +99,7 @@ public class PMCReader {
 				if(date.length()>3){
 					String[] dateparts = date.split("-");
 					for(String part : dateparts){
-						if(part.length()>3)
+						if(part.length()==4 && Utils.isIntNumber(part))
 							yearDate = part;
 							break;
 					}
