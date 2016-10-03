@@ -118,15 +118,18 @@ public class CorpusCreationInBatch {
 			String pmcID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.pmc.name());
 			if(!getExternalIDAlreadyExistOnCorpus().contains(pubPMID) 
 					&& !getExternalIDAlreadyExistOnCorpus().contains(pmcID)){
-				associatePublicationToCorpusOnDatabase(corpus, publication);
-				if(pubPMID != null && !pubPMID.isEmpty()){
-					getExternalIDAlreadyExistOnCorpus().add(pubPMID);
-				}
-				if(pmcID != null && !pmcID.isEmpty()){
-					getExternalIDAlreadyExistOnCorpus().add(pmcID);
+				if(!(corpusType.equals(CorpusTextType.FullText) && (publication.getFullTextContent()==null || publication.getFullTextContent().isEmpty())))
+				{
+					associatePublicationToCorpusOnDatabase(corpus, publication);
+					if(pubPMID != null && !pubPMID.isEmpty()){
+						getExternalIDAlreadyExistOnCorpus().add(pubPMID);
+					}
+					if(pmcID != null && !pmcID.isEmpty()){
+						getExternalIDAlreadyExistOnCorpus().add(pmcID);
+					}
 				}
 			}
-			
+
 		}
 	}
 
