@@ -3,6 +3,7 @@ package com.silicolife.textmining.processes.corpora.loaders;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -134,25 +135,25 @@ public class CorpusCreationInBatch {
 			List<IPublicationField> fields = publication.getPublicationFields();
 			Map<String, IPublicationField> fieldStringMap = new HashMap<>();
 			for(IPublicationField field : fields){
-				
-				if(!fieldStringMap.containsKey(field.getName())){
-					fieldStringMap.put(field.getName(), field);
+				if(!fieldStringMap.containsKey(field.getName().toLowerCase())){
+					fieldStringMap.put(field.getName().toLowerCase(), field);
 				}else{
-					IPublicationField duplField = fieldStringMap.get(field.getName());
+					IPublicationField duplField = fieldStringMap.get(field.getName().toLowerCase());
 					
 					IPublicationField newField1 = new PublicationFieldImpl(duplField.getStart(), duplField.getEnd(), 
 							duplField.getName()+" ("+duplField.getFieldType().toString()+")", duplField.getFieldType());
 					IPublicationField newField2 = new PublicationFieldImpl(field.getStart(), field.getEnd(), 
 							field.getName()+" ("+field.getFieldType().toString()+")", field.getFieldType());
 					
-					if(!newField2.getName().equals(newField1.getName())){
-						fieldStringMap.remove(field.getName());
-						fieldStringMap.put(newField1.getName(), newField1);
-						fieldStringMap.put(newField2.getName(), newField2);
+					if(!newField2.getName().toLowerCase().equals(newField1.getName().toLowerCase())){
+						fieldStringMap.remove(field.getName().toLowerCase());
+						fieldStringMap.put(newField1.getName().toLowerCase(), newField1);
+						fieldStringMap.put(newField2.getName().toLowerCase(), newField2);
 					}
 				}
 			}
-			publication.setPublicationFields(new ArrayList<>(fieldStringMap.values()));
+			Collection<IPublicationField> newFields = fieldStringMap.values();
+			publication.setPublicationFields(new ArrayList<>(newFields));
 		}
 	}
 
