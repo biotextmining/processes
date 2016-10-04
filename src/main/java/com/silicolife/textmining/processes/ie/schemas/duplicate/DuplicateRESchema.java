@@ -116,7 +116,7 @@ public class DuplicateRESchema  {
 	private Properties addDuplicatedProperty(IRESchema reSchematocopy2){
 		// Add duplicated from ID propriety to new schema
 		Properties properties = reSchematocopy2.getProperties();
-		properties.put(GlobalNames.duplicatedFrom, String.valueOf(reSchematocopy2.getID()));
+		properties.put(GlobalNames.duplicatedFrom, String.valueOf(reSchematocopy2.getId()));
 		return properties;
 	}
 	

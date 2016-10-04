@@ -423,7 +423,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	}
 
 	@Override
-	public long getID() {
+	public long getId() {
 		return 0;
 	}
 

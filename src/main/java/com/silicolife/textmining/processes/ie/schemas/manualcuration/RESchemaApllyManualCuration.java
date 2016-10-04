@@ -144,7 +144,7 @@ public class RESchemaApllyManualCuration {
 						list.add(eventToEdit);
 						InitConfiguration.getDataAccess().updateEventsAnnotations(list);
 						String user = InitConfiguration.getDataAccess().getUser().getAuUsername();;
-						AnnotationLogImpl logEvent = new AnnotationLogImpl(oldRelation.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getID(), annnoDocument.getId(),
+						AnnotationLogImpl logEvent = new AnnotationLogImpl(oldRelation.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getId(), annnoDocument.getId(),
 								AnnotationLogTypeEnum.RELATIONUPDATE, oldRelation.toString(),eventToEdit.toString(), "",null,user);
 						List<IAnnotationLog> annotationLogs = new ArrayList<IAnnotationLog>();
 						annotationLogs.add(logEvent);
@@ -238,7 +238,7 @@ public class RESchemaApllyManualCuration {
 				//	Add To Log
 				String newRelation = eventToAdd.toString();
 				String user = InitConfiguration.getDataAccess().getUser().getAuUsername();
-				AnnotationLogImpl logEvent = new AnnotationLogImpl(eventToAdd.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getID(), annnoDocument.getId(),
+				AnnotationLogImpl logEvent = new AnnotationLogImpl(eventToAdd.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getId(), annnoDocument.getId(),
 						AnnotationLogTypeEnum.RELATIONADD, "",newRelation, "",null,user );
 				List<IAnnotationLog> annotationLogs = new ArrayList<IAnnotationLog>();
 				annotationLogs.add(logEvent);
@@ -300,7 +300,7 @@ public class RESchemaApllyManualCuration {
 			InitConfiguration.getDataAccess().inactiveAnnotations(annotation );
 			String oldRelation = event.toString();
 			String user = InitConfiguration.getDataAccess().getUser().getAuUsername();
-			AnnotationLogImpl logEvent = new AnnotationLogImpl(event.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getID(), annnoDocument.getId(),
+			AnnotationLogImpl logEvent = new AnnotationLogImpl(event.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getId(), annnoDocument.getId(),
 					AnnotationLogTypeEnum.RELATIONREMOVE, oldRelation,"", "",null,user );
 			List<IAnnotationLog> annotationLogs = new ArrayList<IAnnotationLog>();
 			annotationLogs.add(logEvent);

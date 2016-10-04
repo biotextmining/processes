@@ -53,7 +53,7 @@ public class RECooccurrence implements IREProcess{
 	
 	private static Properties gerateProperties(IRECooccurrenceConfiguration configuration) {
 		Properties prop = new Properties();
-		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getEntityBasedProcess().getID()));
+		prop.put(GlobalNames.entityBasedProcess,String.valueOf(configuration.getEntityBasedProcess().getId()));
 		prop.put(GlobalNames.recooccurrenceModel, configuration.getCooccurrenceModelEnum().getRelationCooccurrenceModel().getDescription());
 		return prop;
 	}

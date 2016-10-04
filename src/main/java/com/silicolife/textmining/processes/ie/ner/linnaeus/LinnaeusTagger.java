@@ -117,7 +117,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		int counter = 0; 
 		while(publicationsPaginator.hasNextDocumentSetPage()){
 			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
-			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, processToRun);
+			DocumentIterator documents = getDocumentIterator(configuration, processToRun, documentSet);
 			
 			counter = executeLinneausForDocumentSet(linnauesConfiguration, processToRun, startime, elementsToNER, rules,
 					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
@@ -131,6 +131,12 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startime);
 		return report;
+	}
+
+	protected DocumentIterator getDocumentIterator(INERConfiguration configuration, IIEProcess processToRun,
+			IDocumentSet documentSet) throws ANoteException {
+		DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, processToRun);
+		return documents;
 	}
 
 	protected ICorpusPublicationPaginator getPublicationsPaginator(ICorpus corpus) throws ANoteException {
@@ -575,7 +581,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 	}
 	
 	protected IIEProcess getProcessInDatabase(IIEProcess process) throws ANoteException{
-		return InitConfiguration.getDataAccess().getProcessByID(process.getID());
+		return InitConfiguration.getDataAccess().getProcessByID(process.getId());
 	}
 	
 	protected ICorpusPublicationPaginator getUnprocessedPublicationsPaginator(IIEProcess process) throws ANoteException {

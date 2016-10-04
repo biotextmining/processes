@@ -165,7 +165,7 @@ public class NewPubMedCrawl extends IRProcessImpl implements IIRCrawl{
 		return new ProcessTypeImpl(-1,"IRCrawl");
 	}
 
-	public long getID() {
+	public long getId() {
 		return 0;
 	}
 

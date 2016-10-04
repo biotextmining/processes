@@ -136,7 +136,7 @@ public class NERSchemaApplyManualCuration {
 					String newStr = newAddEntity.getAnnotationValue() + " ("+ termClass  + ") Text Offset: "+entPOs.getStart()+ "-"+entPOs.getEnd();
 					String user = InitConfiguration.getDataAccess().getUser().getAuUsername();
 					AnnotationLogImpl log = new AnnotationLogImpl(newAddEntity.getId(), annnoDocument.getCorpus().getId(),
-							annnoDocument.getProcess().getID(), annnoDocument.getId(), AnnotationLogTypeEnum.ENTITYADD, "", newStr, notes, null, user );
+							annnoDocument.getProcess().getId(), annnoDocument.getId(), AnnotationLogTypeEnum.ENTITYADD, "", newStr, notes, null, user );
 					List<IAnnotationLog> annotationLogs = new ArrayList<IAnnotationLog>();
 					annotationLogs.add(log);
 					InitConfiguration.getDataAccess().addProcessDocumentLogs(annotationLogs );
@@ -195,7 +195,7 @@ public class NERSchemaApplyManualCuration {
 							String oldStr = entAnnot.getAnnotationValue() + " ("+ oldClass + ") Text Offset: "+entPOS.getStart()+ "-"+entPOS.getEnd();
 							String newStr = entAnnot.getAnnotationValue() + " ("+ newClass + ") Text Offset: "+entPOS.getStart()+ "-"+entPOS.getEnd();
 							String user = InitConfiguration.getDataAccess().getUser().getAuUsername();
-							AnnotationLogImpl log = new AnnotationLogImpl(entAnnot.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getID(), annnoDocument.getId(),
+							AnnotationLogImpl log = new AnnotationLogImpl(entAnnot.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getId(), annnoDocument.getId(),
 									AnnotationLogTypeEnum.ENTITYUPDATE, oldStr,newStr, notes,null,user );
 							List<IAnnotationLog> annotationLogs = new ArrayList<IAnnotationLog>();
 							annotationLogs.add(log);
@@ -260,7 +260,7 @@ public class NERSchemaApplyManualCuration {
 							// Add Log Message
 							String notes = "Removed for Curation Process";
 							String user = InitConfiguration.getDataAccess().getUser().getAuUsername();
-							AnnotationLogImpl log = new AnnotationLogImpl(entAnnot.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getID(), annnoDocument.getId(),
+							AnnotationLogImpl log = new AnnotationLogImpl(entAnnot.getId(), annnoDocument.getCorpus().getId(), annnoDocument.getProcess().getId(), annnoDocument.getId(),
 									AnnotationLogTypeEnum.ENTITYREMOVE, oldStr,"", notes,null,user );
 							List<IAnnotationLog> annotationLogs = new ArrayList<IAnnotationLog>();
 							annotationLogs.add(log);

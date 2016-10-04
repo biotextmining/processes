@@ -75,7 +75,7 @@ public class DuplicateNERSchema {
 	private INERSchema createNewNERSchema() throws ANoteException {
 		// Add duplicated from ID propriety to new schema
 		Properties properties = nerSchematocopy.getProperties();
-		properties.put(GlobalNames.duplicatedFrom, String.valueOf(nerSchematocopy.getID()));
+		properties.put(GlobalNames.duplicatedFrom, String.valueOf(nerSchematocopy.getId()));
 		// Creates a new IIESchema
 		IIEProcess newNERProcess = new IEProcessImpl(nerSchematocopy.getCorpus(), nerSchematocopy.getName() + " (Duplicated)", nerSchematocopy.getNotes(), nerSchematocopy.getType(), nerSchematocopy.getProcessOrigin(), properties);
 		// Saves it in the DB

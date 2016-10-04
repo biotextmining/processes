@@ -109,7 +109,7 @@ public class MergeNERSchemas {
 		String result = "Merge between processes :";
 		for(IIEProcess process:nerProcessesToMerge)
 		{
-			result = result +" "+process.getID() + " AND";
+			result = result +" "+process.getId() + " AND";
 		}
 		result = result.substring(result.length()-2);
 		return result;

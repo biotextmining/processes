@@ -217,7 +217,7 @@ public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 		return new ProcessOriginImpl(-1, "IR Crawl");
 	}
 
-	public long getID() {
+	public long getId() {
 		return 0;
 	}
 
