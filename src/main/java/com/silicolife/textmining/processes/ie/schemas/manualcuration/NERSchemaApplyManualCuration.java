@@ -184,8 +184,8 @@ public class NERSchemaApplyManualCuration {
 						{
 							IAnoteClass newClassID = ClassPropertiesManagement.getClassIDClassName(newClass);
 							// Update Memory entity
-							entAnnot.setClass(newClassID);
-							oldEntity.setClass(newClassID);
+							entAnnot.setClassAnnotation(newClassID);
+							oldEntity.setClassAnnotation(newClassID);
 							// Edit Annotation in Database		
 							List<IEntityAnnotation> list = new ArrayList<IEntityAnnotation>();
 							list.add(entAnnot);
