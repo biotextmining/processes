@@ -33,6 +33,8 @@ public class PMCReader {
 
 	private List<IPublication> publications ;
 	public static final String pubmedLink = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	public static final String PMCLink = "https://www.ncbi.nlm.nih.gov/pmc/articles/";
+
 
 	public PMCReader(){
 		this.publications = new ArrayList<>();
@@ -108,9 +110,21 @@ public class PMCReader {
 
 				String fullTextContent = processFullText(fullTextfields, elements);
 
+				String link = "";
 				IPublication publication = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-						issues, pages, abstractText, "", true, new String(), new String(), externalIDsSource, new ArrayList<IPublicationField>() , labels );
+						issues, pages, abstractText, link , true, new String(), new String(), externalIDsSource, new ArrayList<IPublicationField>() , labels );
 				publication.setFullTextContent(fullTextContent);
+				String pmid = PublicationImpl.getPublicationExternalIDForSource(publication, "pmid");
+				if(pmid!=null && !pmid.isEmpty())
+				{
+					publication.setExternalLink(pubmedLink+pmid);
+				}
+				String pmc = PublicationImpl.getPublicationExternalIDForSource(publication, "pmc");
+
+				if(publication.getExternalLink().isEmpty() && pmc!=null && !pmc.isEmpty())
+				{
+					publication.setExternalLink(PMCLink+pmc);
+				}
 				addPublication(publication);
 			}
 
