@@ -109,7 +109,7 @@ public class PMCReader {
 				String fullTextContent = processFullText(fullTextfields, elements);
 
 				IPublication publication = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-						issues, pages, abstractText, "", true, new String(), new String(), externalIDsSource, fullTextfields , labels );
+						issues, pages, abstractText, "", true, new String(), new String(), externalIDsSource, new ArrayList<IPublicationField>() , labels );
 				publication.setFullTextContent(fullTextContent);
 				addPublication(publication);
 			}
