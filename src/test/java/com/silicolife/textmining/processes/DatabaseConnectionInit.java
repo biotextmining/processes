@@ -33,6 +33,22 @@ public class DatabaseConnectionInit {
 		assertTrue(true);
 	}
 	
+
+	public static void initSisbi(String host,String port,String schema,String username,String password) throws InvalidDatabaseAccess, ANoteException{
+		IDatabase dabaseAcess = factoryDatabase(host,port,schema,username,password);
+		Properties properties = new Properties();
+		properties.put("Using-Title-In-Abstract", "true");
+		properties.put("Free-Full-Text-Only", "true");
+		Proxy proxy = null;
+		String hibernateFilePath = "src/test/resources/hibernate.cfg.xml";
+		IDataAccess dataAccess = new DatabaseAccess(dabaseAcess,hibernateFilePath);
+		InitConfiguration.init(dataAccess,proxy,properties );
+		dataAccess.login("sisbi", "admin");
+		InitConfiguration.getDataAccess().checkLogin("sisbi", "admin");
+		assertTrue(true);
+		
+	}
+
 	
 	/**
 	 * Create Database  
@@ -81,5 +97,6 @@ public class DatabaseConnectionInit {
 		}
 		return false;
 	}
+
 
 }
