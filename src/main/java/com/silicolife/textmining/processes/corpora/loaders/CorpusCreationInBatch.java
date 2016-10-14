@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.common.base.CharMatcher;
 import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
 import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
@@ -27,6 +28,7 @@ import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusText
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
+
 
 public class CorpusCreationInBatch {
 
@@ -138,7 +140,11 @@ public class CorpusCreationInBatch {
 			List<IPublicationField> fields = publication.getPublicationFields();
 			Map<String, IPublicationField> fieldStringMap = new HashMap<>();
 			for(IPublicationField field : fields){
-				if(!fieldStringMap.containsKey(field.getName().toLowerCase())){
+				if(!CharMatcher.ASCII.matchesAllOf(field.getName()))
+				{
+					
+				}
+				else if(!fieldStringMap.containsKey(field.getName().toLowerCase())){
 					fieldStringMap.put(field.getName().toLowerCase(), field);
 				}else{
 					IPublicationField duplField = fieldStringMap.get(field.getName().toLowerCase());
