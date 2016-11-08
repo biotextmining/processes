@@ -30,7 +30,7 @@ import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException
 public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 
 	private IPublication publication;
-	
+
 	public OPSPatentUpdateHandler(IPublication publication)
 	{
 		this.publication=publication;
@@ -59,7 +59,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		}
 		return false;
 	}
-	
+
 	private void updatePublication(Node item) {
 		String epodocID = getEpoDoc(item);
 		String title = getTitle(item);
@@ -107,7 +107,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 			publication.getPublicationLabels().addAll(publicationLabels);
 		}
 	}
-	
+
 	private String getEpoDoc(Node item) {
 		String epoDoc = new String();
 		Node bibliographicDate = item.getFirstChild();
@@ -133,7 +133,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		}
 		return epoDoc;
 	}
-	
+
 	private String getExternalLink(Node item) {
 		String externalLink = new String();
 		Node bibliographicDate = item.getFirstChild();
@@ -157,7 +157,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 				return OPSConfiguration.opsStartLink+"CC="+documentProperties.getProperty("country")+"&NR="+documentProperties.getProperty("doc-number")+documentProperties.getProperty("kind");
 			}
 		}
-		
+
 		return externalLink;
 	}
 
@@ -181,7 +181,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 					}
 					else
 					{
-//						return abstractNode.getTextContent();
+						//						return abstractNode.getTextContent();
 					}
 				}
 				else
@@ -278,7 +278,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 					}
 					else
 					{
-//						return bibliographicDateChild.getTextContent();
+						//						return bibliographicDateChild.getTextContent();
 					}
 				}
 				else
@@ -290,4 +290,40 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		return title;
 	}
 
+	private String getApplicants (Node item){//method to return applicants from patent bibliographic data
+		String applicants = new String();
+		Node bibliographicDate = item.getFirstChild();
+		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
+		for(int i=0;i<bibliographicDateChilds.getLength();i++)
+		{
+			Node bibliographicDateChild = bibliographicDateChilds.item(i);
+			String nodeNAme = bibliographicDateChild.getNodeName();
+			if(nodeNAme.equals("parties"))
+			{
+				Node partiesNode = bibliographicDateChild;
+				NodeList partiesChilds = partiesNode.getChildNodes();
+				for(int j=0;j<partiesChilds.getLength();j++)
+				{
+					Node partiesChild = partiesChilds.item(j);
+					String partiesChildNodeName = partiesChild.getNodeName();
+					if(partiesChildNodeName.equals("applicants"))
+					{
+						Node applicnts = partiesChild;
+						NodeList applicantList = applicnts.getChildNodes();
+						for(int k=0;k<applicantList.getLength();k++)
+						{
+							Node applicant = applicantList.item(k);
+							String inventorType = applicant.getAttributes().getNamedItem("data-format").getNodeValue();
+							if(inventorType.equals("epodoc"))
+							{
+								applicants= applicants + applicant.getTextContent() + ", ";
+							}
+						}
+						return applicants.substring(0, applicants.length()-2);
+					}
+				}
+			}	
+		}
+		return applicants;
+	}
 }
