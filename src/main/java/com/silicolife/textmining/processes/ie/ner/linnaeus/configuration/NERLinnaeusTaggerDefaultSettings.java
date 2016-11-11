@@ -13,7 +13,6 @@ public class NERLinnaeusTaggerDefaultSettings {
 	public static final String LEXICAL_RESOURCE_STOPWORDS_ID = "NER.LinneausTagger.StopWords";
 	public static final String ONTOLOGY_RESOURCE_ID = "NER.LinneausTagger.Ontology";
 	public static final String LOOKUPTABLE_RESOURCE_ID = "NER.LinneausTagger.LookupTable";
-	public static final String NOT_ANNOTATE_SMALL_WORDS = "NER.LinneausTagger.NotAnnotateSmallWords";
 	public static final String SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED = "NER.LinneausTagger.SizeOfSmallWordsToBeNotAnnotated";
 	
 	

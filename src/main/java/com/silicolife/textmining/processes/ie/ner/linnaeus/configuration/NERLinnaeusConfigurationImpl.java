@@ -168,7 +168,7 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		properties.put(NERLinnaeusTaggerDefaultSettings.LOOKUPTABLE_RESOURCE_ID, String.valueOf(lookuptable));
 		int ontology = 0;
 		properties.put(NERLinnaeusTaggerDefaultSettings.ONTOLOGY_RESOURCE_ID, String.valueOf(ontology));
-		properties.put(NERLinnaeusTaggerDefaultSettings.SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED, String.valueOf(sizeOfSmallWordsToBeNotAnnotated));
+//		properties.put(NERLinnaeusTaggerDefaultSettings.SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED, String.valueOf(sizeOfSmallWordsToBeNotAnnotated));
 		return properties;
 	}
 	
