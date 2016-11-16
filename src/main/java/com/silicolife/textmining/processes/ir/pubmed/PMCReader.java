@@ -32,7 +32,7 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.IPublic
 public class PMCReader {
 
 	private List<IPublication> publications ;
-	public static final String pubmedLink = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	public static final String pubmedLink = "https://www.ncbi.nlm.nih.gov/pubmed/";
 	public static final String PMCLink = "https://www.ncbi.nlm.nih.gov/pmc/articles/";
 
 

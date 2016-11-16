@@ -44,7 +44,7 @@ public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 	
 	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.pmc.name());
 	private static HttpClient client;
-	private static String url = "http://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi";
+	private static String url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi";
 //	private static String url = "http://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?id=";
 	private boolean cancel ;
 	private ISimpleTimeLeft progress;

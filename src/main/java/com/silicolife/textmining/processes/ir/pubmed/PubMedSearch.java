@@ -492,7 +492,7 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			int start, int max) {
 
 		PostMethod post = new PostMethod(
-				"http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi/");
+				"https://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi/");
 
 		NameValuePair[] data = { 
 				new NameValuePair("db", "pubmed"),

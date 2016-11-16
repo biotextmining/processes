@@ -37,7 +37,7 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.IPublic
 public class MedLineReader {
 
 	private InputStream stream;
-	public static final String pubmedLink = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	public static final String pubmedLink = "https://www.ncbi.nlm.nih.gov/pubmed/";
 	private List<IPublication> publications ;
 
 	public MedLineReader(InputStream stream){

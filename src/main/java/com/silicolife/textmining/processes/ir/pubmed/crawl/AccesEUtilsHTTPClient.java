@@ -96,7 +96,7 @@ public class AccesEUtilsHTTPClient {
 		  if(InitConfiguration.getProxy()!=null && !InitConfiguration.getProxy().type().equals(Type.DIRECT))
 			  client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,InitConfiguration.getProxy());
 
-		  GetMethod get = new GetMethod("http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id="+id);
+		  GetMethod get = new GetMethod("https://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id="+id);
 		  client.executeMethod(get);
 		  Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(get.getResponseBodyAsStream());
 		  XPathFactory factory = XPathFactory.newInstance();

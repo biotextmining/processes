@@ -58,7 +58,7 @@ public class PMSearch {
 //	public static final String pubmedSourceName = "PUBMED";
 //	public static final String doiSourceName = "doi";
 //	public static final String pmcSourceName = "pmc";
-	public static final String pubmedLink = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	public static final String pubmedLink = "https://www.ncbi.nlm.nih.gov/pubmed/";
 	public static int timeoutManager = 300000;
 	/**
 	 * Logger
@@ -143,7 +143,7 @@ public class PMSearch {
 			int start, int max) {
 
 		PostMethod post = new PostMethod(
-				"http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi/");
+				"https://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi/");
 
 		NameValuePair[] data = { 
 				new NameValuePair("db", "pubmed"),
@@ -369,7 +369,7 @@ public class PMSearch {
 		client.getParams().setConnectionManagerTimeout(timeoutManager);
 		client.getParams().setSoTimeout(timeoutManager);
 		PostMethod post = new PostMethod(
-				"http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?");
+				"https://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?");
 			NameValuePair[] data = { 
 				new NameValuePair("db", "PubMed"),
 				new NameValuePair("usehistory", "y"),

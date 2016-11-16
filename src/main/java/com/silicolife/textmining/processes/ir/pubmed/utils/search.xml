@@ -6,7 +6,7 @@
 		<transformer class="Decorator" branchtype="CASCADE" branchmergemode="ORDERED" loop="false">
 			<description>Decorator</description>
 			<param key="description">Decorator</param>
-			<param key="head"><![CDATA[http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=PubMed&usehistory=y&term=]]></param>
+			<param key="head"><![CDATA[https://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=PubMed&usehistory=y&term=]]></param>
 			<param key="inputFilter"></param>
 			<param key="tail"></param>
 		</transformer>
