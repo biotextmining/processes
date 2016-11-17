@@ -1,0 +1,2223 @@
+<PubmedArticleSet>
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">20641767</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK23569</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="micad">Molecular Imaging and Contrast Agent Database (MICAD)</BookTitle>
+            <PubDate>
+                <Year>2004</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2004</Year>
+            </BeginningDate>
+            <EndingDate>
+                <Year>2013</Year>
+            </EndingDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="micad" part="Insulin67Ga">(67)Ga labeled cyclic diethylenetriamine pentaacetic acid Insulin</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Chopra</LastName>
+                <ForeName>Arvind</ForeName>
+                <Initials>A</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Although the main role of insulin is considered to be the regulation of glucose transport and metabolism, insulin is known to influence directly or indirectly a variety of other metabolic processes in the cell such as protein synthesis, DNA transcription, and RNA translation in that insulin receptors are found in almost all cell types (1). Because insulin plays a key role in the regulation of these important processes, it has been associated with conditions such as diabetes, obesity, heart disease, neurodegenerative diseases, and even cancer (2-5). The insulin amino acid sequence appears to be well conserved throughout the animal kingdom, and there is a difference of less than five amino acids between the human, bovine, and porcine molecules. In addition, insulin from these mammals is known to have an invariant location of three disulfide bonds (6). Insulin was initially purified mainly from bovine and porcine sources for the treatment of humans, but because of high demand insulin is now available commercially as a recombinant form expressed in either Escherichia coli or yeast cells (7). Insulin is approved by the United States Food and Drug Administration for the treatment of diabetes and is being evaluated in several diabetes-related clinical trials. Insulin mediates its effects through the activation of a receptor tyrosine kinase that has been studied primarily in cultured cells or in isolated cell membranes (1). Radioactive iodine ((123)I) was used to label insulin, and the in vivo metabolism of this radiolabeled molecule has been studied in rodents and humans with the use of single-photon emission computed tomography (SPECT); however, (123)I has a very short half-life (~13 h), making it of limited value in the investigation of changes in receptor densities that may occur under various pathological conditions (8-10). Positron emission tomography (PET) using insulin labeled with radioactive fluorine ((18)F) has been used to study insulin receptors in monkeys and under in vitro conditions in HEK-293 cells (11, 12). This labels also has a very short half-life (~110 min), therefore this limitation prohibits the use or either (123)I or (18)F labeled insulin in studies to investigate receptor changes over extended periods. Insulin labeled with meta-stable technetium ((99m)Tc) was also used to study the biodistribution in rats using SPECT, but this radionuclide also has a short half-life of ~6 h (13). Jalilian et al. used radioactive gallium ((67)Ga), which has a half-life of &gt;3 days, to label insulin, and these investigators used SPECT to study its biodistribution in normal rats (14).</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="micad" part="Insulin67Ga" sec="Insulin67Ga.Background">Background</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Insulin67Ga" sec="Insulin67Ga.Synthesis">Synthesis</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Insulin67Ga" sec="Insulin67Ga.In_Vitro_Studies_Tes">In Vitro Studies: Testing in Cells and Tissues</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Insulin67Ga" sec="Insulin67Ga.Animal_Studies">Animal Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Insulin67Ga" sec="Insulin67Ga.Human_Studies">Human Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Insulin67Ga" sec="Insulin67Ga.Supplemental_Informa">Supplemental Information</SectionTitle>
+            </Section>
+        </Sections>
+        <KeywordList>
+            <Keyword>[67Ga]-Insulin</Keyword>
+            <Keyword>Protein</Keyword>
+            <Keyword>Insulin receptor</Keyword>
+            <Keyword>Receptor binding</Keyword>
+            <Keyword>Single-photon emission computed tomography (SPECT), gamma planar imaging</Keyword>
+            <Keyword>67Ga</Keyword>
+        </KeywordList>
+        <ContributionDate>
+            <Year>2008</Year>
+            <Month>05</Month>
+            <Day>22</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2008</Year>
+            <Month>07</Month>
+            <Day>14</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">20641767</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">20641763</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK23565</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="micad">Molecular Imaging and Contrast Agent Database (MICAD)</BookTitle>
+            <PubDate>
+                <Year>2004</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2004</Year>
+            </BeginningDate>
+            <EndingDate>
+                <Year>2013</Year>
+            </EndingDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="micad" part="Enterotoxin111In">[(111)In]-Labeled 1,4,7,10-tetraazacyclododecane-1,4,7,10-tetraacetic acid-heat-stable human Escherichia coli enterotoxin</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Chopra</LastName>
+                <ForeName>Arvind</ForeName>
+                <Initials>A</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Colorectal cancer (CRC) is the second most common neoplastic condition detected in the men and women of the United States. In 2008 it is estimated that ~150,000 individuals will be diagnosed with this disease and that it will result in the death of nearly one third of the patients (1). Most of the patients who have this cancer die because it metastasizes to the liver, and early screening of the neoplasm would help devise a suitable and favorable treatment for the patient (2). The United States Food and Drug Administration has approved radioimmunoscintigraphic agents that are based on monoclonal antibodies for the imaging of colorectal cancers, but these agents have limitations because of incomplete penetration in tumors as a result of their large molecular size and prolonged blood circulation (3, 4). A smaller IgG1-derived Fab&#8217; fragment derived from a murine antibody has been shown to have better tumor penetration, more rapid blood clearance, reduced accumulation in nontarget tissue, and high clinical utility because the Fab&#8217; fragment was reported to have superior imaging properties compared to the conventional diagnostic modalities (5). This indicates that a smaller radiopharmaceutical is a superior diagnostic agent with suitable pharmacodynamic properties. In addition, it has been shown that radiolabeled peptides are extremely useful for the imaging and radiotherapy of neuroendocrine and pulmonary tumors (6, 7). Among the various labeled peptides, the Escherichia coli heat-stable enterotoxin (STh) has been used to image colorectal cancers (8, 9). The STh is known to target guanylate cyclase C (GC-C), a type I transmembrane glycoprotein that is known to be the target that was expressed on intestinal brush border membranes and the human colon cancer T-84 cell line. The glycoprotein is expressed in very low amounts on the extraintestinal tissues and is expressed primarily on the primary and metastatic colon cancer tissues, therefore making it a unique marker for colorectal cancer tumors (10). Peptides such as the STh and uroguanylin have been shown to inhibit the growth of colorectal cancer cells and are efficacious in the treatment of this cancer in animal models (11-13). The enterotoxin has been shown to behave like an agonist for the GC-C receptor, resulting in activation of the guanylyl cyclase that increased the intracellular concentrations of guanosine 3,5-cyclic monophosphate, which directly influenced the fluid and electrolyte balance in the cells (14, 15). Several studies are available in which 1,4,7,10-tetraazacyclododecane-1,4,7,10-tetraacetic acid (DOTA) derivatives of STh have been evaluated for in vitro and in vivo activities in mice bearing xenograft tumors (8, 9, 16, 17). These studies are presented in this chapter.</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.Background">Background</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.Synthesis">Synthesis</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.In_Vitro_Studies_Tes">In Vitro Studies: Testing in Cells and Tissues</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.Animal_Studies">Animal Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.Human_Studies">Human Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.Supplemental_Informa">Supplemental Information</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Enterotoxin111In" sec="Enterotoxin111In.NIH_Support">NIH Support</SectionTitle>
+            </Section>
+        </Sections>
+        <KeywordList>
+            <Keyword>[111In]DOTA-F19-STh(1-19)</Keyword>
+            <Keyword>Peptide</Keyword>
+            <Keyword>Guanylate cyclase receptor</Keyword>
+            <Keyword>Receptor binding</Keyword>
+            <Keyword>Single-photon emission computed tomography (SPECT); gamma planar imaging</Keyword>
+            <Keyword>111In</Keyword>
+        </KeywordList>
+        <ContributionDate>
+            <Year>2008</Year>
+            <Month>05</Month>
+            <Day>16</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2008</Year>
+            <Month>06</Month>
+            <Day>10</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">20641763</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">24354039</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK174613</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>Canadian Agency for Drugs and Technologies in Health</PublisherName>
+                <PublisherLocation>Ottawa (ON)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="rd0282">Screening, Isolation, and Decolonization Strategies for Vancomycin-Resistant Enterococci or Extended Spectrum Beta-Lactamase Producing Organisms: A Systematic Review of the Clinical Evidence and Health Services Impact</BookTitle>
+            <PubDate>
+                <Year>2012</Year>
+                <Month>09</Month>
+            </PubDate>
+            <AuthorList Type="authors">
+                <Author>
+                    <LastName>Ho</LastName>
+                    <ForeName>Chuong</ForeName>
+                    <Initials>C</Initials>
+                </Author>
+                <Author>
+                    <LastName>Lau</LastName>
+                    <ForeName>Andrea</ForeName>
+                    <Initials>A</Initials>
+                </Author>
+                <Author>
+                    <LastName>Cimon</LastName>
+                    <ForeName>Karen</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author>
+                    <LastName>Farrah</LastName>
+                    <ForeName>Kelly</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author>
+                    <LastName>Gardam</LastName>
+                    <ForeName>Michael</ForeName>
+                    <Initials>M</Initials>
+                </Author>
+            </AuthorList>
+            <CollectionTitle book="cadthrdcollect">CADTH Rapid Response Reports</CollectionTitle>
+            <Medium>Internet</Medium>
+        </Book>
+        <Language>eng</Language>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Bacterial resistance to antibiotics is an increasing problem in Canada and worldwide. Vancomycin-resistant enterococci (VRE) are strains of Enterococcus faecium or Enterococcus faecalis that contain genes conferring resistance to vancomycin. Escherichia coli (E. coli), Klebsiella pneumonia (K. pneumonia), and other gram-negative bacteria may produce the enzymes known as extended spectrum beta-lactamases (ESBL). These have the ability to inactivate beta lactam antibiotics such as penicillin, ampicillin, and the cephalosporins. The presence and growth (colonization) of VRE and ESBL-producing micro-organisms in the gastrointestinal tract is usually of no consequence for the host, but under certain circumstances, such as immunosuppression, gastrointestinal surgery, or physical debilitation, they may serve as a source of infection for the carrier. These hosts may also serve as a reservoir for the transmission of VRE and ESBL-producing organisms to other persons. Results from the Canadian Nosocomial Infection Surveillance Program showed that from 1999 to 2005, the rate of VRE colonization and VRE infection increased from 0.37 to 1.32 cases, and from 0.02 to 0.05 cases respectively per 1,000 patients admitted to hospital. The laboratory-based Canadian Ward Surveillance Study in 2008 found that ESBL-producing E. coli were identified in all Canadian geographic regions, and that 4.9% of E. coli isolates were ESBL producers. Specific prevention and control measures for antibiotic-resistant organisms (AROs) include screening (a process to identify persons colonized with AROs) and isolation of the carriers. Hospital infection prevention and control strategies have been developed in some Canadian jurisdictions, and these are compatible with other national and international documents. Non-specific strategies for controlling ARO transmission and infection include hand hygiene; environmental cleaning; antimicrobial stewardship; and bundled practices, such as those to prevent central line-associated blood stream infections. Antibiotic-resistant organisms, such as VRE and ESBL-producers, lead to the increased use of hospital resources due to extended hospital stays, laboratory tests, physician consultations, costly medications if therapy for a VRE or ESBL-related infection were to arise, and the need to adhere to infection prevention and control measures to prevent the further spread of these pathogens. Some of the increased resource usage results from the morbidity caused by VRE or ESBL-producing organism infections, while some is a consequence of control strategies. For example, it may be harder to transfer a patient to a rehabilitation facility if they are currently in isolation, which will in and of itself, prolong the length of stay. The objective of this systematic review is to evaluate the clinical evidence for the effectiveness of screening, isolation, and decolonization strategies for persons colonized or infected with VRE and ESBL-producing organisms in acute and long-term care facilities. The health services impact of these strategies will be discussed.</AbstractText>
+            <CopyrightInformation>Copyright &#169; CADTH (September 2012).</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="rd0282" part="S1">ACRONYMS AND ABBREVIATIONS</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="S2">EXECUTIVE SUMMARY</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="chapter">1</LocationLabel>
+                <SectionTitle book="rd0282" part="CH1">CONTEXT AND POLICY ISSUES</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="chapter">2</LocationLabel>
+                <SectionTitle book="rd0282" part="CH2">RESEARCH QUESTIONS</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="chapter">3</LocationLabel>
+                <SectionTitle book="rd0282" part="CH3">KEY MESSAGE</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">A</LocationLabel>
+                <SectionTitle book="rd0282" part="PARTA">CLINICAL EVIDENCE</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">4</LocationLabel>
+                    <SectionTitle book="rd0282" part="CH4">METHODS</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">5</LocationLabel>
+                    <SectionTitle book="rd0282" part="CH5">RESULTS</SectionTitle>
+                </Section>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">B</LocationLabel>
+                <SectionTitle book="rd0282" part="PARTB">HEALTH SERVICES IMPACT</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">6</LocationLabel>
+                    <SectionTitle book="rd0282" part="CH6">METHODS</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">7</LocationLabel>
+                    <SectionTitle book="rd0282" part="CH7">SUMMARY OF EVIDENCE</SectionTitle>
+                </Section>
+            </Section>
+            <Section>
+                <LocationLabel Type="chapter">8</LocationLabel>
+                <SectionTitle book="rd0282" part="CH8">DISCUSSION</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="chapter">9</LocationLabel>
+                <SectionTitle book="rd0282" part="CH9">CONCLUSIONS AND IMPLICATIONS FOR DECISION OR POLICY-MAKING</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="RL1">REFERENCES</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP1">APPENDIX 1 LITERATURE SEARCH STRATEGY</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP2">APPENDIX 2 SELECTION OF INCLUDED TRIALS FOR CLINICAL EVIDENCE</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP3">APPENDIX 3 CLINICAL STUDY INCLUSION / EXCLUSION FORM</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP4">APPENDIX 4 CLINICAL STUDY DATA EXTRACTION FORM</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP5">APPENDIX 5 INCLUDED TRIALS FOR CLINICAL EVIDENCE</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP6">APPENDIX 6 EXCLUDED TRIALS FOR CLINICAL EVIDENCE</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP7">APPENDIX 7 CLINICAL EVIDENCE STUDY CHARACTERISTICS</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP8">APPENDIX 8 CLINICAL EVIDENCE PATIENT CHARACTERISTICS</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP9">APPENDIX 9 CLINICAL EVIDENCE INTERVENTIONS AND COMPARATORS</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP10">APPENDIX 10 CRITICAL APPRAISAL OF INCLUDED STUDIES FOR CLINICAL EVIDENCE</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP11">APPENDIX 11 MAIN CLINICAL STUDY FINDINGS AND AUTHORS&#8217; CONCLUSIONS</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP12">APPENDIX 12 SELECTION OF STUDIES FOR HEALTH SERVICE IMPACT</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP13">APPENDIX 13 HEALTH SERVICES IMPACT STUDY CHARACTERISTICS</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="rd0282" part="APP14">APPENDIX 14 HEALTH SERVICES IMPACT STUDY FINDINGS</SectionTitle>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2013</Year>
+                <Month>12</Month>
+                <Day>20</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2013</Year>
+                <Month>12</Month>
+                <Day>20</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2013</Year>
+                <Month>12</Month>
+                <Day>20</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">24354039</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">20641562</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK23361</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="micad">Molecular Imaging and Contrast Agent Database (MICAD)</BookTitle>
+            <PubDate>
+                <Year>2004</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2004</Year>
+            </BeginningDate>
+            <EndingDate>
+                <Year>2013</Year>
+            </EndingDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="micad" part="Egadme">(1-(2-(&#946;-Galactopyranosyloxy)propyl)-4,7,10-tris(carboxymethyl)-1,4,7,10-tetraazacyclododecane) gadolinium(III)</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Zhang</LastName>
+                <ForeName>Huiming</ForeName>
+                <Initials>H</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>&#946;-Galactosidase (&#946;-Gal) derived from Escherichia coli (E. coli) is the gene product of the bacterial lacZ operon (1). This 465-kDa tetrameric enzyme is responsible for hydrolysis of lactose and other &#946;-galactosides to monosaccharides (2). &#946;-Gal exhibits fairly strict specificity for sugars in galactosyl positions in a wide variety of aglycones (3). Several chromogenic sugar substrates have been synthetically modified so that their hydrolyzed products are easily detectable by a conventional colorimeter (2, 4). For example, &#946;-Gal hydrolyzes 5-bromo-4-chloro-3-indolyl-&#946;-D-galactoside (X-Gal) to produce a 5-bromo-4-chloro-indigo in blue color (5). The development of substrates like X-Gal makes &#946;-Gal a common enzymatic reporter protein to assay clonal insertions, transcriptional activations, protein expressions, and protein interactions in vitro and in vivo (2, 6). The increase in &#946;-Gal activity in particular has been used as an indirect measure of the enhanced transcription of the lacZ reporter gene (6). A major advantage of using &#946;-Gal as a reporter protein is its high sensitivity originating from efficiently enzymatic turnover (4). 1-(2-(&#946;-Galactopyranosyloxy)propyl)-4,7,10-tris(carboxymethyl)-1,4,7,10-tetraazacyclododecane) gadolinium(III) (EGadMe) is a modified sugar substrate containing a gadolinium (Gd) chelate (7), which is used to enhance the imaging contrast of &#946;-Gal in magnetic resonance imaging (MRI). EGadMe consists of a high-affinity chelator that occupies eight of the nine coordination sites on Gd(3+) and a galactopyranose residue that is positioned to block the remaining site on Gd(3+) from water access. An &#945;-methyl group is attached to the ethylenic carbon on the sugar linkage arm of the tetraazacarboxylic macrocycle to restrict the rotation of the galactopyranose blocking group. As a result, it not only enhances the rigidity of the chelator but also limits the bulk water access to Gd(3+). The T1 relaxivity of Gd chelates contains the contributions from water molecules in two environments: the water molecules that are directly bonded to the metal ions (the inner sphere water) and the water molecules that are not directly bonded to the metal ions (the outer sphere water) (8, 9). For Gd with one structural water (q = 1) in the fast reorientation motion region (small free Gd chelates), the inner sphere water contributes 50&#8211;70% to the T1 relaxivity depending on the magnetic field strength (8). In the absence of &#946;-Gal, EGadMe is in a water-inaccessible conformation (uncleaved); its T1 relaxivity is low because the primary contribution is only from the outer sphere water. The presence of &#946;-Gal enzymatically cleaves the galactopyranose from EGadMe (cleaved), freeing one coordination site (q ~ 1) and causing a substantial increase in the T1 relaxivity. Such a substantial change in T1 relaxivity allows for measuring the activity of &#946;-Gal by MRI. Xenopus embryos comprise an important cell system used for biological studies of cell signaling, cell lineage, and cell movement (10). The embryos are typically 1 mm in diameter, which is sufficiently large for easy visualization and manipulation at low magnification. Cell division as early as the stage of the first six divisions generates easily identifiable rows and tiers of cells (blastomeres) (11). A fate map of these blastomeres has been established for identification of the descendents during embryo development (11). The &#946;-Gal gene can be introduced into a Xenopus embryo via transfection of messenger ribonucleic acid (mRNA) of &#946;-Gal or plasmid deoxyribonucleic acid (DNA) carrying the lacZ gene at the two-cell stage (7). At the same time, EGadMe as a MRI lineage tracer is microinjected into both cells, and it remains within the originally labeled cell and its progeny (the descendents) during the growth of embryo. As a result, the transfected cell is easily distinguished from the nontransfected one by MRI and their descendents as well.</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="micad" part="Egadme" sec="Egadme.Background">Background</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Egadme" sec="Egadme.Synthesis">Synthesis</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Egadme" sec="Egadme.In_Vitro_Studies_Tes">In Vitro Studies: Testing in Cells and Tissues</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Egadme" sec="Egadme.Animal_Studies">Animal Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="Egadme" sec="Egadme.Human_Studies">Human Studies</SectionTitle>
+            </Section>
+        </Sections>
+        <KeywordList>
+            <Keyword>EGadMe</Keyword>
+            <Keyword>Small molecule</Keyword>
+            <Keyword>&#946;-Galactosidase</Keyword>
+            <Keyword>Enzyme</Keyword>
+            <Keyword>Magnetic resonance imaging (MRI)</Keyword>
+            <Keyword>Gadolinium</Keyword>
+        </KeywordList>
+        <ContributionDate>
+            <Year>2008</Year>
+            <Month>01</Month>
+            <Day>14</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2008</Year>
+            <Month>2</Month>
+            <Day>20</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">20641562</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">21290715</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK2413</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>ASM Press</PublisherName>
+                <PublisherLocation>Washington (DC)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="hp">Helicobacter pylori: Physiology and Genetics</BookTitle>
+            <PubDate>
+                <Year>2001</Year>
+            </PubDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Mobley</LastName>
+                    <ForeName>Harry LT</ForeName>
+                    <Initials>HLT</Initials>
+                </Author>
+                <Author>
+                    <LastName>Mendz</LastName>
+                    <ForeName>George L</ForeName>
+                    <Initials>GL</Initials>
+                </Author>
+                <Author>
+                    <LastName>Hazell</LastName>
+                    <ForeName>Stuart L</ForeName>
+                    <Initials>SL</Initials>
+                </Author>
+            </AuthorList>
+            <Isbn>1555812139</Isbn>
+        </Book>
+        <LocationLabel Type="chapter">Chapter 12</LocationLabel>
+        <ArticleTitle book="hp" part="A1286">The Citric Acid Cycle and Fatty Acid Biosynthesis</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Kelly</LastName>
+                <ForeName>David J.</ForeName>
+                <Initials>DJ</Initials>
+            </Author>
+            <Author>
+                <LastName>Hughes</LastName>
+                <ForeName>Nicky J.</ForeName>
+                <Initials>NJ</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>The citric acid cycle (CAC) is arguably the most important central metabolic pathway in living cells. It has long been appreciated that this pathway often serves a dual role in energy conservation and in the biosynthesis of key cellular intermediates for anabolic reactions; for example, 2-oxoglutarate and oxaloacetate for amino acid biosynthesis, and succinyl-coenzyme A (CoA) for heme synthesis in some bacteria. The latter function is particularly important under anaerobic conditions, where the usual complete "aerobic" CAC is converted into two branches, an oxidative, or C6 branch, from citrate to 2-oxoglutarate, and a reductive, or C4 branch, from oxaloacetate to succinate. This occurs largely as the result of the anaerobic repression of the 2-oxoglutarate dehydrogenase multi-enzyme complex and succinate dehydrogenase, and the induction of fumarate reductase. The regulatory mechanisms by which this occurs in some bacteria are well known. In Escherichia coli, for example, they involve the oxygen-sensing activities of Fnr and the ArcA/ArcB system (51). However, not all bacteria conform to this pattern. With the advent of genome sequencing it has become apparent that there are many variations on the basic theme of the "textbook" CAC, and a surprisingly large number of bacteria, particularly pathogens, are turning out to have incomplete or otherwise unusual CAC, which deviate from the E. coli paradigm (10, 24). Indeed, in analyses of the CAC predicted from 19 completely sequenced genomes, Huynen et al. (24) concluded that in the majority of species the cycle is incomplete or even absent, reflecting particular adaptations to the metabolic lifestyle of that particular organism. While this may be the case, one must be cautious about "missing" enzymes from genome analysis alone; actual biochemical experiments can reveal activities for which no gene appears to exist. More sensitive similarity searching may "find" the gene, or nonhomologous gene displacement with unexpected enzymes performing the expected function may be responsible (10, 24). With this background, the available biochemical and genomic data are employed to assess the nature of the CAC in Helicobacter pylori. Also described in this chapter is fatty acid biosynthesis, linked to the cycle through the utilization of acetyl-CoA as its starting point.</AbstractText>
+            <CopyrightInformation>Copyright &#169; 2001, ASM Press.</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="hp" part="A1286" sec="A1289">Diversity and Multiple Roles of the Citric Acid Cycle in Prokaryotes</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A1286" sec="A1290">The CAC in H. pylori</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A1286" sec="A1310">Fatty Acid Biosynthesis in H. pylori</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A1286" sec="A1321">Acknowledgments</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A1286" sec="A1322">References</SectionTitle>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2011</Year>
+                <Month>2</Month>
+                <Day>4</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2011</Year>
+                <Month>2</Month>
+                <Day>4</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2011</Year>
+                <Month>2</Month>
+                <Day>4</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">21290715</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">20641625</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK23426</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="micad">Molecular Imaging and Contrast Agent Database (MICAD)</BookTitle>
+            <PubDate>
+                <Year>2004</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2004</Year>
+            </BeginningDate>
+            <EndingDate>
+                <Year>2013</Year>
+            </EndingDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="micad" part="DPA-Zn-Cy7">Cy7-Bis-dipicolylamine-zinc</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Leung</LastName>
+                <ForeName>Kam</ForeName>
+                <Initials>K</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Optical fluorescence imaging is increasingly being used to obtain images of biological functions of specific targets in vitro and in small animals (1, 2). Near-infrared (NIR) fluorescence (700&#8211;900 nm) detection avoids the background fluorescence interference of natural biomolecules, providing a high contrast between target and background tissues. NIR fluorescence imaging is becoming a non-invasive alternative to radionuclide imaging in vitro and in small animals. Apoptosis (programmed cell death) plays an important role in the pathophysiology of many diseases, such as cancer, neurodegenerative disorders, vascular disorders, atherosclerosis, and chronic hepatitis, as well as in the biology of normal cells like epithelial cells and immune cells (3). During apoptosis, there is rapid redistribution of phosphatidylserine (PS) (3) from the inner membrane leaflet to the outer membrane leaflet, exposing the anionic head group of PS. PS is also accessible for annexin V (or annexin A5) binding in necrosis because of disruption of the plasma membrane. Annexin V, a 36-kDa protein, binds to PS with high affinity (Kd = 7 nM). Annexin V has been radiolabeled with (123)I (124)I, and (99m)Tc for imaging of cell death (4-6). Annexin V was successfully labeled with (18)F ((18)F-labeled annexin V (4-[(18)F]FBA)) and is currently being developed as a positron emission tomography agent for imaging apoptosis as well as necrosis (7, 8). Cy5.5-Annexin V has been evaluated as an optical probe in small animals. Gram-negative bacterium (e.g., Escherichia coli) and Gram-positive bacterium (e.g., Staphylococcus aureus) contain negatively charged molecules such as phosphatidylglycerol and phosphates in their cell membranes (9), whereas healthy mammalian cells primarily contain phospholipids of nearly neutral charge (10). Bis-dipicolylamine-zinc (DPA-Zn) showed selective affinity for anionic phospholipids (11, 12) on the surface of apoptotic bacteria and inflammatory neutrophils. Cy7, a NIR carbocyanine dye, was conjugated to DPA-Zn to form Cy7-DPA-Zn for in vivo NIR imaging of bacterial infection in mice (13, 14). Cy7-DPA-Zn was also able to detect apoptotic and necrotic cells (15-17).</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.Background">Background</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.Synthesis">Synthesis</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.In_Vitro_Studies_Testing_in_C">In Vitro Studies: Testing in Cells and Tissues</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.Animal_Studies">Animal Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.Human_Studies">Human Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.NIH_Support">NIH Support</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="DPA-Zn-Cy7" sec="DPA-Zn-Cy7.References">References</SectionTitle>
+            </Section>
+        </Sections>
+        <KeywordList>
+            <Keyword>Cy7-DPA-Zn, Zn-DPA-Cy7</Keyword>
+            <Keyword>Compound</Keyword>
+            <Keyword>Phosphatidylserine</Keyword>
+            <Keyword>Phospholipid</Keyword>
+            <Keyword>Optical near-infrared (NIR) fluorescence</Keyword>
+            <Keyword>Cy7</Keyword>
+        </KeywordList>
+        <ContributionDate>
+            <Year>2008</Year>
+            <Month>10</Month>
+            <Day>08</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2008</Year>
+            <Month>11</Month>
+            <Day>12</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">20641625</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">21413329</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK8406</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>University of Texas Medical Branch at Galveston</PublisherName>
+                <PublisherLocation>Galveston (TX)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="mmed">Medical Microbiology</BookTitle>
+            <PubDate>
+                <Year>1996</Year>
+            </PubDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Baron</LastName>
+                    <ForeName>Samuel</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+            </AuthorList>
+            <Edition>4th</Edition>
+            <Isbn>0963117211</Isbn>
+        </Book>
+        <LocationLabel Type="chapter">Chapter 3</LocationLabel>
+        <ArticleTitle book="mmed" part="A319">Classification</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Baron</LastName>
+                <ForeName>Ellen Jo</ForeName>
+                <Initials>EJ</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Bacteria are classified and identified to distinguish one organism from another and to group similar organisms by criteria of interest to microbiologists or other scientists. The most important level of this type of classification is the species level. A species name should mean the same thing to everyone. Within one species, strains and subgroups can differ by the disease they produce, their environmental habitat, and many other characteristics. Formerly, species were created on the basis of such criteria, which may be extremely important for clinical microbiologists and physicians but which are not a sufficient basis for establishing a species. Verification of existing species and creation of new species should involve biochemical and other phenotypic criteria as well as DNA relatedness. In numerical or phenetic approaches to classification, strains are grouped on the basis of a large number of phenotypic characteristics. DNA relatedness is used to group strains on the basis of overall genetic similarity. Species are identified in the clinical laboratory by morphological traits and biochemical tests, some of which are supplemented by serologic assessments (e.g., identification of Salmonella and Shigella species). Because of differences in pathogenicity (Escherichia coli) or the necessity to characterize a disease outbreak (Vibrio cholerae, methicillin-resistant Staphylococcus aureus), strains of medical interest are often classified below the species level by serology or identification of toxins. Pathogenic or epidemic strains also can be classified by the presence of a specific plasmid, by their plasmid profile (the number and sizes of plasmids), or by bacteriophage susceptibility patterns (phage typing). Newer molecular biologic techniques have enabled scientists to identify some species and strains (without the use of biochemical tests) by identifying a specific gene or genetic sequence, sometimes directly from the clinical specimen. Laboratories have no difficulty in identifying typical strains of common bacteria using commonly available test systems. Problems do arise, however, when atypical strains or rare or newly described species are not in the data base. Such difficulties are compounded when the strains are misidentified rather than unidentified, and so laboratory personnel and physicians (at least infectious diseases specialists) should be familiar with taxonomic reference texts and journals that publish papers on new species. Bacterial nomenclature at the genus and species level changes often, based primarily on the use of newer genetic techniques. A species may acquire more than one name. In some cases the recognition of a new species results in a unique correlation with specific clinical problems. For example, recognition of Porphyromonas gingivalis as a unique species, separate from its previous inclusion within Bacteroides melaninogenicus (now known to be composed of several taxonomic groups of black-pigmenting anaerobic gram-negative bacilli), elucidated its role as a key pathogen in adult periodontitis. It is important to understand why these changes and synonyms exist in taxonomy. The clinical laboratory is concerned with the rapid, sensitive, and accurate identification of microbes involved in producing disease. The number and types of tests done in such a laboratory depend on its size and the population it serves. Highly specialized or rarely performed tests should be done only by reference laboratories. Physicians, clinical laboratory personnel, and reference laboratory personnel must have a good working relationship if patients are to receive first-rate care. In addition, the physician and the clinical laboratory personnel must know which diseases and isolates are reportable to public health laboratories and how to report them .</AbstractText>
+            <CopyrightInformation>Copyright &#169; 1996, The University of Texas Medical Branch at Galveston.</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="mmed_ch3">General Concepts</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A327">Introduction</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A328">Definitions</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A334">Approaches to Taxonomy</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A347">Phenotypic Characteristics Useful in Classification and Identification</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A352">Classification Below and Above the Species Level</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A355">Designation of New Species and Nomenclatural Changes</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A356">Assessing Newly Described Bacteria</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A357">Role of the Clinical Laboratory</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A360">Interfacing with Public Health Laboratories</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A319" sec="A362">Hazards of Clinical Laboratory Work</SectionTitle>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">21413329</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">23833802</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK148500</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="mlprobe">Probe Reports from the NIH Molecular Libraries Program</BookTitle>
+            <PubDate>
+                <Year>2010</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2010</Year>
+            </BeginningDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="mlprobe" part="ml333">N-(pyridin-4-yl)benzo[d]thiazole-6-carboxamide inhibits E. coli UT189 bacterial capsule biogenesis</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Noah</LastName>
+                <ForeName>James W.</ForeName>
+                <Initials>JW</Initials>
+            </Author>
+            <Author>
+                <LastName>Ananthan</LastName>
+                <ForeName>Subramaniam</ForeName>
+                <Initials>S</Initials>
+            </Author>
+            <Author>
+                <LastName>Evans</LastName>
+                <ForeName>Carrie W.</ForeName>
+                <Initials>CW</Initials>
+            </Author>
+            <Author>
+                <LastName>Nebane</LastName>
+                <ForeName>N. Miranda</ForeName>
+                <Initials>NM</Initials>
+            </Author>
+            <Author>
+                <LastName>Rasmussen</LastName>
+                <ForeName>Lynn</ForeName>
+                <Initials>L</Initials>
+            </Author>
+            <Author>
+                <LastName>Sosa</LastName>
+                <ForeName>Melinda</ForeName>
+                <Initials>M</Initials>
+            </Author>
+            <Author>
+                <LastName>Tower</LastName>
+                <ForeName>Nichole A.</ForeName>
+                <Initials>NA</Initials>
+            </Author>
+            <Author>
+                <LastName>White</LastName>
+                <ForeName>E. Lucile</ForeName>
+                <Initials>EL</Initials>
+            </Author>
+            <Author>
+                <LastName>Seed</LastName>
+                <ForeName>Patrick</ForeName>
+                <Initials>P</Initials>
+            </Author>
+            <Author>
+                <LastName>Goller</LastName>
+                <ForeName>Carlos</ForeName>
+                <Initials>C</Initials>
+            </Author>
+            <Author>
+                <LastName>Arshad</LastName>
+                <ForeName>Mehreen</ForeName>
+                <Initials>M</Initials>
+            </Author>
+            <Author>
+                <LastName>Datta</LastName>
+                <ForeName>Apurba</ForeName>
+                <Initials>A</Initials>
+            </Author>
+            <Author>
+                <LastName>Neuenswander</LastName>
+                <ForeName>Benjamin</ForeName>
+                <Initials>B</Initials>
+            </Author>
+            <Author>
+                <LastName>Porubsky</LastName>
+                <ForeName>Patrick</ForeName>
+                <Initials>P</Initials>
+            </Author>
+            <Author>
+                <LastName>Maki</LastName>
+                <ForeName>Brooks E.</ForeName>
+                <Initials>BE</Initials>
+            </Author>
+            <Author>
+                <LastName>Liu</LastName>
+                <ForeName>Chunjing</ForeName>
+                <Initials>C</Initials>
+            </Author>
+            <Author>
+                <LastName>Rogers</LastName>
+                <ForeName>Steven A.</ForeName>
+                <Initials>SA</Initials>
+            </Author>
+            <Author>
+                <LastName>Schoenen</LastName>
+                <ForeName>Frank</ForeName>
+                <Initials>F</Initials>
+            </Author>
+            <Author>
+                <LastName>Aub&#233;</LastName>
+                <ForeName>Jeffrey</ForeName>
+                <Initials>J</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Uropathogenic Escherichia coli (UPEC) is the leading cause of community-acquired urinary tract infections (UTIs). Over 100 million UTIs occur annually throughout the world, including more than 7 million cases in U.S. adolescents and adults. UTIs in younger children are associated with greater risk of morbidity and mortality than in older children and adults. During UTI, UPEC exists in both intracellular and extracellular spaces. Infection is initiated by adherence to the apical bladder epithelium and then invading this layer of cells. Within the bladder epithelium, UPEC typically reproduces in a biofilm-like state composed of intracellular bacterial communities (IBC). After maturation of IBCs, UPEC disperses away from the IBC and exits the infected cells. Extracellular UPEC must then re-adhere, initiating the invasion and intracellular propagation phases again. Bacterial-epithelial interactions incite a strong inflammatory response through which the UPEC must persist. One persistence factor is the K type polysaccharide capsule. Capsule protects against phagocytosis, complement action, and antimicrobial peptide (AP) killing. Recent studies have also revealed that capsule along with fibrous protein assemblies is a key part of the IBC formation. Antimicrobial resistance among UPEC is increasing, driving efforts to identify therapeutic targets in the molecular pathogenesis of infection. Capsules are an attractive target because of new insights into the roles of bacterial K capsules in UPEC virulence during UTI. Specific investigations have shown that K capsule contributes to multiple aspects of pathogenesis, including IBC formation. In this program, the team used a cell-based assay to screen 335,740 compounds from the MLSMR library and identified 1,767 hits that inhibited K1 bacterial capsule formation. Of those hits, 59 were confirmed as active in a dose-responsive manner and eight compounds were shown in secondary assays to specifically inhibit capsule formation. Of those eight compounds, three were further characterized for structure-activity relationships, mechanism of action, and selectivity. The probe compound, N-(pyridin-4-yl)benzo[d]thiazole-6-carboxamide, was identified as a small molecule inhibitor of K1 capsule formation with an IC50 value of 1.04 &#177; 0.13 &#956;M and a &gt;200-fold selectivity index (SI) in BC5637 bladder cells. The probe has been broadly profiled for off-target liabilities and assessed for aqueous solubility, parallel artificial membrane permeability, and hepatocyte microsome and plasma stability. It is suitable for use as a lead compound for inhibition of K1 capsule formation.</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.rp">Resulting Publications</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s1">Probe Structure and Characteristics</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s2">Recommendations for Scientific Use of the Probe</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="section">1</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s3">Introduction</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="section">2</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s7">Materials and Methods</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="section">3</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s28">Results</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="section">4</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s39">Discussion</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="section">5</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.s43">References</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="appendix">Appendix A</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.app1">Detailed Assay Descriptions</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="appendix">Appendix B</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.app2">Structure Verification and Purity: (1)H NMR, (13)C NMR, RP HPLC/UV/HRMS Spectra for the Probe Compound</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="appendix">Appendix C</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.app3">Analytical Characterization Data for the Five Supporting Analogues</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="appendix">Appendix D</LocationLabel>
+                <SectionTitle book="mlprobe" part="ml333" sec="ml333.app4">Ricerca LeadProfiling Report for ML333</SectionTitle>
+            </Section>
+        </Sections>
+        <ContributionDate>
+            <Year>2012</Year>
+            <Month>12</Month>
+            <Day>17</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2013</Year>
+            <Month>04</Month>
+            <Day>5</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2013</Year>
+                <Month>7</Month>
+                <Day>9</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2013</Year>
+                <Month>7</Month>
+                <Day>9</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2013</Year>
+                <Month>7</Month>
+                <Day>9</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">23833802</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">20641352</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK23149</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="micad">Molecular Imaging and Contrast Agent Database (MICAD)</BookTitle>
+            <PubDate>
+                <Year>2004</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2004</Year>
+            </BeginningDate>
+            <EndingDate>
+                <Year>2013</Year>
+            </EndingDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="micad" part="GLuc">Gaussia princeps luciferase</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Chopra</LastName>
+                <ForeName>Arvind</ForeName>
+                <Initials>A</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Proteins engineered to generate fluorescent or bioluminescent signals are commonly used for the non-invasive study of a variety of biological processes and diseases in animals and humans (1-3). Usually the enhanced green fluorescent proteins, the variant red or yellow fluorescent proteins, or the bioluminescent luciferase proteins are used as reporter molecules because they produce a photo signal upon stimulation that can be tracked for the study of a dynamic biological system or phenomenon under in vitro and in vivo conditions (4-6). The luciferase family is composed of several different enzymes that catalyze light-producing, oxygen-dependent molecular reactions and have been detected across a diverse group of organisms including bacteria, fungi, insects, and marine animals (7). Among the luciferases, the firefly (Photinus pyralis) luciferase (FLuc) has been extensively studied; it requires ATP and Mg(2+) as co-factors to function and oxidizes D-luciferin, its substrate, to release energy in the form of photons (8). The sea pansy (Renilla reniformis) is another luciferase (RLuc) that has been extensively investigated; RLuc uses coelenterazine as a substrate and does not require ATP to produce light. However, RLuc has a lower quantum yield compared with FLuc (6% versus 88%) and also shows a low enzymatic efficiency (9). With the use of commercially available molecular kits, the humanized forms of FLuc and RLuc (designated as hFLuc and hRLuc, respectively) were combined as dual reporters to image cultured cells in vivo because both enzymes used different substrates (10, 11). However, these enzymes have very specific requirements to catalyze reactions under in vivo conditions to generate sufficient signal/background ratios for imaging. Tannous et al. decided to explore the possibility of finding a superior luciferase that was more efficient and had a higher quantum yield compared with the FLuc and RLuc enzymes (12). Gaussia princeps, a marine copepod, naturally secretes a luciferase (GLuc) that was cloned, expressed in Escherichia coli, and used as a detection agent in a DNA hybridization assay (13). Tannous et al. cloned the humanized version of the GLuc enzyme (hGLuc) into a herpes simplex virus-1 (HSV-1) amplicon under a cytomegalovirus (CMV) immediate early (IE) promoter and evaluated the bioluminescence emitted from DNA-transfected and vector-infected mammalian cells (12). The luciferase was also evaluated for imaging cultured cells in vivo after subcutaneous implantation of GLuc-transfected cells into nude mice (12). In another study, GLuc was evaluated for imaging after it was cloned into a lentivirus (LV) vector and transduced into human glioma cells that were implanted into nude mice (14).</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.Background">Background</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.Synthesis">Synthesis</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.In_Vitro_Studies_Tes">In Vitro Studies: Testing in Cells and Tissues</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.Animal_Studies">Animal Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.Human_Studies">Human Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.Supplemental_Informa">Supplemental Information</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="GLuc" sec="GLuc.NIH_Support">NIH Support</SectionTitle>
+            </Section>
+        </Sections>
+        <KeywordList>
+            <Keyword>GLuc</Keyword>
+            <Keyword>Luciferase</Keyword>
+            <Keyword>Non-targeted</Keyword>
+            <Keyword>Photon emission/bioluminescence</Keyword>
+            <Keyword>Optical imaging</Keyword>
+            <Keyword>Photons</Keyword>
+        </KeywordList>
+        <ContributionDate>
+            <Year>2008</Year>
+            <Month>01</Month>
+            <Day>31</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2008</Year>
+            <Month>02</Month>
+            <Day>28</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">20641352</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">20641190</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK22982</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Center for Biotechnology Information (US)</PublisherName>
+                <PublisherLocation>Bethesda (MD)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="micad">Molecular Imaging and Contrast Agent Database (MICAD)</BookTitle>
+            <PubDate>
+                <Year>2004</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2004</Year>
+            </BeginningDate>
+            <EndingDate>
+                <Year>2013</Year>
+            </EndingDate>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="micad" part="CysEGF64Cu">(64)Cu-Labeled cysteine&#8211;tagged epidermal growth factor</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Chopra</LastName>
+                <ForeName>Arvind</ForeName>
+                <Initials>A</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Growth factors such as the epidermal growth factor (EGF), the vascular endothelial growth factor (VEGF), and the tumor necrosis factor are known to have important roles in the development and progression of cancers (1-3). The EGF mediates its activity through a group of tyrosine kinase (TK)&#8211;dependent EGF receptors (EGFR) that promote not only cell proliferation but also cell survival and the motility phenotype that is necessary for the development of an invasive cancer (4). As a consequence, the EGFRs and their associated TKs are the targets of several anti-EGFR antibodies and TK inhibitors that are either approved by the United Stated Food and Drug Administration or are being evaluated in clinical trials for the treatment of various neoplasms. Before treatment, the patients are screened to determine the extent of EGFR expression in the tumors with the use of immunohistochemistry (IHC) or fluorescence in situ hybridization (FISH) because these techniques help predict the probable therapeutic response and outcome for the individual (5, 6). However, only 10&#8211;25% of the patients who are EGFR-positive according to IHC or FISH analysis respond to the anti-EGFR therapy, which indicates that a poor correlation exists between the EGFR expression analysis and the treatment (7, 8). This is probably because only the active receptors are important to predict efficacy of the anti-EGFR agents for the treatment of cancers, and ICH and FISH do not distinguish between the active and inactive EGFR (9). On binding the ligand, a characteristic feature of a functional EGFR is that it is internalized by the cell. Levashova et al. (10) envisioned that perhaps the natural ligand EGF itself could be used as an imaging agent to detect the active EGFRs in tumors. The investigators used an Escherichia coli (E. coli)&#8211;expressed EGF containing an N-terminal cysteine fusion tag of 15 amino acids (Cys-EGF) that can be used to conjugate therapeutic or imaging probes as done earlier with VEGF (11). In addition, because an active EGF/EGFR complex is composed of two molecules each of EGF and EGFR, the investigators also bioengineered an N-terminal cysteine fusion tag containing a dimeric EGF (dEGF) molecule, with the second EGF molecule linked to the first through a linker of 9 amino acids (11). The EGF and the dEGF were then labeled with radioactive copper ((64)Cu) to obtain [(64)Cu]Cys-EGF and [(64)Cu]Cys-dEGF. The biodistribution and imaging characteristics of the two molecules were then investigated in mice bearing xenograft tumors. It is pertinent to mention here that the imaging and biodistribution studies of only [(64)Cu]Cys-EGF are described in this chapter. Investigations performed with [(64)Cu]Cys-dEGF are described separately in MICAD (www.micad.nih.gov).</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.Background">Background</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.Synthesis">Synthesis</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.In_Vitro_Studies_Tes">In Vitro Studies: Testing in Cells and Tissues</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.Animal_Studies">Animal Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.Human_Studies">Human Studies</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.Supplemental_Informa">Supplemental Information</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="micad" part="CysEGF64Cu" sec="CysEGF64Cu.References">References</SectionTitle>
+            </Section>
+        </Sections>
+        <KeywordList>
+            <Keyword>[64Cu]Cys-EGF; EGF-PEG-DOTA/Cu</Keyword>
+            <Keyword>Ligand</Keyword>
+            <Keyword>Epidermal growth factor receptor (EGFR)</Keyword>
+            <Keyword>Receptor</Keyword>
+            <Keyword>Positron emission tomography (PET)</Keyword>
+            <Keyword>64Cu</Keyword>
+        </KeywordList>
+        <ContributionDate>
+            <Year>2009</Year>
+            <Month>05</Month>
+            <Day>18</Day>
+        </ContributionDate>
+        <DateRevised>
+            <Year>2009</Year>
+            <Month>07</Month>
+            <Day>15</Day>
+        </DateRevised>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2010</Year>
+                <Month>7</Month>
+                <Day>22</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">20641190</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">24649503</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK190421</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>Massachusetts Eye and Ear Infirmary</PublisherName>
+                <PublisherLocation>Boston</PublisherLocation>
+            </Publisher>
+            <BookTitle book="enterocc">Enterococci: From Commensals to Leading Causes of Drug Resistant Infection</BookTitle>
+            <PubDate>
+                <Year>2014</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2014</Year>
+            </BeginningDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Gilmore</LastName>
+                    <ForeName>Michael S</ForeName>
+                    <Initials>MS</Initials>
+                </Author>
+                <Author>
+                    <LastName>Clewell</LastName>
+                    <ForeName>Don B</ForeName>
+                    <Initials>DB</Initials>
+                </Author>
+                <Author>
+                    <LastName>Ike</LastName>
+                    <ForeName>Yasuyoshi</ForeName>
+                    <Initials>Y</Initials>
+                </Author>
+                <Author>
+                    <LastName>Shankar</LastName>
+                    <ForeName>Nathan</ForeName>
+                    <Initials>N</Initials>
+                </Author>
+            </AuthorList>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="enterocc" part="indicators">Enterococci as Indicators of Environmental Fecal Contamination</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Boehm</LastName>
+                <ForeName>Alexandria B.</ForeName>
+                <Initials>AB</Initials>
+            </Author>
+            <Author>
+                <LastName>Sassoubre</LastName>
+                <ForeName>Lauren M.</ForeName>
+                <Initials>LM</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Enterococci are found in high concentrations in human feces, usually between 10(4) and 10(6) bacteria per gram wet weight (Layton, Walters, Lam, &amp; Boehm, 2010; Slanetz &amp; Bartley, 1957; Zubrzycki &amp; Spaulding, 1962); see also Enterococcus Diversity, Origins in Nature, and Gut Colonization). Although enterococci usually represent less than 1% of the flora (Tendolkar, Baghdayan, &amp; Shankar, 2003), they are usually present in the fecal consortium, but are outnumbered by other bacteria, including Escherichia coli, clostridia, and the Bacteroidales (Zubrzycki &amp; Spaulding, 1962). Due to their ubiquity in human feces and persistence in the environment, enterococci have been adopted as indicators of human fecal pollution in water. More recently, their densities on human hands have been used as indicators of hand hygiene. The use of enterococci as indicators of human fecal pollution or contamination can be problematic, however, because enterococci are also found in animal feces (Harwood, Whitlock, &amp; Withington, 2000; Layton, Walters, Lam, &amp; Boehm, 2010), in soils (Byappanahalli &amp; Fujioka, 2004; Goto &amp; Yan, 2011), and on plants (Byappanahalli, Shively, Nevers, Sadowsky, &amp; Whitman, 2003; Imamura, Thompson, Boehm, &amp; Jay, 2011; M&#252;ller, Ulrich, Ott, &amp; M&#252;ller, 2001). Although there is debate about the extent to which this happens in nature, there is evidence that enterococci are capable of replicating in extra-enteric environments, such as on beach sands (Bahirathan, Puente, &amp; Seyfried, 1998; Zubrzycki &amp; Spaulding, 1962) and in water containing kelp (Byappanahalli, Shively, Nevers, Sadowsky, &amp; Whitman, 2003; Imamura, Thompson, Boehm, &amp; Jay, 2011) and plankton (Mote, Turner, &amp; Lipp, 2012). Identification of human-specific enterococcal species or genotypes could aid in the discrimination of human fecal contamination from other environmental sources of the organisms. Some data suggest that Enterococcus faecium and Enterococcus faecalis may be more prevalent in human feces than other enterococcal species, while Enterococcus casseliflavus and Enterococcus mundtii may be more abundant in environmental reservoirs (such as on plants) than other species (Bahirathan, Puente, &amp; Seyfried, 1998; Ferguson, Moore, Getrich, &amp; Zhowandai, 2005; Wheeler, Hartel, Godfrey, Hill, &amp; Segars, 2002). However, a number of species of Enterococcus have been isolated from human feces (Layton, Walters, Lam, &amp; Boehm, 2010); Enterococcus Diversity, Origins in Nature, and Gut Colonization), so it will be difficult to derive a single host-specific indicator. It has been suggested that E. faecium that contains the enterococcal surface protein (esp) gene may be human-specific (Scott, Jenkins, Lukasik, &amp; Rose, 2005), but esp-containing E. faecium can also be found in select animal hosts (Layton, Walters, &amp; Boehm, 2009; Whitman, Przybyla-Kelly, Shively, &amp; Byappanahalli, 2007). Fecal enterococci from the GI tract consortia of healthy humans are generally not virulent. Nevertheless, multidrug-resistant Enterococcus strains have emerged as leading causes of hospital-acquired infections (Tendolkar, Baghdayan, &amp; Shankar, 2003). Vancomycin-resistant enterococci are particularly important pathogens (Willems, et al., 2005), as are esp-containing E. faecalis (Shankar, Baghdayan, Huycke, Lindahl, &amp; Gilmore, 1999) and E. faecium (Willems, et al., 2001), as well as other types of E. faecalis and E. faecium (Wisplinghoff, Bischoff, Tallent, Seifert, Wenzel, &amp; Edmond, 2004). It is estimated that there are 800,000 cases of enterococcal infection in the US each year, adding $500,000,000 to annual healthcare costs (Tendolkar, Baghdayan, &amp; Shankar, 2003). Therefore, the presence of enterococci in the environment and on hands may have important direct health implications.</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="enterocc" part="indicators" sec="indicators.Detection_of_Enterococci">Detection of Enterococci</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="indicators" sec="indicators.Enterococci_as_Indicators_of">Enterococci as Indicators of Fecal Contamination in Recreational Water</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="indicators" sec="indicators.Enterococci_as_Indicators_of_1">Enterococci as Indicators of Fecal Contamination on Hands</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="indicators" sec="indicators.Future_Research_Needs">Future Research Needs</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="indicators" sec="indicators.References">References</SectionTitle>
+            </Section>
+        </Sections>
+        <ContributionDate>
+            <Year>2014</Year>
+            <Month>2</Month>
+            <Day>5</Day>
+        </ContributionDate>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2014</Year>
+                <Month>3</Month>
+                <Day>21</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2014</Year>
+                <Month>3</Month>
+                <Day>21</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2014</Year>
+                <Month>3</Month>
+                <Day>21</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">24649503</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">24649501</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK190419</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>Massachusetts Eye and Ear Infirmary</PublisherName>
+                <PublisherLocation>Boston</PublisherLocation>
+            </Publisher>
+            <BookTitle book="enterocc">Enterococci: From Commensals to Leading Causes of Drug Resistant Infection</BookTitle>
+            <PubDate>
+                <Year>2014</Year>
+            </PubDate>
+            <BeginningDate>
+                <Year>2014</Year>
+            </BeginningDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Gilmore</LastName>
+                    <ForeName>Michael S</ForeName>
+                    <Initials>MS</Initials>
+                </Author>
+                <Author>
+                    <LastName>Clewell</LastName>
+                    <ForeName>Don B</ForeName>
+                    <Initials>DB</Initials>
+                </Author>
+                <Author>
+                    <LastName>Ike</LastName>
+                    <ForeName>Yasuyoshi</ForeName>
+                    <Initials>Y</Initials>
+                </Author>
+                <Author>
+                    <LastName>Shankar</LastName>
+                    <ForeName>Nathan</ForeName>
+                    <Initials>N</Initials>
+                </Author>
+            </AuthorList>
+            <Medium>Internet</Medium>
+        </Book>
+        <ArticleTitle book="enterocc" part="bacteriophages">Enterococcal Bacteriophages and Genome Defense</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Duerkop</LastName>
+                <ForeName>Breck A.</ForeName>
+                <Initials>BA</Initials>
+            </Author>
+            <Author>
+                <LastName>Palmer</LastName>
+                <ForeName>Kelli L.</ForeName>
+                <Initials>KL</Initials>
+            </Author>
+            <Author>
+                <LastName>Horsburgh</LastName>
+                <ForeName>Malcolm J.</ForeName>
+                <Initials>MJ</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>A brief overview of bacteriophages: Bacteriophages (phages) are viruses that infect bacteria. Similar to the viruses of plants and animals, phages are inert and are unable to propagate themselves in the absence of a host. Phages depend on host metabolism to provide the organic material and machinery necessary for their replication and for the subsequent packaging of the viral genetic material during phage particle biosynthesis. Phages are associated with nearly all known bacterial taxa and, as a result, are found in diverse environments that range from soil to oceans and even in deserts (Prestel, Salamitou, &amp; DuBow, 2008; Prigent, Leroy, Confalonieri, Dutertre, &amp; DuBow, 2005; Srinivasiah, Bhavsar, Thapar, Liles, Schoenfeld, &amp; Wommack, 2008; Wommack &amp; Colwell, 2000). Phages are found either directly associated with their bacterial hosts or in large numbers as free virions in the environment. Since there is a vast distribution of phages across the globe, it is possible to theorize that phages constitute the most abundant biological entities on earth. Their numbers have been estimated to reach as high as 10(31) particles with the potential for 10(25) phage infections occurring every second (Pedulla, et al., 2003; Wommack &amp; Colwell, 2000). As many more phage genome sequences have become available in recent years, it is obvious that phages are extremely incongruent at the genomic level. This diversity in genetic makeup is proposed to result from the fastidious replication of phage particles during the infection of highly permissive hosts. During these infections, phages are able to exchange DNA within host genomes through recombination, and continually generate diversity as a result (Hendrix, Smith, Burns, Ford, &amp; Hatfull, 1999). The vast majority of phages belong to the order of Caudovirales, which are tailed phages that have dsDNA and an isometric capsid. Caudovirales is comprised of three phylogenetically-related families that are discriminated by tail morphology: Myoviridae (long contractile tails), Siphoviridae (long non-contractile tails), and Podoviridae (short tails) (Ackermann, 2007; Krupovic, Prangishvili, Hendrix, &amp; Bamford, 2011). The most well-studied tailed phages are the coliphages &#654; (Siphoviridae), T4 (Myoviridae), and T7 (Podoviridae) which infect Escherichia coli and which have served as workhorses for elucidating the mechanisms of modern molecular genetics and biochemistry (Johnson, Poteete, Lauer, Sauer, Ackers, &amp; Ptashne, 1981; Miller, Kutter, Mosiq, Arisaka, Kunisawa, &amp; R&#252;ger, 2003; Ptashne, et al., 1980; Tabor &amp; Richardson, 1985). Far less abundant are the non-tailed phages, which encompass numerous families with great morphological distinction; these include phages that are filamentous (long filaments to short rods), polyhedral (vesicular and envelope-like), and pleomorphic (including those that are lemon, droplet, and ampule shaped) (Ackermann, 2007). The nucleic acid content of phage genomes is either DNA or RNA and both double and single stranded DNA and RNA phages have been identified. In addition, the size of the phage genome can range from under ten kilobases to several hundred kilobases. Phages have evolved replication strategies that can be lytic, lysogenic (temperate), or chronic. Chronic replication results in the continual, non-lethal shedding of virions by protrusion through the membrane. All phages have common life-cycle stages of adsorption, DNA injection and replication, virion production, and release. Tailed phages mediate host cell lysis through the combined action of a holin, which perforates the membrane, and an endolysin (lysin), which hydrolyses cell wall peptidoglycan. Lytic phages are restricted to a life-cycle that results in the lysis of their host. Temperate phages have two possible life-cycles: lysis, or the recombination of their genome at a chromosomal attachment site using a phage-encoded integrase. Temperate phages are maintained within the host chromosome by transcriptional repressors that determine when the phage undergoes an infectious or lytic switch. The lytic switch occurs when conditions within their host promote excision. Excision usually proceeds during times of hardship when host health is threatened, either by physical stress or by chemical stress, such as antibiotics, ultraviolet (UV) light, or reactive oxygen species (Allen, et al., 2011; DeMarini &amp; Lawrence, 1992; Little &amp; Mount, 1982). Temperate phages provide key insights into the evolution of bacterial pathogenesis, since many temperate phages encode virulence factors used by pathogenic bacteria during both human and animal infections (Bensing, Siboo, &amp; Sullam, 2001; Br&#252;ssow, Canchaya, &amp; Hardt, 2004; Novick, Christie, &amp; Penad&#233;s, 2010).</AbstractText>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Distribution_of_phages_ac">Distribution of phages across the enterococci</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Known_phage_families_foun">Known phage families found among Enterococci</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Environments_where_entero">Environments where enterococcal phages are found</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Enterococcal_Temperate_Ph">Enterococcal Temperate Phages and the Impact of Lysogeny</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Enterococcal_Lytic_Phages">Enterococcal Lytic Phages</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Enterococcal_Genome_Defen">Enterococcal Genome Defense Mechanisms</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Perspectives_and_Future_D">Perspectives and Future Directions</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.Concluding_Remarks">Concluding Remarks</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="enterocc" part="bacteriophages" sec="bacteriophages.References">References</SectionTitle>
+            </Section>
+        </Sections>
+        <ContributionDate>
+            <Year>2014</Year>
+            <Month>2</Month>
+            <Day>11</Day>
+        </ContributionDate>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2014</Year>
+                <Month>3</Month>
+                <Day>21</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2014</Year>
+                <Month>3</Month>
+                <Day>21</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2014</Year>
+                <Month>3</Month>
+                <Day>21</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">24649501</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">21413346</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK8526</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>University of Texas Medical Branch at Galveston</PublisherName>
+                <PublisherLocation>Galveston (TX)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="mmed">Medical Microbiology</BookTitle>
+            <PubDate>
+                <Year>1996</Year>
+            </PubDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Baron</LastName>
+                    <ForeName>Samuel</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+            </AuthorList>
+            <Edition>4th</Edition>
+            <Isbn>0963117211</Isbn>
+        </Book>
+        <LocationLabel Type="chapter">Chapter 7</LocationLabel>
+        <ArticleTitle book="mmed" part="A537">Bacterial Pathogenesis</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Peterson</LastName>
+                <ForeName>Johnny W.</ForeName>
+                <Initials>JW</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Infection is the invasion of the host by microorganisms, which then multiply in close association with the host's tissues. Infection is distinguished from disease, a morbid process that does not necessarily involve infection (diabetes, for example, is a disease with no known causative agent). Bacteria can cause a multitude of different infections, ranging in severity from inapparent to fulminating. Table 7-1 lists these types of infections. The capacity of a bacterium to cause disease reflects its relative pathogenicity. On this basis, bacteria can be organized into three major groups. When isolated from a patient, frank or primary pathogens are considered to be probable agents of disease (e.g., when the cause of diarrheal disease is identified by the laboratory isolation of Salmonella spp. from feces). Opportunistic pathogens are those isolated from patients whose host defense mechanisms have been compromised. They may be the agents of disease (e.g., in patients who have been predisposed to urinary tract infections with Escherichia coli by catheterization). Finally, some bacteria, such as Lactobacillus acidophilus, are considered to be nonpathogens, because they rarely or never cause human disease. Their categorization as nonpathogens may change, however, because of the adaptability of bacteria and the detrimental effect of modern radiation therapy, chemotherapy, and immunotherapy on resistance mechanisms. In fact, some bacteria previously considered to be nonpathogens are now known to cause disease. Serratia marcescens, for example, is a common soil bacterium that causes pneumonia, urinary tract infections, and bacteremia in compromised hosts. Virulence is the measure of the pathogenicity of an organism. The degree of virulence is related directly to the ability of the organism to cause disease despite host resistance mechanisms; it is affected by numerous variables such as the number of infecting bacteria, route of entry into the body, specific and nonspecific host defense mechanisms, and virulence factors of the bacterium. Virulence can be measured experimentally by determining the number of bacteria required to cause animal death, illness, or lesions in a defined period after the bacteria are administered by a designated route. Consequently, calculations of a lethal dose affecting 50 percent of a population of animals (LD50) or an effective dose causing a disease symptom in 50 percent of a population of animals (ED50) are useful in comparing the relative virulence of different bacteria. Pathogenesis refers both to the mechanism of infection and to the mechanism by which disease develops. The purpose of this chapter is to provide an overview of the many bacterial virulence factors and, where possible, to indicate how they interact with host defense mechanisms and to describe their role in the pathogenesis of disease. It should be understood that the pathogenic mechanisms of many bacterial diseases are poorly understood, while those of others have been probed at the molecular level. The relative importance of an infectious disease to the health of humans and animals does not always coincide with the depth of our understanding of its pathogenesis. This information is best acquired by reading each of the ensuing chapters on specific bacterial diseases, infectious disease texts, and public health bulletins.</AbstractText>
+            <CopyrightInformation>Copyright &#169; 1996, The University of Texas Medical Branch at Galveston.</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="mmed_ch7">General Concepts</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A545">Introduction</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A547">Host Susceptibility</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A549">Pathogenic Mechanisms</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A560">Specific Virulence Factors</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A567">Biologic Activity of Endotoxin</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A573">Detection of Endotoxin in Medical Solutions</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A537" sec="A577">Epilogue</SectionTitle>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">21413346</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">25121196</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK232214</ArticleId>
+            <ArticleId IdType="doi">10.17226/4910</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>National Academies Press (US)</PublisherName>
+                <PublisherLocation>Washington (DC)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="nap4910">Tempo And Mode In Evolution: Genetics And Paleontology 50 Years After Simpson</BookTitle>
+            <PubDate>
+                <Year>1995</Year>
+            </PubDate>
+            <AuthorList Type="authors">
+                <Author>
+                    <CollectiveName>National Academy of Sciences (US)</CollectiveName>
+                </Author>
+            </AuthorList>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Fitch</LastName>
+                    <ForeName>Walter M.</ForeName>
+                    <Initials>WM</Initials>
+                </Author>
+                <Author>
+                    <LastName>Ayala</LastName>
+                    <ForeName>Francisco J.</ForeName>
+                    <Initials>FJ</Initials>
+                </Author>
+            </AuthorList>
+            <Isbn>0309051916</Isbn>
+        </Book>
+        <Language>eng</Language>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Since George Gaylord Simpson published Tempo and Mode in Evolution in 1944, discoveries in paleontology and genetics have abounded. This volume brings together the findings and insights of today's leading experts in the study of evolution, including Ayala, W. Ford Doolittle, and Stephen Jay Gould. The volume examines early cellular evolution, explores changes in the tempo of evolution between the Precambrian and Phanerozoic periods, and reconstructs the Cambrian evolutionary burst. Long-neglected despite Darwin's interest in it, species extinction is discussed in detail. Although the absence of data kept Simpson from exploring human evolution in his book, the current volume covers morphological and genetic changes in human populations, contradicting the popular claim that all modern humans descend from a single woman. This book discusses the role of molecular clocks, the results of evolution in 12 populations of Escherichia coli propagated for 10,000 generations, a physical map of Drosophila chromosomes, and evidence for "hitchhiking" by mutations.</AbstractText>
+            <CopyrightInformation>Copyright 1995 by the National Academy of Sciences. All rights reserved.</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="nap4910" part="ddd00003">PREFACE</SectionTitle>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">PART I</LocationLabel>
+                <SectionTitle book="nap4910" part="ddd00006">EARLY LIFE</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">1</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00007">Tempo, Mode, the Progenote, and the Universal Root</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">2</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00017">Phylogeny from Function: The Origin of tRNA Is in Replication, not Translation</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">3</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00023">Disparate Rates, Differing Fates: Tempo and Mode of Evolutionm Changed from the Precambrian to the Phanerozoic</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">4</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00030">Proterozoic and Early Cambrian Protists: Evidence for Accelerating Evolutionary Tempo</SectionTitle>
+                </Section>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">PART II</LocationLabel>
+                <SectionTitle book="nap4910" part="ddd00038">MACROEVOLUTION</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">5</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00039">Late Precambrian Bilaterians: Grades and Clades</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">6</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00046">The Role of Extinction in Evolution</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">7</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00056">Tempo and Mode in the Macroevolutionary Reconstruction of Darwinism</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">8</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00062">Morphological Evolution Through Complex Domains of Fitness</SectionTitle>
+                </Section>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">PART III</LocationLabel>
+                <SectionTitle book="nap4910" part="ddd00068">HUMAN EVOLUTION</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">9</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00069">Tempo and Mode in Human Evolution</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">10</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00077">Molecular Genetics of Speciation and Human Origins</SectionTitle>
+                </Section>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">PART IV</LocationLabel>
+                <SectionTitle book="nap4910" part="ddd00089">RATES</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">11</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00090">Rates and Patterns of Chloroplast DNA Evolution</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">12</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00098">The Superoxide Dismutase Molecular Clock Revisited</SectionTitle>
+                </Section>
+            </Section>
+            <Section>
+                <LocationLabel Type="part">PART V</LocationLabel>
+                <SectionTitle book="nap4910" part="ddd00104">PATTERNS</SectionTitle>
+                <Section>
+                    <LocationLabel Type="chapter">13</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00105">Dynamics of Adaptation and Diversification: A 10,000-Generation Experiment with Bacterial Populations</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">14</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00112">Explaining Low Levels of DNA Sequence Variation in Regions of the Drosophila Genome with Low Recombination Rates</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">15</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00120">The History of a Genetic System</SectionTitle>
+                </Section>
+                <Section>
+                    <LocationLabel Type="chapter">16</LocationLabel>
+                    <SectionTitle book="nap4910" part="ddd00125">Genome Structure and Evolution in Drosophila: Applications of the Framework P1 Map</SectionTitle>
+                </Section>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2014</Year>
+                <Month>8</Month>
+                <Day>15</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2014</Year>
+                <Month>8</Month>
+                <Day>15</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2014</Year>
+                <Month>8</Month>
+                <Day>15</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">25121196</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">21413261</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK7710</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>University of Texas Medical Branch at Galveston</PublisherName>
+                <PublisherLocation>Galveston (TX)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="mmed">Medical Microbiology</BookTitle>
+            <PubDate>
+                <Year>1996</Year>
+            </PubDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Baron</LastName>
+                    <ForeName>Samuel</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+            </AuthorList>
+            <Edition>4th</Edition>
+            <Isbn>0963117211</Isbn>
+        </Book>
+        <LocationLabel Type="chapter">Chapter 25</LocationLabel>
+        <ArticleTitle book="mmed" part="A1408">Escherichia Coli in Diarrheal Disease</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Evans</LastName>
+                <ForeName>Doyle J.</ForeName>
+                <Initials>DJ</Initials>
+                <Suffix>Jr.</Suffix>
+            </Author>
+            <Author>
+                <LastName>Evans</LastName>
+                <ForeName>Dolores G.</ForeName>
+                <Initials>DG</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>Escherichia coli is a common member of the normal flora of the large intestine. As long as these bacteria do not acquire genetic elements encoding for virulence factors, they remain benign commensals. Strains that acquire bacteriophage or plasmid DNA encoding enterotoxins or invasion factors become virulent and can cause either a plain, watery diarrhea or an inflammatory dysentery. These diseases are most familiar to Westerners as traveler's diarrhea, but they are also major health problems in endemic countries, particularly among infants. Three groups of E coli are associated with diarrheal diseases. Escherichia coli strains that produce enterotoxins are called enterotoxigenic E coli (ETEC). There are numerous types of enterotoxin. Some of these toxins are cytotoxic, damaging the mucosal cells, whereas others are merely cytotonic, inducing only the secretion of water and electrolytes. A second group of E coli strains have invasion factors and cause tissue destruction and inflammation resembling the effects of Shigella(EIEC). A third group of serotypes, called enteropathogenic E coli (EPEC), are associated with outbreaks of diarrhea in newborn nurseries, but produce no recognizable toxins or invasion factors. Figure 25-1 presents a summary of the diseases caused by virulent E coli.</AbstractText>
+            <CopyrightInformation>Copyright &#169; 1996, The University of Texas Medical Branch at Galveston.</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="mmed" part="A1408" sec="mmed_ch25">General Concepts</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A1408" sec="A1416">Introduction</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A1408" sec="A1418">Noninflammatory Diarrheas Caused by Enterotoxigenic Escherichia Coli</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="mmed" part="A1408" sec="A1430">Inflammatory Diarrheas Caused by Enteroinvasive, Cytotoxic, and Enteropathogenic Escherichia Coli</SectionTitle>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2011</Year>
+                <Month>3</Month>
+                <Day>18</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">21413261</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedBookArticle>
+    <BookDocument>
+        <PMID Version="1">21290726</PMID>
+        <ArticleIdList>
+            <ArticleId IdType="bookaccession">NBK2425</ArticleId>
+        </ArticleIdList>
+        <Book>
+            <Publisher>
+                <PublisherName>ASM Press</PublisherName>
+                <PublisherLocation>Washington (DC)</PublisherLocation>
+            </Publisher>
+            <BookTitle book="hp">Helicobacter pylori: Physiology and Genetics</BookTitle>
+            <PubDate>
+                <Year>2001</Year>
+            </PubDate>
+            <AuthorList Type="editors">
+                <Author>
+                    <LastName>Mobley</LastName>
+                    <ForeName>Harry LT</ForeName>
+                    <Initials>HLT</Initials>
+                </Author>
+                <Author>
+                    <LastName>Mendz</LastName>
+                    <ForeName>George L</ForeName>
+                    <Initials>GL</Initials>
+                </Author>
+                <Author>
+                    <LastName>Hazell</LastName>
+                    <ForeName>Stuart L</ForeName>
+                    <Initials>SL</Initials>
+                </Author>
+            </AuthorList>
+            <Isbn>1555812139</Isbn>
+        </Book>
+        <LocationLabel Type="chapter">Chapter 23</LocationLabel>
+        <ArticleTitle book="hp" part="A2398">Chromosomal Replication, Plasmid Replication, and Cell Division</ArticleTitle>
+        <Language>eng</Language>
+        <AuthorList Type="authors">
+            <Author>
+                <LastName>Takeuchi</LastName>
+                <ForeName>Hiroaki</ForeName>
+                <Initials>H</Initials>
+            </Author>
+            <Author>
+                <LastName>Nakazawa</LastName>
+                <ForeName>Teruko</ForeName>
+                <Initials>T</Initials>
+            </Author>
+        </AuthorList>
+        <PublicationType UI="D016454">Review</PublicationType>
+        <Abstract>
+            <AbstractText>The study of chromosomal replication and cell division of bacteria has extended beyond Escherichia coli, and important insights have emerged recently from studies in other species, especially Bacillus subtilis and Caulobacter crescentus (55, 67). In contrast, there is still little information about cell division processes in Helicobacter pylori. Analyses of the complete genome sequences of H. pylori strains 26695 and J99 (2, 64) provide insights into the cell division mechanisms of this microorganism, a spiral-shaped gram-negative bacterium with a bundle of polar flagella. Many genes homologous to those involved in replication and cell division in E. coli are found in the H. pylori genome, suggesting similar basic mechanisms for both bacteria. Orthologs of some E. coli genes have not been identified in the H. pylori genome, suggesting differences in the cell proliferation machinery of both bacteria, which belong to different subdivisions of the Proteobacteria. Cell division is coordinated with other cell cycle events such as genomic DNA synthesis that leads to chromosomal replication and partition, increase of cell mass, and cell expansion by cell wall synthesis. Thus, in this chapter the information about predicted genes related to chromosomal replication, plasmid replication, and cell division in H. pylori is reviewed, and a plausible replication machinery of the bacterium is discussed in light of our current understanding of bacterial organization and function of replication and cell division. The focus of the section on chromosomal replication is on the replication origin and genes of the replication complex, while division site, filamenting, and other related genes are discussed in the section on cell division.</AbstractText>
+            <CopyrightInformation>Copyright &#169; 2001, ASM Press.</CopyrightInformation>
+        </Abstract>
+        <Sections>
+            <Section>
+                <SectionTitle book="hp" part="A2398" sec="A2400">Chromosomal Replication</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A2398" sec="A2405">Plasmid Replication</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A2398" sec="A2406">Cell Division</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A2398" sec="A2413">Summary and Perspectives</SectionTitle>
+            </Section>
+            <Section>
+                <SectionTitle book="hp" part="A2398" sec="A2414">References</SectionTitle>
+            </Section>
+        </Sections>
+    </BookDocument>
+    <PubmedBookData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2011</Year>
+                <Month>2</Month>
+                <Day>4</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2011</Year>
+                <Month>2</Month>
+                <Day>4</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2011</Year>
+                <Month>2</Month>
+                <Day>4</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">21290726</ArticleId>
+        </ArticleIdList>
+    </PubmedBookData>
+</PubmedBookArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">12832124</PMID>
+        <DateCreated>
+            <Year>2003</Year>
+            <Month>06</Month>
+            <Day>30</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2003</Year>
+            <Month>11</Month>
+            <Day>06</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2010</Year>
+            <Month>11</Month>
+            <Day>18</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">0928-8244</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>37</Volume>
+                    <Issue>2-3</Issue>
+                    <PubDate>
+                        <Year>2003</Year>
+                        <Month>Jul</Month>
+                        <Day>15</Day>
+                    </PubDate>
+                </JournalIssue>
+                <Title>FEMS immunology and medical microbiology</Title>
+                <ISOAbbreviation>FEMS Immunol. Med. Microbiol.</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Construction of recombinant S-layer proteins (rSbsA) and their expression in bacterial ghosts--a delivery system for the nontypeable Haemophilus influenzae antigen Omp26.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>185-92</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText>This study has investigated the feasibility of a combination of recombinant surface layer (S-layer) proteins and empty bacterial cell envelopes (ghosts) to deliver candidate antigens for a vaccine against nontypeable Haemophilus influenzae (NTHi) infections. The S-layer gene sbsA from Bacillus stearothermophilus PV72 was used for the construction of fusion proteins. Fusion of maltose binding protein (MBP) to the N-terminus of SbsA allowed expression of the S-layer in the periplasm of Escherichia coli. The outer membrane protein (Omp) 26 of NTHi was inserted into the N-terminal and C-terminal regions of SbsA. The presence of the fused antigen Omp26 was demonstrated by Western blot experiments using anti-Omp26 antisera. Electron microscopy showed that the recombinant SbsA maintained the ability to self-assemble into sheet-like and cylindrical structures. Recombinant E. coli cell envelopes (ghosts) were produced by the expression of SbsA/Omp26 fusion proteins prior to gene E-mediated lysis. Intraperitoneal immunization with these recombinant bacterial ghosts induced an Omp26-specific antibody response in BALB/c mice. These results demonstrate that the NTHi antigen, Omp26, was expressed in the S-layer self-assembly product and this construct was immunogenic for Omp26 when administered to mice in bacterial cell envelopes.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Riedmann</LastName>
+                    <ForeName>Eva M</ForeName>
+                    <Initials>EM</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Institute of Microbiology and Genetics, Vienna Biocentre, University of Vienna, 1090 Vienna, Austria.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Kyd</LastName>
+                    <ForeName>Jennelle M</ForeName>
+                    <Initials>JM</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Smith</LastName>
+                    <ForeName>Adam M</ForeName>
+                    <Initials>AM</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Gomez-Gallego</LastName>
+                    <ForeName>Sara</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Jalava</LastName>
+                    <ForeName>Katri</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Cripps</LastName>
+                    <ForeName>Allan W</ForeName>
+                    <Initials>AW</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Lubitz</LastName>
+                    <ForeName>Werner</ForeName>
+                    <Initials>W</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>Netherlands</Country>
+            <MedlineTA>FEMS Immunol Med Microbiol</MedlineTA>
+            <NlmUniqueID>9315554</NlmUniqueID>
+            <ISSNLinking>0928-8244</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D000907">Antibodies, Bacterial</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D001425">Bacterial Outer Membrane Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D001426">Bacterial Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D002352">Carrier Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D018073">Haemophilus Vaccines</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D058619">Maltose-Binding Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D008565">Membrane Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="C118414">OMP26 protein, Haemophilus influenzae</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D011993">Recombinant Fusion Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="C088619">sbsA protein, Bacillus stearothermophilus</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D000818">Animals</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D000907">Antibodies, Bacterial</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000097">blood</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D001425">Bacterial Outer Membrane Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y" UI="Q000276">immunology</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000378">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D001426">Bacterial Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y" UI="Q000276">immunology</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000378">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D001433">Bacteriolysis</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D002352">Carrier Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000378">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D002462">Cell Membrane</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000276">immunology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D004926">Escherichia coli</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000378">metabolism</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000502">physiology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D005822">Genetic Vectors</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D006192">Haemophilus Infections</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000276">immunology</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000517">prevention &amp; control</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D018073">Haemophilus Vaccines</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000008">administration &amp; dosage</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000276">immunology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D006193">Haemophilus influenzae</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000145">classification</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y" UI="Q000276">immunology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D007114">Immunization</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D008297">Male</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D058619">Maltose-Binding Proteins</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D008565">Membrane Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y" UI="Q000276">immunology</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000378">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D051379">Mice</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D008807">Mice, Inbred BALB C</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D008854">Microscopy, Electron</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D011993">Recombinant Fusion Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000235">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y" UI="Q000276">immunology</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000378">metabolism</QualifierName>
+            </MeshHeading>
+        </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2003</Year>
+                <Month>7</Month>
+                <Day>2</Day>
+                <Hour>5</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2003</Year>
+                <Month>11</Month>
+                <Day>7</Day>
+                <Hour>5</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2003</Year>
+                <Month>7</Month>
+                <Day>2</Day>
+                <Hour>5</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">12832124</ArticleId>
+            <ArticleId IdType="pii">S0928824403000701</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+</PubmedArticleSet>

@@ -21,7 +21,7 @@ import com.silicolife.textmining.processes.ir.pubmed.configuration.IRPubmedSearc
 
 public class PubmedSearchTest {
 
-	@Test
+//	@Test
 	public void simplePubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		PubMedSearch pubmedSearch = new PubMedSearch();
@@ -37,21 +37,37 @@ public class PubmedSearchTest {
 		assertTrue(report.isFinishing());
 	}
 	
+//	@Test
+	public void simplePubmedSearch2() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
+		DatabaseConnectionInit.init("localhost","3306","anote2_v22","root","admin");
+		PubMedSearch pubmedSearch = new PubMedSearch();
+		Properties propeties = new Properties();
+		// The query name resulted
+		String queryName = "20641767[uid] OR 21413346[uid] OR 12589653[uid] OR 125896[uid]";
+		// Organism
+		String organism = "";
+		// Keywords
+		String keywords = "20641767[uid] OR 21413346[uid] OR 12589653[uid] OR 125896[uid]";
+		IIRSearchConfiguration searchConfiguration = new IRPubmedSearchConfigurationImpl(keywords , organism , queryName, propeties );
+		IIRSearchProcessReport report = pubmedSearch.search(searchConfiguration);
+		assertTrue(report.isFinishing());
+	}
+	
 
-	@Test
+//	@Test
 	public void advancedPubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		IIRSearchProcessReport report = createQuery();
 		assertTrue(report.isFinishing());
 	}
 	
-	@Test
+//	@Test
 	public void pubmedSearchUsingPMIDsList() throws InvalidDatabaseAccess, ANoteException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		fail("Not yet implemented");
 	}
 	
-	@Test
+//	@Test
 	public void updateQueryUsingPubmedSearch() throws InvalidDatabaseAccess, ANoteException, InternetConnectionProblemException, InvalidConfigurationException {
 		DatabaseConnectionInit.init("localhost","3306","createdatest","root","admin");
 		IIRSearchProcessReport report = createQuery();
@@ -60,6 +76,8 @@ public class PubmedSearchTest {
 		IIRSearchUpdateReport reportupdate = pubmedSearch.updateQuery(query);
 		assertTrue(reportupdate.isFinishing());
 	}
+	
+	
 
 
 	public static IIRSearchProcessReport createQuery() throws InvalidDatabaseAccess,

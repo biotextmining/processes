@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.pubmed;
+package com.silicolife.textmining.processes.ir.pubmed.reader;
 
 import java.io.File;
 import java.io.IOException;

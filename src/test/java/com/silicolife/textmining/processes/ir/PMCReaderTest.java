@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
-import com.silicolife.textmining.processes.ir.pubmed.PMCReader;
+import com.silicolife.textmining.processes.ir.pubmed.reader.PMCReader;
 
 public class PMCReaderTest {
 

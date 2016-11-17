@@ -1,14 +1,10 @@
-package com.silicolife.textmining.processes.ir.pubmed;
+package com.silicolife.textmining.processes.ir.pubmed.reader;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -18,7 +14,6 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.PublicationFieldTypeEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
@@ -32,27 +27,20 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
+import com.silicolife.textmining.processes.ir.pubmed.PubmedReader;
 
 
 public class MedLineReader {
 
-	private InputStream stream;
-	public static final String pubmedLink = "https://www.ncbi.nlm.nih.gov/pubmed/";
-	private List<IPublication> publications ;
 
-	public MedLineReader(InputStream stream){
-		this.stream = stream;
-		this.publications = new ArrayList<>();
+	public MedLineReader(){
+		
 	}
 
-	private InputStream getInputStream(){
-		return stream;
-	}
 
-	public List<IPublication> getMedlinePublications() throws ANoteException{
+	public List<IPublication> getPublications(Document doc) throws ANoteException{
 		try{
-			
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(getInputStream());
+			List<IPublication> publicationsResulty = new ArrayList<>();
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
 			NodeList nodes = doc.getElementsByTagName("MedlineCitation");
@@ -121,25 +109,18 @@ public class MedLineReader {
 				if(date.length()>3)
 					yearDate = date.substring(0,4);
 				IPublication pub = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-						issues, pages, abstractText, pubmedLink+pubmedID, false, new String(), new String(), externalIDsSource, fullTextfields , labels );
-				addPublication(pub);
+						issues, pages, abstractText, PubmedReader.pubmedLink+pubmedID, false, new String(), new String(), externalIDsSource, fullTextfields , labels );
+				publicationsResulty.add(pub);
 			}
-			return getPublications();
-		}catch(SAXException | IOException | ParserConfigurationException | XPathExpressionException e){
+			return publicationsResulty;
+		}catch(XPathExpressionException e){
 			throw new ANoteException(e);
 		}
 
 	}
 
-	public List<IPublication> getPublications() {
-		return publications;
-	}
 	
-	public void addPublication(IPublication pub){
-		getPublications().add(pub);
-	}
-
-	public String processAbstract(List<IPublicationField> fullTextfields,
+	private String processAbstract(List<IPublicationField> fullTextfields,
 			Element elements) throws ANoteException{
 		NodeList node = elements.getElementsByTagName("AbstractText");
 		String abstractText = new String();

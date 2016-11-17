@@ -48,7 +48,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublicationExter
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
-import com.silicolife.textmining.processes.ir.pubmed.MedLineReader;
+import com.silicolife.textmining.processes.ir.pubmed.PubmedReader;
 
 public class PMSearch {
 	
@@ -158,11 +158,10 @@ public class PMSearch {
 	}
 	
 	public static List<IPublication> readXMLResultFile(PostMethod post) throws ANoteException, IOException{
-		InputStream stream = post.getResponseBodyAsStream();
-		MedLineReader reader = new MedLineReader(stream);
-		return reader.getMedlinePublications();
+		return new PubmedReader().getPublications(post.getResponseBodyAsStream());
 	}
 
+	@Deprecated
 	public static List<IPublication> getPublicationsFromXMLStream(InputStream stream)
 			throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
 		List<IPublication> publications = new ArrayList<IPublication>();
