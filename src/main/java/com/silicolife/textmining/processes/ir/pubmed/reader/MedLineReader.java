@@ -110,7 +110,7 @@ public class MedLineReader {
 					yearDate = date.substring(0,4);
 				IPublication pub = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
 						issues, pages, abstractText, PubmedReader.pubmedLink+pubmedID, false, new String(), new String(), externalIDsSource, fullTextfields , labels );
-				publicationsResulty.add(pub);
+				addPublication(publicationsResulty, pub);
 			}
 			return publicationsResulty;
 		}catch(XPathExpressionException e){
@@ -119,8 +119,13 @@ public class MedLineReader {
 
 	}
 
+
+	protected void addPublication(List<IPublication> publicationsResulty, IPublication pub) {
+		publicationsResulty.add(pub);
+	}
+
 	
-	private String processAbstract(List<IPublicationField> fullTextfields,
+	protected String processAbstract(List<IPublicationField> fullTextfields,
 			Element elements) throws ANoteException{
 		NodeList node = elements.getElementsByTagName("AbstractText");
 		String abstractText = new String();
