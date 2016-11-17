@@ -169,13 +169,23 @@ public class PubmedEbookReader {
 	}
 
 	private String processArticleTitle(Element elements) {
-		String title;
+		String title = "";
 		NodeList node;
 		node = elements.getElementsByTagName("ArticleTitle");
-		if(node.item(0)== null)
-			return "";
-		title = node.item(0).getTextContent();
-		title = NormalizationForm.removeOffsetProblemSituation(title);
+		if(node.item(0)!= null)
+		{
+			title = node.item(0).getTextContent();
+			title = NormalizationForm.removeOffsetProblemSituation(title);
+		}
+		if(title.isEmpty())
+		{
+			node = elements.getElementsByTagName("BookTitle");
+			if(node.item(0)!= null)
+			{
+				title = node.item(0).getTextContent();
+				title = NormalizationForm.removeOffsetProblemSituation(title);
+			}
+		}
 		return title;
 	}
 
