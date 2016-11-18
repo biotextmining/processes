@@ -9,6 +9,7 @@ import java.util.Properties;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.DatabaseAccess;
 import com.silicolife.textmining.core.datastructures.dataaccess.database.DatabaseFactory;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
+import com.silicolife.textmining.core.datastructures.init.dataaccess.DataAccessDefaultSettings;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.IDataAccess;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.database.DataBaseTypeEnum;
@@ -24,6 +25,7 @@ public class DatabaseConnectionInit {
 		Properties properties = new Properties();
 		properties.put("Using-Title-In-Abstract", "true");
 		properties.put("Free-Full-Text-Only", "true");
+		properties.put(DataAccessDefaultSettings.LUCENEINDEXBASEDIRECTORY, "src/test/resources/");
 		Proxy proxy = null;
 		String hibernateFilePath = "src/test/resources/hibernate.cfg.xml";
 		IDataAccess dataAccess = new DatabaseAccess(dabaseAcess,hibernateFilePath);
@@ -39,6 +41,7 @@ public class DatabaseConnectionInit {
 		Properties properties = new Properties();
 		properties.put("Using-Title-In-Abstract", "true");
 		properties.put("Free-Full-Text-Only", "true");
+		properties.put(DataAccessDefaultSettings.LUCENEINDEXBASEDIRECTORY, "src/test/resources/");
 		Proxy proxy = null;
 		String hibernateFilePath = "src/test/resources/hibernate.cfg.xml";
 		IDataAccess dataAccess = new DatabaseAccess(dabaseAcess,hibernateFilePath);
