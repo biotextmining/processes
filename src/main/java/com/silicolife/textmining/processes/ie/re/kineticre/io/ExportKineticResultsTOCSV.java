@@ -29,7 +29,7 @@ import com.silicolife.textmining.core.interfaces.process.IE.IRESchema;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.Delimiter;
 import com.silicolife.textmining.core.interfaces.process.IE.io.export.TextDelimiter;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
-import com.silicolife.textmining.processes.ie.re.kineticre.configuration.REKineticConfigurationClasses;
+import com.silicolife.textmining.processes.ie.re.kineticre.core.REKineticConfigurationClasses;
 
 public class ExportKineticResultsTOCSV {
 	

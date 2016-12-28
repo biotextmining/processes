@@ -19,9 +19,9 @@ import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticAdvancedConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticREConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.REKineticAdvancedConfigurationImpl;
-import com.silicolife.textmining.processes.ie.re.kineticre.configuration.REKineticConfigurationClasses;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.REKineticConfigurationImpl;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.KineticRE;
+import com.silicolife.textmining.processes.ie.re.kineticre.core.REKineticConfigurationClasses;
 
 public class KineticRETest {
 		

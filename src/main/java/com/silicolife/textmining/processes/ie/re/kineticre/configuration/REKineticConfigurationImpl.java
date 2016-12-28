@@ -8,6 +8,7 @@ import com.silicolife.textmining.core.datastructures.process.re.REConfigurationI
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
+import com.silicolife.textmining.processes.ie.re.kineticre.core.REKineticConfigurationClasses;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.oldversions.KineticREtriples;
 
 public class REKineticConfigurationImpl extends REConfigurationImpl implements IREKineticREConfiguration{

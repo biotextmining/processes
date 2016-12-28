@@ -14,7 +14,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.process.IE.IRESchema;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
-import com.silicolife.textmining.processes.ie.re.kineticre.configuration.REKineticConfigurationClasses;
+import com.silicolife.textmining.processes.ie.re.kineticre.core.REKineticConfigurationClasses;
 import com.silicolife.textmining.processes.ie.re.kineticre.io.ExportKineticResultsTOCSV;
 
 public class ExportKineticRETest {

@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -81,7 +82,7 @@ public class KineticRE implements IREProcess {
 		validateConfiguration(configuration);
 		IREKineticREConfiguration reConfiguration = (IREKineticREConfiguration) configuration;
 		IIEProcess reProcess = new IEProcessImpl(configuration.getCorpus(), kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, configuration.getProperties());
+				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, generateConfiguration(reConfiguration));
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 		IIEProcess ieProcess = (IIEProcess) configuration.getEntityBasedProcess();
 		REProcessReportImpl report = new REProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.kineticre.report.title"),ieProcess,reProcess,false);
@@ -110,6 +111,28 @@ public class KineticRE implements IREProcess {
 	}
 
 	
+	private Properties generateConfiguration(IREKineticREConfiguration reConfiguration) {
+		Properties properties = new Properties();
+		properties.put(KineticREGroupsEnum.Units.toString(), classesTOString(reConfiguration.getUnitsClasses()));
+		properties.put(KineticREGroupsEnum.Values.toString(), classesTOString(reConfiguration.getValuesClasses()));
+		properties.put(KineticREGroupsEnum.KParameters.toString(), classesTOString(reConfiguration.getKineticParametersClasses()));
+		properties.put(KineticREGroupsEnum.Metabolites.toString(), classesTOString(reConfiguration.getMetabolitesClasses()));
+		properties.put(KineticREGroupsEnum.Enzymes.toString(), classesTOString(reConfiguration.getEnzymesClasses()));
+		properties.put(KineticREGroupsEnum.Organism.toString(), classesTOString(reConfiguration.getOrganismClasses()));
+		return properties;
+	}
+	
+	public String classesTOString(Set<IAnoteClass> classes) 
+	{
+		String result = new String();
+		for(IAnoteClass klass:classes)
+			result = result + klass.getName() + ",";
+		if(result.isEmpty())
+			return result;
+		return result.substring(0,result.length()-1);
+	}
+
+
 	protected void memoryAndProgress(int step, int total,long startime) {
 		if(step%50==0)
 		{
