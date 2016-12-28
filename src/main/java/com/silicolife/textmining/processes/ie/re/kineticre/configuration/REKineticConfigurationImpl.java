@@ -24,7 +24,9 @@ public class REKineticConfigurationImpl extends REConfigurationImpl implements I
 
 	@Override
 	public Map<String, String> getREProperties() {
-		return new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<String, String>();
+		properties.put(KineticREDefaultSettings.CLASSESMAPPING, REKineticConfigurationClasses.convertIntoString(classes));
+		return properties;
 	}
 
 	@Override
@@ -59,8 +61,7 @@ public class REKineticConfigurationImpl extends REConfigurationImpl implements I
 
 	@Override
 	public String getConfigurationUID() {
-		// TODO Auto-generated method stub
-		return null;
+		return "kineticre";
 	}
 
 
