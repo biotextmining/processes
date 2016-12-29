@@ -15,6 +15,8 @@ import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ir.patentpipeline.PatentPiplineSearch;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.IROPSPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.OPSPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.BingSearchPatentIDRecoverSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.IRPatentIDRecoverBingSearchConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.epo.EPOSearchPatentIDRecoverSource;
@@ -66,8 +68,8 @@ public class PatentPipelineSearchTest {
 		
 		//Step 2 - Retrived Meta Information	
 		
-//		IIRPatentMetaInformationRetrievalConfiguration configurationWIPO = new IRWIPOPatentMetaInformationRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, proxy );
-//		IIRPatentRetrievalMetaInformation wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
+		IIRPatentMetaInformationRetrievalConfiguration configurationWIPO = new IRWIPOPatentMetaInformationRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, proxy );
+		IIRPatentRetrievalMetaInformation wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
 		
 		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
 		IIRPatentRetrievalMetaInformation opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
@@ -76,7 +78,7 @@ public class PatentPipelineSearchTest {
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceEPO);
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceBing);
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceGoogle);
-//		configurationPipeline.addIRPatentRetrievalMetaInformation(wipoMetaInformationRetrieval);
+		configurationPipeline.addIRPatentRetrievalMetaInformation(wipoMetaInformationRetrieval);
 		configurationPipeline.addIRPatentRetrievalMetaInformation(opsMetaInformationretrieval);
 		
 		IIRPatentSearchConfiguration configuration = new IRPatentSearchConfigurationImpl(query,"Teste23062016",prop,configurationPipeline);

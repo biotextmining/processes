@@ -59,5 +59,50 @@
 			<version>2.6.2</version>
 		</dependency>
 		
+				<!-- WIPO Dependencies -->
+
+		<dependency>
+			<groupId>org.wipo</groupId>
+			<artifactId>patentscope</artifactId>
+			<version>1.2</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/dependencies/patentscope-webservice-client-1.2.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.wipo</groupId>
+			<artifactId>webservicesapi</artifactId>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/dependencies/webservices-api.jar</systemPath>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wipo</groupId>
+			<artifactId>webservicesextraapi</artifactId>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/dependencies/webservices-extra-api.jar</systemPath>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wipo</groupId>
+			<artifactId>webservicesextra</artifactId>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/dependencies/webservices-extra.jar</systemPath>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wipo</groupId>
+			<artifactId>webservicesrt</artifactId>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/dependencies/webservices-rt.jar</systemPath>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wipo</groupId>
+			<artifactId>webservicestools</artifactId>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/dependencies/webservices-tools.jar</systemPath>
+			<version>1.2</version>
+		</dependency>
+		
 	</dependencies>
 </project>
