@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -82,7 +81,6 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 
 
 	private void getPatentDocumentOCRBYID(String patentID)throws UnknownApplicationException_Exception,UnknownDocumentException_Exception, IOException, DocumentException {
-		//		System.out.println("getAvailableDocuments(" + patentID + ")");
 		List<Doc> retour = serviceHelper.getStub().getAvailableDocuments(patentID);
 		File pathStock = new File(getConfiguration().getOutputDirectory() +"/"+ patentID + ".pdf");
 		if (!verifyPDFAlreadyDownloaded(pathStock.getPath())){
@@ -90,9 +88,7 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 				Doc doc = retour.get(count);
 				List<String> pagesList = null;
 				File outDir = new File(getConfiguration().getOutputDirectory());
-				long t1;
 				if ((doc.getDocType().equals("PAMPH")) && (doc.getOcrPresence() != null) && (doc.getOcrPresence().equals("yes"))) {
-					t1 = new Date().getTime();
 					StreamingDataHandler myfile = (StreamingDataHandler)serviceHelper.getStub().getDocumentOcrContent(doc.getDocId());
 					if (myfile != null){
 						if (!outDir.exists()) {
@@ -104,7 +100,6 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 					}
 				}
 				else{
-					t1 = new Date().getTime();
 					File temporaryPath = new File (getConfiguration().getOutputDirectory() +"/tmp_"+ patentID);
 					pagesList = serviceHelper.getStub().getDocumentTableOfContents(doc.getDocId());
 					for (int i=0; i<pagesList.size(); i++) {
@@ -121,16 +116,10 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 						}
 					}
 					transformTiffIntoPDF(pathStock, temporaryPath);
-			}
-					long t2 = new Date().getTime();
-					long lengthFile = pathStock.length()/1000;
-					float downLoadingTime = ((float)(t2 - t1))/1000;
-					System.out.println("-> getDocumentUsingWIPO("+ patentID + "): " + lengthFile + "kB"
-							+ " downloaded in " + downLoadingTime + "s"
-							+ " at " + (lengthFile/downLoadingTime) + "kB/s");
 				}
 			}
 		}
+	}
 
 
 

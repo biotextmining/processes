@@ -116,7 +116,6 @@ public class WIPOCrawling extends IRProcessImpl implements IIRCrawl{
 
 					for (int count=0; count<retour.size(); count++) {
 						Doc doc = retour.get(count);
-						System.out.println(doc.getDocId());
 						if ((doc.getDocType().equals("PAMPH")) && (doc.getOcrPresence() != null) && (doc.getOcrPresence().equals("yes"))) {
 							File outDir = new File(saveDocDirectory);
 							String pathStock = saveDocDirectory +"/"+ pub.getId() + ".pdf";

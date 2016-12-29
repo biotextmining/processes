@@ -526,10 +526,8 @@ public abstract class ABingQuery <ResultT> {
                     Node parseable = parseables.item(i);
                     ResultT ar = this.parseEntry(parseable);
                     if (ar != null) {
-                        _queryResult.addResult(ar);
-						//j++;
-						
-                    } //System.out.println(j);
+                        _queryResult.addResult(ar);						
+                    } 
                 }
             }
         }
@@ -555,7 +553,6 @@ public abstract class ABingQuery <ResultT> {
                 @SuppressWarnings("resource")
 				java.util.Scanner s = new java.util.Scanner(bis).useDelimiter("\\A");
                 dumpable = s.hasNext() ? s.next() : "";
-                //System.out.print(dumpable);
                 // convert String into InputStream
                 InputStream istwo = new java.io.ByteArrayInputStream(dumpable.getBytes());
                 
@@ -571,12 +568,6 @@ public abstract class ABingQuery <ResultT> {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SAXException e) {
-            if (e instanceof SAXParseException) {
-                SAXParseException ex = (SAXParseException) e;
-                System.out.println("Line: " + ex.getLineNumber());
-                System.out.println("Col: " + ex.getColumnNumber());
-                System.out.println("Data: " + dumpable);
-            }
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();

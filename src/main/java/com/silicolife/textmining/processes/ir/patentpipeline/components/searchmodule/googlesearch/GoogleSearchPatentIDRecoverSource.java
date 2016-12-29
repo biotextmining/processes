@@ -50,7 +50,6 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 			catch (NullPointerException e) {//means that there is no more results to search using that query
 			}
 			catch ( Exception e) {
-				System.out.println("Daily limit exceeded!!");
 				throw new ANoteException(e);
 			}
 		}
@@ -106,31 +105,6 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 
 	@Override
 	public int getNumberOfResults() throws ANoteException {
-		//		String tokenaccess = ((IIRPatentIDRecoverGoogleSearchConfiguration)getConfiguration()).getAccessToken();
-		//		String CustomSearchID = ((IIRPatentIDRecoverGoogleSearchConfiguration)getConfiguration()).getCustomSearchID();
-		//		
-		//		Set<String> links = new HashSet<>();
-		//		
-		//		GoogleWebQuery s = new GoogleWebQuery(tokenaccess, CustomSearchID);
-		//
-		//		for (int i = 0; i < 91; i+=10) {
-		//			s.setStartIndexOfResult(i);	
-		//
-		//			try {
-		//				GoogleResults r = s.search(getConfiguration().getQuery());
-		//				List<Items> items=new ArrayList<Items>();//iniciar uma lista
-		//				items = r.getItems();
-		//				for(Items it:items){
-		//					links.add(it.getLink());
-		//				}
-		//			}
-		//			catch ( Exception e) {
-		//				System.out.println("Daily limit exceeded!!");
-		//				throw new ANoteException(e);
-		//				// TODO: handle exception
-		//			}
-		//		}
-		//		return links.size();
 		return recoverPatentIDs().size();
 	}
 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +49,6 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 		String autentication = Utils.get64Base(((IIROPSPatentRetrievalConfiguration)getConfiguration()).getAccessToken());
 		String tokenaccess=null;
 		tokenaccess=OPSUtils.loginOPS(autentication);
-		int i=0;
 		long starttime = System.currentTimeMillis();
 		for(String patentID:patentsIds)
 		{
@@ -60,7 +58,6 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 				Set<String> possiblePatentIDs;
 				if(((float)(actualtime-starttime)/1000)>=900){//15min
 					try {
-						System.out.println("sleeping...5 seconds");
 						Thread.sleep(5000);
 						tokenaccess=OPSUtils.loginOPS(autentication);
 						starttime=System.currentTimeMillis();
@@ -72,7 +69,6 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 				File fileDownloaded = searchInAllPatents(tokenaccess, patentID, possiblePatentIDs);
 				if (fileDownloaded==null){
 					report.addNotRetrievedPatents(patentID);				
-					System.out.println("Patent num not retrieved : "+i);
 				}
 				else{
 					report.addRetrievedPatents(patentID);
@@ -80,12 +76,8 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 			}
 			else{
 				report.addRetrievedPatents(patentID);
-				System.out.println("PatentID already downloaded: "+patentID);
 			}
-			i++;
 		}
-		System.out.println("Number of IDs: "+i);
-		System.out.println("Number of retrieved patents (OPS):"+(i-report.getNotRetrievedPatents().size())+"\nRetrieval Percentage (OPS):"+((1-(float)report.getNotRetrievedPatents().size()/(float)i)*100+"%")+"\nIds Not Retrieved (OPS):"+report.getNotRetrievedPatents());
 		return report;
 	}
 
@@ -108,7 +100,6 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 		File generatedPDF = null;
 		File outDir = new File(getConfiguration().getOutputDirectory());
 		String docPDFFinal = outDir +"/" + patentID + ".pdf";
-		long t1 = new Date().getTime();
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
@@ -131,7 +122,6 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 			{
 				if(tokenaccess==null)
 				{
-					System.out.println("sleeping...62 seconds");
 					Thread.sleep(62000);
 				}
 			}
@@ -140,12 +130,6 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 		merger.mergeDocuments();
 		generatedPDF = new File(docPDFFinal);			
 		recursiveDelete(docPath.toFile());
-		long t2 = new Date().getTime();
-		long lengthFile = generatedPDF.length()/1000;
-		float downLoadingTime = ((float)(t2 - t1))/1000;
-		System.out.println("-> getDocumentUsingOPS("+ patentID + "): " + lengthFile + "kB"
-				+ " downloaded in " + downLoadingTime + "s"
-				+ " at " + (lengthFile/downLoadingTime) + "kB/s");
 
 		return generatedPDF;
 	}

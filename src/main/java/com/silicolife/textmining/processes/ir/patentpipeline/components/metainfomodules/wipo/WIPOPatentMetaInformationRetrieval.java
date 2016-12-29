@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +46,8 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
 		for(String patentID:mapPatentIDPublication.keySet())
 		{
-			long t1 = new Date().getTime();
-			System.out.println("Getting metainformation for patent:"+patentID);
+//			long t1 = new Date().getTime();
+//			System.out.println("Getting metainformation for patent:"+patentID);
 			IPublication publication = mapPatentIDPublication.get(patentID);
 			List<Doc> retour;
 			try {
@@ -70,10 +69,10 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 
 							sp.parse(is,parseEventsHandler);
 
-							long t2 = new Date().getTime();
-							float downLoadingTime = ((float)(t2 - t1))/1000;
-							System.out.println("getPatentMetaInformation(" + patentID + "," + pagesList.get(i) + "): "
-									+ " downloaded in " + downLoadingTime + "s");
+//							long t2 = new Date().getTime();
+//							float downLoadingTime = ((float)(t2 - t1))/1000;
+//							System.out.println("getPatentMetaInformation(" + patentID + "," + pagesList.get(i) + "): "
+//									+ " downloaded in " + downLoadingTime + "s");
 
 						}
 					}

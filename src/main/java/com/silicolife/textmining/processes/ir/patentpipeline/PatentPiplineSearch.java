@@ -92,13 +92,46 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		Date date = new Date();
 		String name = generateQueryName(configuration,date);
 		IQueryOriginType queryType = new QueryOriginTypeImpl(PublicationSourcesDefaultEnum.patent.name());
-		query = new QueryImpl(queryType, date , configuration.getKeywords(),"", querySTR, 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), configuration.getProperties());
+		query = new QueryImpl(queryType, date , configuration.getKeywords(),"", querySTR, 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), generateProperties(configuration));
 		IIRSearchProcessReport report = searchMethod(query,configuration);
 		if(cancel)
 			report.setcancel();
 		return report;
 	}
+	
+	public Properties generateProperties(IIRPatentSearchConfiguration configuration)
+	{
+		Properties properties = new Properties();
+		List<IIRPatentIDRecoverSource> searchIDs = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource();
+		properties.put(PatentPipelineSettings.patentPipelineSearchPatentIDs, getIIRPatentIDRecoverSourceString(searchIDs));
+		List<IIRPatentRetrievalMetaInformation> patentRetrievalMetaInformations = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation();
+		properties.put(PatentPipelineSettings.patentPipelineSearchPatentMetaInfo, getIIRPatentRetrievalMetaInformation(patentRetrievalMetaInformations));
+		return properties;
+	}
+	
+	public String getIIRPatentRetrievalMetaInformation(List<IIRPatentRetrievalMetaInformation> patentRetrievalMetaInformations)
+	{
+		String result = new String();
+		for(IIRPatentRetrievalMetaInformation patentRetrievalMetaInformation:patentRetrievalMetaInformations)
+		{
+			result = result + patentRetrievalMetaInformation.getSourceName() + ",";
+		}
+		if(result.isEmpty())
+			return result;
+		return result.substring(0,result.length()-1);
+	}
 
+	public String getIIRPatentIDRecoverSourceString(List<IIRPatentIDRecoverSource> searchIDs)
+	{
+		String result = new String();
+		for(IIRPatentIDRecoverSource searchID:searchIDs)
+		{
+			result = result + searchID.getSourceName() + ",";
+		}
+		if(result.isEmpty())
+			return result;
+		return result.substring(0,result.length()-1);
+	}
 
 	private IIRSearchProcessReport searchMethod(IQuery query,IIRPatentSearchConfiguration searchConfiguration) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException {
 		registerQueryOnDatabase(query);

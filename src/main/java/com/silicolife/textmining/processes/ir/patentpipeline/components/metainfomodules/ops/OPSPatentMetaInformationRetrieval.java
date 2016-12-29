@@ -33,7 +33,6 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			long t2 = System.currentTimeMillis();
 			if(((float)(t2-t1)/1000)>=900){//15min
 				try {
-					System.out.println("sleeping...5 seconds");
 					Thread.sleep(5000);
 					tokenaccess=OPSUtils.loginOPS(autentication);
 					t1=System.currentTimeMillis();
@@ -86,7 +85,6 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		if (!downloadSuccess){
 			return false;
 		}
-		System.out.println(publiction.toString());
 		return true;
 	}
 

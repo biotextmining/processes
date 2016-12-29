@@ -106,13 +106,13 @@ public class GoogleWebQuery {
 		
 		try {
 			//encoding
-			String google_encoded = URLEncoder.encode(google_arguments, CHAR_SET)
-					.replaceAll("\\%28", "(") 
-					.replaceAll("\\%29", ")") 
-					.replaceAll("\\+", "%20") 
-					.replaceAll("\\%27", "'") 
-					.replaceAll("\\%21", "!") 
-					.replaceAll("\\%7E", "~");
+//			String google_encoded = URLEncoder.encode(google_arguments, CHAR_SET)
+//					.replaceAll("\\%28", "(") 
+//					.replaceAll("\\%29", ")") 
+//					.replaceAll("\\+", "%20") 
+//					.replaceAll("\\%27", "'") 
+//					.replaceAll("\\%21", "!") 
+//					.replaceAll("\\%7E", "~");
 			String keywords_encoded = URLEncoder.encode(keywords, CHAR_SET);
 			
 			url = new URL(GOOGLE_API_URL + google_arguments + keywords_encoded);
@@ -128,8 +128,6 @@ public class GoogleWebQuery {
 			GoogleResults results = new Gson().fromJson(br, GoogleResults.class);
 			
 			////////////////
-			int total = results.getItems().size();
-			System.out.println("total: "+total);
 			return results;
 
 		} catch (IOException e) {

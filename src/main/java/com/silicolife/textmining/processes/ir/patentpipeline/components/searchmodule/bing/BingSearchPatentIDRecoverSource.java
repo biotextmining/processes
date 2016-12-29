@@ -78,7 +78,6 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 	{
 		try {
 			query=URLEncoder.encode(query,CHAR_SET);
-			System.out.println(query);
 		} catch (UnsupportedEncodingException e) {
 			throw new ANoteException(e);
 		}
@@ -96,7 +95,6 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 	private static Set<String> patentIDExtraction (Set<String> setURLS) throws ANoteException{
 		Set<String> PatentID =new HashSet<>();
 		for (String url : setURLS) {
-			System.out.println(url);
 			try{
 				String[] subArray = url.replaceAll("\\?.*", "").split("/");//get all URL parts separated
 				for (int part = 0; part < subArray.length; part++) {
@@ -118,33 +116,6 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	@Override
 	public int getNumberOfResults() throws ANoteException {
-		//		BingWebQuery query = new BingWebQuery();
-		//		String patent = " site:www.google.com/patents/";
-		//		int results = 0;
-		//		//		System.out.println(q+patent);
-		//		query.setQuery(getConfiguration().getQuery() + patent );
-		//		//query.setWebSearchOptions("DisableHostCollapsing");
-		//		//query.setWebSearchOptions("DisableQueryAlterations"); 
-		//
-		//		String tokenaccess = ((IIRPatentIDRecoverBingSearchConfiguration)getConfiguration()).getAccessToken(); 
-		//		query.setAppid(tokenaccess);
-		//
-		//		//Primary Account Key available at https://datamarket.azure.com/account
-		//		//query.setAppid("Ju0WWwspaT9tVXY+JhWeftB2Om9yQeCCz2cRpA+fGCE");
-		//
-		//		int stopNumber =1;//stop the cicle when its turned to 0.
-		//		while (stopNumber>0) {
-		//			query.doQuery();
-		//			BingResultSet<BingWebResult> ResultSet= query.getQueryResult();
-		//			stopNumber=ResultSet.getAsrs().size();
-		//			results+=ResultSet.getAsrs().size();
-		//			if (stopNumber==0) {
-		//				break;
-		//
-		//			}else{
-		//				query.nextPage();
-		//				}
-		//		}
 		return recoverPatentIDs().size();
 	}
 

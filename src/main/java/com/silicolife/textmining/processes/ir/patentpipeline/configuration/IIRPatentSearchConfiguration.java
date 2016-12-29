@@ -3,6 +3,7 @@ import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfigurati
 
 public interface IIRPatentSearchConfiguration extends IIRSearchConfiguration{
 	
+	
 	/**
 	 * Return keywords for the patent search process
 	 * @return
