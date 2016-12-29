@@ -114,7 +114,7 @@ public class PatentPipeline {
 		return reportMetaInformation.getMapPatentIDPublication();
 	}
 	
-	protected Set<String> executePatentIDSearchStep() throws ANoteException {
+	public Set<String> executePatentIDSearchStep() throws ANoteException {
 		logger.info("Patent Ids Retrieval Step");
 		Set<String> patentIds = new HashSet<>();
 		for(IIRPatentIDRecoverSource patentSource:patentIDrecoverSourceList)
@@ -159,7 +159,7 @@ public class PatentPipeline {
 		return report;
 	}
 	
-	private Map<String, IPublication> createSimplePublicationMaps(Set<String> patentIds) {
+	public static Map<String, IPublication> createSimplePublicationMaps(Set<String> patentIds) {
 		Map<String, IPublication> mapPatentIDPublication = new HashMap<>();
 		for(String patentID:patentIds)
 		{
