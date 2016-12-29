@@ -1,0 +1,91 @@
+package com.silicolife.textmining.processes.ir.patentpipeline;
+
+import java.io.IOException;
+
+import com.silicolife.textmining.core.interfaces.core.configuration.IProxy;
+import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.IROPSPatentMetaInformationRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.OPSPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.IROPSPatentRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.OPSPatentRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.BingSearchPatentIDRecoverSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.IRPatentIDRecoverBingSearchConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.epo.EPOSearchPatentIDRecoverSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.epo.IRPatentIDRecoverEPOSearchConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.googlesearch.GoogleSearchPatentIDRecoverSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.googlesearch.IRPatentIDRecoverGoogleSearchConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.PatentPipeline;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.WrongIRPatentRetrievalConfigurationException;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
+
+import net.sourceforge.tess4j.TesseractException;
+
+public class PatentPipelineCompleteTest {
+
+//	@Test
+	public void test6() throws WrongIRPatentRetrievalConfigurationException, WrongIRPatentIDRecoverConfigurationException, PatentPipelineException, ANoteException, IOException, TesseractException, WrongIRPatentMetaInformationRetrievalConfigurationException {
+		String accessTokenOPS = "accessTokenOPS";
+		String accessTokenBing = "accessTokenBing";
+		String accessTokenGoogle = "accessTokenGoogle";
+		String customSearchID = "customSearchID";
+		String username = "username";
+		String pwd = "pwd";
+		String outputDir = "src/test/resource";
+		IProxy proxy = null;
+		PatentPipeline patentPipeline = new PatentPipeline();
+		
+		//Step 1 - Retrieved Patent IDs Information	
+
+		String query = "Difine Query";
+		IIRPatentIDRecoverConfiguration configuration0 = new IRPatentIDRecoverEPOSearchConfigurationImpl(query , accessTokenOPS);
+		IIRPatentIDRecoverSource patentIDrecoverSourceEPO = new EPOSearchPatentIDRecoverSource(configuration0);
+		patentPipeline.addPatentIDRecoverSource(patentIDrecoverSourceEPO);
+		
+		IIRPatentIDRecoverConfiguration configuration3 = new IRPatentIDRecoverBingSearchConfigurationImpl(query , accessTokenBing);
+		IIRPatentIDRecoverSource patentIDrecoverSourceBing = new BingSearchPatentIDRecoverSource(configuration3);
+		patentPipeline.addPatentIDRecoverSource(patentIDrecoverSourceBing);
+		
+		IIRPatentIDRecoverConfiguration configuration4 = new IRPatentIDRecoverGoogleSearchConfigurationImpl(query , accessTokenGoogle, customSearchID);
+		IIRPatentIDRecoverSource patentIDrecoverSourceGoogle = new GoogleSearchPatentIDRecoverSource(configuration4);
+		patentPipeline.addPatentIDRecoverSource(patentIDrecoverSourceGoogle);
+		
+		//Step 2 - Retrieved Meta Information	
+		
+//		IIRPatentMetaInformationRetrievalConfiguration configurationWIPO = new IRWIPOPatentMetaInformationRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, proxy );
+//		IIRPatentRetrievalMetaInformation wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
+//		patentPipeline.addPatentsMetaInformationRetrieval(wipoMetaInformationRetrieval);
+		
+		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
+		IIRPatentRetrievalMetaInformation opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
+		patentPipeline.addPatentsMetaInformationRetrieval(opsMetaInformationretrieval);
+		
+		//Step 3 - Retrieved PDF
+
+		
+//		IIRPatentRetrievalConfiguration configuration = new IRWIPOPatentRetrievalConfigurationImpl(username, pwd, outputDir, proxy );
+//		IIRPatentRetrieval WIPOpatentRetrievalProcess = new WIPOPatentRetrieval(configuration);
+//		patentPipeline.addPatentIDRetrieval(WIPOpatentRetrievalProcess);
+		
+		IIRPatentRetrievalConfiguration configuration2 = new IROPSPatentRetrievalConfigurationImpl(outputDir, proxy, accessTokenOPS);
+		IIRPatentRetrieval OPSpatentRetrievalProcess = new OPSPatentRetrieval(configuration2 );
+		patentPipeline.addPatentIDRetrieval(OPSpatentRetrievalProcess);
+		
+		
+		
+		//String path = "D:/Desktop/ATCC 55618 OR Actinobacillus succinogenes OR CCUG 43843 OR CIP 106512 OR strain 130Z.txt";
+		//String path="src/test/resources/data/teste_ids_google.txt";
+//		patentPipeline.runPipelineWithpatentIdsFromFile(patentPipeline.patentIDsloaderFromFile(path));
+		patentPipeline.runCompletePipeline();
+		
+//		patentPipeline.applyOCRengine();
+//		patentPipeline.saveTXTwithPatentsText("teste02_real.txt");
+	}
+
+}
