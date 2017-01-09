@@ -17,8 +17,15 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
+	public final static String bingproccessID = "bing.searchpatentid";
+	
 	public static String bingURL = "site:www.google.com/patents/ ";
 	public static String CHAR_SET = "UTF-8";
+	
+	public BingSearchPatentIDRecoverSource()
+	{
+		
+	}
 
 	public BingSearchPatentIDRecoverSource(IIRPatentIDRecoverConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
