@@ -6,15 +6,7 @@ package com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule;
  * @author Hugo Costa
  *
  */
-public interface IIRPatentIDRecoverConfiguration {
-	
-	/**
-	 * Return the Query configuration to search
-	 * 
-	 * @return
-	 */
-	public String getQuery();
+public interface IIRPatentIDRetrievalModuleConfiguration {
 
-	public void setQuery(String query);
 
 }

@@ -10,8 +10,9 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.googlesearch.googleEntities.GoogleResults;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.googlesearch.googleEntities.GoogleWebQuery;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.googlesearch.googleEntities.Items;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.AIRPatentIDRecoverSource;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 
 
@@ -20,19 +21,19 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
-	public GoogleSearchPatentIDRecoverSource(IIRPatentIDRecoverConfiguration configuration)
+	public GoogleSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
 		super(configuration);
 	}
 
 	@Override
-	public Set<String> recoverPatentIDs() throws ANoteException {
+	public Set<String> retrievalPatentIds(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
 		String tokenaccess = ((IIRPatentIDRecoverGoogleSearchConfiguration)getConfiguration()).getAccessToken();
 		String customSearchID = ((IIRPatentIDRecoverGoogleSearchConfiguration)getConfiguration()).getCustomSearchID();
 		Set<String> links = new HashSet<>();
 		//Create a new GoogleSearch object
 		GoogleWebQuery s = new GoogleWebQuery(tokenaccess, customSearchID);
-		String query = transformQueryToGoogleSearchOperators(getConfiguration().getQuery());
+		String query = transformQueryToGoogleSearchOperators(configuration.getQuery());
 		s.addExtraParam("siteSearch", "www.google.com/patents");//to search only on specified sites
 		s.addExtraParam("siteSearchFilter", "i");
 		for (int i = 0; i < 91; i+=10) {
@@ -105,20 +106,15 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 
 	@Override
 	public int getNumberOfResults() throws ANoteException {
-		return recoverPatentIDs().size();
+		return 0;
 	}
 
 
 	@Override
-	public void validate(IIRPatentIDRecoverConfiguration configuration)
+	public void validate(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
 		if(configuration instanceof IIRPatentIDRecoverGoogleSearchConfiguration)
 		{
-			if(configuration.getQuery()==null || configuration.getQuery().isEmpty())
-			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Query can not be null or empty");
-
-			}
 			IIRPatentIDRecoverGoogleSearchConfiguration configurationGoogleSearch = (IIRPatentIDRecoverGoogleSearchConfiguration) configuration;
 			if(configurationGoogleSearch.getAccessToken()==null || configurationGoogleSearch.getAccessToken().isEmpty())
 			{

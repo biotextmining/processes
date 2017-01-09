@@ -3,37 +3,34 @@ package com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule;
 import java.util.Properties;
 
 import com.silicolife.textmining.core.datastructures.process.ir.configuration.AIRSearchConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
-import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentSearchConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchStepsConfiguration;
 
-public  class IRPatentSearchConfigurationImpl extends AIRSearchConfigurationImpl implements IIRPatentSearchConfiguration {
+public  class IRPatentSearchConfigurationImpl extends AIRSearchConfigurationImpl implements IIRPatentPipelineConfiguration {
 
-	String keywords;
-	IIRPatentPipelineSearchConfiguration pipelineConfiguration;
+	private IIRPatentPipelineSearchConfiguration patentIDRetrievalConfiguration;
+	private IIRPatentPipelineSearchStepsConfiguration pipelineConfiguration;
 	
-	public IRPatentSearchConfigurationImpl(IIRPatentPipelineSearchConfiguration pipelineConfiguration)
+	public IRPatentSearchConfigurationImpl(IIRPatentPipelineSearchStepsConfiguration pipelineConfiguration)
 	{
 		super();
 		this.pipelineConfiguration=pipelineConfiguration;
 	}
 
-	public IRPatentSearchConfigurationImpl(String keywords,String queryName,Properties properties,IIRPatentPipelineSearchConfiguration pipelineConfiguration) {
+	public IRPatentSearchConfigurationImpl(IIRPatentPipelineSearchConfiguration patentIDRetrievalConfiguration,String queryName,Properties properties,IIRPatentPipelineSearchStepsConfiguration pipelineConfiguration) {
 		super(queryName, properties);
-		this.keywords=keywords;
+		this.patentIDRetrievalConfiguration=patentIDRetrievalConfiguration;
 		this.pipelineConfiguration=pipelineConfiguration;
 	}
 	
 	@Override
-	public String getKeywords() {
-	return keywords;
-	}
-	
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
+	public IIRPatentPipelineSearchConfiguration getIRPatentPipelineSearchConfiguration() {
+		return patentIDRetrievalConfiguration;
 	}
 
 	@Override
-	public IIRPatentPipelineSearchConfiguration getIIRPatentPipelineSearchConfiguration() {
+	public IIRPatentPipelineSearchStepsConfiguration getIIRPatentPipelineSearchConfiguration() {
 		return pipelineConfiguration;
 	}
 

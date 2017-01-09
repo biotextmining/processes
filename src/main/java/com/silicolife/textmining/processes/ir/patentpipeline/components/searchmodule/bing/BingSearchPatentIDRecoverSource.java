@@ -9,8 +9,9 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities.BingResultSet;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities.BingWebQuery;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities.BingWebResult;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.AIRPatentIDRecoverSource;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 
 
@@ -21,21 +22,16 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 	
 	public static String bingURL = "site:www.google.com/patents/ ";
 	public static String CHAR_SET = "UTF-8";
-	
-	public BingSearchPatentIDRecoverSource()
-	{
-		
-	}
 
-	public BingSearchPatentIDRecoverSource(IIRPatentIDRecoverConfiguration configuration)
+	public BingSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
 		super(configuration);
 	}
 
 	@Override
-	public Set<String> recoverPatentIDs() throws ANoteException {
+	public Set<String> retrievalPatentIds(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
 		BingWebQuery query = new BingWebQuery();
-		String newQuery = transformQuerytoBingPatterns((getConfiguration().getQuery()));
+		String newQuery = transformQuerytoBingPatterns(configuration.getQuery());
 		query.setQuery(queryBuilder(bingURL + newQuery));
 		String tokenaccess = ((IIRPatentIDRecoverBingSearchConfiguration)getConfiguration()).getAccessToken(); 
 		query.setAppid(tokenaccess);
@@ -123,19 +119,14 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	@Override
 	public int getNumberOfResults() throws ANoteException {
-		return recoverPatentIDs().size();
+		return 0;
 	}
 
 	@Override
-	public void validate(IIRPatentIDRecoverConfiguration configuration)
+	public void validate(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
 		if(configuration instanceof IIRPatentIDRecoverBingSearchConfiguration)
 		{
-			if(configuration.getQuery()==null || configuration.getQuery().isEmpty())
-			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Query can not be null or empty");
-
-			}
 			IIRPatentIDRecoverBingSearchConfiguration configurationBingSearch = (IIRPatentIDRecoverBingSearchConfiguration) configuration;
 			if(configurationBingSearch.getAccessToken()==null || configurationBingSearch.getAccessToken().isEmpty())
 			{

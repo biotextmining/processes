@@ -10,8 +10,9 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.AIRPatentIDRecoverSource;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
 import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
@@ -22,15 +23,15 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 
 	
-	public EPOSearchPatentIDRecoverSource(IIRPatentIDRecoverConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException {
+	public EPOSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException {
 		super(configuration);
 	}
 
 	@Override
-	public Set<String> recoverPatentIDs() throws ANoteException{
+	public Set<String> retrievalPatentIds(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException{
 
 		int results;
-		String query = OPSUtils.queryBuilder(getConfiguration().getQuery());
+		String query = OPSUtils.queryBuilder(configuration.getQuery());
 		String autentication = null;
 		try {
 			String tokenaccess = Utils.get64Base(((IIRPatentIDRecoverEPOSearchConfiguration)getConfiguration()).getAccessToken());
@@ -72,14 +73,9 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 	}
 
 	@Override
-	public void validate(IIRPatentIDRecoverConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException {
+	public void validate(IIRPatentIDRetrievalModuleConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException {
 		if(configuration instanceof IIRPatentIDRecoverEPOSearchConfiguration)
 		{
-			if(configuration.getQuery()==null || configuration.getQuery().isEmpty())
-			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Query can not be null or empty");
-
-			}
 			IIRPatentIDRecoverEPOSearchConfiguration configurationEPOSearch = (IIRPatentIDRecoverEPOSearchConfiguration) configuration;
 			if(configurationEPOSearch.getAccessToken()==null || configurationEPOSearch.getAccessToken().isEmpty())
 			{
@@ -96,15 +92,6 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 
 	@Override
 	public int getNumberOfResults() throws ANoteException {
-		try {
-			String tokenaccess = Utils.get64Base(((IIRPatentIDRecoverEPOSearchConfiguration)getConfiguration()).getAccessToken());
-			String autentication = OPSUtils.postAuth(tokenaccess);
-			String query = OPSUtils.queryBuilder(getConfiguration().getQuery());
-			return OPSUtils.getSearchResults(query);
-		} catch (RedirectionException | ClientErrorException
-				| ServerErrorException | ConnectionException
-				| ResponseHandlingException e) {
-			throw new ANoteException(new InternetConnectionProblemException(e));
-		}
+		return 0;
 	}
 }

@@ -16,20 +16,22 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineException;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalReport;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IRPatentMetaInformationRetrievalReportImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalReport;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IRPatentRetrievalReport;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 
 public class PatentPipeline {
 	
 	static Logger logger = Logger.getLogger(PatentPipeline.class.getName());
 
 	
-	private List<IIRPatentIDRecoverSource> patentIDrecoverSourceList;
+	private List<IIRPatentIDRetrievalSource> patentIDrecoverSourceList;
 	private List<IIRPatentRetrievalMetaInformation> patentMetaInformationRetrievelSourceList;
 	private List<IIRPatentRetrieval> patentRetrievalProcessList;
 
@@ -46,9 +48,9 @@ public class PatentPipeline {
 	 * @param patentIDrecoverSource
 	 * @throws PatentPipelineException
 	 */
-	public void addPatentIDRecoverSource(IIRPatentIDRecoverSource patentIDrecoverSource) throws PatentPipelineException
+	public void addPatentIDRecoverSource(IIRPatentIDRetrievalSource patentIDrecoverSource) throws PatentPipelineException
 	{
-		for(IIRPatentIDRecoverSource patentSource:patentIDrecoverSourceList)
+		for(IIRPatentIDRetrievalSource patentSource:patentIDrecoverSourceList)
 		{
 			if(patentSource.getSourceName().equals(patentIDrecoverSource.getSourceName()))
 			{
@@ -103,24 +105,33 @@ public class PatentPipeline {
 	 * @return 
 	 * 
 	 * @throws ANoteException
+	 * @throws WrongIRPatentIDRecoverConfigurationException 
 	 */
-	public Map<String, IPublication> runCompletePipeline() throws ANoteException
+	public Map<String, IPublication> runCompletePipeline(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException, WrongIRPatentIDRecoverConfigurationException
 	{
+		if(configuration.getQuery()==null || configuration.getQuery().isEmpty())
+		{
+			throw new WrongIRPatentIDRecoverConfigurationException("Query can not be null or empty");
+		}
 		logger.info("Patent Complete pipeline started");
-		Set<String> patentIds = executePatentIDSearchStep();
+		Set<String> patentIds = executePatentIDSearchStep(configuration);
 		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds);
 		IIRPatentRetrievalReport reportDownload = executePatentRetrievalPDFStep(reportMetaInformation.getMapPatentIDPublication());
 		printReport(reportDownload);
 		return reportMetaInformation.getMapPatentIDPublication();
 	}
 	
-	public Set<String> executePatentIDSearchStep() throws ANoteException {
+	public Set<String> executePatentIDSearchStep(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException, WrongIRPatentIDRecoverConfigurationException {
+		if(configuration.getQuery()==null || configuration.getQuery().isEmpty())
+		{
+			throw new WrongIRPatentIDRecoverConfigurationException("Query can not be null or empty");
+		}
 		logger.info("Patent Ids Retrieval Step");
 		Set<String> patentIds = new HashSet<>();
-		for(IIRPatentIDRecoverSource patentSource:patentIDrecoverSourceList)
+		for(IIRPatentIDRetrievalSource patentSource:patentIDrecoverSourceList)
 		{
 			logger.info(patentSource.getSourceName());
-			Set<String> patentsSource = patentSource.recoverPatentIDs();
+			Set<String> patentsSource = patentSource.retrievalPatentIds(configuration);
 			patentIds.addAll(patentsSource);
 		}
 		return patentIds;
@@ -133,11 +144,12 @@ public class PatentPipeline {
 	 * @return 
 	 * 
 	 * @throws ANoteException
+	 * @throws WrongIRPatentIDRecoverConfigurationException 
 	 */
-	public Map<String, IPublication> runMetaInformationPipeline() throws ANoteException
+	public Map<String, IPublication> runMetaInformationPipeline(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException, WrongIRPatentIDRecoverConfigurationException
 	{
 		logger.info("Patent Metainformation pipeline started");
-		Set<String> patentIds = executePatentIDSearchStep();
+		Set<String> patentIds = executePatentIDSearchStep(configuration);
 		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds);
 		return reportMetaInformation.getMapPatentIDPublication();
 	}

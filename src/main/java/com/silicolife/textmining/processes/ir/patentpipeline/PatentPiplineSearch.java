@@ -37,12 +37,12 @@ import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfigurati
 import com.silicolife.textmining.core.interfaces.process.IR.IQuery;
 import com.silicolife.textmining.core.interfaces.process.IR.IQueryOriginType;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
-import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
-import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentSearchConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchStepsConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.PatentPipeline;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverConfiguration;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRecoverSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 
 public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
@@ -69,13 +69,15 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		nAbstracts = 0;
 		nPublicacoes = 0;
 		listPublicacoes=new ArrayList<IPublication>();
-		IIRPatentSearchConfiguration patentpipelinesearchConfiguration = (IIRPatentSearchConfiguration) searchConfiguration;
+		IIRPatentPipelineConfiguration patentpipelinesearchConfiguration = (IIRPatentPipelineConfiguration) searchConfiguration;
 		IIRSearchProcessReport searchProcessReport = null;
 		try {
 			searchProcessReport = search(patentpipelinesearchConfiguration);
 		} catch (PatentPipelineException e) {
 			new ANoteException(e);
 		} catch (IOException e) {
+			new ANoteException(e);
+		} catch (WrongIRPatentIDRecoverConfigurationException e) {
 			new ANoteException(e);
 		}
 		return searchProcessReport;
@@ -87,22 +89,22 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 
 
-	private IIRSearchProcessReport search(IIRPatentSearchConfiguration configuration) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException {
-		String querySTR = configuration.getKeywords();
+	private IIRSearchProcessReport search(IIRPatentPipelineConfiguration configuration) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
+		String querySTR = configuration.getIRPatentPipelineSearchConfiguration().getQuery();
 		Date date = new Date();
 		String name = generateQueryName(configuration,date);
 		IQueryOriginType queryType = new QueryOriginTypeImpl(PublicationSourcesDefaultEnum.patent.name());
-		query = new QueryImpl(queryType, date , configuration.getKeywords(),"", querySTR, 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), generateProperties(configuration));
+		query = new QueryImpl(queryType, date , configuration.getIRPatentPipelineSearchConfiguration().getQuery(),"", querySTR, 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), generateProperties(configuration));
 		IIRSearchProcessReport report = searchMethod(query,configuration);
 		if(cancel)
 			report.setcancel();
 		return report;
 	}
 	
-	public Properties generateProperties(IIRPatentSearchConfiguration configuration)
+	public Properties generateProperties(IIRPatentPipelineConfiguration configuration)
 	{
 		Properties properties = new Properties();
-		List<IIRPatentIDRecoverSource> searchIDs = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource();
+		List<IIRPatentIDRetrievalSource> searchIDs = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource();
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentIDs, getIIRPatentIDRecoverSourceString(searchIDs));
 		List<IIRPatentRetrievalMetaInformation> patentRetrievalMetaInformations = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation();
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentMetaInfo, getIIRPatentRetrievalMetaInformation(patentRetrievalMetaInformations));
@@ -121,10 +123,10 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		return result.substring(0,result.length()-1);
 	}
 
-	public String getIIRPatentIDRecoverSourceString(List<IIRPatentIDRecoverSource> searchIDs)
+	public String getIIRPatentIDRecoverSourceString(List<IIRPatentIDRetrievalSource> searchIDs)
 	{
 		String result = new String();
-		for(IIRPatentIDRecoverSource searchID:searchIDs)
+		for(IIRPatentIDRetrievalSource searchID:searchIDs)
 		{
 			result = result + searchID.getSourceName() + ",";
 		}
@@ -133,7 +135,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		return result.substring(0,result.length()-1);
 	}
 
-	private IIRSearchProcessReport searchMethod(IQuery query,IIRPatentSearchConfiguration searchConfiguration) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException {
+	private IIRSearchProcessReport searchMethod(IQuery query,IIRPatentPipelineConfiguration searchConfiguration) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
 		registerQueryOnDatabase(query);
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		IIRSearchProcessReport report = new IRSearchReportImpl(query);
@@ -149,14 +151,14 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 
 
-	private String generateQueryName(IIRPatentSearchConfiguration configuration,Date date) {
+	private String generateQueryName(IIRPatentPipelineConfiguration configuration,Date date) {
 		if(configuration.getQueryName()!=null && !configuration.getQueryName().isEmpty())
 		{
 			if(configuration.getQueryName().equals(GlobalOptions.defaulQuerytName))
 			{
 				String result = new String();
-				if (configuration != null && !configuration.getKeywords().isEmpty())
-					result = result + configuration.getKeywords() + ":";
+				if (configuration != null && !configuration.getIRPatentPipelineSearchConfiguration().getQuery().isEmpty())
+					result = result + configuration.getIRPatentPipelineSearchConfiguration() + ":";
 				if (date != null)
 					result = result + date;
 				return result;
@@ -167,8 +169,8 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		else
 		{
 			String result = new String();
-			if (configuration != null && !configuration.getKeywords().isEmpty())
-				result = result + configuration.getKeywords() + ":";
+			if (configuration != null && !configuration.getIRPatentPipelineSearchConfiguration().getQuery().isEmpty())
+				result = result + configuration.getIRPatentPipelineSearchConfiguration() + ":";
 			if (date != null)
 				result = result + date;
 			return result;
@@ -176,7 +178,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 	}
 
 
-	private void patentPipeline(IIRPatentSearchConfiguration searchConfiguration,IQuery query,IIRSearchProcessReport report) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException {
+	private void patentPipeline(IIRPatentPipelineConfiguration searchConfiguration,IQuery query,IIRSearchProcessReport report) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
 
 		PatentPipeline patentPipeline = new PatentPipeline();
 		Set<IPublication> documentsToInsert,documentsThatAlreayInDB;
@@ -184,10 +186,8 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		int step=0;
 
 		//add configurations to pipeline class in order to get the all the requisites to search for the IDs and retrieve their PDFs
-		IIRPatentPipelineSearchConfiguration pipelineSearchConfiguration = searchConfiguration.getIIRPatentPipelineSearchConfiguration();
-		for (IIRPatentIDRecoverSource patentIDrecoverSource:pipelineSearchConfiguration.getIIRPatentIDRecoverSource()){
-			IIRPatentIDRecoverConfiguration configurationold = patentIDrecoverSource.getConfiguration();
-			configurationold.setQuery(searchConfiguration.getKeywords());
+		IIRPatentPipelineSearchStepsConfiguration pipelineSearchConfiguration = searchConfiguration.getIIRPatentPipelineSearchConfiguration();
+		for (IIRPatentIDRetrievalSource patentIDrecoverSource:pipelineSearchConfiguration.getIIRPatentIDRecoverSource()){
 			patentPipeline.addPatentIDRecoverSource(patentIDrecoverSource);
 		}
 
@@ -195,7 +195,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			patentPipeline.addPatentsMetaInformationRetrieval(patentmetaInformationRetrieval);
 		}
 
-		Map<String, IPublication> patentMap = patentPipeline.runMetaInformationPipeline();
+		Map<String, IPublication> patentMap = patentPipeline.runMetaInformationPipeline(searchConfiguration.getIRPatentPipelineSearchConfiguration());
 
 		// Previously download the existent documentID for PMID,PMC and DOI documents from System and Query
 		Map<String, Long> patentidsAlreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.patent.name());
@@ -328,30 +328,30 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 	@Override
 	public void validateConfiguration(IIRSearchConfiguration configuration)throws InvalidConfigurationException {
-		if(configuration instanceof IIRPatentSearchConfiguration)
+		if(configuration instanceof IIRPatentPipelineConfiguration)
 		{
-			if (((IIRPatentSearchConfiguration) configuration).getKeywords() == null ||
-					(((IIRPatentSearchConfiguration) configuration).getKeywords().isEmpty()))
+			if (((IIRPatentPipelineConfiguration) configuration).getIRPatentPipelineSearchConfiguration() == null ||
+					(((IIRPatentPipelineConfiguration) configuration).getIRPatentPipelineSearchConfiguration().getQuery().isEmpty()))
 			{
 				throw new InvalidConfigurationException("IIRPatentSearchConfiguration instance must have Keywords to search");
 
 			}
-			else if (((IIRPatentSearchConfiguration) configuration).getIIRPatentPipelineSearchConfiguration() == null )
+			else if (((IIRPatentPipelineConfiguration) configuration).getIIRPatentPipelineSearchConfiguration() == null )
 			{
 				throw new InvalidConfigurationException("IIRPatentSearchConfiguration instance must have a valid PipelineSearchConfiguration to search for patents");
 			}
-			else if(((IIRPatentSearchConfiguration) configuration).getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource().isEmpty())
+			else if(((IIRPatentPipelineConfiguration) configuration).getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource().isEmpty())
 			{
 				throw new InvalidConfigurationException("IIRPatentSearchConfiguration instance must have valid patentIDRecoverSource configurations to search for patents");
 
 			}
-			else if(((IIRPatentSearchConfiguration) configuration).getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation().isEmpty())
+			else if(((IIRPatentPipelineConfiguration) configuration).getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation().isEmpty())
 			{
 				throw new InvalidConfigurationException("IIRPatentSearchConfiguration instance must have valid patentRetrievalMetaInformations configurations to search for patents metaInformation");
 			}
 		}	
 		else
-			throw new InvalidConfigurationException("Configuration is not a IIRPatentSearchConfiguration instance");
+			throw new InvalidConfigurationException("Configuration is not a IIRPatentPipelineConfiguration instance");
 
 	}
 

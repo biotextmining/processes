@@ -1,8 +1,8 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule;
 
-public abstract class AIRPatentIDRecoverSource implements IIRPatentIDRecoverSource{
+public abstract class AIRPatentIDRecoverSource implements IIRPatentIDRetrievalSource{
 	
-	private IIRPatentIDRecoverConfiguration configuration;
+	private IIRPatentIDRetrievalModuleConfiguration configuration;
 	protected boolean stop;
 	
 	/**
@@ -11,20 +11,20 @@ public abstract class AIRPatentIDRecoverSource implements IIRPatentIDRecoverSour
 	 * @param configuration
 	 * @throws WrongIRPatentIDRecoverConfigurationException
 	 */
-	public AIRPatentIDRecoverSource(IIRPatentIDRecoverConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException
+	public AIRPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException
 	{
 		validate(configuration);
 		this.configuration=configuration;
 		this.stop = false;
 	}
 	
-	public IIRPatentIDRecoverConfiguration getConfiguration()
+	public IIRPatentIDRetrievalModuleConfiguration getConfiguration()
 	{
 		return configuration;
 	}
 	
 
-	public void setConfigutaion(IIRPatentIDRecoverConfiguration  configuration) throws WrongIRPatentIDRecoverConfigurationException
+	public void setConfigutaion(IIRPatentIDRetrievalModuleConfiguration  configuration) throws WrongIRPatentIDRecoverConfigurationException
 	{
 		validate(configuration);
 		this.configuration=configuration;
@@ -38,7 +38,7 @@ public abstract class AIRPatentIDRecoverSource implements IIRPatentIDRecoverSour
 	 * @param configuration
 	 * @throws WrongIRPatentIDRecoverConfigurationException
 	 */
-	public abstract void validate(IIRPatentIDRecoverConfiguration configuration)throws WrongIRPatentIDRecoverConfigurationException;
+	public abstract void validate(IIRPatentIDRetrievalModuleConfiguration configuration)throws WrongIRPatentIDRecoverConfigurationException;
 	
 	public void stop()
 	{
