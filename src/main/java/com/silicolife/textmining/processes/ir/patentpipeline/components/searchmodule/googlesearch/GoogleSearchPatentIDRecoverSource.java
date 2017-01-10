@@ -136,6 +136,6 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 			}
 		}
 		else
-			throw new WrongIRPatentIDRecoverConfigurationException("Configuration is not a IIRPatentIDRecoverBingSearchConfiguration");
+			throw new WrongIRPatentIDRecoverConfigurationException("Configuration is not a IIRPatentIDRecoverGoogleSearchConfiguration");
 	}
 }
