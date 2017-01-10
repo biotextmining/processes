@@ -28,6 +28,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval {
 
+	public final static String wipoProcessID = "wipo.searchpatentmetainformation";
 	private static ServiceHelper serviceHelper;
 
 	public WIPOPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)

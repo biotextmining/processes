@@ -2,7 +2,7 @@ package com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodul
 
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 
-public abstract class AIRPatentMetaInformationRetrieval implements IIRPatentRetrievalMetaInformation{
+public abstract class AIRPatentMetaInformationRetrieval implements IIRPatentMetainformationRetrievalSource{
 	
 	private IIRPatentMetaInformationRetrievalConfiguration configuration;
 	protected boolean stop;

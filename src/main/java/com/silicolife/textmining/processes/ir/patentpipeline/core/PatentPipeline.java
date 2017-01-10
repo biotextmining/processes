@@ -18,7 +18,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublicationExter
 import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineException;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalReport;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IRPatentMetaInformationRetrievalReportImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalReport;
@@ -32,7 +32,7 @@ public class PatentPipeline {
 
 	
 	private List<IIRPatentIDRetrievalSource> patentIDrecoverSourceList;
-	private List<IIRPatentRetrievalMetaInformation> patentMetaInformationRetrievelSourceList;
+	private List<IIRPatentMetainformationRetrievalSource> patentMetaInformationRetrievelSourceList;
 	private List<IIRPatentRetrieval> patentRetrievalProcessList;
 
 	public PatentPipeline()
@@ -61,18 +61,18 @@ public class PatentPipeline {
 	}
 
 	/**
-	 * Add IIRPatentRetrievalMetaInformation and Configuration to the Pipeline ( Meta Information Retrieval)
+	 * Add IIRPatentMetainformationRetrievalSource and Configuration to the Pipeline ( Meta Information Retrieval)
 	 * 
 	 * @param patentIDrecoverSource
 	 * @throws PatentPipelineException
 	 */
-	public void addPatentsMetaInformationRetrieval(IIRPatentRetrievalMetaInformation patentMetaInformationSourceToAdd) throws PatentPipelineException
+	public void addPatentsMetaInformationRetrieval(IIRPatentMetainformationRetrievalSource patentMetaInformationSourceToAdd) throws PatentPipelineException
 	{
-		for(IIRPatentRetrievalMetaInformation patentMetaInformationSource:patentMetaInformationRetrievelSourceList)
+		for(IIRPatentMetainformationRetrievalSource patentMetaInformationSource:patentMetaInformationRetrievelSourceList)
 		{
 			if(patentMetaInformationSource.getSourceName().equals(patentMetaInformationSourceToAdd.getSourceName()))
 			{
-				throw new PatentPipelineException("IIRPatentRetrievalMetaInformation already registed");
+				throw new PatentPipelineException("IIRPatentMetainformationRetrievalSource already registed");
 			}
 		}
 		patentMetaInformationRetrievelSourceList.add(patentMetaInformationSourceToAdd);
@@ -183,7 +183,7 @@ public class PatentPipeline {
 	}
 
 	private void runMetaInformationForTheGivenSources (Map<String, IPublication> mapPatentIDPublication) throws ANoteException{
-		for(IIRPatentRetrievalMetaInformation patentMetaInformationRetrievelSource:patentMetaInformationRetrievelSourceList)
+		for(IIRPatentMetainformationRetrievalSource patentMetaInformationRetrievelSource:patentMetaInformationRetrievelSourceList)
 		{
 			logger.info(patentMetaInformationRetrievelSource.getSourceName());
 			patentMetaInformationRetrievelSource.retrievePatentsMetaInformation(mapPatentIDPublication);

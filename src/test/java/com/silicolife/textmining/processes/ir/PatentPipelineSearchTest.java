@@ -29,7 +29,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPa
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IRPatentPipelineSearchConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IRPatentPipelineSearchStepsConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
@@ -74,10 +74,10 @@ public class PatentPipelineSearchTest {
 		//Step 2 - Retrived Meta Information	
 		
 		IIRPatentMetaInformationRetrievalConfiguration configurationWIPO = new IRWIPOPatentMetaInformationRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, proxy );
-		IIRPatentRetrievalMetaInformation wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
+		IIRPatentMetainformationRetrievalSource wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
 		
 		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
-		IIRPatentRetrievalMetaInformation opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
+		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
 			
 		IIRPatentPipelineSearchStepsConfiguration configurationPipeline=new IRPatentPipelineSearchStepsConfigurationImpl();
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceEPO);

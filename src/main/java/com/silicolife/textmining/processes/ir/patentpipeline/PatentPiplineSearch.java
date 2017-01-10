@@ -40,7 +40,7 @@ import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetCo
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchStepsConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.PatentPipeline;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
 
@@ -106,15 +106,15 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		Properties properties = new Properties();
 		List<IIRPatentIDRetrievalSource> searchIDs = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource();
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentIDs, getIIRPatentIDRecoverSourceString(searchIDs));
-		List<IIRPatentRetrievalMetaInformation> patentRetrievalMetaInformations = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation();
+		List<IIRPatentMetainformationRetrievalSource> patentRetrievalMetaInformations = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation();
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentMetaInfo, getIIRPatentRetrievalMetaInformation(patentRetrievalMetaInformations));
 		return properties;
 	}
 	
-	public String getIIRPatentRetrievalMetaInformation(List<IIRPatentRetrievalMetaInformation> patentRetrievalMetaInformations)
+	public String getIIRPatentRetrievalMetaInformation(List<IIRPatentMetainformationRetrievalSource> patentRetrievalMetaInformations)
 	{
 		String result = new String();
-		for(IIRPatentRetrievalMetaInformation patentRetrievalMetaInformation:patentRetrievalMetaInformations)
+		for(IIRPatentMetainformationRetrievalSource patentRetrievalMetaInformation:patentRetrievalMetaInformations)
 		{
 			result = result + patentRetrievalMetaInformation.getSourceName() + ",";
 		}
@@ -191,7 +191,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			patentPipeline.addPatentIDRecoverSource(patentIDrecoverSource);
 		}
 
-		for (IIRPatentRetrievalMetaInformation patentmetaInformationRetrieval:pipelineSearchConfiguration.getIIRPatentRetrievalMetaInformation()){
+		for (IIRPatentMetainformationRetrievalSource patentmetaInformationRetrieval:pipelineSearchConfiguration.getIIRPatentRetrievalMetaInformation()){
 			patentPipeline.addPatentsMetaInformationRetrieval(patentmetaInformationRetrieval);
 		}
 

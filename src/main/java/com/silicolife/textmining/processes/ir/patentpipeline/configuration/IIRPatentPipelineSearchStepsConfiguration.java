@@ -2,7 +2,7 @@ package com.silicolife.textmining.processes.ir.patentpipeline.configuration;
 
 import java.util.List;
 
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
 
 public interface IIRPatentPipelineSearchStepsConfiguration {
@@ -17,7 +17,7 @@ public interface IIRPatentPipelineSearchStepsConfiguration {
 	 * @return
 	 */
 
-	public List<IIRPatentRetrievalMetaInformation> getIIRPatentRetrievalMetaInformation();
+	public List<IIRPatentMetainformationRetrievalSource> getIIRPatentRetrievalMetaInformation();
 	
 	/**
 	 * add a PatentIDRecoverSource configuration to list
@@ -30,6 +30,6 @@ public interface IIRPatentPipelineSearchStepsConfiguration {
 	 * add a PatentRetrievalMetaInformation configuration to list
 	 * @param patentRetrievalMetaInformation
 	 */
-	public void addIRPatentRetrievalMetaInformation(IIRPatentRetrievalMetaInformation patentRetrievalMetaInformation);
+	public void addIRPatentRetrievalMetaInformation(IIRPatentMetainformationRetrievalSource patentRetrievalMetaInformation);
 
 }

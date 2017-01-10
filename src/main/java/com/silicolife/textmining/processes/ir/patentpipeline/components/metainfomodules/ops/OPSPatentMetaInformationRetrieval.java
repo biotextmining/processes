@@ -17,6 +17,8 @@ import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException
 import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
+	
+	public final static String opsProcessID = "ops.searchpatentmetainformation";
 
 	public OPSPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {

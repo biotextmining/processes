@@ -5,8 +5,7 @@ import java.util.Map;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 
-public interface IIRPatentRetrievalMetaInformation {
-	
+public interface IIRPatentMetainformationRetrievalSource {
 	
 	/**
 	 * Get Patent Document given Patent ID List

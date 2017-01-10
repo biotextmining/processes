@@ -22,7 +22,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPa
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IRPatentPipelineSearchConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.PatentPipeline;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentRetrievalMetaInformation;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
@@ -69,11 +69,11 @@ public class PatentPipelineCompleteTest {
 		//Step 2 - Retrieved Meta Information	
 		
 		IIRPatentMetaInformationRetrievalConfiguration configurationWIPO = new IRWIPOPatentMetaInformationRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, proxy );
-		IIRPatentRetrievalMetaInformation wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
+		IIRPatentMetainformationRetrievalSource wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
 		patentPipeline.addPatentsMetaInformationRetrieval(wipoMetaInformationRetrieval);
 		
 		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
-		IIRPatentRetrievalMetaInformation opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
+		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
 		patentPipeline.addPatentsMetaInformationRetrieval(opsMetaInformationretrieval);
 		
 		//Step 3 - Retrieved PDF
