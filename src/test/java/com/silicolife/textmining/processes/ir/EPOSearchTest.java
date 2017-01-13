@@ -18,7 +18,7 @@ public class EPOSearchTest {
 	@Test
 	public void test() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
 		IPublication publiction = new PublicationImpl();
-		String accessTokenEPO = "LLCAsGwQHRQAi9sKU3L83tMcKszoVnhi:q9sxdjCvGbLDsWrc";
+		String accessTokenEPO = "aceswswtoken";
 		String autentication = Utils.get64Base(accessTokenEPO);
 		String tokenaccess = null;
 		try {

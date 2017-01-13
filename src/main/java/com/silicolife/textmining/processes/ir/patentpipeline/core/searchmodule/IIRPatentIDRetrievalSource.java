@@ -21,22 +21,6 @@ public interface IIRPatentIDRetrievalSource {
 	 */
 	public String getSourceName();
 	
-//	/**
-//	 * Get IIRPatentIDRecoverConfiguration configuration
-//	 * 
-//	 * @return
-//	 */
-//	public IIRPatentIDRecoverConfiguration getConfiguration();
-//	
-//	/**
-//	 * Set IIRPatentIDRecoverConfiguration configuration
-//	 * 	
-//	 * 
-//	 * @param configuration
-//	 * @throws WrongIRPatentIDRecoverConfigurationException if configuration is wrong for the source
-//	 */
-//	public void setConfigutaion(IIRPatentIDRecoverConfiguration  configuration) throws WrongIRPatentIDRecoverConfigurationException;
-	
 	/**
 	 * Stop process
 	 * 

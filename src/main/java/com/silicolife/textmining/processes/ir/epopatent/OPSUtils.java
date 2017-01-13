@@ -43,6 +43,7 @@ import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentClai
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentDescriptionHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentIDSearchHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
+import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentOwnersHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentUpdateHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSSearchHandler;
@@ -96,6 +97,19 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
+	
+	public static String getPatentOwners(String tokenaccess,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
+	{
+		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		String urlPatentDescritpion = publicationDetails + patentID + "/biblio";
+		// Get Biblio Info
+		return client.get(urlPatentDescritpion, headers, new OPSPatentOwnersHandler());
+		
+	}
+	
 
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
