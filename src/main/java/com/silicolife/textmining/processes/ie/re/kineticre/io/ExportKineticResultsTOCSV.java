@@ -42,12 +42,13 @@ public class ExportKineticResultsTOCSV {
 		
 	}
 	
-	public IRESchemaExportReport export(String fileToExport,IRESchema reschema,REKineticConfigurationClasses classConfiguration) throws ANoteException, IOException
+	public IRESchemaExportReport export(IREKineticREResultsExportConfiguration configuration) throws ANoteException, IOException
 	{
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		PrintWriter pw;
 		IRESchemaExportReport report = new RESchemaExportReportImpl();
-		pw = new PrintWriter(fileToExport);
+		pw = new PrintWriter(configuration.getExportFile());
+		IRESchema reschema = configuration.getRESchema();
 		ICorpus corpus = reschema.getCorpus();
 		IDocumentSet docs = corpus.getArticlesCorpus();
 		Iterator<IPublication> itDocs = docs.iterator();	
@@ -60,7 +61,7 @@ public class ExportKineticResultsTOCSV {
 			IAnnotatedDocument docAnnot = new AnnotatedDocumentImpl(doc,reschema,corpus);
 			for(IEventAnnotation ev : docAnnot.getEventAnnotations())
 			{
-				writeline(pw,docAnnot,ev,classConfiguration);
+				writeline(pw,docAnnot,ev,configuration);
 				report.incrementeRelationsExported(1);
 			}
 			memoryAndProgressAndTime(step, total, startTime);
@@ -78,7 +79,8 @@ public class ExportKineticResultsTOCSV {
 		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");		
 	}
 	
-	private void writeline(PrintWriter pw,IAnnotatedDocument docAnnot, IEventAnnotation ev,REKineticConfigurationClasses classConfiguration) throws ANoteException, IOException {
+	private void writeline(PrintWriter pw,IAnnotatedDocument docAnnot, IEventAnnotation ev,IREKineticREResultsExportConfiguration configuration) throws ANoteException, IOException {
+		REKineticConfigurationClasses classConfiguration = configuration.getREKineticConfigurationClasses();
 		String[] toWrite = new String[17];
 		List<IEntityAnnotation> allEntities = ev.getEntitiesAtLeft();
 		allEntities.addAll(ev.getEntitiesAtRight());
@@ -99,8 +101,8 @@ public class ExportKineticResultsTOCSV {
 		toWrite[8] = textDelimiter.getValue() +toStringEntitiesExternalIds(organisms) + textDelimiter.getValue();
 		toWrite[9] = textDelimiter.getValue() +ev.getEventProperties().getGeneralProperties("organism_score_penalty")!=null ? ev.getEventProperties().getGeneralProperties("organism_score_penalty"): "Na" + textDelimiter.getValue() ;
 		toWrite[10] = textDelimiter.getValue() +PublicationImpl.getPublicationExternalIDForSource(docAnnot, PublicationSourcesDefaultEnum.PUBMED.toString()) + textDelimiter.getValue();
-		toWrite[11] = getSentenceAnnotationIgnoreOrganism(docAnnot,ev,classConfiguration.getOrganismClasses());
-		toWrite[12] = getSentenceAnnotationIgnoreOrganism(docAnnot,ev,new HashSet<IAnoteClass>());
+		toWrite[11] = getSentenceAnnotationIgnoreOrganism(configuration,docAnnot,ev,classConfiguration.getOrganismClasses());
+		toWrite[12] = getSentenceAnnotationIgnoreOrganism(configuration,docAnnot,ev,new HashSet<IAnoteClass>());
 		toWrite[13] = textDelimiter.getValue() + docAnnot.getId() + textDelimiter.getValue();
 		toWrite[14] = textDelimiter.getValue() +(kineticparameters.size()==1 ? kineticparameters.get(0).getResourceElement().getTerm(): "Error") + textDelimiter.getValue();
 		toWrite[15] = textDelimiter.getValue() +(kineticparameters.size()==1 ? kineticparameters.get(0).getResourceElement().getId(): "Error") + textDelimiter.getValue();
@@ -180,7 +182,9 @@ public class ExportKineticResultsTOCSV {
 		return result;
 	}
 	
-	private String getSentenceAnnotationIgnoreOrganism(IAnnotatedDocument docAnnot,IEventAnnotation ev,Set<IAnoteClass> ignoredClasses) throws ANoteException, IOException {
+	private String getSentenceAnnotationIgnoreOrganism(IREKineticREResultsExportConfiguration configuration, IAnnotatedDocument docAnnot,IEventAnnotation ev,Set<IAnoteClass> ignoredClasses) throws ANoteException, IOException {
+		if(!configuration.isSentencesToExport())
+			return new String();
 		long startOffset = getStartRelationOffsetIgnoreClasses(ev,ignoredClasses);
 		long endOffset = getEndRelationOffsetIgnoreClasses(ev,ignoredClasses);
 		return textDelimiter.getValue() + getSentence(docAnnot,startOffset,endOffset) + textDelimiter.getValue() ;
