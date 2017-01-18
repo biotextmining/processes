@@ -16,6 +16,8 @@ import com.silicolife.textmining.core.interfaces.process.IE.IRESchema;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.REKineticConfigurationClasses;
 import com.silicolife.textmining.processes.ie.re.kineticre.io.ExportKineticResultsTOCSV;
+import com.silicolife.textmining.processes.ie.re.kineticre.io.IREKineticREResultsExportConfiguration;
+import com.silicolife.textmining.processes.ie.re.kineticre.io.REKineticREResultsExportConfigurationImpl;
 
 public class ExportKineticRETest {
 
@@ -45,7 +47,9 @@ public class ExportKineticRETest {
 		organism.add(ClassPropertiesManagement.getClassIDClassName("Organism"));
 		REKineticConfigurationClasses classConfiguration = new REKineticConfigurationClasses(units, values, kineticParameters, metabolites, enzymes, organism);
 		ExportKineticResultsTOCSV export = new ExportKineticResultsTOCSV();
-		export.export(fileToExport, reSchema, classConfiguration);
+		boolean sentencesToExport = true;;
+		IREKineticREResultsExportConfiguration configutaion =  new REKineticREResultsExportConfigurationImpl(fileToExport, reSchema, classConfiguration, sentencesToExport );
+		export.export(configutaion);
 	}
 
 }
