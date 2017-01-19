@@ -148,8 +148,9 @@ public class PatentPipeline {
 	 */
 	public Map<String, IPublication> runMetaInformationPipeline(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException, WrongIRPatentIDRecoverConfigurationException
 	{
-		logger.info("Patent Metainformation pipeline started");
+		logger.info("Patent Retrieval IDs pipeline started");
 		Set<String> patentIds = executePatentIDSearchStep(configuration);
+		logger.info("Patent Metainformation pipeline started");
 		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds);
 		return reportMetaInformation.getMapPatentIDPublication();
 	}

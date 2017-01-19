@@ -90,11 +90,10 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 
 	private IIRSearchProcessReport search(IIRPatentPipelineConfiguration configuration) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
-		String querySTR = configuration.getIRPatentPipelineSearchConfiguration().getQuery();
 		Date date = new Date();
 		String name = generateQueryName(configuration,date);
 		IQueryOriginType queryType = new QueryOriginTypeImpl(PublicationSourcesDefaultEnum.patent.name());
-		query = new QueryImpl(queryType, date , configuration.getIRPatentPipelineSearchConfiguration().getQuery(),"", querySTR, 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), generateProperties(configuration));
+		query = new QueryImpl(queryType, date , configuration.getIRPatentPipelineSearchConfiguration().getQuery(),"", configuration.getIRPatentPipelineSearchConfiguration().getQuery(), 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), generateProperties(configuration));
 		IIRSearchProcessReport report = searchMethod(query,configuration);
 		if(cancel)
 			report.setcancel();
@@ -158,7 +157,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			{
 				String result = new String();
 				if (configuration != null && !configuration.getIRPatentPipelineSearchConfiguration().getQuery().isEmpty())
-					result = result + configuration.getIRPatentPipelineSearchConfiguration() + ":";
+					result = result + configuration.getIRPatentPipelineSearchConfiguration().getQuery() + ":";
 				if (date != null)
 					result = result + date;
 				return result;
@@ -169,8 +168,8 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		else
 		{
 			String result = new String();
-			if (configuration != null && !configuration.getIRPatentPipelineSearchConfiguration().getQuery().isEmpty())
-				result = result + configuration.getIRPatentPipelineSearchConfiguration() + ":";
+			if (configuration != null && !configuration.getQueryName().isEmpty())
+				result = result + configuration.getQueryName() + ":";
 			if (date != null)
 				result = result + date;
 			return result;

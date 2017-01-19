@@ -439,7 +439,8 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 		{
 			
 		}
-		throw new InvalidConfigurationException("configuration is not a IIRSpringerSearchConfiguration");
+		else
+			throw new InvalidConfigurationException("configuration is not a IIRSpringerSearchConfiguration");
 		
 	}
 
