@@ -6,6 +6,14 @@
 	<artifactId>processes</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
+	<repositories>
+		<repository>
+			<id>thirdparty</id>
+			<url>
+			http://mendel.di.uminho.pt:8081/nexus/content/repositories/thirdparty/
+			</url>
+		</repository>
+	</repositories>
 
 	<name>processes</name>
 	<url>http://anote-project.org</url>
@@ -65,44 +73,34 @@
 			<groupId>org.wipo</groupId>
 			<artifactId>patentscope</artifactId>
 			<version>1.2</version>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/dependencies/patentscope-webservice-client-1.2.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.wipo</groupId>
-			<artifactId>webservicesapi</artifactId>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/dependencies/webservices-api.jar</systemPath>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wipo</groupId>
-			<artifactId>webservicesextraapi</artifactId>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/dependencies/webservices-extra-api.jar</systemPath>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wipo</groupId>
-			<artifactId>webservicesextra</artifactId>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/dependencies/webservices-extra.jar</systemPath>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wipo</groupId>
-			<artifactId>webservicesrt</artifactId>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/dependencies/webservices-rt.jar</systemPath>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wipo</groupId>
-			<artifactId>webservicestools</artifactId>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/dependencies/webservices-tools.jar</systemPath>
-			<version>1.2</version>
 		</dependency>
 		
 	</dependencies>
+	<!--  
+	<build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/dependencylibs</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    </build>
+    -->
+    
 </project>
