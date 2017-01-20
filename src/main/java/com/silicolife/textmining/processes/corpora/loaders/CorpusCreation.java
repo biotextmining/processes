@@ -39,38 +39,34 @@ public class CorpusCreation {
 			Set<IPublication> documents = configuration.getDocuments();
 			int step = 0;
 			int total = documents.size();
-			for(IPublication publication:documents)
-			{
+			for(IPublication publication:documents) {
 				// Before connect ... insert document if not exists
 				IPublication pub = getPublicationOnDatabaseByID(publication.getId());
-				if(pub==null)
-				{		
+				if(pub==null) {		
 					Set<IPublication> documentToadd = new HashSet<>();
 					documentToadd.add(publication);
 					// Add Publication to system
 					addPublicationToDatabase(documentToadd);
 				}
 				if(configuration.getCorpusTextType().equals(CorpusTextType.Hybrid) || 
-						configuration.getCorpusTextType().equals(CorpusTextType.FullText))
-				{
+						configuration.getCorpusTextType().equals(CorpusTextType.FullText)) {
 					// IF PDF is not available and source URL is a file put file in directory and update Full text COntent
-					if(publication.getSourceURL()!=null && !publication.isPDFAvailable())
-					{
+					if(publication.getSourceURL()!=null && !publication.isPDFAvailable()) {
 						publication.addPDFFile(new File(publication.getSourceURL()));
 						// update relative path
 						InitConfiguration.getDataAccess().updatePublication(publication);
 					}
 					// PDF is availbale and Full text are not available yet
-					if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty())
-					{
+					if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty()) {
 						String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
 						// Get PDF to text from PDF file
+						System.out.println("Before PDFtotext.convert: " + publication + "\nTitle-> " + publication.getTitle() + "\n");
 						String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
 						publication.setFullTextContent(fullTextContent);
 						updatePublicationFullTextOnfDatabase(publication);
 					}
 					// If pub don't have fulltext and publication has a full text inserted from other system. Then it will be added
-					else if(changefulltext(publication, pub)){
+					else if(changefulltext(publication, pub)) {
 						updatePublicationFullTextOnfDatabase(publication);
 					}
 				}
@@ -82,6 +78,7 @@ public class CorpusCreation {
 			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocuments().size());
 			return report;
 		} catch (IOException e) {
+
 			throw new ANoteException(e);
 		}
 	}
