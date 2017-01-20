@@ -23,10 +23,10 @@ public class ExportKineticRETest {
 
 	@Test
 	public void test() throws InvalidDatabaseAccess, ANoteException, IOException {
-		DatabaseConnectionInit.init("localhost","3306","kineticre","root","admin");
+		DatabaseConnectionInit.init("localhost","3306","sisbi_kinetic_data_bacillus","root","admin");
 
-		long processID = 9030444517125912921L;
-		String fileToExport = processID + ".tsv";
+		long processID = 1390739550229247071L;
+		String fileToExport = "C:\\Users\\anaal\\Dropbox\\ANA_work\\BI_SISBI\\Bsubtilis\\pesquisa BRENDA data_agosto\\_Ki\\" + processID + ".tsv";
 
 		IRESchema reSchema = new RESchemaImpl(InitConfiguration.getDataAccess().getProcessByID(processID ));
 		
