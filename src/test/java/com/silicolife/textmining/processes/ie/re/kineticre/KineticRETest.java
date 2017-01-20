@@ -27,7 +27,7 @@ public class KineticRETest {
 		
 	@Test //RE -> NER
 	public void test1() throws ANoteException, InvalidDatabaseAccess, IOException, InvalidConfigurationException {
-		DatabaseConnectionInit.init("localhost","3306","kineticre","root","admin");
+		DatabaseConnectionInit.init("localhost","3306","sisbi_kinetic_data_bacillus","root","admin");
 		// number of NER process, that will be used in RE;
 		
 		// NER new search08_corpus Ki query_48 pdfs
@@ -48,10 +48,8 @@ public class KineticRETest {
 		// NER Id EXP Km 46 pdfs__Km query 08_366 pdfs
 		//long processID = new Long ("8244767063668385953");
 		
-		// NER TESTE Km
-		long processID = new Long ("4268651946828108937");
-
-		
+		// NER new search08_corpus Ki query_48 PDFs_com 33 regrasConv_altsManual 
+		long processID = new Long ("761395225317218037");
 		
 		repeatedInfoMapClasses(processID);
 	}
@@ -66,13 +64,13 @@ public class KineticRETest {
 		Set<IAnoteClass> kineticParameters = new HashSet<IAnoteClass>();
 		kineticParameters.add(ClassPropertiesManagement.getClassIDClassName("Kparameters"));
 		Set<IAnoteClass> metabolites = new HashSet<IAnoteClass>();
-		metabolites.add(ClassPropertiesManagement.getClassIDClassName("metabolite"));
+		//metabolites.add(ClassPropertiesManagement.getClassIDClassName("metabolite"));
 		Set<IAnoteClass> enzymes = new HashSet<IAnoteClass>();
-		enzymes.add(ClassPropertiesManagement.getClassIDClassName("Enzyme"));
-		enzymes.add(ClassPropertiesManagement.getClassIDClassName("enzyme_rule"));
+		//enzymes.add(ClassPropertiesManagement.getClassIDClassName("Enzyme"));
+		//enzymes.add(ClassPropertiesManagement.getClassIDClassName("enzyme_rule"));
 
 		Set<IAnoteClass> organism = new HashSet<IAnoteClass>();
-		organism.add(ClassPropertiesManagement.getClassIDClassName("Organism"));
+		//organism.add(ClassPropertiesManagement.getClassIDClassName("Organism"));
 		
 		REKineticConfigurationClasses classes = new REKineticConfigurationClasses(units, values, kineticParameters, metabolites, enzymes, organism);
 		IIEProcess entityProcess = InitConfiguration.getDataAccess().getProcessByID(processID );
