@@ -168,12 +168,14 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 				String strid = td.getOriginal().getID();
 				Long id = Long.valueOf(strid);
 				AnnotationPositions positions = new AnnotationPositions();
+				AnnotationPositions positionsRules = new AnnotationPositions();
+
 				addMatchesToAnnotationPositions(linnauesConfiguration, resourceMapClass, resourceIDMapResource,
 						maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, stopwords, td,
 						positions);
-				applyHandRulesToAnnotationPositions(elementsToNER, rules, td, positions);
+				applyHandRulesToAnnotationPositions(elementsToNER, rules, td, positionsRules);
 				saveAnnotatedDocumentWithAnnotationPositions(linnauesConfiguration, processToRun, report, td, id,
-						positions);
+						positions,positionsRules);
 			}
 			counter++;
 			memoryAndProgress(counter,publicationsSize,startime);		
@@ -298,7 +300,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		if(!stop && elementsToNER.getRules()!=null && !elementsToNER.getRules().isEmpty())
 		{
 			if(rules != null && !stop)
-				rules.applyRules(td.getOriginal().getBody(), positions);	
+				rules.applyRules(td.getOriginal().getRawContent(), positions);	
 		}
 	}
 
@@ -306,7 +308,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
 	private void saveAnnotatedDocumentWithAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
 			IIEProcess processToRun, INERProcessReport report, TaggedDocument td, Long id,
-			AnnotationPositions positions) throws ANoteException {
+			AnnotationPositions positions, AnnotationPositions positionsRules) throws ANoteException {
 		if(!stop)
 		{
 			report.incrementEntitiesAnnotated(positions.getAnnotations().size());
@@ -323,6 +325,19 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 					publicationLabels );
 
 			entityAnnotations = correctEntitiesAfterNormalization(linnauesConfiguration, td, entityAnnotations);
+			AnnotationPositions annotationsPositionsResult = new AnnotationPositions();
+			for(IEntityAnnotation entityAnnotation:entityAnnotations)
+			{
+				AnnotationPosition position = new AnnotationPosition((int) entityAnnotation.getStartOffset(),(int) entityAnnotation.getEndOffset());
+				annotationsPositionsResult.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(position, entityAnnotation);
+			}
+			// Add Rules Entities
+			List<IEntityAnnotation> entityAnnotationsRules = positionsRules.getEntitiesFromAnnoattionPositions();
+			for(IEntityAnnotation entityAnnotationsRule:entityAnnotationsRules)
+			{
+				AnnotationPosition position = new AnnotationPosition((int) entityAnnotationsRule.getStartOffset(),(int) entityAnnotationsRule.getEndOffset());
+				annotationsPositionsResult.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(position, entityAnnotationsRule);
+			}
 			// Add Document Entity Annotations
 			addAnnotatedDocumentEntities(processToRun,entityAnnotations, document);
 		}
