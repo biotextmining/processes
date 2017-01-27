@@ -338,6 +338,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 				AnnotationPosition position = new AnnotationPosition((int) entityAnnotationsRule.getStartOffset(),(int) entityAnnotationsRule.getEndOffset());
 				annotationsPositionsResult.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(position, entityAnnotationsRule);
 			}
+			entityAnnotations = annotationsPositionsResult.getEntitiesFromAnnoattionPositions();
 			// Add Document Entity Annotations
 			addAnnotatedDocumentEntities(processToRun,entityAnnotations, document);
 		}
