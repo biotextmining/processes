@@ -19,7 +19,8 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	public final static String bingProcessID = "bing.searchpatentid";
-	
+	public final static String bingName= "Bing Web Search API from Bing";
+		
 	public static String bingURL = "site:www.google.com/patents/ ";
 	public static String CHAR_SET = "UTF-8";
 

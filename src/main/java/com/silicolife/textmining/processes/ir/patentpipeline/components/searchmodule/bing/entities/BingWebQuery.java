@@ -64,7 +64,7 @@ public class BingWebQuery extends ABingQuery<BingWebResult>{
      */
     @Override
     public String getQueryPath() {
-        return this.getPath() + querytypeToUrl(AZURESEARCH_QUERYTYPE.WEB);
+        return this.getPath();
     }
 
     /**
