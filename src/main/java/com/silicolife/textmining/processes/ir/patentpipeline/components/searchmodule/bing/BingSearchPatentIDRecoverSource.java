@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities.BingResultSet;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities.BingWebQuery;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities.BingWebResult;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.AIRPatentIDRecoverSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
@@ -40,14 +38,13 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 		Set<String> patentlinks = new HashSet<>();
 		while (stopNumber>0) {
 			//Thread.sleep(2000);//pausar durante dois segundos
-			query.doQuery();
-			BingResultSet<BingWebResult> ResultSet= query.getQueryResult();
-			stopNumber=ResultSet.getAsrs().size();
+			Set<String> urls = query.doQuery();
+			stopNumber=urls.size();
 			if (stopNumber==0) {
 				break;
 			}else{
-				for (BingWebResult wr : ResultSet) {
-					patentlinks.add(wr.getUrl());
+				for (String wr : urls) {
+					patentlinks.add(wr);
 				}
 				query.nextPage();
 			} 
@@ -107,7 +104,7 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 					}
 				}
 			}catch(Exception e){
-				throw new ANoteException("There's a problem with input query. Try to change it!");
+//				throw new ANoteException("There's a problem with input query. Try to change it!"); dont do anything and try the next link
 			}
 		} 
 		return PatentID;
