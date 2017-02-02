@@ -18,6 +18,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.AIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalReport;
@@ -171,11 +172,19 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 			IIROPSPatentRetrievalConfiguration opsConfiguration = (IIROPSPatentRetrievalConfiguration) configuration;
 			String tokenAcess = opsConfiguration.getAccessToken();
 			if ( tokenAcess== null || tokenAcess.isEmpty()) {
-				throw new WrongIRPatentRetrievalConfigurationException("The AcessToken can not be null or empty");
+				throw new WrongIRPatentRetrievalConfigurationException("The AccessToken can not be null or empty!");
+			}
+			
+			String autentication = Utils.get64Base(tokenAcess);
+			try {
+				OPSUtils.postAuth(autentication);
+			}catch(RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+					| ResponseHandlingException e1) {
+				throw new WrongIRPatentRetrievalConfigurationException("The given AccessToken is not a valid one. Try another one!");
 			}
 		}
 		else
-			new WrongIRPatentRetrievalConfigurationException("Configuration is not a IIROPSPatentRetrievalConfiguration");
+			throw new WrongIRPatentRetrievalConfigurationException("Configuration is not a IIROPSPatentRetrievalConfiguration.");
 	}
 
 	@Override

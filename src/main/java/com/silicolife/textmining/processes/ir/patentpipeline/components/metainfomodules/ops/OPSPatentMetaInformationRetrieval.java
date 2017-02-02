@@ -6,6 +6,7 @@ import java.util.Set;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
+import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
@@ -17,8 +18,10 @@ import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException
 import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
-	
+
 	public final static String opsProcessID = "ops.searchpatentmetainformation";
+
+	public final static String opsName= "Open Patent Services API from EPO";
 
 	public OPSPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -29,22 +32,29 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
 		long t1 = System.currentTimeMillis();
 		String autentication = Utils.get64Base(((IIROPSPatentMetaInformationRetrievalConfiguration)getConfiguration()).getAccessToken());
-		String tokenaccess=OPSUtils.loginOPS(autentication);
-		for(String patentID:mapPatentIDPublication.keySet())
-		{
-			long t2 = System.currentTimeMillis();
-			if(((float)(t2-t1)/1000)>=900){//15min
-				try {
-					Thread.sleep(5000);
-					tokenaccess=OPSUtils.loginOPS(autentication);
-					t1=System.currentTimeMillis();
-				} catch (InterruptedException e) {
-					throw new ANoteException(e);
+		String tokenaccess;
+		try {
+			tokenaccess = OPSUtils.postAuth(autentication);
+
+			for(String patentID:mapPatentIDPublication.keySet())
+			{
+				long t2 = System.currentTimeMillis();
+				if(((float)(t2-t1)/1000)>=900){//15min
+					try {
+						Thread.sleep(5000);
+						tokenaccess=OPSUtils.loginOPS(autentication);
+						t1=System.currentTimeMillis();
+					} catch (InterruptedException e) {
+						throw new ANoteException(e);
+					}
 				}
+				Set<String> possiblePatentIDs;
+				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
+				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
 			}
-			Set<String> possiblePatentIDs;
-			possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
-			searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
+		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+				| ResponseHandlingException e1) {
+			throw new ANoteException(new InternetConnectionProblemException(e1));
 		}
 	}
 
@@ -66,8 +76,8 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		IPublication pub = mapPatentIDPublication.get(patentID);
 		if((pub.getTitle()==null||pub.getTitle().isEmpty())||
 				((pub.getAbstractSection()==null||pub.getAbstractSection().isEmpty())&&
-				(pub.getAuthors()==null||pub.getAuthors().isEmpty())&&
-				(pub.getYeardate()==null||pub.getYeardate().isEmpty()))){//empty publication (or without title)
+						(pub.getAuthors()==null||pub.getAuthors().isEmpty())&&
+						(pub.getYeardate()==null||pub.getYeardate().isEmpty()))){//empty publication (or without title)
 			return false;
 		}
 		else{
@@ -103,11 +113,19 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			IIROPSPatentMetaInformationRetrievalConfiguration opsConfiguration = (IIROPSPatentMetaInformationRetrievalConfiguration) configuration;
 			String tokenAcess = opsConfiguration.getAccessToken();
 			if ( tokenAcess== null || tokenAcess.isEmpty()) {
-				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The AcessToken can not be null or empty");
+				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The AccessToken can not be null or empty");
+			}
+
+			String autentication = Utils.get64Base(tokenAcess);
+			try {
+				OPSUtils.postAuth(autentication);
+			}catch(RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+					| ResponseHandlingException e1) {
+				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The given AccessToken is not a valid one. Try another one!");
 			}
 		}
 		else
-			new WrongIRPatentMetaInformationRetrievalConfigurationException("Configuration is not a IIROPSPatentMetaInformationRetrievalConfiguration");	
+			throw new WrongIRPatentMetaInformationRetrievalConfigurationException("Configuration is not a IIROPSPatentMetaInformationRetrievalConfiguration");	
 	}
 
 }

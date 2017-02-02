@@ -29,6 +29,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval {
 
 	public final static String wipoProcessID = "wipo.searchpatentmetainformation";
+	public final static String wipoName= "PATENTSCOPE API from WIPO";
 	private static ServiceHelper serviceHelper;
 
 	public WIPOPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
@@ -122,7 +123,7 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 			}
 		}
 		else
-			new WrongIRPatentMetaInformationRetrievalConfigurationException("Configuration is not a IIRWIPOPatentMetaInformationRetrievalConfiguration");
+			throw new WrongIRPatentMetaInformationRetrievalConfigurationException("Configuration is not a IIRWIPOPatentMetaInformationRetrievalConfiguration");
 	}
 
 

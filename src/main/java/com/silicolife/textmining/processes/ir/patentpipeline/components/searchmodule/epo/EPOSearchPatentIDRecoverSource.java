@@ -23,6 +23,7 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 	
 	public final static String opsProccessID = "ops.searchpatentid";
+	public final static String opsName= "Open Patent Services API from EPO"; 
 
 	
 	public EPOSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration) throws WrongIRPatentIDRecoverConfigurationException {

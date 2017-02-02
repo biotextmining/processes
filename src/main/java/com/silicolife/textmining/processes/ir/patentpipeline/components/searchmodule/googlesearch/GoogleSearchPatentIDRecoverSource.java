@@ -22,6 +22,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 	
 	public final static String googleproccessID = "google.searchpatentid";
+	public final static String googleName= "Custom Search API from Google";
 
 	public GoogleSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {

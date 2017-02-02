@@ -3,13 +3,17 @@ package com.silicolife.textmining.processes.ir.patentpipeline.components.searchm
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.google.gson.Gson;
+import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 
 
 
@@ -31,8 +35,8 @@ public class GoogleWebQuery {
 		this.APIKey = APIkey;
 		customSearchEngineID = cx;
 	}
-	
-	
+
+
 	/**
 	 * Index of the first result.
 	 * @param start a number between 1 and 101-num (where <b>num</b> is the number of results to return)
@@ -40,11 +44,11 @@ public class GoogleWebQuery {
 	public void setStartIndexOfResult(int start){
 		if(start<1)start=1;
 		else if(start>101-getNumberOfResults())start=101-getNumberOfResults();
-		
+
 		addPair("start", ""+start);
-		
+
 	}
-	
+
 	/**
 	 * Set how many results return. 
 	 * @param n an integer between 1 and 10 (max). 
@@ -52,10 +56,10 @@ public class GoogleWebQuery {
 	public void setNumberOfResults(int n){
 		//if(n<1)n=1;
 		//else if(n>10)n=10;
-		
+
 		addPair("num", ""+n);
 	}
-	
+
 	/**
 	 * Add a custom extra params to the query (Read Google api docs https://developers.google.com/custom-search/v1/using_rest)
 	 * @param key
@@ -65,74 +69,81 @@ public class GoogleWebQuery {
 		if(key!=null && value!=null)
 			addPair(key, value);
 	}
-	
+
 	/**
 	 * Remove all extra params
 	 */
 	public void clearExtraParams(){
 		extraParams = null;
 	}
-	
-	
+
+
 	private void addPair(String k, String v){
 		if(extraParams == null) extraParams=new HashMap<String, String>();
 		extraParams.put(k, v);
 	}
-	
+
 	private String generateExtraParams(){
 		String params ="";
-		
+
 		if(extraParams !=null){
 			for(Entry<String, String> e  : extraParams.entrySet())
 				params += "&"+e.getKey()+"="+e.getValue();
 		}
-		
+
 		return params;
 	}
-	
-	
+
+
 	/**
 	 * Search using the specified keywords
 	 * @param keywords
 	 * @return
+	 * @throws ANoteException 
 	 */
-	public GoogleResults search(String keywords){
+	public GoogleResults search(String keywords) throws ANoteException{
 		if(keywords==null)return null;
-		
+
 		String google_arguments= "&key="+APIKey+"&cx="+customSearchEngineID+"&alt=json"+generateExtraParams()+"&q=";
 		//System.out.println(google_arguments);
-		
+
 		URL url;
-		
+
+		//encoding
+		//			String google_encoded = URLEncoder.encode(google_arguments, CHAR_SET)
+		//					.replaceAll("\\%28", "(") 
+		//					.replaceAll("\\%29", ")") 
+		//					.replaceAll("\\+", "%20") 
+		//					.replaceAll("\\%27", "'") 
+		//					.replaceAll("\\%21", "!") 
+		//					.replaceAll("\\%7E", "~");
+		String keywords_encoded;
 		try {
-			//encoding
-//			String google_encoded = URLEncoder.encode(google_arguments, CHAR_SET)
-//					.replaceAll("\\%28", "(") 
-//					.replaceAll("\\%29", ")") 
-//					.replaceAll("\\+", "%20") 
-//					.replaceAll("\\%27", "'") 
-//					.replaceAll("\\%21", "!") 
-//					.replaceAll("\\%7E", "~");
-			String keywords_encoded = URLEncoder.encode(keywords, CHAR_SET);
-			
+			keywords_encoded = URLEncoder.encode(keywords, CHAR_SET);
+
+
 			url = new URL(GOOGLE_API_URL + google_arguments + keywords_encoded);
 			///////////////////////////////////////
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//			System.out.println("Connection opened!");
+			//			System.out.println("Connection opened!");
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			BufferedReader br = new BufferedReader(new InputStreamReader(
-			(conn.getInputStream())));
-			
+					(conn.getInputStream())));
+
 			//Reader reader = new InputStreamReader(url.openStream(), CHAR_SET);
 			GoogleResults results = new Gson().fromJson(br, GoogleResults.class);
-			
+
 			////////////////
 			return results;
-
+		} catch (UnsupportedEncodingException e) {
+			throw new ANoteException(e);
+		} catch (MalformedURLException e) {
+			throw new ANoteException(e);
+		} catch (ProtocolException e) {
+			throw new ANoteException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+			throw new ANoteException(e);
 		}
 	}
 
