@@ -18,8 +18,8 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	public final static String bingProcessID = "bing.searchpatentid";
 	public final static String bingName= "Bing Web Search API from Bing";
-		
-	public static String bingURL = "site:www.google.com/patents/ ";
+
+	public static String bingURL = "(site:www.google.com/patents/ OR site:patents.google.com) ";
 	public static String CHAR_SET = "UTF-8";
 
 	public BingSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
@@ -30,25 +30,22 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 	@Override
 	public Set<String> retrievalPatentIds(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
 		BingWebQuery query = new BingWebQuery();
-		String newQuery = transformQuerytoBingPatterns(configuration.getQuery());
-		query.setQuery(queryBuilder(bingURL + newQuery));
 		String tokenaccess = ((IIRPatentIDRecoverBingSearchConfiguration)getConfiguration()).getAccessToken(); 
 		query.setAppid(tokenaccess);
-		int stopNumber =1;//stop the cicle when its turned to 0.
+		String newQuery = transformQuerytoBingPatterns(configuration.getQuery());
+		query.setQuery(queryBuilder(bingURL+newQuery));
+		int stopNumber =query.getNumberOfResults();//stop the cicle
 		Set<String> patentlinks = new HashSet<>();
-		while (stopNumber>0) {
+		int index = 0;
+		while (index<stopNumber) {
 			//Thread.sleep(2000);//pausar durante dois segundos
 			Set<String> urls = query.doQuery();
-			stopNumber=urls.size();
-			if (stopNumber==0) {
-				break;
-			}else{
-				for (String wr : urls) {
-					patentlinks.add(wr);
-				}
-				query.nextPage();
-			} 
-		} 
+			for (String wr : urls) {
+				patentlinks.add(wr);
+			}
+			query.nextPage();
+			index+=query.getPerPage();
+		}  
 		Set<String> patentidsAllCountries=patentIDExtraction(patentlinks);
 		return patentidsAllCountries;
 	}
@@ -104,7 +101,7 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 					}
 				}
 			}catch(Exception e){
-//				throw new ANoteException("There's a problem with input query. Try to change it!"); dont do anything and try the next link
+				//				throw new ANoteException("There's a problem with input query. Try to change it!"); dont do anything and try the next link
 			}
 		} 
 		return PatentID;
@@ -128,11 +125,11 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 			IIRPatentIDRecoverBingSearchConfiguration configurationBingSearch = (IIRPatentIDRecoverBingSearchConfiguration) configuration;
 			if(configurationBingSearch.getAccessToken()==null || configurationBingSearch.getAccessToken().isEmpty())
 			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Acess Token can not be null or empty");
+				throw new WrongIRPatentIDRecoverConfigurationException("Bing Acess Token can not be null or empty");
 			}
 			if(!configurationBingSearch.getAccessToken().contains(":") && configurationBingSearch.getAccessToken().length() < 20)
 			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Invalid access token");
+				throw new WrongIRPatentIDRecoverConfigurationException("Invalid Bing access token");
 			}
 		}
 		else

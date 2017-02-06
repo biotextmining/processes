@@ -1,6 +1,7 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.entities;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
@@ -324,31 +325,64 @@ public abstract class ABingQuery {
 	 */
 	public Set<String> doQuery() throws ANoteException {
 		Set<String> urls = null;
-		URI uri;
+		InputStream inputStreamFile;
 		try {
-			String full_path = getQueryPath();
-			String full_query = getUrlQuery();
-			uri = new URI(AZURESEARCH_SCHEME, AZURESEARCH_AUTHORITY, full_path,
-					full_query, null);
-			uri = new URI(uri.getScheme() + "://" + uri.getAuthority()
-			+ uri.getPath() + "?"
-			+ uri.getQuery());
-			if (uri.toASCIIString().length()<MAX_URL_LENGTH){
-			InputStream inputStreamFile = BingUtils.getInputStreamJSON(uri, _appid);
-			urls = BingUtils.createJSONFile(inputStreamFile);
+			URI uri = buildURI();
+			inputStreamFile = requestDataFromServer(uri);
+			if (inputStreamFile!=null){
+				urls = BingUtils.createJSONFile(inputStreamFile);
 			}
-
-		} catch (URISyntaxException | IOException e1) {
-
-			throw new ANoteException(e1);
+		} catch (IOException | URISyntaxException e) {
+			throw new ANoteException(e);
 		}
+
 		return urls;
 
-	
-		
+
+
 	}
 
-	
+
+	private URI buildURI () throws URISyntaxException{
+		URI uri;
+		String full_path = getQueryPath();
+		String full_query = getUrlQuery();
+		uri = new URI(AZURESEARCH_SCHEME, AZURESEARCH_AUTHORITY, full_path,
+				full_query, null);
+		uri = new URI(uri.getScheme() + "://" + uri.getAuthority()
+		+ uri.getPath() + "?"
+		+ uri.getQuery());
+//		System.out.println(uri.toASCIIString());
+
+		return uri;
+	}
+
+
+	private InputStream requestDataFromServer (URI uri) throws MalformedURLException, IOException{
+		InputStream inputStreamFile=null;
+		if (uri.toASCIIString().length()<MAX_URL_LENGTH){
+			inputStreamFile = BingUtils.getInputStreamJSON(uri, _appid);
+		}
+		return inputStreamFile;
+
+	}
+
+
+	public int getNumberOfResults () throws ANoteException{
+		InputStream inputStreamFile;
+		int numResults=0;
+		try {
+			URI uri = buildURI();
+			inputStreamFile = requestDataFromServer(uri);
+			if (inputStreamFile!=null){
+				numResults = BingUtils.getNumberofResults(inputStreamFile);
+			}
+		} catch (IOException | URISyntaxException | ANoteException e) {
+			throw new ANoteException(e);
+		}
+		return numResults;
+	}
+
 	/**
 	 *
 	 * @return the Azure Appid
@@ -365,7 +399,7 @@ public abstract class ABingQuery {
 		_appid = appid;
 	}
 
-	
+
 	/**
 	 *
 	 * @param adult from the AZURESEARCH_QUERYADULT enum
@@ -389,7 +423,7 @@ public abstract class ABingQuery {
 
 	}
 
-	
+
 	/**
 	 *
 	 * @return the number of results to skip for pagination

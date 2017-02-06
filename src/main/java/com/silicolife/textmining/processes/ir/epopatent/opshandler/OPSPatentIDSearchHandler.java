@@ -1,7 +1,5 @@
 package com.silicolife.textmining.processes.ir.epopatent.opshandler;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -30,23 +28,7 @@ public class OPSPatentIDSearchHandler implements ResponseHandler<Set<String>>{
 	@Override
 	public Set<String> buildResponse(InputStream response, String responseMessage,Map<String, List<String>> headerFields, int status)throws ResponseHandlingException {
 		Set<String> result = new HashSet<>();
-		File file = new File("TesteOPS/");
-		if (!file.exists()){
-			file.mkdirs();
-			
-		}
-
-		
 		try {
-			FileOutputStream outputStream = new FileOutputStream(file.getAbsolutePath()+"\\teste.txt");
-
-			int read = 0;
-			byte[] bytes = new byte[1024];
-
-			while ((read = response.read(bytes)) != -1) {
-				outputStream.write(bytes, 0, read);
-			}
-			outputStream.close();
 			Document doc = OPSUtils.createJDOMDocument(response);
 			NodeList extchangeNode = doc.getElementsByTagName("exchange-document");
 			for(int i=0;i<extchangeNode.getLength();i++)

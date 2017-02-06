@@ -113,7 +113,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			IIROPSPatentMetaInformationRetrievalConfiguration opsConfiguration = (IIROPSPatentMetaInformationRetrievalConfiguration) configuration;
 			String tokenAcess = opsConfiguration.getAccessToken();
 			if ( tokenAcess== null || tokenAcess.isEmpty()) {
-				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The AccessToken can not be null or empty");
+				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The OPS AccessToken can not be null or empty");
 			}
 
 			String autentication = Utils.get64Base(tokenAcess);
@@ -121,7 +121,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 				OPSUtils.postAuth(autentication);
 			}catch(RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 					| ResponseHandlingException e1) {
-				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The given AccessToken is not a valid one. Try another one!");
+				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The given OPS AccessToken is not a valid one. Try another one!");
 			}
 		}
 		else

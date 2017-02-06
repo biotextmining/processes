@@ -183,12 +183,12 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 			IIRWIPOPatentRetrievalConfiguration wipoConfiguration = (IIRWIPOPatentRetrievalConfiguration) configuration;
 			String userName = wipoConfiguration.getUserName();
 			if (userName == null || userName.isEmpty()) {
-				throw new WrongIRPatentRetrievalConfigurationException("The username can not be null or empty");
+				throw new WrongIRPatentRetrievalConfigurationException("The WIPO username can not be null or empty");
 			}
 
 			String password = wipoConfiguration.getPassword();
 			if (password == null || password.isEmpty()) {
-				throw new WrongIRPatentRetrievalConfigurationException("The password can not be null or empty");
+				throw new WrongIRPatentRetrievalConfigurationException("The WIPO password can not be null or empty");
 			}
 		}
 		else

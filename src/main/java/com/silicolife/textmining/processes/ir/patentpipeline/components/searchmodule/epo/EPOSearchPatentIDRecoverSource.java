@@ -82,11 +82,11 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 			IIRPatentIDRecoverEPOSearchConfiguration configurationEPOSearch = (IIRPatentIDRecoverEPOSearchConfiguration) configuration;
 			if(configurationEPOSearch.getAccessToken()==null || configurationEPOSearch.getAccessToken().isEmpty())
 			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Acess Token can not be null or empty");
+				throw new WrongIRPatentIDRecoverConfigurationException("OPS Acess Token can not be null or empty");
 			}
 			if(!configurationEPOSearch.getAccessToken().contains(":") && configurationEPOSearch.getAccessToken().length() < 20)
 			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Invalid access token");
+				throw new WrongIRPatentIDRecoverConfigurationException("Invalid OPS access token");
 			}
 		}
 		else

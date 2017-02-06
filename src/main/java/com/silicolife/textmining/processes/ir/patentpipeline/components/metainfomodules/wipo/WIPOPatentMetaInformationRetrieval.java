@@ -114,12 +114,12 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 			IIRWIPOPatentMetaInformationRetrievalConfiguration wipoConfiguration = (IIRWIPOPatentMetaInformationRetrievalConfiguration) configuration;
 			String userName = wipoConfiguration.getUserName();
 			if (userName == null || userName.isEmpty()) {
-				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The username can not be null or empty");
+				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The WIPO username can not be null or empty");
 			}
 
 			String password = wipoConfiguration.getPassword();
 			if (password == null || password.isEmpty()) {
-				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The password can not be null or empty");
+				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("The WIPO password can not be null or empty");
 			}
 		}
 		else

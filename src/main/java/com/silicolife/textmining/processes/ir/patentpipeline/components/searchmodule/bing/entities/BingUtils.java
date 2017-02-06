@@ -22,12 +22,16 @@ public class BingUtils {
 
 	public static InputStream getInputStreamJSON(URI uri, String tokenAccess) throws MalformedURLException, IOException{
 		HttpURLConnection conn;
+		InputStream result=null;
 		conn = (HttpURLConnection) uri.toURL().openConnection();
 		conn.setRequestProperty("Ocp-Apim-Subscription-Key", tokenAccess);
 		conn.setRequestMethod("GET");
 		conn.setDoOutput(true);
 		conn.connect();
-		InputStream result = conn.getInputStream();
+		conn.setReadTimeout(20000);
+		if (conn.getResponseMessage()!=null){
+			 result = conn.getInputStream();
+		}
 		return result;
 	}
 
@@ -68,8 +72,8 @@ public class BingUtils {
 			jsonMap = mapper.readValue(inputStreamObject, Map.class);
 			JSONObject json = new JSONObject(jsonMap);
 			LinkedHashMap<String,String> value = (LinkedHashMap<String, String>) json.get("webPages");
-			json=new JSONObject(value);
-			totalResults =new Integer(json.get("totalEstimatedMatches").toString());
+			JSONObject newJson = new JSONObject(value);
+			totalResults =new Integer(newJson.get("totalEstimatedMatches").toString());
 
 		}catch (IOException e) {
 			throw new ANoteException(e);

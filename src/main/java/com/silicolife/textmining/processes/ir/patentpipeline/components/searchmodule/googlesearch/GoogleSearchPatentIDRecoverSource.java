@@ -121,11 +121,11 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 			IIRPatentIDRecoverGoogleSearchConfiguration configurationGoogleSearch = (IIRPatentIDRecoverGoogleSearchConfiguration) configuration;
 			if(configurationGoogleSearch.getAccessToken()==null || configurationGoogleSearch.getAccessToken().isEmpty())
 			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Acess Token can not be null or empty");
+				throw new WrongIRPatentIDRecoverConfigurationException("Google Acess Token can not be null or empty");
 			}
 			if(!configurationGoogleSearch.getAccessToken().contains(":") && configurationGoogleSearch.getAccessToken().length() < 20)
 			{
-				throw new WrongIRPatentIDRecoverConfigurationException("Invalid access token");
+				throw new WrongIRPatentIDRecoverConfigurationException("Invalid Google access token");
 			}
 			if(configurationGoogleSearch.getCustomSearchID()==null || configurationGoogleSearch.getCustomSearchID().isEmpty())
 			{

@@ -172,7 +172,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 			IIROPSPatentRetrievalConfiguration opsConfiguration = (IIROPSPatentRetrievalConfiguration) configuration;
 			String tokenAcess = opsConfiguration.getAccessToken();
 			if ( tokenAcess== null || tokenAcess.isEmpty()) {
-				throw new WrongIRPatentRetrievalConfigurationException("The AccessToken can not be null or empty!");
+				throw new WrongIRPatentRetrievalConfigurationException("The OPS AccessToken can not be null or empty!");
 			}
 			
 			String autentication = Utils.get64Base(tokenAcess);
@@ -180,7 +180,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 				OPSUtils.postAuth(autentication);
 			}catch(RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 					| ResponseHandlingException e1) {
-				throw new WrongIRPatentRetrievalConfigurationException("The given AccessToken is not a valid one. Try another one!");
+				throw new WrongIRPatentRetrievalConfigurationException("The given OPS AccessToken is not a valid one. Try another one!");
 			}
 		}
 		else
