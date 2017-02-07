@@ -121,6 +121,10 @@ public class ResourceExportToCSVImpl implements IResourceExportToCSV{
 					if(!first){
 						sb.append(externalIDDel.getValue());
 					}
+					sb.append(externalID.getExternalID());
+					if(externalIDSubDel != null){
+						sb.append(externalIDSubDel.getValue());
+					}
 					ISource source = externalID.getSource();
 					if(source!= null){
 						String sourcename = source.getSource();
@@ -128,10 +132,6 @@ public class ResourceExportToCSVImpl implements IResourceExportToCSV{
 							sb.append(sourcename);
 						}
 					}
-					if(externalIDSubDel != null){
-						sb.append(externalIDSubDel.getValue());
-					}
-					sb.append(externalID.getExternalID());
 					first = false;
 				}
 				line[columnParam.get(ResourceIOColumnNames.externalID).getColumnNumber()] = sb.toString();
