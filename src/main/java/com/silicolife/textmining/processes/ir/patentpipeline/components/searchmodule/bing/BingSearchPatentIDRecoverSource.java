@@ -21,6 +21,7 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	public static String bingURL = "(site:www.google.com/patents/ OR site:patents.google.com) ";
 	public static String CHAR_SET = "UTF-8";
+	private boolean autenticated=false; 
 
 	public BingSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
@@ -39,13 +40,24 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 		int index = 0;
 		while (index<stopNumber) {
 			//Thread.sleep(2000);//pausar durante dois segundos
-			Set<String> urls = query.doQuery();
-			for (String wr : urls) {
-				patentlinks.add(wr);
+			try{
+				Set<String> urls = query.doQuery();
+				autenticated=true;
+				for (String wr : urls) {
+					patentlinks.add(wr);
+				}
+				query.nextPage();
+				index+=query.getPerPage();
+			}catch(Exception e){
+				if (autenticated){
+					break;
+				}
+				else{
+					throw new ANoteException(e);
+				}
 			}
-			query.nextPage();
-			index+=query.getPerPage();
-		}  
+		}
+
 		Set<String> patentidsAllCountries=patentIDExtraction(patentlinks);
 		return patentidsAllCountries;
 	}

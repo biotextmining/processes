@@ -20,9 +20,10 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 
 public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
-	
+
 	public final static String googleproccessID = "google.searchpatentid";
 	public final static String googleName= "Custom Search API from Google";
+	private boolean autenticated=false;
 
 	public GoogleSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
@@ -43,6 +44,7 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 			s.setStartIndexOfResult(i);	
 			try {
 				GoogleResults r = s.search(query);
+				autenticated=true;
 
 				//print results
 				List<Items> items=new ArrayList<Items>();//iniciar uma lista
@@ -54,7 +56,13 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 			catch (NullPointerException e) {//means that there is no more results to search using that query
 			}
 			catch ( Exception e) {
-				throw new ANoteException(e);
+				if (autenticated){
+					break;
+				}
+				else{
+					throw new ANoteException(e);
+				}
+
 			}
 		}
 		Set<String> patentidsAllCountries=patentIDExtraction(links);
