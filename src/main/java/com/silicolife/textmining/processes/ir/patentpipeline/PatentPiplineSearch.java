@@ -99,7 +99,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			report.setcancel();
 		return report;
 	}
-	
+
 	public Properties generateProperties(IIRPatentPipelineConfiguration configuration)
 	{
 		Properties properties = new Properties();
@@ -109,7 +109,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentMetaInfo, getIIRPatentRetrievalMetaInformation(patentRetrievalMetaInformations));
 		return properties;
 	}
-	
+
 	public String getIIRPatentRetrievalMetaInformation(List<IIRPatentMetainformationRetrievalSource> patentRetrievalMetaInformations)
 	{
 		String result = new String();
@@ -180,10 +180,12 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 	private void patentPipeline(IIRPatentPipelineConfiguration searchConfiguration,IQuery query,IIRSearchProcessReport report) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
 
 		PatentPipeline patentPipeline = new PatentPipeline();
-		Set<IPublication> documentsToInsert,documentsThatAlreayInDB;
+		Set<IPublication> documentsToInsert;
+		Set<IPublication> documentsThatAlreayInDB;
 		int abs_count=0;
 		int step=0;
-
+		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
+		
 		//add configurations to pipeline class in order to get the all the requisites to search for the IDs and retrieve their PDFs
 		IIRPatentPipelineSearchStepsConfiguration pipelineSearchConfiguration = searchConfiguration.getIIRPatentPipelineSearchConfiguration();
 		for (IIRPatentIDRetrievalSource patentIDrecoverSource:pipelineSearchConfiguration.getIIRPatentIDRecoverSource()){
@@ -243,7 +245,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 				report.incrementDocumentRetrieval(1);
 			}
 			step++;
-			memoryAndProgress(step,patentMap.size());
+			memoryAndProgress(step,patentMap.size(),startTime);
 		}
 		// Insert publications in System
 		if(!cancel && documentsToInsert.size()!=0){
@@ -265,14 +267,14 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 	}
 
-
-
-	protected void memoryAndProgress(int step, int total) {
+	protected void memoryAndProgress(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
+		logger.info((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 		Runtime.getRuntime().gc();
 		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
 	}
-
+	
+	
 	protected void addToCounts(int pubs, int absCount){
 		this.nPublicacoes += pubs;
 		this.nAbstracts += absCount;
@@ -333,7 +335,6 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 					(((IIRPatentPipelineConfiguration) configuration).getIRPatentPipelineSearchConfiguration().getQuery().isEmpty()))
 			{
 				throw new InvalidConfigurationException("IIRPatentSearchConfiguration instance must have Keywords to search");
-
 			}
 			else if (((IIRPatentPipelineConfiguration) configuration).getIIRPatentPipelineSearchConfiguration() == null )
 			{
@@ -359,5 +360,9 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		return 0;
 	}
 
-
+	
 }
+
+
+
+

@@ -102,7 +102,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 
 	@Override
 	public String getSourceName() {
-		return "OPSPatentRetrieval";
+		return "OPS Patent Metainformation Retrieval";
 	}
 
 	@Override

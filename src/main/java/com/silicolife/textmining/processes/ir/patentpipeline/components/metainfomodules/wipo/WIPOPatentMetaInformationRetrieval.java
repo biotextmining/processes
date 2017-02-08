@@ -103,7 +103,7 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 
 	@Override
 	public String getSourceName() {
-		return "WIPOPatentRetrieval";
+		return "WIPO Patent Metainformation Retrieval";
 	}
 
 	@Override

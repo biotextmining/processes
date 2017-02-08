@@ -97,7 +97,7 @@ public class OPSUtils {
 		// Try to add claims and description to abstract
 		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 	}
-	
+
 	public static String getPatentOwners(String tokenaccess,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
@@ -107,9 +107,9 @@ public class OPSUtils {
 		String urlPatentDescritpion = publicationDetails + patentID + "/biblio";
 		// Get Biblio Info
 		return client.get(urlPatentDescritpion, headers, new OPSPatentOwnersHandler());
-		
+
 	}
-	
+
 
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
@@ -347,7 +347,7 @@ public class OPSUtils {
 		for(String part : keywordsParts)
 		{
 			part = part.trim();
-//			String partLower = part.toLowerCase();
+			//			String partLower = part.toLowerCase();
 			if(!part.isEmpty())
 			{
 				keywords = keywords.replace(part, "\""+part+"\"");
@@ -409,63 +409,78 @@ public class OPSUtils {
 
 
 	private static boolean verifyYearPresence(String patentID){
-		if (Character.isLetter(patentID.charAt(0))){
-			if (Character.isLetter(patentID.charAt(1))){
-				String year=patentID.substring(2,6);//year
-				try{
+		try{
+			if (Character.isLetter(patentID.charAt(0))){
+				if (Character.isLetter(patentID.charAt(1))){
+					String year=patentID.substring(2,6);//year
+					try{
+						int date=Integer.parseInt(year);
+						if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+							return true;
+						}
+					}catch(NumberFormatException e){
+						return false;				
+					}
+				}
+				else{
+					String year=patentID.substring(1,5);//year
 					int date=Integer.parseInt(year);
 					if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
 						return true;
 					}
-				}catch(NumberFormatException e){
-					return false;				
 				}
 			}
-			else{
-				String year=patentID.substring(1,5);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					return true;
-				}
-			}
+		}catch(StringIndexOutOfBoundsException e){
+			return false;
 		}
 		return false;
 	}
 
 	private static String deleteChar0(String patentID,int lettersOfSection){
 		String newPatentID = patentID;
-		if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
-			newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
+		try{
+			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+				newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
+			}
 		}
+		catch (StringIndexOutOfBoundsException e){
+			return newPatentID;
+		}
+
+
 		return newPatentID;
 	}
 
 
 	private static String transformYear(String patentID) throws ParseException{
 		String newPatentID = new String();
-		if (Character.isLetter(patentID.charAt(0))){
-			if (Character.isLetter(patentID.charAt(1))){
-				String year=patentID.substring(2,6);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
-					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //date output
-					Date dateParsering = dateParser.parse(year);
-					String newYear = dateFormatter.format(dateParsering);
-					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+		try{
+			if (Character.isLetter(patentID.charAt(0))){
+				if (Character.isLetter(patentID.charAt(1))){
+					String year=patentID.substring(2,6);//year
+					int date=Integer.parseInt(year);
+					if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+						SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
+						SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //date output
+						Date dateParsering = dateParser.parse(year);
+						String newYear = dateFormatter.format(dateParsering);
+						newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+					}
+				}
+				else{
+					String year=patentID.substring(1,5);//year
+					int date=Integer.parseInt(year);
+					if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
+						SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
+						SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
+						Date dateParsering = dateParser.parse(year);
+						String newYear = dateFormatter.format(dateParsering);
+						newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
+					}
 				}
 			}
-			else{
-				String year=patentID.substring(1,5);//year
-				int date=Integer.parseInt(year);
-				if (date>=1900 && date<=Calendar.getInstance().get(Calendar.YEAR)){
-					SimpleDateFormat dateParser = new SimpleDateFormat("yyyy"); //formatter for parsing date
-					SimpleDateFormat dateFormatter = new SimpleDateFormat("yy"); //formatter for formatting date output
-					Date dateParsering = dateParser.parse(year);
-					String newYear = dateFormatter.format(dateParsering);
-					newPatentID=patentID.substring(0, 2)+newYear+patentID.substring(6, patentID.length());
-				}
-			}
+		}catch(StringIndexOutOfBoundsException e){
+			return newPatentID;
 		}
 		return newPatentID;
 	}
@@ -475,14 +490,20 @@ public class OPSUtils {
 
 		//char[] array = patentID.toCharArray();
 		String newPatentID = patentID;
-		if(patentID.matches(".*[A-Z]{1}")){
-			newPatentID=patentID.substring(0, patentID.length()-1);
-		}
-		else{
-			if(patentID.matches(".*[A-Z]{1}[1-9]{1}")){
-				newPatentID=patentID.substring(0,patentID.length()-2);
+
+		try{
+			if(patentID.matches(".*[A-Z]{1}")){
+				newPatentID=patentID.substring(0, patentID.length()-1);
 			}
+			else{
+				if(patentID.matches(".*[A-Z]{1}[1-9]{1}")){
+					newPatentID=patentID.substring(0,patentID.length()-2);
+				}
+			}
+		}catch(StringIndexOutOfBoundsException e){
+			return newPatentID;
 		}
+
 		return newPatentID;
 	}
 
