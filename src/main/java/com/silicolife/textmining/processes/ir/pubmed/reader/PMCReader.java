@@ -111,13 +111,13 @@ public class PMCReader {
 				String fullTextContent = processFullText(fullTextfields, elements);
 				String fullText = fullTextContent;
 				if(!abstractText.isEmpty())
-					fullText =  abstractText + " " +fullTextContent;
+					fullText =  abstractText + " " +fullText;
 				if(title.isEmpty())
 					fullText = title +  ". " + fullText;
 				String link = "";
 				IPublication publication = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
 						issues, pages, abstractText, link , true, new String(), new String(), externalIDsSource, new ArrayList<IPublicationField>() , labels );
-				publication.setFullTextContent(fullTextContent);
+				publication.setFullTextContent(fullText);
 				String pmid = PublicationImpl.getPublicationExternalIDForSource(publication, "pmid");
 				if(pmid!=null && !pmid.isEmpty())
 				{
