@@ -418,7 +418,7 @@ public class KineticREtriples implements IREProcess {
 
 				IEventProperties eventProperties = new EventPropertiesImpl();
 				eventProperties.setGeneralProperty("score", String.valueOf(relationScore));
-				IEventAnnotation relationTriple = new EventAnnotationImpl(simpleComplexPair.getStartRelation(), simpleComplexPair.getEndRelation(), GlobalNames.re, left, right, "", 0, "", eventProperties);
+				IEventAnnotation relationTriple = new EventAnnotationImpl(simpleComplexPair.getStartRelation(), simpleComplexPair.getEndRelation(), GlobalNames.re, left, right, "", eventProperties,false);
 			
 				results.add(relationTriple);
 			}
@@ -588,7 +588,7 @@ public class KineticREtriples implements IREProcess {
 			eventProperties.setGeneralProperty("score", String.valueOf(relationScore));
 			// o HUGO mandou mudar de endRelation para startRelatiion para resolver o problam do verde na visualização
 			IEventAnnotation relationTriple = new EventAnnotationImpl(sentTriples.get(i).getPairs().getStartRelation(),
-					sentTriples.get(i).getPairs().getStartRelation(), GlobalNames.re, left, right, "", 0, "", eventProperties);
+					sentTriples.get(i).getPairs().getStartRelation(), GlobalNames.re, left, right, "", eventProperties,false);
 			try {
 				fileError.write("Results: " + left + "<->" + right + "\n");
 			} catch (IOException e) {

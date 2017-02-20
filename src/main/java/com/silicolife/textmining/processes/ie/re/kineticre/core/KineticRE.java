@@ -358,7 +358,7 @@ public class KineticRE implements IREProcess {
 				addMetabolites(sent, metabolitesInDocument, simpleComplexPair, left, right,eventProperties);
 				
 				eventProperties.setGeneralProperty("score", String.valueOf(relationScore));
-				IEventAnnotation relationTriple = new EventAnnotationImpl(tripleSC.getSimpleORcomplexPairs().getStartRelation(), tripleSC.getSimpleORcomplexPairs().getStartRelation(), GlobalNames.re, left, right, "", 0, "", eventProperties);
+				IEventAnnotation relationTriple = new EventAnnotationImpl(tripleSC.getSimpleORcomplexPairs().getStartRelation(), tripleSC.getSimpleORcomplexPairs().getStartRelation(), GlobalNames.re, left, right, "",eventProperties,false);
 			
 				results.add(relationTriple);
 			}

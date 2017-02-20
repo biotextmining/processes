@@ -114,7 +114,7 @@ public class CHEMDNERCorpusLoader implements ICorpusEntityLoader{
 			}
 			IAnoteClass klassToAdd = new AnoteClass(sufixchemical+classe);
 			IAnoteClass klass = ClassPropertiesManagement.getClassIDOrinsertIfNotExist(klassToAdd);
-			IEntityAnnotation ent = new EntityAnnotationImpl(startoffset, endoffset,klass,null, name, false, null);
+			IEntityAnnotation ent = new EntityAnnotationImpl(startoffset, endoffset,klass,null, name, false,true, null);
 			docEntities.get(patent).add(ent);
 		}
 		for(IPublication doc: docExternalID.values())

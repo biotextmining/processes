@@ -95,7 +95,7 @@ public class NERPreProcessingStopWords extends NERSimple {
 				{
 					String element = text.substring(pos.getStart(), pos.getEnd());
 					IEntityAnnotation entity = new EntityAnnotationImpl(pos.getStart(), pos.getEnd(), termAnnot.getClassAnnotation(),
-							termAnnot.getResourceElement(), element, false, null);
+							termAnnot.getResourceElement(), element, false,false, null);
 					annotations.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(pos,entity);
 				}
 			}

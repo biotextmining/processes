@@ -54,7 +54,7 @@ public class RECooccurrenceSentencePortion implements IRECooccurrenceSentenceMod
 							List<IEntityAnnotation> entLeftList = new ArrayList<>();
 							entLeftList.add(entLeft1);
 
-							IEventAnnotation ev = new EventAnnotationImpl(sentence.getStartOffset(), sentence.getStartOffset(),"", entLeftList, entrifgtList, "", -1, "", new EventPropertiesImpl());
+							IEventAnnotation ev = new EventAnnotationImpl(sentence.getStartOffset(), sentence.getStartOffset(),"", entLeftList, entrifgtList, "", new EventPropertiesImpl(),false);
 							events.add(ev);
 						}
 					}

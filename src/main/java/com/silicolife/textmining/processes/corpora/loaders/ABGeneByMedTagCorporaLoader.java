@@ -226,7 +226,7 @@ public class ABGeneByMedTagCorporaLoader implements ICorpusEntityLoader{
 					end = start + (long)trimedEntity.length();
 				}
 			}
-			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, trimedEntity, false, null);
+			IEntityAnnotation entity = new EntityAnnotationImpl(start, end,klass,null, trimedEntity, false,true, null);
 			entities.add(entity);
 		}
 		return entities;

@@ -138,7 +138,7 @@ public class RESchemaApllyManualCuration {
 					{	
 						eventToEdit = new EventAnnotationImpl(oldID, eventToEdit.getStartOffset(), eventToEdit.getEndOffset(), AnnotationType.re.name(),
 								eventToEdit.getEntitiesAtLeft(),
-								eventToEdit.getEntitiesAtRight(), eventToEdit.getEventClue(), -1, "", eventToEdit.getEventProperties(),true);
+								eventToEdit.getEntitiesAtRight(), eventToEdit.getEventClue(), eventToEdit.getEventProperties(),true,eventToEdit.isValidated());
 						// Edit relation in Database
 						List<IEventAnnotation> list = new ArrayList<IEventAnnotation>();
 						list.add(eventToEdit);
@@ -205,7 +205,7 @@ public class RESchemaApllyManualCuration {
 			}
 		}
 		IEventAnnotation result = new EventAnnotationImpl(eventUpdated.getStartOffset(), eventUpdated.getEndOffset(), AnnotationType.re.name(),
-				entitiesAtLeft,entitiesAtRight, eventUpdated.getEventClue(), -1, "", eventUpdated.getEventProperties());
+				entitiesAtLeft,entitiesAtRight, eventUpdated.getEventClue(),eventUpdated.getEventProperties(),eventUpdated.isValidated());
 		return result;
 	}
 
@@ -285,7 +285,7 @@ public class RESchemaApllyManualCuration {
 			}
 		}	
 		IEventAnnotation event = new EventAnnotationImpl(eventToAdd.getStartOffset(), eventToAdd.getEndOffset(),
-				AnnotationType.re.name(), leftEntities, rightEntities, eventToAdd.getEventClue(), -1, "", eventToAdd.getEventProperties());
+				AnnotationType.re.name(), leftEntities, rightEntities, eventToAdd.getEventClue(), eventToAdd.getEventProperties(),eventToAdd.isActive());
 		return event;
 	}
 

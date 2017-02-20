@@ -361,7 +361,7 @@ public class KineticREtriplesANDmetsEnzs implements IREProcess{
 			eventProperties.setGeneralProperty("score", String.valueOf(relationScore));
 			// o HUGO mandou mudar de endRelation para startRelatiion para resolver o problam do verde na visualização
 			IEventAnnotation relationTriple = new EventAnnotationImpl(sentTriples.get(i).getPairs().getStartRelation(),
-					sentTriples.get(i).getPairs().getStartRelation(), GlobalNames.re, left, right, "", 0, "", eventProperties);
+					sentTriples.get(i).getPairs().getStartRelation(), GlobalNames.re, left, right, "",eventProperties,false);
 //			// para não imprimir relações só valor-unidade, sem entidades das classes kparam/enz/met;		
 //			if(left.size()+right.size()!=2)
 //			{

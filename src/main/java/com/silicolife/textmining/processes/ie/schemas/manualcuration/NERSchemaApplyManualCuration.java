@@ -127,7 +127,7 @@ public class NERSchemaApplyManualCuration {
 				{
 					// Insert on database
 					IEntityAnnotation newAddEntity = new EntityAnnotationImpl(addEntity.getStartOffset(),
-							addEntity.getEndOffset(), addEntity.getClassAnnotation(), addEntity.getResourceElement(), addEntity.getAnnotationValue(), addEntity.isAbreviation(),addEntity.getProperties());			
+							addEntity.getEndOffset(), addEntity.getClassAnnotation(), addEntity.getResourceElement(), addEntity.getAnnotationValue(), addEntity.isAbreviation(),addEntity.isValidated(),addEntity.getProperties());			
 					List<IEntityAnnotation> entityAnnotations = new ArrayList<IEntityAnnotation>();
 					entityAnnotations.add(newAddEntity);
 					InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(nerSchema, annnoDocument, entityAnnotations );

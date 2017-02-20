@@ -70,7 +70,7 @@ public class NERPreProcessingPOSTagging extends NERSimple{
 					auxpos = new AnnotationPosition(pos.getStart(),pos.getEnd());
 					String element = text.substring(pos.getStart(), pos.getEnd());
 					IEntityAnnotation entity = new EntityAnnotationImpl(auxpos.getStart(), auxpos.getEnd(), termAnnot.getClassAnnotation(),
-							termAnnot.getResourceElement(), element, false, null);
+							termAnnot.getResourceElement(), element, false,false, null);
 					annotations.addAnnotationWhitConflitsAndReplaceIfRangeIsMore(auxpos,entity);
 				}
 			}
