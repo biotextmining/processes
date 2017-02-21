@@ -17,7 +17,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	public final static String bingProcessID = "bing.searchpatentid";
-	public final static String bingName= "Bing Web Search API from Bing";
+	public final static String bingName= "Bing Web Search API from Microsoft";
 
 	public static String bingURL = "(site:www.google.com/patents/ OR site:patents.google.com) ";
 	public static String CHAR_SET = "UTF-8";
@@ -30,17 +30,18 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 
 	@Override
 	public Set<String> retrievalPatentIds(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
-		BingWebQuery query = new BingWebQuery();
-		String tokenaccess = ((IIRPatentIDRecoverBingSearchConfiguration)getConfiguration()).getAccessToken(); 
-		query.setAppid(tokenaccess);
-		String newQuery = transformQuerytoBingPatterns(configuration.getQuery());
-		query.setQuery(queryBuilder(bingURL+newQuery));
-		int stopNumber =query.getNumberOfResults();//stop the cicle
 		Set<String> patentlinks = new HashSet<>();
-		int index = 0;
-		while (index<stopNumber) {
-			//Thread.sleep(2000);//pausar durante dois segundos
-			try{
+		try{		
+			BingWebQuery query = new BingWebQuery();
+			String tokenaccess = ((IIRPatentIDRecoverBingSearchConfiguration)getConfiguration()).getAccessToken(); 
+			query.setAppid(tokenaccess);
+			String newQuery = transformQuerytoBingPatterns(configuration.getQuery());
+			query.setQuery(queryBuilder(bingURL+newQuery));
+			int stopNumber =query.getNumberOfResults();//stop the cicle
+			int index = 0;
+			while (index<stopNumber) {
+				//Thread.sleep(2000);//pausar durante dois segundos
+
 				Set<String> urls = query.doQuery();
 				autenticated=true;
 				for (String wr : urls) {
@@ -48,13 +49,14 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 				}
 				query.nextPage();
 				index+=query.getPerPage();
-			}catch(Exception e){
-				if (autenticated){
-					break;
-				}
-				else{
-					throw new ANoteException(e);
-				}
+				
+			}
+		}catch(Exception e){
+			if (autenticated){
+
+			}
+			else{
+				throw new ANoteException(e);
 			}
 		}
 

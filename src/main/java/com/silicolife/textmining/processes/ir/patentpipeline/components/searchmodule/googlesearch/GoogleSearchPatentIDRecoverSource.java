@@ -53,9 +53,7 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 					links.add(it.getLink());
 				}
 			}
-			catch (NullPointerException e) {//means that there is no more results to search using that query
-			}
-			catch ( Exception e) {
+			catch (Exception e) {
 				if (autenticated){
 					break;
 				}

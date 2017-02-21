@@ -63,12 +63,17 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	private boolean searchInAllPatents(Map<String, IPublication> mapPatentIDPublication, String tokenaccess,
 			String patentID, Set<String> possiblePatentIDs) {
 		boolean informationdownloaded =false;
+		//		if (!verifyPublicationMetadataDownload(mapPatentIDPublication, patentID)){
 		for (String id:possiblePatentIDs){
 			informationdownloaded = tryUpdatePatentMetaInformation(mapPatentIDPublication, patentID, id, tokenaccess);
 			if (informationdownloaded){
 				return true;
 			}
 		}
+		//		}
+		//		else{
+		//			return true;
+		//		}
 		return false;
 	}
 
