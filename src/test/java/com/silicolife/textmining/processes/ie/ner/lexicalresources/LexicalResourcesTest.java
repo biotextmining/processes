@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
 import com.silicolife.textmining.core.datastructures.nlptools.PartOfSpeechLabels;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -46,7 +47,7 @@ public class LexicalResourcesTest {
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
 		NERLexicalResourcesPreProssecingEnum preProcessing = NERLexicalResourcesPreProssecingEnum.POSTagging;	
 		Set<String> posTgas = PartOfSpeechLabels.getDefaultPOStags();
-		INERLexicalResourcesConfiguration configurations = new NERLexicalResourcesConfiguration(corpus, preProcessing , resourceToNER,
+		INERLexicalResourcesConfiguration configurations = new NERLexicalResourcesConfiguration(corpus,ProcessRunStatusConfigurationEnum.createnew, preProcessing , resourceToNER,
 				posTgas, stopwords, caseSensitive, normalized, usingOtherResourceInfoToImproveRuleAnnotations);
 		NERLexicalResources nerLexicalResources = new NERLexicalResources();
 		System.out.println("Execute Lexical Resources");

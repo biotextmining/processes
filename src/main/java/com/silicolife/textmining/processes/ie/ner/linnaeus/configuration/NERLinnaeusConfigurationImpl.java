@@ -1,18 +1,25 @@
 package com.silicolife.textmining.processes.ie.ner.linnaeus.configuration;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
+import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourceSelectedClassesMap;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
 import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
+import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.Matcher.Disambiguation;
@@ -39,10 +46,15 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		super();
 	}
 	
-	public NERLinnaeusConfigurationImpl(ICorpus corpus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
+	public NERLinnaeusConfigurationImpl(IIEProcess process,ProcessRunStatusConfigurationEnum processRunStatus)
+	{
+		super(process.getCorpus(),nerLinnaeusUID,process,processRunStatus);
+	}
+	
+	public NERLinnaeusConfigurationImpl(ICorpus corpus,ProcessRunStatusConfigurationEnum processRunStatus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
 			Disambiguation disambiguation, NERCaseSensativeEnum caseSensitiveEnum,boolean normalized, int numThreads,ILexicalWords stopwords,
 			NERLinnaeusPreProcessingEnum preprocessing,boolean usingOtherResourceInfoToImproveRuleAnnotations, int sizeOfSmallWordsToBeNotAnnotated) {
-		super(corpus,LinnaeusTagger.linneausTagger,LinnaeusTagger.linneausTagger);
+		super(corpus,nerLinnaeusUID, build(corpus),processRunStatus);
 		this.patterns = patterns;
 		this.resourceToNER = resourceToNER;
 		this.useAbreviation = useabreviation;
@@ -54,6 +66,15 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 		this.usingOtherResourceInfoToImproveRuleAnnotations = usingOtherResourceInfoToImproveRuleAnnotations;
 		this.preProcessing = preprocessing;
 		this.sizeOfSmallWordsToBeNotAnnotated =sizeOfSmallWordsToBeNotAnnotated;
+	}
+	
+	private static IIEProcess build(ICorpus corpus)
+	{
+		String description = LinnaeusTagger.linneausTagger  + " " +Utils.SimpleDataFormat.format(new Date());
+		String notes = new String();
+		Properties properties = new Properties();
+		IIEProcess processToRun = new IEProcessImpl(corpus, description, notes , ProcessTypeImpl.getNERProcessType(), LinnaeusTagger.linnausOrigin, properties );
+		return processToRun;
 	}
 
 	public Map<String, Pattern> getPatterns() {

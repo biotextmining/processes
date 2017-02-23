@@ -12,9 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.REProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -64,8 +62,7 @@ public class RECooccurrence implements IREProcess{
 	{
 		validateConfiguration(configuration);
 		IRECooccurrenceConfiguration reCooccurrence = (IRECooccurrenceConfiguration) configuration;
-		IIEProcess reProcess = new IEProcessImpl(configuration.getCorpus(), relationCooccurrence+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationCooccurrenceProcessType, gerateProperties(reCooccurrence));
+		IIEProcess reProcess = processbuilder(configuration, reCooccurrence);
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 		InitConfiguration.getDataAccess().registerCorpusProcess(configuration.getCorpus(), reProcess);
 		IRECooccurrenceSentenceModel model = reCooccurrence.getCooccurrenceModelEnum().getRelationCooccurrenceModel();
@@ -97,6 +94,17 @@ public class RECooccurrence implements IREProcess{
 		long end = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(end-start);
 		return report;
+	}
+
+
+
+	private IIEProcess processbuilder(IREConfiguration configuration, IRECooccurrenceConfiguration reCooccurrence) {
+		String name = RECooccurrence.relationCooccurrence+" "+Utils.SimpleDataFormat.format(new Date());
+		Properties properties = gerateProperties(reCooccurrence);
+		IIEProcess reProcess =	configuration.getIEProcess();
+		reProcess.setName(name);
+		reProcess.setProperties(properties);
+		return reProcess;
 	}
 	
 	@JsonIgnore

@@ -17,9 +17,7 @@ import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocument
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.REProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -41,6 +39,7 @@ import com.silicolife.textmining.core.interfaces.process.IE.IREProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IREConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticREConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.EntityAnnotationListSort;
+import com.silicolife.textmining.processes.ie.re.kineticre.core.KineticRE;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.KparamValueUnitBasedRelation;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.KparamValueUnitSimpleOrComplex;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.ValueUnitBasedRelation;
@@ -119,8 +118,7 @@ public class KineticREtriples implements IREProcess {
 		validateConfiguration(configuration);
 		IREKineticREConfiguration reConfiguration = (IREKineticREConfiguration) configuration;
 		configureKineticREClasses(reConfiguration);
-		IIEProcess reProcess = new IEProcessImpl(configuration.getCorpus(), kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, configuration.getProperties());
+		IIEProcess reProcess = build(configuration, reConfiguration);
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 
 		try {
@@ -233,6 +231,13 @@ public class KineticREtriples implements IREProcess {
 		}
 		return report;
 	}
+	
+	private IIEProcess build(IREConfiguration configuration, IREKineticREConfiguration reConfiguration) {
+		IIEProcess reProcess = configuration.getIEProcess();
+		reProcess.setName(KineticRE.kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()));
+		return reProcess;
+	}
+
 	
 	private List<ValueUnitSimpleOrComplex> generateListPairsValueUnitSimpleOrComplex(ISentence sent,
 			List<ValueUnitBasedRelation> listPairsValueUnit, List<IEntityAnnotation> valuesSent) {

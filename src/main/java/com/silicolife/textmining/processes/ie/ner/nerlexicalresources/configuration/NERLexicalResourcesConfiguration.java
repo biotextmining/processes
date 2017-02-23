@@ -1,16 +1,22 @@
 package com.silicolife.textmining.processes.ie.ner.nerlexicalresources.configuration;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
-import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
+import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
+import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourceSelectedClassesMap;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
+import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
 import com.silicolife.textmining.processes.ie.ner.nerlexicalresources.NERLexicalResources;
 
@@ -27,9 +33,9 @@ public class NERLexicalResourcesConfiguration extends NERConfigurationImpl imple
 	private boolean usingOtherResourceInfoToImproveRuleAnnotstions;
 	
 	
-	public NERLexicalResourcesConfiguration(ICorpus corpus,NERLexicalResourcesPreProssecingEnum preProcessing,ResourcesToNerAnote resourceToNER,
+	public NERLexicalResourcesConfiguration(ICorpus corpus,ProcessRunStatusConfigurationEnum processRunStatusConfigurationEnum,NERLexicalResourcesPreProssecingEnum preProcessing,ResourcesToNerAnote resourceToNER,
 			Set<String> posTgas,ILexicalWords stopWords, NERCaseSensativeEnum caseSensitive,boolean normalized,boolean usingOtherResourceInfoToImproveRuleAnnotstions) {
-		super(corpus,NERLexicalResources.nerlexicalresourcesTagger,LanguageProperties.getLanguageStream("pt.uminho.anote2.ner.operations.name"));
+		super(corpus,NERLexicalResources.nerlexicalresourcesTagger,build(corpus),processRunStatusConfigurationEnum);
 		this.preProcessing = preProcessing;
 		this.resourceToNER = resourceToNER;
 		this.posTags = posTgas;
@@ -39,7 +45,15 @@ public class NERLexicalResourcesConfiguration extends NERConfigurationImpl imple
 		this.caseSensitive = caseSensitive;
 	}
 	
+	private static IIEProcess build(ICorpus corpus) {
 
+		String description = NERLexicalResources.nerlexicalresourcesTagger  + " " +Utils.SimpleDataFormat.format(new Date());
+		String notes = new String();
+		Properties properties = new Properties();
+		IIEProcess processToRun = new IEProcessImpl(corpus, description, notes, ProcessTypeImpl.getNERProcessType(), NERLexicalResources.nerlexicalresourcesOrigin, properties);
+		return processToRun;
+	}
+	
 	@Override
 	public NERLexicalResourcesPreProssecingEnum getPreProcessingOption() {
 		return preProcessing;

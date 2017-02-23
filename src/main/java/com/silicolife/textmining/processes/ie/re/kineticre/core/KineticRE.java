@@ -22,9 +22,7 @@ import com.silicolife.textmining.core.datastructures.documents.AnoteClassInDocum
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.REProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -81,8 +79,7 @@ public class KineticRE implements IREProcess {
 	public IREProcessReport executeRE(IREConfiguration configuration) throws ANoteException,InvalidConfigurationException {
 		validateConfiguration(configuration);
 		IREKineticREConfiguration reConfiguration = (IREKineticREConfiguration) configuration;
-		IIEProcess reProcess = new IEProcessImpl(configuration.getCorpus(), kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, generateConfiguration(reConfiguration));
+		IIEProcess reProcess = build(configuration, reConfiguration);		
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 		IIEProcess ieProcess = (IIEProcess) configuration.getEntityBasedProcess();
 		REProcessReportImpl report = new REProcessReportImpl(LanguageProperties.getLanguageStream("pt.uminho.anote2.kineticre.report.title"),ieProcess,reProcess,false);
@@ -108,6 +105,14 @@ public class KineticRE implements IREProcess {
 		}
 		InitConfiguration.getDataAccess().registerCorpusProcess(corpus, reProcess);
 		return report;
+	}
+
+
+	private IIEProcess build(IREConfiguration configuration, IREKineticREConfiguration reConfiguration) {
+		IIEProcess reProcess = configuration.getIEProcess();
+		reProcess.setName(KineticRE.kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()));
+		reProcess.setProperties(generateConfiguration(reConfiguration));
+		return reProcess;
 	}
 
 	

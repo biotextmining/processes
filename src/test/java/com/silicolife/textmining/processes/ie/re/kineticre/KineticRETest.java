@@ -10,6 +10,7 @@ import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidC
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.processes.IREProcessReport;
@@ -75,7 +76,7 @@ public class KineticRETest {
 		REKineticConfigurationClasses classes = new REKineticConfigurationClasses(units, values, kineticParameters, metabolites, enzymes, organism);
 		IIEProcess entityProcess = InitConfiguration.getDataAccess().getProcessByID(processID );
 		IREKineticAdvancedConfiguration advanced = new REKineticAdvancedConfigurationImpl();
-		IREKineticREConfiguration configuration = new REKineticConfigurationImpl(entityProcess.getCorpus(), entityProcess, classes,advanced );
+		IREKineticREConfiguration configuration = new REKineticConfigurationImpl(entityProcess.getCorpus(),entityProcess, ProcessRunStatusConfigurationEnum.createnew, classes,advanced );
 		IREProcess kineticRE = new KineticRE();
 		System.out.println("Execute KineticRE!!!");
 		IREProcessReport report = kineticRE.executeRE(configuration);

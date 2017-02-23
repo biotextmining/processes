@@ -5,14 +5,13 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -72,8 +71,10 @@ public class NERLexicalResources implements INERProcess{
 	private IIEProcess getIEProcess(INERLexicalResourcesConfiguration lexicalResurcesConfiguration,INERLexicalResourcesPreProcessingModel model) {
 
 		String description = NERLexicalResources.nerlexicalresourcesTagger  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = lexicalResurcesConfiguration.getProcessNotes();
-		IIEProcess processToRun = new IEProcessImpl(lexicalResurcesConfiguration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), nerlexicalresourcesOrigin, model.getProperties(lexicalResurcesConfiguration));
+		Properties properties = model.getProperties(lexicalResurcesConfiguration);	
+		IIEProcess processToRun = lexicalResurcesConfiguration.getIEProcess();
+		processToRun.setName(description);
+		processToRun.setProperties(properties);
 		return processToRun;
 	}
 
