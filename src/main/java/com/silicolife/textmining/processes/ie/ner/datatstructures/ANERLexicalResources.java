@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.ie.ner.datatstructures;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.slf4j.Logger;
@@ -9,25 +10,26 @@ import com.silicolife.textmining.core.datastructures.documents.CorpusPublication
 import com.silicolife.textmining.core.datastructures.documents.UnprocessedPublicationsStackPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.ICorpusPublicationPaginator;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
-import com.silicolife.textmining.core.interfaces.process.IE.IIEConfiguration;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.INERProcessResume;
+import com.silicolife.textmining.core.interfaces.process.IE.INERProcessUpdate;
+import com.silicolife.textmining.core.interfaces.process.IE.INERProcessUpdateResume;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 
-public abstract class ANERLexicalResources implements INERProcess, INERProcessResume{
+public abstract class ANERLexicalResources implements INERProcess, INERProcessResume,INERProcessUpdate,INERProcessUpdateResume{
 	
 	final static Logger nerlogger = LoggerFactory.getLogger(ANERLexicalResources.class);
 	
 	public abstract IIEProcess buildProcess(INERConfiguration configuration);
-	public abstract void executeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException; 
-	public abstract void resumeNER(IIEConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException;
-	
+	public abstract void executeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException; 	
+	public abstract INERConfiguration getProcessConfiguration(IIEProcess ieprocess,ProcessRunStatusConfigurationEnum processStatus) throws ANoteException;
 	
 	public INERProcessReport execute(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException
 	{
@@ -36,6 +38,10 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 				return executeCorpusNER(configuration);
 			case resume :
 				return resumeCorpusNER(configuration);
+			case update :
+				return updateNER(configuration);
+			case resumeupdate :
+				return updateResumeNER(configuration);
 			default :
 				return null;
 		}
@@ -59,7 +65,6 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		return report;
 	}
 	
-	
 	public INERProcessReport resumeCorpusNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException
 	{
 		validateResumeConfiguration(configuration);
@@ -69,7 +74,56 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess());
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessAddEntitiesImpl();
-		resumeNER(configuration, report, publicationsPaginator,nerPosProccessAddEntities);
+		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
+		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
+		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(endTime-startime);
+		return report;
+	}
+	
+	/**
+	 * TO DO
+	 * 
+	 */
+	public INERProcessReport updateNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException
+	{
+		validateUpdateConfiguration(configuration);
+		IIEProcess processToResume = configuration.getIEProcess();
+		nerlogger.info("Update NER");
+		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToResume);
+		int version = processToResume.getVersion();
+		processToResume.setVersion(++version);
+		processToResume.setUpdateDate(new Date());
+		InitConfiguration.getDataAccess().updateIEProcess(processToResume);
+		ICorpusPublicationPaginator publicationsPaginator = getPublicationsPaginator(configuration.getCorpus());
+		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		// TO DO
+		INERPosProccessAddEntities nerPosProccessAddEntities = null;// new NERPosProcessAddEntitiesImpl();
+		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
+		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
+		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
+		report.setTime(endTime-startime);
+		return report;
+	}
+
+	/**
+	 * TO DO
+	 * 
+	 */
+	public INERProcessReport updateResumeNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException
+	{
+		validateUpdateResumeConfiguration(configuration);
+		IIEProcess processToResume = configuration.getIEProcess();
+		nerlogger.info("Update Resume NER");
+		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToResume);
+		int version = processToResume.getVersion();
+		// TO DO
+		ICorpusPublicationPaginator publicationsPaginator = null;
+		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		// TO DO
+		INERPosProccessAddEntities nerPosProccessAddEntities = null;// new NERPosProcessAddEntitiesImpl();		
+		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
+		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startime);
 		return report;
@@ -84,6 +138,16 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		} catch (ANoteException e) {
 			throw new InvalidConfigurationException("The process cannot be resumed!");
 		}
+		
+	}
+	
+	public void validateUpdateConfiguration(INERConfiguration configuration) throws InvalidConfigurationException {
+		this.validateResumeConfiguration(configuration);	
+		
+	}
+	
+	public void validateUpdateResumeConfiguration(INERConfiguration configuration) throws InvalidConfigurationException {
+		this.validateResumeConfiguration(configuration);	
 		
 	}
 	

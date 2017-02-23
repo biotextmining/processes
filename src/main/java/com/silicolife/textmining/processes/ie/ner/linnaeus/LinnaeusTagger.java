@@ -48,7 +48,6 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.IPublic
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
-import com.silicolife.textmining.core.interfaces.process.IE.IIEConfiguration;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
 import com.silicolife.textmining.core.interfaces.resource.IResource;
@@ -114,8 +113,37 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
 					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
 		}
-
 	}
+	
+//	public void resumeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException {
+//		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess(),ProcessRunStatusConfigurationEnum.resume);
+//		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+//		nerlogger.info("Start to get resources elements on DB");
+//		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
+//		HandRules rules = new HandRules(elementsToNER);
+//		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
+//		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
+//		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
+//		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
+//		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
+//		Set<String> stopwords = loadStopWords(linnauesConfiguration);
+//		Matcher matcher = getMatcher(linnauesConfiguration,elements);
+//		nerlogger.info("Finished to get resources elements on DB");		
+//		int size = (int) (long) publicationsPaginator.getPublicationsCount();
+//		int counter = 0; 
+//		while(publicationsPaginator.hasNextDocumentSetPage()){
+//			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
+//			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, configuration.getIEProcess());
+//			
+//			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
+//					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
+//					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
+//		}
+//		if(stop)
+//		{
+//			report.setcancel();
+//		}
+//	}
 
 	private DocumentIterator getDocumentIterator(INERConfiguration configuration, IIEProcess processToRun,
 			IDocumentSet documentSet) throws ANoteException {
@@ -525,37 +553,9 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		return prop;
 	}
 
-	public void resumeNER(IIEConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException {
-		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess(),ProcessRunStatusConfigurationEnum.resume);
-		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-		nerlogger.info("Start to get resources elements on DB");
-		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
-		HandRules rules = new HandRules(elementsToNER);
-		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
-		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
-		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
-		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
-		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
-		Set<String> stopwords = loadStopWords(linnauesConfiguration);
-		Matcher matcher = getMatcher(linnauesConfiguration,elements);
-		nerlogger.info("Finished to get resources elements on DB");		
-		int size = (int) (long) publicationsPaginator.getPublicationsCount();
-		int counter = 0; 
-		while(publicationsPaginator.hasNextDocumentSetPage()){
-			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
-			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, configuration.getIEProcess());
-			
-			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
-					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
-					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
-		}
-		if(stop)
-		{
-			report.setcancel();
-		}
-	}
+
 	
-	private INERConfiguration convertProcessToConfiguration(IIEProcess ieprocess,ProcessRunStatusConfigurationEnum processStatus) throws ANoteException{
+	public INERConfiguration getProcessConfiguration(IIEProcess ieprocess,ProcessRunStatusConfigurationEnum processStatus) throws ANoteException{
 		ICorpus corpus = ieprocess.getCorpus();
 		Map<String, Pattern> patterns = null;
 		boolean useabreviation = false;
