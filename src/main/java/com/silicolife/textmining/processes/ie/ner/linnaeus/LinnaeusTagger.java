@@ -18,20 +18,16 @@ import org.slf4j.LoggerFactory;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
 import com.silicolife.textmining.core.datastructures.annotation.ner.EntityAnnotationImpl;
-import com.silicolife.textmining.core.datastructures.documents.CorpusPublicationPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.UnprocessedPublicationsStackPaginatorImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.general.ClassPropertiesManagement;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
-import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
-import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ElementToNer;
 import com.silicolife.textmining.core.datastructures.process.ner.HandRules;
 import com.silicolife.textmining.core.datastructures.process.ner.NERCaseSensativeEnum;
 import com.silicolife.textmining.core.datastructures.process.ner.ResourcesToNerAnote;
-import com.silicolife.textmining.core.datastructures.report.processes.NERProcessReportImpl;
 import com.silicolife.textmining.core.datastructures.resources.ResourceImpl;
 import com.silicolife.textmining.core.datastructures.resources.lexiacalwords.LexicalWordsImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.EntitiesDesnormalization;
@@ -52,14 +48,14 @@ import com.silicolife.textmining.core.interfaces.core.document.structure.IPublic
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
 import com.silicolife.textmining.core.interfaces.process.IProcessOrigin;
+import com.silicolife.textmining.core.interfaces.process.IE.IIEConfiguration;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
-import com.silicolife.textmining.core.interfaces.process.IE.INERProcess;
-import com.silicolife.textmining.core.interfaces.process.IE.INERProcessResume;
 import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguration;
-import com.silicolife.textmining.core.interfaces.process.IE.ner.INERResumeConfiguration;
 import com.silicolife.textmining.core.interfaces.resource.IResource;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.lexicalwords.ILexicalWords;
+import com.silicolife.textmining.processes.ie.ner.datatstructures.ANERLexicalResources;
+import com.silicolife.textmining.processes.ie.ner.datatstructures.INERPosProccessAddEntities;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.compthreads.IteratorBasedMaster;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.dataholders.Document;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.input.DocumentIterator;
@@ -75,30 +71,27 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLin
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusConfigurationImpl;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusPreProcessingEnum;
 
-public class LinnaeusTagger  implements INERProcess, INERProcessResume{
+public class LinnaeusTagger  extends ANERLexicalResources{
 
 	public static final String linneausTagger = "Linnaeus Tagger";
 	public static final String abreviation = "Abbreviation";
 	public static final String disambiguation = "Disambiguation";
 	
 	final static Logger nerlogger = LoggerFactory.getLogger(LinnaeusTagger.class);
+	
+	private boolean stop = false;
 
 	public static final IProcessOrigin linnausOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),linneausTagger);
 
-	private boolean stop = false;
 
 	public LinnaeusTagger() {
 
 	}
 
-	@Override
-	public INERProcessReport executeCorpusNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException 
+	public void executeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException 
 	{	
-		validateConfiguration(configuration);
+		stop = false;
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
-		IIEProcess processToRun = buildIEProcess(configuration,linnauesConfiguration);
-		nerlogger.info("Created the Linneaus NER process on DB");
-		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		nerlogger.info("Start to get resources elements on DB");
 		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
 		HandRules rules = new HandRules(elementsToNER);
@@ -110,46 +103,33 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Set<String> stopwords = loadStopWords(linnauesConfiguration);
 		nerlogger.info("Finished to get resources elements on DB");
 		Matcher matcher = getMatcher(linnauesConfiguration,elements);
-		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", processToRun);
-		
-		ICorpusPublicationPaginator publicationsPaginator = getPublicationsPaginator(configuration.getCorpus());
+		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		int size = (int) (long) publicationsPaginator.getPublicationsCount();
 		int counter = 0; 
 		while(publicationsPaginator.hasNextDocumentSetPage()){
 			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
-			DocumentIterator documents = getDocumentIterator(configuration, processToRun, documentSet);
+			DocumentIterator documents = getDocumentIterator(configuration, configuration.getIEProcess(), documentSet);
 			
-			counter = executeLinneausForDocumentSet(linnauesConfiguration, processToRun, startime, elementsToNER, rules,
+			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
 					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
 					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
 		}
 
-		if(stop)
-		{
-			report.setcancel();
-		}
-		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
-		report.setTime(endTime-startime);
-		return report;
 	}
 
-	protected DocumentIterator getDocumentIterator(INERConfiguration configuration, IIEProcess processToRun,
+	private DocumentIterator getDocumentIterator(INERConfiguration configuration, IIEProcess processToRun,
 			IDocumentSet documentSet) throws ANoteException {
 		DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, processToRun);
 		return documents;
 	}
-
-	protected ICorpusPublicationPaginator getPublicationsPaginator(ICorpus corpus) throws ANoteException {
-		return new CorpusPublicationPaginatorImpl(corpus);
-	}
 	
-	protected ElementToNer getElementsToNER(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
+	private ElementToNer getElementsToNER(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
 		elementsToNER.processingINfo();
 		return elementsToNER;
 	}
 
-	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,
+	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,INERPosProccessAddEntities nerPosProccessAddEntities,
 			long startime, ElementToNer elementsToNER, HandRules rules, Map<Long, Long> resourceMapClass,
 			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs, 
 			Map<Long, String> mapPossibleResourceIDsToTermString, Set<String> stopwords, Matcher matcher, INERProcessReport report,
@@ -174,7 +154,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 						maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, stopwords, td,
 						positions);
 				applyHandRulesToAnnotationPositions(elementsToNER, rules, td, positionsRules);
-				saveAnnotatedDocumentWithAnnotationPositions(linnauesConfiguration, processToRun, report, td, id,
+				saveAnnotatedDocumentWithAnnotationPositions(linnauesConfiguration, processToRun, report, nerPosProccessAddEntities, td, id,
 						positions,positionsRules);
 			}
 			counter++;
@@ -307,7 +287,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
 
 	private void saveAnnotatedDocumentWithAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
-			IIEProcess processToRun, INERProcessReport report, TaggedDocument td, Long id,
+			IIEProcess processToRun, INERProcessReport report,INERPosProccessAddEntities nerPosProccessAddEntities,TaggedDocument td, Long id,
 			AnnotationPositions positions, AnnotationPositions positionsRules) throws ANoteException {
 		if(!stop)
 		{
@@ -340,7 +320,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 			}
 			entityAnnotations = annotationsPositionsResult.getEntitiesFromAnnoattionPositions();
 			// Add Document Entity Annotations
-			addAnnotatedDocumentEntities(processToRun,entityAnnotations, document);
+			nerPosProccessAddEntities.addAnnotatedDocumentEntities(processToRun, document, entityAnnotations);
 		}
 	}
 
@@ -358,19 +338,7 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 
 
 
-	protected void addAnnotatedDocumentEntities(IIEProcess processToRun,List<IEntityAnnotation> entityAnnotations, IPublication document)throws ANoteException {
-		InitConfiguration.getDataAccess().addProcessDocumentEntitiesAnnotations(processToRun, document, entityAnnotations);
-	}
 
-
-
-	protected void createIEProcessONDataAccess(IIEProcess processToRun) throws ANoteException {
-		InitConfiguration.getDataAccess().createIEProcess(processToRun);
-	}
-	
-	protected void associateIEProcessToCorpusONDataAccess(ICorpus corpus, IIEProcess processToRun)throws ANoteException {
-		InitConfiguration.getDataAccess().registerCorpusProcess(corpus, processToRun);
-	}
 
 	private static Properties gereateProperties(INERLinnaeusConfiguration configurations) {
 		Properties properties = transformResourcesToOrderMapInProperties(configurations.getResourceToNER());
@@ -405,13 +373,13 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		return properties;
 	}
 
-	private IIEProcess buildIEProcess(INERConfiguration configuration,INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
+	public IIEProcess buildProcess(INERConfiguration configuration) {
+		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
 		String description = LinnaeusTagger.linneausTagger  + " " +Utils.SimpleDataFormat.format(new Date());
-		String notes = configuration.getProcessNotes();
 		Properties properties = gereateProperties(linnauesConfiguration);
-		IIEProcess processToRun = new IEProcessImpl(configuration.getCorpus(), description, notes, ProcessTypeImpl.getNERProcessType(), linnausOrigin, properties);
-		createIEProcessONDataAccess(processToRun);
-		associateIEProcessToCorpusONDataAccess(configuration.getCorpus(), processToRun);
+		IIEProcess processToRun = configuration.getIEProcess();
+		processToRun.setProperties(properties);
+		processToRun.setName(description);
 		return processToRun;
 	}
 
@@ -557,10 +525,8 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		return prop;
 	}
 
-	@Override
-	public INERProcessReport resumeNER(INERResumeConfiguration configuration) throws ANoteException, InvalidConfigurationException {
-		validateConfiguration(configuration);
-		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess());
+	public void resumeNER(IIEConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException {
+		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess(),ProcessRunStatusConfigurationEnum.resume);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		nerlogger.info("Start to get resources elements on DB");
 		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
@@ -572,52 +538,24 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
 		Set<String> stopwords = loadStopWords(linnauesConfiguration);
 		Matcher matcher = getMatcher(linnauesConfiguration,elements);
-		nerlogger.info("Finished to get resources elements on DB");
-		INERProcessReport report = new NERProcessReportImpl(LinnaeusTagger.linneausTagger + " report", configuration.getIEProcess());
-		
-		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess());
+		nerlogger.info("Finished to get resources elements on DB");		
 		int size = (int) (long) publicationsPaginator.getPublicationsCount();
 		int counter = 0; 
 		while(publicationsPaginator.hasNextDocumentSetPage()){
 			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
 			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, configuration.getIEProcess());
 			
-			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), startime, elementsToNER, rules,
+			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
 					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
 					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
 		}
-
 		if(stop)
 		{
 			report.setcancel();
 		}
-		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
-		report.setTime(endTime-startime);
-		return report;
 	}
 	
-	protected IIEProcess getProcessInDatabase(IIEProcess process) throws ANoteException{
-		return InitConfiguration.getDataAccess().getProcessByID(process.getId());
-	}
-	
-	protected ICorpusPublicationPaginator getUnprocessedPublicationsPaginator(IIEProcess process) throws ANoteException {
-		return new UnprocessedPublicationsStackPaginatorImpl(process);
-	}
-
-	@Override
-	public void validateConfiguration(INERResumeConfiguration configuration) throws InvalidConfigurationException {
-		try {
-			IIEProcess process = getProcessInDatabase(configuration.getIEProcess());
-			if(process == null){
-				throw new InvalidConfigurationException("The given process is not present in the database!");
-			}
-		} catch (ANoteException e) {
-			throw new InvalidConfigurationException("The process cannot be resumed!");
-		}
-		
-	}
-	
-	private INERConfiguration convertProcessToConfiguration(IIEProcess ieprocess) throws ANoteException{
+	private INERConfiguration convertProcessToConfiguration(IIEProcess ieprocess,ProcessRunStatusConfigurationEnum processStatus) throws ANoteException{
 		ICorpus corpus = ieprocess.getCorpus();
 		Map<String, Pattern> patterns = null;
 		boolean useabreviation = false;
@@ -665,14 +603,14 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 					usingOtherResourceInfoToImproveRuleAnnotations = true;
 
 				if(keyString.equals(GlobalNames.stopWordsResourceID))
-					stopwords = new LexicalWordsImpl(getResourceFromDatabase(Long.valueOf(String.valueOf(value))));
+					stopwords = new LexicalWordsImpl(InitConfiguration.getDataAccess().getResourceByID(Long.valueOf(String.valueOf(value))));
 				if(keyString.equals(GlobalNames.sizeOfNonAnnotatedSmallWords))
 					sizeOfSmallWordsToBeNotAnnotated = Integer.valueOf(String.valueOf(value));
 			}
 		}
 		
 		ResourcesToNerAnote resourceToNER = getResourcesToNERForConfiguration(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated, mapResourceIDToClassesID);
-		return new NERLinnaeusConfigurationImpl(corpus, patterns, resourceToNER, useabreviation, disambiguationEnum, caseSensitiveEnum, normalized, numThreads, stopwords, preprocessing, usingOtherResourceInfoToImproveRuleAnnotations,sizeOfSmallWordsToBeNotAnnotated);
+		return new NERLinnaeusConfigurationImpl(corpus,processStatus, patterns, resourceToNER, useabreviation, disambiguationEnum, caseSensitiveEnum, normalized, numThreads, stopwords, preprocessing, usingOtherResourceInfoToImproveRuleAnnotations,sizeOfSmallWordsToBeNotAnnotated);
 	}
 
 	private ResourcesToNerAnote getResourcesToNERForConfiguration(NERCaseSensativeEnum caseSensitiveEnum,
@@ -680,16 +618,11 @@ public class LinnaeusTagger  implements INERProcess, INERProcessResume{
 		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
 		for(Long resource : mapResourceIDToClassesID.keySet()){
 			
-			IResource<IResourceElement> resElem = getResourceFromDatabase(resource);
+			IResource<IResourceElement> resElem = InitConfiguration.getDataAccess().getResourceByID(resource);
 			Set<Long> selectedClass = mapResourceIDToClassesID.get(resource);
 			Set<Long> classContent = selectedClass;
 			resourceToNER.add(resElem, classContent, selectedClass);
 		}
 		return resourceToNER;
 	}
-	
-	protected IResource<IResourceElement> getResourceFromDatabase(Long resourceId) throws ANoteException{
-		return InitConfiguration.getDataAccess().getResourceByID(resourceId);
-	}
-
 }

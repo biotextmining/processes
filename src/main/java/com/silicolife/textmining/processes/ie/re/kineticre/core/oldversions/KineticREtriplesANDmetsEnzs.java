@@ -41,6 +41,7 @@ import com.silicolife.textmining.core.interfaces.process.IE.IREProcess;
 import com.silicolife.textmining.core.interfaces.process.IE.re.IREConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticREConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.EntityAnnotationListSort;
+import com.silicolife.textmining.processes.ie.re.kineticre.core.KineticRE;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.KparamValueUnitBasedRelation;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.ValueUnitBasedRelation;
 import com.silicolife.textmining.processes.nlptools.opennlp.OpenNLP;
@@ -126,8 +127,7 @@ public class KineticREtriplesANDmetsEnzs implements IREProcess{
 		validateConfiguration(configuration);
 		IREKineticREConfiguration reConfiguration = (IREKineticREConfiguration) configuration;
 		configureKineticREClasses(reConfiguration);
-		IIEProcess reProcess = new IEProcessImpl(configuration.getCorpus(), kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()),
-				configuration.getProcessNotes(), ProcessTypeImpl.getREProcessType(), relationProcessType, configuration.getProperties());
+		IIEProcess reProcess = build(configuration, reConfiguration);
 		InitConfiguration.getDataAccess().createIEProcess(reProcess);
 
 		// identificar nºprocesso do NER
@@ -234,6 +234,12 @@ public class KineticREtriplesANDmetsEnzs implements IREProcess{
 		};	
 		InitConfiguration.getDataAccess().registerCorpusProcess(corpus, reProcess);
 		return report;
+	}
+	
+	private IIEProcess build(IREConfiguration configuration, IREKineticREConfiguration reConfiguration) {
+		IIEProcess reProcess = configuration.getIEProcess();
+		reProcess.setName(KineticRE.kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()));
+		return reProcess;
 	}
 	
 	private void insertAnnotationsInDatabse(IIEProcess process,IREProcessReport report,IAnnotatedDocument annotDoc,List<IEntityAnnotation> entitiesList,List<IEventAnnotation> relationsList) throws ANoteException {

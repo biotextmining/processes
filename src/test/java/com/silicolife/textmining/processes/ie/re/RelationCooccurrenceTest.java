@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.process.ProcessRunStatusConfigurationEnum;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.processes.INERProcessReport;
@@ -37,7 +38,7 @@ public class RelationCooccurrenceTest {
 //		IRECooccurrenceSentenceModel model = new RECooccurrenceSentencePortion();
 		RECooccurrenceModelEnum model = RECooccurrenceModelEnum.Sentence_Contigous;
 		IIEProcess manualCurationFromOtherProcess = null;
-		IRECooccurrenceConfiguration configuration = new RECooccurrenceConfiguration(corpus, entityProcess, model, useManualCurationFromOtherProcess, manualCurationFromOtherProcess);
+		IRECooccurrenceConfiguration configuration = new RECooccurrenceConfiguration(corpus,ProcessRunStatusConfigurationEnum.createnew, entityProcess, model, useManualCurationFromOtherProcess, manualCurationFromOtherProcess);
 		RECooccurrence reCoorrence = new RECooccurrence();
 		System.out.println("Execute Relation Cooccurrence");
 		IREProcessReport reportRelationRE = reCoorrence.executeRE(configuration);
