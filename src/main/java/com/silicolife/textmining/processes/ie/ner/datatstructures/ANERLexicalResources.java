@@ -81,10 +81,6 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		return report;
 	}
 	
-	/**
-	 * TO DO
-	 * 
-	 */
 	public INERProcessReport updateNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException
 	{
 		validateUpdateConfiguration(configuration);
@@ -97,9 +93,9 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		InitConfiguration.getDataAccess().updateIEProcess(processToResume);
 		ICorpusPublicationPaginator publicationsPaginator = getPublicationsPaginator(configuration.getCorpus());
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-		// TO DO
-		INERPosProccessAddEntities nerPosProccessAddEntities = null;// new NERPosProcessAddEntitiesImpl();
+		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessRemoveExistentEntitiesAddEntitiesImpl();
 		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
+		processConfiguration.setIEProcess(processToResume);
 		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startime);
@@ -116,12 +112,11 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		IIEProcess processToResume = configuration.getIEProcess();
 		nerlogger.info("Update Resume NER");
 		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToResume);
-		int version = processToResume.getVersion();
+//		int version = processToResume.getVersion();
 		// TO DO
 		ICorpusPublicationPaginator publicationsPaginator = null;
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-		// TO DO
-		INERPosProccessAddEntities nerPosProccessAddEntities = null;// new NERPosProcessAddEntitiesImpl();		
+		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessRemoveExistentEntitiesAddEntitiesImpl();
 		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
 		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
