@@ -398,6 +398,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		if(configurations.getSizeOfSmallWordsToBeNotAnnotated()>0){
 			properties.put(GlobalNames.sizeOfNonAnnotatedSmallWords, String.valueOf(configurations.getSizeOfSmallWordsToBeNotAnnotated()));
 		}
+		properties.put(GlobalNames.numberThreads, configurations.getNumberOfThreads());
 		return properties;
 	}
 
@@ -601,9 +602,13 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 				
 				if(keyString.equals(GlobalNames.useOtherResourceInformationInRules))
 					usingOtherResourceInfoToImproveRuleAnnotations = true;
-
+				if(keyString.equals(GlobalNames.numberThreads))
+					numThreads = Integer.valueOf(String.valueOf(value));
 				if(keyString.equals(GlobalNames.stopWordsResourceID))
+				{
 					stopwords = new LexicalWordsImpl(InitConfiguration.getDataAccess().getResourceByID(Long.valueOf(String.valueOf(value))));
+					preprocessing = NERLinnaeusPreProcessingEnum.StopWords;
+				}
 				if(keyString.equals(GlobalNames.sizeOfNonAnnotatedSmallWords))
 					sizeOfSmallWordsToBeNotAnnotated = Integer.valueOf(String.valueOf(value));
 			}
