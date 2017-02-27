@@ -112,7 +112,7 @@ public class PMCReader {
 				String fullText = fullTextContent;
 				if(!abstractText.isEmpty())
 					fullText =  abstractText + " " +fullText;
-				if(title.isEmpty())
+				if(!title.isEmpty())
 					fullText = title +  ". " + fullText;
 				String link = "";
 				IPublication publication = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,

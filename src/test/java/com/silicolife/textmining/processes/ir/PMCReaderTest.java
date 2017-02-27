@@ -19,7 +19,9 @@ public class PMCReaderTest {
 		for(IPublication pub : pubs)
 		{
 			System.out.println(pub.getTitle());
+			System.out.println();
 			System.out.println(pub.getAbstractSection());
+			System.out.println();
 			System.out.println(pub.getFullTextContent());
 
 		}
