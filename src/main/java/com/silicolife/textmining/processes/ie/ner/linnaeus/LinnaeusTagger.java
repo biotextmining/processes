@@ -67,6 +67,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.UnionMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.VariantDictionaryMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
+import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.LinnauesExecutionData;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusConfigurationImpl;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.NERLinnaeusPreProcessingEnum;
 
@@ -91,6 +92,20 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 	{	
 		stop = false;
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
+		LinnauesExecutionData linnauesExecutionData = loadExecutionData(linnauesConfiguration);
+		Matcher matcher = getMatcher(linnauesConfiguration,linnauesExecutionData.getElements());
+		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		int size = (int) (long) publicationsPaginator.getPublicationsCount();
+		int counter = 0; 
+		while(publicationsPaginator.hasNextDocumentSetPage()){
+			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
+			DocumentIterator documents = getDocumentIterator(configuration, configuration.getIEProcess(), documentSet);
+			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime,linnauesExecutionData, matcher, report, documents, size, counter);
+		}
+	}
+	
+	protected LinnauesExecutionData loadExecutionData(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException
+	{
 		nerlogger.info("Start to get resources elements on DB");
 		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
 		HandRules rules = new HandRules(elementsToNER);
@@ -101,18 +116,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
 		Set<String> stopwords = loadStopWords(linnauesConfiguration);
 		nerlogger.info("Finished to get resources elements on DB");
-		Matcher matcher = getMatcher(linnauesConfiguration,elements);
-		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-		int size = (int) (long) publicationsPaginator.getPublicationsCount();
-		int counter = 0; 
-		while(publicationsPaginator.hasNextDocumentSetPage()){
-			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
-			DocumentIterator documents = getDocumentIterator(configuration, configuration.getIEProcess(), documentSet);
-			
-			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
-					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
-					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
-		}
+		return new LinnauesExecutionData(elementsToNER, rules, elements, resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, stopwords);
 	}
 	
 //	public void resumeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException {
@@ -151,16 +155,14 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		return documents;
 	}
 	
-	private ElementToNer getElementsToNER(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
+	protected  ElementToNer getElementsToNER(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
 		elementsToNER.processingINfo();
 		return elementsToNER;
 	}
 
 	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,INERPosProccessAddEntities nerPosProccessAddEntities,
-			long startime, ElementToNer elementsToNER, HandRules rules, Map<Long, Long> resourceMapClass,
-			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs, 
-			Map<Long, String> mapPossibleResourceIDsToTermString, Set<String> stopwords, Matcher matcher, INERProcessReport report,
+			long startime,LinnauesExecutionData linnaeusExecutionData, Matcher matcher, INERProcessReport report,
 			DocumentIterator documents, Integer publicationsSize, Integer counter) throws ANoteException {
 		
 		ConcurrentMatcher tm = new ConcurrentMatcher(matcher,documents);
@@ -178,10 +180,9 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 				AnnotationPositions positions = new AnnotationPositions();
 				AnnotationPositions positionsRules = new AnnotationPositions();
 
-				addMatchesToAnnotationPositions(linnauesConfiguration, resourceMapClass, resourceIDMapResource,
-						maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, stopwords, td,
+				addMatchesToAnnotationPositions(linnauesConfiguration, linnaeusExecutionData, td,
 						positions);
-				applyHandRulesToAnnotationPositions(elementsToNER, rules, td, positionsRules);
+				applyHandRulesToAnnotationPositions(linnaeusExecutionData, td, positionsRules);
 				saveAnnotatedDocumentWithAnnotationPositions(linnauesConfiguration, processToRun, report, nerPosProccessAddEntities, td, id,
 						positions,positionsRules);
 			}
@@ -196,11 +197,13 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		return counter;
 	}
 
-	private Set<String> loadStopWords(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
+
+
+	public static Set<String> loadStopWords(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		Set<String> stopwords = new HashSet<String>();
 		if(linnauesConfiguration.getStopWords()!=null)
 		{
-			ILexicalWords st = getStopWords(linnauesConfiguration);
+			ILexicalWords st = linnauesConfiguration.getStopWords();
 			Set<String> stopwordsTmp = st.getLexicalWords().keySet();
 			if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
 				stopwords = stopwordsTmp;
@@ -220,31 +223,26 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		return stopwords;
 	}
 	
-	protected ILexicalWords getStopWords(INERLinnaeusConfiguration linnauesConfiguration){
-		return linnauesConfiguration.getStopWords();
-	}
-
-	private void addMatchesToAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
-			Map<Long, Long> resourceMapClass, Map<Long, IResourceElement> resourceIDMapResource,
-			Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
-			Map<Long, String> mapPossibleResourceIDsToTermString, Set<String> stopwords, TaggedDocument td,
+	protected void addMatchesToAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
+			LinnauesExecutionData linnauesExecutionData , TaggedDocument td,
 			AnnotationPositions positions) throws ANoteException {
 		List<Mention> matches = td.getAllMatches();
 		for(Mention men:matches){
 			String text = men.getText();
-			if(!isInStopWords(stopwords, text, linnauesConfiguration)){
+			if(!isInStopWords(linnauesExecutionData.getStopwords(), text, linnauesConfiguration)){
 				if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS)){
-					addAnnotationWithCaseSensitive(resourceMapClass, resourceIDMapResource, positions, men, text);
+					addAnnotationWithCaseSensitive(linnauesExecutionData.getResourceMapClass(), linnauesExecutionData.getResourceIDMapResource(), positions, men, text);
 				}else{
-					addAnnotationWithoutCaseSensitive(resourceMapClass, resourceIDMapResource,
-							maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, positions, men,
+					addAnnotationWithoutCaseSensitive(linnauesExecutionData.getResourceMapClass(), linnauesExecutionData.getResourceIDMapResource(),
+							linnauesExecutionData.getMaplowerCaseToPossibleResourceIDs(), linnauesExecutionData.getMapPossibleResourceIDsToTermString(), positions, men,
 							text);
 				}
 			}
 		}
 	}
 
-	private void addAnnotationWithCaseSensitive(Map<Long, Long> resourceMapClass,
+
+	protected void addAnnotationWithCaseSensitive(Map<Long, Long> resourceMapClass,
 			Map<Long, IResourceElement> resourceIDMapResource, AnnotationPositions positions, Mention men, String text)
 					throws ANoteException {
 		long dicEntityID = Long.valueOf(men.getIds()[0]);
@@ -260,7 +258,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		return klass;
 	}
 
-	private void addAnnotationWithoutCaseSensitive(Map<Long, Long> resourceMapClass,
+	private void  addAnnotationWithoutCaseSensitive(Map<Long, Long> resourceMapClass,
 			Map<Long, IResourceElement> resourceIDMapResource, Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs,
 			Map<Long, String> mapPossibleResourceIDsToTermString, AnnotationPositions positions, Mention men,
 			String text) throws ANoteException {
@@ -283,7 +281,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		}
 	}
 
-	private boolean isInStopWords(Set<String> stopwords, String text, INERLinnaeusConfiguration linnauesConfiguration){
+	private static boolean isInStopWords(Set<String> stopwords, String text, INERLinnaeusConfiguration linnauesConfiguration){
 		if(!stopwords.isEmpty()){
 			if(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.INALLWORDS) ||
 					(linnauesConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS) 
@@ -303,15 +301,14 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 	}
 
 
-	private void applyHandRulesToAnnotationPositions(ElementToNer elementsToNER, HandRules rules, TaggedDocument td,
+	protected void applyHandRulesToAnnotationPositions(LinnauesExecutionData linnaeusExecutionData, TaggedDocument td,
 			AnnotationPositions positions) throws ANoteException {
-		if(!stop && elementsToNER.getRules()!=null && !elementsToNER.getRules().isEmpty())
+		if(linnaeusExecutionData.getElementsToNER().getRules()!=null && !linnaeusExecutionData.getElementsToNER().getRules().isEmpty())
 		{
-			if(rules != null && !stop)
-				rules.applyRules(td.getOriginal().getRawContent(), positions);	
-		}
+			if(linnaeusExecutionData.getRules() != null)
+				linnaeusExecutionData.getRules().applyRules(td.getOriginal().getRawContent(), positions);	
+		}		
 	}
-
 
 
 	private void saveAnnotatedDocumentWithAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
@@ -354,7 +351,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 
 
 
-	private List<IEntityAnnotation> correctEntitiesAfterNormalization(INERLinnaeusConfiguration linnauesConfiguration,
+	protected List<IEntityAnnotation> correctEntitiesAfterNormalization(INERLinnaeusConfiguration linnauesConfiguration,
 			TaggedDocument td, List<IEntityAnnotation> entityAnnotations) {
 		if(linnauesConfiguration.isNormalized()){
 			Document linnausDocument = td.getOriginal();
@@ -422,7 +419,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 	 * @throws DatabaseLoadDriverException 
 	 * @throws SQLException 
 	 */
-	private Matcher getMatcher(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements) throws ANoteException{
+	protected  Matcher getMatcher(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements) throws ANoteException{
 		List<Matcher> matchers = new ArrayList<Matcher>();
 		if(!linnaeusConfiguration.getCaseSensitiveEnum().equals(NERCaseSensativeEnum.ONLYINSMALLWORDS)){
 			getMatchersForNoneSmallWordCaseSensitive(linnaeusConfiguration,elements, matchers);
@@ -439,7 +436,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		return matcher;
 	}
 
-	private void getMatchersForSmallWordCaseSensitive(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements, List<Matcher> matchers) {
+	private static void getMatchersForSmallWordCaseSensitive(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements, List<Matcher> matchers) {
 		List<String[]> biggerTermsToIdsMapList = new ArrayList<>();
 		List<String[]> smallTermsToIdsMapList = new ArrayList<>();
 		List<String> biggerTerms = new ArrayList<>();
@@ -465,7 +462,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		matchers.add(new VariantDictionaryMatcher(smallTermsToIdsMapList.toArray(new String[0][2]), smallTerms.toArray(new String[0]), false));
 	}
 
-	private void getMatchersForNoneSmallWordCaseSensitive(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements, List<Matcher> matchers) {
+	private static void getMatchersForNoneSmallWordCaseSensitive(INERLinnaeusConfiguration linnaeusConfiguration,List<IEntityAnnotation> elements, List<Matcher> matchers) {
 		String[][] termToIdsMapArray = new String[elements.size()][2] ;
 		String[] terms = new String[elements.size()];
 		int i=0;
