@@ -146,7 +146,7 @@ public class KineticRE implements IREProcess {
 		}
 	}
 
-	private List<IEventAnnotation> processDocument(IREKineticREConfiguration reConfiguration,
+	protected List<IEventAnnotation> processDocument(IREKineticREConfiguration reConfiguration,
 			List<IEntityAnnotation> entitiesdoc, IAnnotatedDocument annotdocNER) throws ANoteException {
 		List<IEventAnnotation> eventsDoc = new ArrayList<>();
 		String text = annotdocNER.getDocumentAnnotationText();

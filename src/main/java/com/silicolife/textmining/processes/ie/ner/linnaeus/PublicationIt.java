@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
+import com.silicolife.textmining.core.datastructures.documents.DocumentSetImpl;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
 import com.silicolife.textmining.core.datastructures.textprocessing.TermSeparator;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
@@ -39,6 +40,15 @@ public class PublicationIt implements DocumentIterator{
 		documentIt = documentSet.iterator();
 		this.process = process;
 		fetchNext();
+	}
+
+	public PublicationIt(ICorpus corpus, IAnnotatedDocument annotatedDocument,IIEProcess process) throws ANoteException {
+		this.corpus = corpus;
+		IDocumentSet documentSet = new DocumentSetImpl();
+		documentSet.addDocument(annotatedDocument.getId(), annotatedDocument);
+		documentIt = documentSet.iterator();
+		this.process = process;
+		fetchNext();	
 	}
 
 	@Override
@@ -95,15 +105,7 @@ public class PublicationIt implements DocumentIterator{
 	private Document convertAnoteDocumentToLinnaeus(IPublication anoteDocument) throws ANoteException {
 		if(anoteDocument instanceof IAnnotatedDocument){
 			String rawText = ((IAnnotatedDocument) anoteDocument).getDocumentAnnotationText();
-			String documentText = rawText;
-			if(process.getProperties().containsKey(GlobalNames.normalization))
-			{
-				if(Boolean.valueOf(process.getProperties().getProperty(GlobalNames.normalization)))
-				{
-					documentText = TermSeparator.termSeparator(rawText);
-				}
-			}
-			return new Document(String.valueOf(anoteDocument.getId()),null , null, documentText, rawText,
+			return new Document(String.valueOf(anoteDocument.getId()),null , null, rawText, rawText,
 					Text_raw_type.TEXT, ((IAnnotatedDocument) anoteDocument).getYeardate(), null, null, null, ((IAnnotatedDocument) anoteDocument).getVolume(),
 					((IAnnotatedDocument) anoteDocument).getIssue(), ((IAnnotatedDocument) anoteDocument).getPages(), null, null);
 		}
