@@ -79,7 +79,7 @@ public class ExportKineticResultsTOCSV {
 		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");		
 	}
 	
-	private void writeline(PrintWriter pw,IAnnotatedDocument docAnnot, IEventAnnotation ev,IREKineticREResultsExportConfiguration configuration) throws ANoteException, IOException {
+	protected void writeline(PrintWriter pw,IAnnotatedDocument docAnnot, IEventAnnotation ev,IREKineticREResultsExportConfiguration configuration) throws ANoteException, IOException {
 		REKineticConfigurationClasses classConfiguration = configuration.getREKineticConfigurationClasses();
 		String[] toWrite = new String[17];
 		List<IEntityAnnotation> allEntities = ev.getEntitiesAtLeft();
