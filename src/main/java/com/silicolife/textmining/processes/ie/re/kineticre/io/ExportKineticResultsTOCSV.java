@@ -113,7 +113,7 @@ public class ExportKineticResultsTOCSV {
 	}
 	
 	
-	private void writeHeaderLine(PrintWriter pw) {
+	protected void writeHeaderLine(PrintWriter pw) {
 		String[] toWrite = new String[17];
 		toWrite[0] = "Kinetic Parameter";
 		toWrite[1] = "Value";
