@@ -6,5 +6,8 @@ public interface IKineticREPipelineConfiguration extends INERConfiguration{
 	
 	public Integer getNCBITaxonomy();
 	public String getECNumber();
-	
+	public Integer getChEBI();
+	public void setNCBITaxonomy(Integer nCBITaxonomy);
+	public void setECNumber(String eCNumber);
+	public void setChEBI(Integer chEBI);
 }

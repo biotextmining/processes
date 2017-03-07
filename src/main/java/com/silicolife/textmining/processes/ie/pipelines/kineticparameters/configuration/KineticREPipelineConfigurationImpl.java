@@ -10,25 +10,12 @@ public class KineticREPipelineConfigurationImpl extends NERConfigurationImpl imp
 	
 	private Integer NCBITaxonomy;
 	private String ECNumber;
+	private Integer ChEBI;
 	
 	public KineticREPipelineConfigurationImpl()
 	{
 		super();
 		setConfigurationUID(processUID);
-	}
-
-	public KineticREPipelineConfigurationImpl(Integer ncbiTaxonomy)
-	{
-		this();
-		this.NCBITaxonomy = ncbiTaxonomy;
-		this.ECNumber = null;
-	}
-	
-	public KineticREPipelineConfigurationImpl(String eCNumber)
-	{
-		this();
-		this.NCBITaxonomy = null;
-		this.ECNumber = eCNumber;
 	}
 
 	@Override
@@ -56,6 +43,14 @@ public class KineticREPipelineConfigurationImpl extends NERConfigurationImpl imp
 
 	public void setECNumber(String eCNumber) {
 		ECNumber = eCNumber;
+	}
+
+	public Integer getChEBI() {
+		return ChEBI;
+	}
+
+	public void setChEBI(Integer chEBI) {
+		ChEBI = chEBI;
 	}
 
 	
