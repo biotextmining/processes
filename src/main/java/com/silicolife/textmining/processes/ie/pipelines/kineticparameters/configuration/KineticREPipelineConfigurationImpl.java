@@ -2,7 +2,6 @@ package com.silicolife.textmining.processes.ie.pipelines.kineticparameters.confi
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.process.ner.NERConfigurationImpl;
 
 public class KineticREPipelineConfigurationImpl extends NERConfigurationImpl implements IKineticREPipelineConfiguration{
@@ -10,11 +9,26 @@ public class KineticREPipelineConfigurationImpl extends NERConfigurationImpl imp
 	public final static String processUID = "kineticre.pipeline";
 	
 	private Integer NCBITaxonomy;
+	private String ECNumber;
+	
+	public KineticREPipelineConfigurationImpl()
+	{
+		super();
+		setConfigurationUID(processUID);
+	}
 
 	public KineticREPipelineConfigurationImpl(Integer ncbiTaxonomy)
 	{
-		super();
+		this();
 		this.NCBITaxonomy = ncbiTaxonomy;
+		this.ECNumber = null;
+	}
+	
+	public KineticREPipelineConfigurationImpl(String eCNumber)
+	{
+		this();
+		this.NCBITaxonomy = null;
+		this.ECNumber = eCNumber;
 	}
 
 	@Override
@@ -24,7 +38,6 @@ public class KineticREPipelineConfigurationImpl extends NERConfigurationImpl imp
 
 	@Override
 	public void setConfiguration(Object obj) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -33,15 +46,20 @@ public class KineticREPipelineConfigurationImpl extends NERConfigurationImpl imp
 		return NCBITaxonomy;
 	} 
 
-	@Override
-	@JsonIgnore
-	public String getUniqueProcessID() {
-		return processUID ;
-	}
-
 	public void setNCBITaxonomy(Integer nCBITaxonomy) {
 		NCBITaxonomy = nCBITaxonomy;
 	}
+
+	public String getECNumber() {
+		return ECNumber;
+	}
+
+	public void setECNumber(String eCNumber) {
+		ECNumber = eCNumber;
+	}
+
+	
+
 
 
 }

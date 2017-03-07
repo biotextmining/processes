@@ -5,5 +5,6 @@ import com.silicolife.textmining.core.interfaces.process.IE.ner.INERConfiguratio
 public interface IKineticREPipelineConfiguration extends INERConfiguration{
 	
 	public Integer getNCBITaxonomy();
+	public String getECNumber();
 	
 }
