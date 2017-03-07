@@ -35,11 +35,34 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 	}
 	
 	
-	public IOrganismKineticInformationReport retrieved(int ncbiTaxonomy) throws ANoteException
+	public IOrganismKineticInformationReport retrievedByOrganism(int ncbiTaxonomy) throws ANoteException
 	{
 		logger.info("Process Kinetic Information for NCBI TAxonomy :"+ncbiTaxonomy);
 		IResourceElement resourceElementOrganism = OrganismUtils.getOrganismResourceElement(ncbiTaxonomy);
 		logger.info("NCBI TAxonomy Name:"+resourceElementOrganism.getTerm());
+		return findKineticParametersForResourceElement(resourceElementOrganism);
+	}
+	
+	public IOrganismKineticInformationReport retrievedByEnzyme(String ecNumber) throws ANoteException
+	{
+		logger.info("Process Kinetic Information for Enzyme :"+ecNumber);
+		IResourceElement resourceElementOrganism = OrganismUtils.getEnzymeResourceElement(ecNumber);
+		logger.info("Enzyme Name:"+resourceElementOrganism.getTerm());
+		findKineticParametersForResourceElement(resourceElementOrganism);
+		return null;
+	}
+	
+	public IOrganismKineticInformationReport retrievedByCompound(int chebiID) throws ANoteException
+	{
+		logger.info("Process Kinetic Information for Enzyme :"+chebiID);
+		IResourceElement resourceElementOrganism = OrganismUtils.getCompoundResourceElement(chebiID);
+		logger.info("Enzyme Name:"+resourceElementOrganism.getTerm());
+		findKineticParametersForResourceElement(resourceElementOrganism);
+		return null;
+	}
+
+	private IOrganismKineticInformationReport findKineticParametersForResourceElement(IResourceElement resourceElementOrganism)
+			throws ANoteException {
 		Set<IResourceElement> organisms = new HashSet<>();
 		organisms.add(resourceElementOrganism);
 		List<Long> publicationIdsWithOrganism = InitConfiguration.getDataAccess().getPublicationsIdsByResourceElements(organisms);
@@ -57,6 +80,8 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 		}
 		return null;
 	}
+	
+
 
 	public Set<IIEProcess> getProcesses() {
 		return processes;

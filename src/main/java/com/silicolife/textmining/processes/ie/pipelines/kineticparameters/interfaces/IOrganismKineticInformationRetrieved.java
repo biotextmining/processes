@@ -3,6 +3,9 @@ package com.silicolife.textmining.processes.ie.pipelines.kineticparameters.inter
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 
 public interface IOrganismKineticInformationRetrieved {
-	public IOrganismKineticInformationReport retrieved(int ncbiTaxonomy) throws ANoteException;
+	public IOrganismKineticInformationReport retrievedByOrganism(int ncbiTaxonomy) throws ANoteException;
+	public IOrganismKineticInformationReport retrievedByEnzyme(String ecNumber) throws ANoteException;
+	public IOrganismKineticInformationReport retrievedByCompound(int chebiID) throws ANoteException;
+
 
 }
