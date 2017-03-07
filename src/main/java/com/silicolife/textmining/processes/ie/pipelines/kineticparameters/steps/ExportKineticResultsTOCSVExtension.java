@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.ie.pipelines.kineticparameters.steps;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,8 +20,13 @@ public class ExportKineticResultsTOCSVExtension extends ExportKineticResultsTOCS
 	{
 		this.configuration=configuration;
 		try {
+			File file = new File(configuration.getExportFile());	
+			if(!file.exists())
+				file.createNewFile();
 			pw = new PrintWriter(configuration.getExportFile());
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		super.writeHeaderLine(pw);
