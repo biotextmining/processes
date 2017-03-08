@@ -24,12 +24,12 @@ public class ExportKineticResultsTOCSVExtension extends ExportKineticResultsTOCS
 			if(!file.exists())
 				file.createNewFile();
 			pw = new PrintWriter(configuration.getExportFile());
+			super.writeHeaderLine(pw);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		super.writeHeaderLine(pw);
 	}
 	
 	public void writeEvent(IAnnotatedDocument docAnnot, IEventAnnotation ev) throws ANoteException {				

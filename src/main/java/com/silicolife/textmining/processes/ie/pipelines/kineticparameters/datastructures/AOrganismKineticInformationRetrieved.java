@@ -37,7 +37,7 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 	
 	public IOrganismKineticInformationReport retrievedByOrganism(int ncbiTaxonomy) throws ANoteException
 	{
-		logger.info("Process Kinetic Information for NCBI TAxonomy :"+ncbiTaxonomy);
+		logger.info("Process Kinetic Information for Organism (NCBI TAxonomy) :"+ncbiTaxonomy);
 		IResourceElement resourceElementOrganism = OrganismUtils.getOrganismResourceElement(ncbiTaxonomy);
 		logger.info("NCBI TAxonomy Name:"+resourceElementOrganism.getTerm());
 		return findKineticParametersForResourceElement(resourceElementOrganism);
@@ -45,7 +45,7 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 	
 	public IOrganismKineticInformationReport retrievedByEnzyme(String ecNumber) throws ANoteException
 	{
-		logger.info("Process Kinetic Information for Enzyme :"+ecNumber);
+		logger.info("Process Kinetic Information for Enzyme (ECNumber):"+ecNumber);
 		IResourceElement resourceElementOrganism = OrganismUtils.getEnzymeResourceElement(ecNumber);
 		logger.info("Enzyme Name:"+resourceElementOrganism.getTerm());
 		findKineticParametersForResourceElement(resourceElementOrganism);
@@ -54,9 +54,9 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 	
 	public IOrganismKineticInformationReport retrievedByCompound(int chebiID) throws ANoteException
 	{
-		logger.info("Process Kinetic Information for Enzyme :"+chebiID);
+		logger.info("Process Kinetic Information for Compound (ChEBI):"+chebiID);
 		IResourceElement resourceElementOrganism = OrganismUtils.getCompoundResourceElement(chebiID);
-		logger.info("Enzyme Name:"+resourceElementOrganism.getTerm());
+		logger.info("Compound Name:"+resourceElementOrganism.getTerm());
 		findKineticParametersForResourceElement(resourceElementOrganism);
 		return null;
 	}

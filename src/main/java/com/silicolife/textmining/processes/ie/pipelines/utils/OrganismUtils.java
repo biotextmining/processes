@@ -13,9 +13,9 @@ import com.silicolife.textmining.processes.ie.pipelines.utils.exception.Organism
 
 public class OrganismUtils {
 	
-	public static String ncbitaxonomySourceDefault = "Ncbi Taxonomy";
-	public static String brendaSourceDefault = "Brenda";
-	public static String chebiSourceDefault = "Chebi";
+	private static String ncbitaxonomySourceDefault = "Ncbi Taxonomy";
+	private static String brendaSourceDefault = "Brenda";
+	private static String chebiSourceDefault = "Chebi";
 
 	
 	public static IResourceElement getOrganismResourceElement(int ncbiTaxonomy) throws ANoteException
@@ -70,7 +70,7 @@ public class OrganismUtils {
 		List<ISource> listSources = InitConfiguration.getDataAccess().getAllSources();
 		for(ISource source:listSources)
 		{
-			if(source.getSource().equals(ncbitaxonomySourceDefault))
+			if(source.getSource().equals(brendaSourceDefault))
 			{
 				return source;
 			}
