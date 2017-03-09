@@ -67,6 +67,7 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 		organisms.add(resourceElementOrganism);
 		List<Long> publicationIdsWithOrganism = InitConfiguration.getDataAccess().getPublicationsIdsByResourceElements(organisms);
 		int total = publicationIdsWithOrganism.size()*processes.size();
+		logger.info("Documents To Process:"+total);
 		int step = 0;
 		for(IIEProcess process: getProcesses()){
 			for(Long publicationIdWithOrganism: publicationIdsWithOrganism){

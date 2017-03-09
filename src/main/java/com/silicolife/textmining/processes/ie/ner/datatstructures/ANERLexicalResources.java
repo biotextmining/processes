@@ -110,13 +110,14 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 	public INERProcessReport updateResumeNER(INERConfiguration configuration) throws ANoteException, InvalidConfigurationException
 	{
 		validateUpdateResumeConfiguration(configuration);
-		IIEProcess processToResume = configuration.getIEProcess();
+		IIEProcess processToUpdateResume = configuration.getIEProcess();
 		nerlogger.info("Update Resume NER");
-		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToResume);
-		ICorpusPublicationPaginator publicationsPaginator = getOutdatedPublicationsPaginator(processToResume);
+		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToUpdateResume);
+		ICorpusPublicationPaginator publicationsPaginator = getOutdatedPublicationsPaginator(processToUpdateResume);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessRemoveExistentEntitiesAddEntitiesImpl();
-		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
+		INERConfiguration processConfiguration = getProcessConfiguration(processToUpdateResume,configuration.getProcessRunStatus());
+		processConfiguration.setIEProcess(processToUpdateResume);
 		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startime);
