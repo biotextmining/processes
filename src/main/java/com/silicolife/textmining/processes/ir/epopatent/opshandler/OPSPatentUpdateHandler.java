@@ -10,6 +10,7 @@ import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -40,8 +41,10 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 	public Boolean buildResponse(InputStream response, String responseMessage,Map<String, List<String>> headerFields, int status)throws ResponseHandlingException {
 		try {
 			Document doc = OPSUtils.createJDOMDocument(response);
-			NodeList extchangeNode = doc.getElementsByTagName("exchange-document");
-			if(extchangeNode.getLength() > 0)
+			NodeList extchangeNode = doc.getElementsByTagName("exchange-document");		
+
+
+			if(extchangeNode.getLength() > 0 && !findStatus(extchangeNode.item(0)))
 			{
 				updatePublication(extchangeNode.item(0));
 				return true;
@@ -50,6 +53,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 			{
 				return false;
 			}
+
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -59,6 +63,23 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		}
 		return false;
 	}
+
+
+	private boolean findStatus(Node item){
+		NamedNodeMap nodeAttributes = item.getAttributes();
+		try{
+			Node statusNode = nodeAttributes.getNamedItem("status");
+			if (statusNode.getTextContent().equalsIgnoreCase("not found")){
+				publication.setNotes("NF" + publication.getNotes());
+				return true;
+			}
+		}catch(Exception e){
+			return false;
+		}
+		return false;
+	}
+
+
 
 	private void updatePublication(Node item) {
 		String epodocID = getEpoDoc(item);
