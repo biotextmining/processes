@@ -94,6 +94,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		IPublication publiction = mapPatentIDPublication.get(patentIDOriginal);
 		try {
 			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified);
+			OPSUtils.getPatentFamily(tokenaccess, publiction, patentIDModified);
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e) {
 			return false;
