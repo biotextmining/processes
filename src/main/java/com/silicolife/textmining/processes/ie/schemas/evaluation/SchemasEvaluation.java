@@ -219,16 +219,18 @@ public class SchemasEvaluation implements INERSchemasEvaluation,IRESchemasEvalua
 		{
 
 			// Compare clues
-			if(eventGold.getEventClue().isEmpty() && !eventGold.getEventClue().equals(toCompareEvent.getEventClue()))
+			if(eventGold.getEventClue()!= null && toCompareEvent.getEventClue()!= null 
+					&& eventGold.getEventClue().isEmpty() && !eventGold.getEventClue().equals(toCompareEvent.getEventClue()))
 			{
 				return false;
 			}
-			else if(toCompareEvent.getEventClue().isEmpty() && !eventGold.getEventClue().equals(toCompareEvent.getEventClue()))
+			else if(eventGold.getEventClue()!= null && toCompareEvent.getEventClue()!= null &&
+					toCompareEvent.getEventClue().isEmpty() && !eventGold.getEventClue().equals(toCompareEvent.getEventClue()))
 			{
 				return false;
 			}
 			
-			if( (eventGold.getEventClue().isEmpty() && toCompareEvent.getEventClue().isEmpty()) 
+			if( (eventGold.getEventClue()!= null && toCompareEvent.getEventClue()!= null & eventGold.getEventClue().isEmpty() && toCompareEvent.getEventClue().isEmpty()) 
 				|| ((eventGold.getStartOffset() == eventGold.getEndOffset()) && (toCompareEvent.getStartOffset() == toCompareEvent.getEndOffset())))
 			{
 				if(sameEntityFinder(getAllEntitiesFromEvent(eventGold), getAllEntitiesFromEvent(toCompareEvent))){
