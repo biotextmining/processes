@@ -76,7 +76,8 @@ public class BingUtils {
 			totalResults =new Integer(newJson.get("totalEstimatedMatches").toString());
 
 		}catch (IOException e) {
-			throw new ANoteException(e);
+//			throw new ANoteException(e);
+			totalResults=0;
 		}
 		return totalResults;
 	}
