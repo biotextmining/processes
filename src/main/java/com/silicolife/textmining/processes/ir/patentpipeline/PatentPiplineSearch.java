@@ -269,10 +269,6 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			
 			//if already exist on query or on other source that publication will be ignored 
 			if(patentidsAlreadyExistOnQuery.contains(pubpatentID)){}
-
-			//if already exist on the documents to insert (resultant from the external IDs adding, it will be ignored
-			else if (documentsThatAlreayInDB.contains(pubpatentID)){
-			}
 						
 			// Test if patentID already exists in System
 			else if(patentidsAlreadyExistOnDB.containsKey(pubpatentID))
@@ -304,22 +300,24 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 				report.incrementDocumentRetrieval(1);
 				for (String externalID:pubExternalIDs){
 					if (!externalID.equalsIgnoreCase(pubpatentID) && patentMap.keySet().contains(externalID)){
-						//get the identifier from the added publication
-						long majorPubID = pub.getId();
+						//remove the previous entry on the dataset to be added
+						documentsThatAlreayInDB.remove(pub);
 						//get each external publication
-						pub = patentMap.get(externalID);
-						//set the ID of each external pub as the major pub
-						pub.setId(majorPubID);
+						IPublication pubExternal = patentMap.get(externalID);
+						// get patent abstract to compare after this process with the final abstract section
+						String pubAbstract = pub.getAbstractSection();					
 						//add the publication into the patent Ids alredy existent on DB set
 						patentidsAlreadyExistOnDB.put(externalID, pub.getId());
-						//add the pub into the list to be added to query (the major pub is already ready to be added)
-						documentsThatAlreayInDB.add(pub);
-						// Add new Document Relevance - Default
-						query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
-						// Test is abstract is available an increase report
-						if(!pub.getAbstractSection().isEmpty()){
+						// Add if to The added ids
+						alreadyAdded.add(patentidsAlreadyExistOnDB.get(externalID));
+						//update publication fields
+						pub=updatePublication(pub, pubExternal);						
+						// Test is abstract is available and if was not added previously
+						if(!pub.getAbstractSection().isEmpty() && pubAbstract.isEmpty()){
 							abs_count ++;}
-						report.incrementDocumentRetrieval(1);
+//						report.incrementDocumentRetrieval(1);
+						//add the updated pub into the list to be added to query					
+						documentsThatAlreayInDB.add(pub);
 					}
 				}
 			}
@@ -348,7 +346,25 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 	}
 
+	protected IPublication updatePublication (IPublication pub1, IPublication pub2){
+		if (pub1.getAbstractSection().isEmpty() || pub1.getAbstractSection().length()<pub2.getAbstractSection().length()){
+			pub1.setAbstractSection(pub2.getAbstractSection());			
+		}
+		if (pub1.getAuthors().isEmpty() || pub1.getAuthors().length()<pub2.getAuthors().length()){
+			pub1.setAuthors(pub2.getAuthors());			
+		}
+		if (pub1.getTitle().isEmpty() || pub1.getTitle().length()<pub2.getTitle().length()){
+			pub1.setTitle(pub2.getTitle());			
+		}
+		if (pub1.getYeardate().isEmpty() || pub1.getYeardate().length()<pub2.getYeardate().length()){
+			pub1.setYeardate(pub2.getYeardate());			
+		}
+		return pub1;
 
+	}
+	
+	
+	
 	protected void increaseStep(){
 		if (actualProcessStep==1){
 			logger.info("Patent Retrieval IDs pipeline started");
