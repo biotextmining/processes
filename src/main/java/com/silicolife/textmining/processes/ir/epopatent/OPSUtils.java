@@ -41,6 +41,7 @@ import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfigu
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.AutenticationHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentClaimsHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentDescriptionHandler;
+import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentFamilyHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentIDSearchHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentOwnersHandler;
@@ -62,11 +63,11 @@ public class OPSUtils {
 	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio/?q=";
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
 	private static String generalURL = "http://ops.epo.org/" + version + "/rest-services/";
+	private static String publicationFamily = "http://ops.epo.org/" + version + "/rest-services/family/publication/epodoc/";
 
 	private static HTTPClient client = new HTTPClient();
 
 	public static String postAuth(String autentication) throws ConnectionException, RedirectionException, ClientErrorException, ServerErrorException, ResponseHandlingException {
-
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("Authorization", "Basic " + autentication);
 		headers.put("Content-Type", "application/x-www-form-urlencoded");
@@ -85,6 +86,23 @@ public class OPSUtils {
 		return pubs;
 	}
 
+
+	public static void getPatentFamily(String tokenaccess, IPublication pub, String patentID) {
+		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		String urlPatentDescritpion = publicationFamily + patentID;
+		// Get patent family Info
+		try {
+			client.get(urlPatentDescritpion, headers, new OPSPatentFamilyHandler(pub));
+		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+				| ResponseHandlingException e) {
+		}
+		
+	}
+	
+	
 	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
@@ -95,7 +113,12 @@ public class OPSUtils {
 		// Get Biblio Info
 		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
 		// Try to add claims and description to abstract
-		updateAbstractwithDescritionandclaims(tokenaccess, publiction);
+		if (!publiction.getNotes().startsWith("NF")){//STATUS - not found
+			updateAbstractwithDescritionandclaims(tokenaccess, publiction);
+		}
+		else{
+			publiction.setNotes(publiction.getNotes().substring(2, publiction.getNotes().length()));//return to the previous note state
+		}
 	}
 
 	public static String getPatentOwners(String tokenaccess,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
@@ -152,10 +175,21 @@ public class OPSUtils {
 			int intEndAbstarct = newAbstract.length();
 			String descritionconnection = " DESCRIPTION: ";
 			int startdescritpion = intEndAbstarct + 1;
-			newAbstract = newAbstract + descritionconnection + description;
-			int enddescritpion = newAbstract.length();
-			IPublicationField publicationFieldDescription = new PublicationFieldImpl(startdescritpion, enddescritpion, "Description", PublicationFieldTypeEnum.abstracttext);
-			pub.getPublicationFields().add(publicationFieldDescription);
+			if (returnIntPublicationField(pub,"Description")!=-1){
+				if (verifyMinorPublicationFieldLenght (pub,"Description",description)){
+					newAbstract = newAbstract + descritionconnection + description;
+					int enddescritpion = newAbstract.length();
+					IPublicationField publicationFieldDescription = new PublicationFieldImpl(startdescritpion, enddescritpion, "Description", PublicationFieldTypeEnum.abstracttext);
+					pub.getPublicationFields().remove(returnIntPublicationField(pub, "Description"));
+					pub.getPublicationFields().add(publicationFieldDescription);
+				}
+			}
+			else{
+				newAbstract = newAbstract + descritionconnection + description;
+				int enddescritpion = newAbstract.length();
+				IPublicationField publicationFieldDescription = new PublicationFieldImpl(startdescritpion, enddescritpion, "Description", PublicationFieldTypeEnum.abstracttext);
+				pub.getPublicationFields().add(publicationFieldDescription);	
+			}
 		}
 		String urlPatentClains = publicationDetails + patent + "/claims";
 		String claims = null;
@@ -173,13 +207,49 @@ public class OPSUtils {
 			int intEndAbstarct = newAbstract.length();
 			String claimsconnection = " CLAIMS: ";
 			int startclaims = intEndAbstarct +1;
-			newAbstract = newAbstract +  claimsconnection + claims;
-			int endclaims = newAbstract.length();
-			IPublicationField publicationFieldClaims = new PublicationFieldImpl(startclaims, endclaims, "Claims", PublicationFieldTypeEnum.abstracttext);
-			pub.getPublicationFields().add(publicationFieldClaims);
-
+			if (returnIntPublicationField(pub,"Claims")!=-1){
+				if (verifyMinorPublicationFieldLenght (pub,"Claims",claims)){
+					newAbstract = newAbstract +  claimsconnection + claims;
+					int endclaims = newAbstract.length();
+					IPublicationField publicationFieldClaims = new PublicationFieldImpl(startclaims, endclaims, "Claims", PublicationFieldTypeEnum.abstracttext);	
+					pub.getPublicationFields().remove(returnIntPublicationField(pub, "Claims"));
+					pub.getPublicationFields().add(publicationFieldClaims);
+				}
+			}
+			else{
+				newAbstract = newAbstract +  claimsconnection + claims;
+				int endclaims = newAbstract.length();
+				IPublicationField publicationFieldClaims = new PublicationFieldImpl(startclaims, endclaims, "Claims", PublicationFieldTypeEnum.abstracttext);	
+				pub.getPublicationFields().add(publicationFieldClaims);
+			}
 		}
 		pub.setAbstractSection(newAbstract);
+	}
+
+	private static int returnIntPublicationField(IPublication pub, String name){
+		List<IPublicationField> fields = pub.getPublicationFields();
+		for (IPublicationField field:fields){
+			if (field.getName().equalsIgnoreCase(name)){
+				return fields.indexOf(field);
+			}
+		}
+		return -1;
+	}
+
+	private static boolean verifyMinorPublicationFieldLenght (IPublication pub, String name, String newText){
+		List<IPublicationField> fields = pub.getPublicationFields();
+		int init=0;
+		int end=0;
+		for (IPublicationField field:fields){
+			if (field.getName().equalsIgnoreCase(name)){
+				init=(int) field.getStart();
+				end=(int) field.getEnd();
+				if ((end-init)<newText.length()){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public static File getPatentFullTextPDF(String tokenaccess, IPublication pub,String path) throws COSVisitorException, IOException, RedirectionException, ClientErrorException,
@@ -296,6 +366,7 @@ public class OPSUtils {
 		DocumentBuilder parser = factory.newDocumentBuilder();
 		Document doc = parser.parse(imputstream);
 		return doc;
+
 	}
 
 	public static String readString(InputStream is) throws IOException {
