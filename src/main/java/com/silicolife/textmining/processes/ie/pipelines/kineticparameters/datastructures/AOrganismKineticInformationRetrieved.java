@@ -16,12 +16,12 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
-import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.IOrganismKineticInformationReport;
-import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.IOrganismKineticInformationRetrieved;
+import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.IKineticInformationReport;
+import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.IKineticInformationRetrieved;
 import com.silicolife.textmining.processes.ie.pipelines.utils.OrganismUtils;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticREConfiguration;
 
-public abstract class  AOrganismKineticInformationRetrieved implements IOrganismKineticInformationRetrieved{
+public abstract class  AOrganismKineticInformationRetrieved implements IKineticInformationRetrieved{
 		
 	final static Logger logger = LoggerFactory.getLogger(OrganismKineticInformationRetrievedByDocumentSingleton.class);
 
@@ -35,7 +35,7 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 	}
 	
 	
-	public IOrganismKineticInformationReport retrievedByOrganism(int ncbiTaxonomy) throws ANoteException
+	public IKineticInformationReport retrievedByOrganism(int ncbiTaxonomy) throws ANoteException
 	{
 		logger.info("Process Kinetic Information for Organism (NCBI TAxonomy) :"+ncbiTaxonomy);
 		IResourceElement resourceElementOrganism = OrganismUtils.getOrganismResourceElement(ncbiTaxonomy);
@@ -43,25 +43,28 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 		return findKineticParametersForResourceElement(resourceElementOrganism);
 	}
 	
-	public IOrganismKineticInformationReport retrievedByEnzyme(String ecNumber) throws ANoteException
+	public IKineticInformationReport retrievedByEnzyme(String ecNumber) throws ANoteException
 	{
 		logger.info("Process Kinetic Information for Enzyme (ECNumber):"+ecNumber);
 		IResourceElement resourceElementOrganism = OrganismUtils.getEnzymeResourceElement(ecNumber);
 		logger.info("Enzyme Name:"+resourceElementOrganism.getTerm());
-		findKineticParametersForResourceElement(resourceElementOrganism);
-		return null;
+		return findKineticParametersForResourceElement(resourceElementOrganism);
 	}
 	
-	public IOrganismKineticInformationReport retrievedByCompound(int chebiID) throws ANoteException
+	public IKineticInformationReport retrievedByCompound(int chebiID) throws ANoteException
 	{
 		logger.info("Process Kinetic Information for Compound (ChEBI):"+chebiID);
 		IResourceElement resourceElementOrganism = OrganismUtils.getCompoundResourceElement(chebiID);
 		logger.info("Compound Name:"+resourceElementOrganism.getTerm());
-		findKineticParametersForResourceElement(resourceElementOrganism);
-		return null;
+		return findKineticParametersForResourceElement(resourceElementOrganism);
 	}
 
-	private IOrganismKineticInformationReport findKineticParametersForResourceElement(IResourceElement resourceElementOrganism)
+	public IKineticInformationReport retrievedByCompoundName(String compoundName) throws ANoteException
+	{
+		return null;
+	}
+	
+	private IKineticInformationReport findKineticParametersForResourceElement(IResourceElement resourceElementOrganism)
 			throws ANoteException {
 		Set<IResourceElement> organisms = new HashSet<>();
 		organisms.add(resourceElementOrganism);
@@ -79,7 +82,7 @@ public abstract class  AOrganismKineticInformationRetrieved implements IOrganism
 				logger.info(step + " / " + total);
 			}
 		}
-		return null;
+		return new KineticInformationReportImpl(resourceElementOrganism);
 	}
 	
 
