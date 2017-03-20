@@ -289,15 +289,11 @@ public class BioNLPA2A1CorpusLoader implements ICorpusEventAnnotationLoader{
 			List<IEntityAnnotation> left = new ArrayList<>();
 			left.add(annotation2);
 			IEventProperties eventProp = new EventPropertiesImpl();
-			Properties properties = new Properties();
-			properties.put(eventColumns[0], eventColumns[0]);
-			eventProp.setProperties(properties);
+			eventProp.setClassification(eventColumns[0]);
 			events.add(new EventAnnotationImpl(-1,-1,AnnotationType.re.name(),left,null, null, eventProp,true));
 		}else if(annotation2 != null){
 			IEventProperties eventProp = new EventPropertiesImpl();
-			Properties properties = new Properties();
-			properties.put(eventColumns[0], eventColumns[0]);
-			eventProp.setProperties(properties);
+			eventProp.setClassification(eventColumns[0]);
 			List<IEntityAnnotation> left = new ArrayList<>();
 			left.add(annotation2);
 			events.add(new EventAnnotationImpl(-1,-1,AnnotationType.re.name(),left,null,null,eventProp, true));
@@ -306,9 +302,7 @@ public class BioNLPA2A1CorpusLoader implements ICorpusEventAnnotationLoader{
 
 	private void saveEntitiesIntoEvent(String eventClass, IEntityAnnotation annotation1, IEntityAnnotation annotation2, List<IEventAnnotation> events){
 		IEventProperties eventProp = new EventPropertiesImpl();
-		Properties properties = new Properties();
-		properties.put(eventClass, eventClass);
-		eventProp.setProperties(properties);
+		eventProp.setClassification(eventClass);
 		if(annotation2.getStartOffset()>annotation1.getEndOffset()){
 			List<IEntityAnnotation> left = new ArrayList<>();
 			left.add(annotation1);
