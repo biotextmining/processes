@@ -113,7 +113,7 @@ public class ExportKineticResultsTOCSV {
 	}
 	
 	
-	protected void writeHeaderLine(PrintWriter pw) {
+	public static void writeHeaderLine(PrintWriter pw) {
 		String[] toWrite = new String[17];
 		toWrite[0] = "Kinetic Parameter";
 		toWrite[1] = "Value";
@@ -137,7 +137,7 @@ public class ExportKineticResultsTOCSV {
 		pw.println();
 	}
 	
-	public String toStringEntities(List<IEntityAnnotation> entityAnnotations)
+	private static String toStringEntities(List<IEntityAnnotation> entityAnnotations)
 	{
 		String result = new String();
 		for(IEntityAnnotation entity:entityAnnotations)
@@ -243,7 +243,7 @@ public class ExportKineticResultsTOCSV {
 	
 
 	
-	private String getLineToWrite(String[] toWrite) {
+	private static String getLineToWrite(String[] toWrite) {
 		String line = new String();
 		for(String value:toWrite)
 		{
