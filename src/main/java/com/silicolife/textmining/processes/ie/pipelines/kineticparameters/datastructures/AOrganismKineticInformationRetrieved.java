@@ -46,22 +46,25 @@ public abstract class  AOrganismKineticInformationRetrieved implements IKineticI
 	public IKineticInformationReport retrievedByEnzyme(String ecNumber) throws ANoteException
 	{
 		logger.info("Process Kinetic Information for Enzyme (ECNumber):"+ecNumber);
-		IResourceElement resourceElementOrganism = OrganismUtils.getEnzymeResourceElement(ecNumber);
-		logger.info("Enzyme Name:"+resourceElementOrganism.getTerm());
-		return findKineticParametersForResourceElement(resourceElementOrganism);
+		IResourceElement resourceElementEnzyme = OrganismUtils.getEnzymeResourceElement(ecNumber);
+		logger.info("Enzyme Name:"+resourceElementEnzyme.getTerm());
+		return findKineticParametersForResourceElement(resourceElementEnzyme);
 	}
 	
 	public IKineticInformationReport retrievedByCompound(int chebiID) throws ANoteException
 	{
 		logger.info("Process Kinetic Information for Compound (ChEBI):"+chebiID);
-		IResourceElement resourceElementOrganism = OrganismUtils.getCompoundResourceElement(chebiID);
-		logger.info("Compound Name:"+resourceElementOrganism.getTerm());
-		return findKineticParametersForResourceElement(resourceElementOrganism);
+		IResourceElement resourceElementCompound = OrganismUtils.getCompoundResourceElement(chebiID);
+		logger.info("Compound Name:"+resourceElementCompound.getTerm());
+		return findKineticParametersForResourceElement(resourceElementCompound);
 	}
 
 	public IKineticInformationReport retrievedByCompoundName(String compoundName) throws ANoteException
 	{
-		return null;
+		logger.info("Process Kinetic Information for Compound Name:"+compoundName);
+		IResourceElement resourceElementCompound = OrganismUtils.getCompoundResourceElement(compoundName);
+		logger.info("Compound Name:"+resourceElementCompound.getTerm());
+		return findKineticParametersForResourceElement(resourceElementCompound);
 	}
 	
 	private IKineticInformationReport findKineticParametersForResourceElement(IResourceElement resourceElementOrganism)

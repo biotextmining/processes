@@ -95,6 +95,30 @@ public class OrganismUtils {
 		return cadidateResults.getResourceElementsOrder().get(0);
 	}
 	
+	public static IResourceElement getCompoundResourceElement(String compoundName) throws ANoteException {
+		IResourceElementsFilter filter = new ResourceElementsFilterImpl();
+		filter.addSource(getChebiSource());
+		IResourceElementSet<IResourceElement> cadidateResults = InitConfiguration.getDataAccess().getResourceElementsFilteredByExactTerm(filter, compoundName);
+		if(cadidateResults.size() > 1)
+		{
+			throw new OrganismRetrievelException("Mutiples compounds found for Compound Name"+compoundName);
+		}
+		if(cadidateResults.size()==0)
+		{
+			IResourceElementSet<IResourceElement> cadidateResultsSynonym = InitConfiguration.getDataAccess().getResourceElementsFilteredByExactSynonym(filter, compoundName);
+			if(cadidateResultsSynonym.size()==0)
+			{
+				throw new OrganismRetrievelException("No compound found for Chebi Compound Name"+compoundName);
+			}
+			if(cadidateResultsSynonym.size() > 1)
+			{
+				throw new OrganismRetrievelException("Mutiples compounds found for Compound Name"+compoundName);
+			}
+			return cadidateResults.getResourceElementsOrder().get(0);
+		}
+		return cadidateResults.getResourceElementsOrder().get(0);
+	}
+	
 	private static ISource getChebiSource() throws ANoteException
 	{
 		List<ISource> listSources = InitConfiguration.getDataAccess().getAllSources();
@@ -107,5 +131,7 @@ public class OrganismUtils {
 		}
 		throw new OrganismRetrievelException("ChEBI Source are not available");
 	}
+
+
 
 }
