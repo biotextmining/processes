@@ -42,6 +42,7 @@ import com.silicolife.textmining.core.datastructures.exceptions.PubmedException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
+import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
@@ -399,7 +400,7 @@ public class PMSearch {
 		throw new InternetConnectionProblemException(new PubmedException("The PubMed search was not completed for server problems"));
 	}
 	
-	private static ESearchContext readXMLResultFileESearchContext(PostMethod post) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException{
+	private static ESearchContext readXMLResultFileESearchContext(PostMethod post) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, InternetConnectionProblemException{
 		InputStream stream = post.getResponseBodyAsStream();
 //		System.out.println(readString(stream));
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -409,6 +410,10 @@ public class PMSearch {
 	    XPath xPath = XPathFactory.newInstance().newXPath();
 	    XPathExpression expr = xPath.compile("//eSearchResult/Count");  // these 2 lines
 	    String count = (String) expr.evaluate(dDoc, XPathConstants.STRING);  // are different
+	    if(count==null || count.isEmpty() || !Utils.isIntNumber(count))
+	    {
+	    	throw new InternetConnectionProblemException("Parse file ESearchContext error");
+	    }
 	    expr = xPath.compile("//eSearchResult/QueryKey");  // these 2 lines
 	    String queryKey = (String) expr.evaluate(dDoc, XPathConstants.STRING);  // are different
 	    expr = xPath.compile("//eSearchResult/WebEnv");  // these 2 lines
