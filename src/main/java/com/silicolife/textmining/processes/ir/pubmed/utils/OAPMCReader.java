@@ -21,12 +21,19 @@ public class OAPMCReader {
 		this.stream = stream;
 	}
 	
-	public String getPDFURL() throws ANoteException{
+	/**
+	 * 
+	 * 
+	 * @return String[0] pdf link and String[1] tgz link
+	 * @throws ANoteException
+	 */
+	public String[] getPDFURL() throws ANoteException{
 		try{
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(getInputStream());
-			String url = getURLGivenFormat(doc,"pdf");
-//			String url = getURLGivenFormat(doc,"tgz");
-			return url;
+			String[] urls= new String[2];
+			urls[0] = getURLGivenFormat(doc,"pdf");
+			urls[1] = getURLGivenFormat(doc,"tgz");
+			return urls;
 
 		}catch(SAXException | IOException | ParserConfigurationException e){
 			throw new ANoteException(e);

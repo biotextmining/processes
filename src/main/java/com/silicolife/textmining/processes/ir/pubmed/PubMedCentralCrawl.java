@@ -45,7 +45,6 @@ public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.pmc.name());
 	private static HttpClient client;
 	private static String url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi";
-//	private static String url = "http://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?id=";
 	private boolean cancel ;
 	private ISimpleTimeLeft progress;
 	private Integer startRange;
@@ -171,7 +170,7 @@ public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 	}
 	
 	private static String retreivePMCPDF(String url, String filepath) throws IOException{
-		String urlChange = url.replace("ftp://", "http://");
+		String urlChange = url.replace("ftp://", "https://");
 		GetMethod getMehot = new GetMethod(urlChange);
 		int statusCode =  client.executeMethod(getMehot);
 		if (statusCode != HttpStatus.SC_OK) {
@@ -199,7 +198,7 @@ public class PubMedCentralCrawl extends IRProcessImpl implements IIRCrawl{
 	public static String readXMLResultFile(PostMethod post) throws ANoteException, IOException{
 		InputStream stream = post.getResponseBodyAsStream();
 		OAPMCReader reader = new OAPMCReader(stream);
-		return reader.getPDFURL();
+		return reader.getPDFURL()[0];
 	}
 
 	@Override
