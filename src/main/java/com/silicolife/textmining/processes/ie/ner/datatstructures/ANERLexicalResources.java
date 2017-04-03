@@ -76,6 +76,7 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessAddEntitiesImpl();
 		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
+		processConfiguration.setIEProcess(processToResume);
 		executeNER(processConfiguration, report, publicationsPaginator,nerPosProccessAddEntities);
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startime);
