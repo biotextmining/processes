@@ -29,7 +29,7 @@ import com.silicolife.textmining.core.interfaces.core.report.resources.IResource
 import com.silicolife.textmining.core.interfaces.resource.dictionary.IDicionaryFlatFilesLoader;
 import com.silicolife.textmining.core.interfaces.resource.dictionary.configuration.IDictionaryLoaderConfiguration;
 
-public class DrugBankFlatFileLoader extends DictionaryLoaderHelp implements IDicionaryFlatFilesLoader {
+public class DrugBankXMLFlatFileLoader extends DictionaryLoaderHelp implements IDicionaryFlatFilesLoader {
 	
 	private static final String drugbanksource = "Drug Bank";
 	private boolean cancel = false;
@@ -42,7 +42,7 @@ public class DrugBankFlatFileLoader extends DictionaryLoaderHelp implements IDic
 
 	public final static String propertyloadDrugPartner = "Drug Partner Load";
 	
-	public DrugBankFlatFileLoader()
+	public DrugBankXMLFlatFileLoader()
 	{
 		super(drugbanksource);
 	}
@@ -157,7 +157,7 @@ public class DrugBankFlatFileLoader extends DictionaryLoaderHelp implements IDic
 				IResourceManagerReport reportBatchInserted = super.executeBatch();
 				super.updateReport(reportBatchInserted, getReport());
 			}
-			if ((iterator+globalIterator % 100) == 0) {
+			if ((iterator % 100) == 0) {
 				memoryAndProgress(iterator+globalIterator+1, totalNumberOfNodes);
 			}
 		}
