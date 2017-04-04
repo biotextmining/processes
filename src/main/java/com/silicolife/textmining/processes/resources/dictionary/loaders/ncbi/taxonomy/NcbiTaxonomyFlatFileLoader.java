@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.resources.dictionary.loaders.ncbitaxonomy;
+package com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.taxonomy;
 
 import java.io.BufferedReader;
 import java.io.File;

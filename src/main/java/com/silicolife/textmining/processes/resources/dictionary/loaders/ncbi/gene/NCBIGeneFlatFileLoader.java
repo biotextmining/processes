@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.resources.dictionary.loaders.entrezgene;
+package com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.gene;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,9 +43,11 @@ import com.silicolife.textmining.core.interfaces.resource.dictionary.configurati
  * 
  * 
  */
-public class EntrezGeneFlatFileLoader extends DictionaryLoaderHelp implements IDicionaryFlatFilesLoader {
+public class NCBIGeneFlatFileLoader extends DictionaryLoaderHelp implements IDicionaryFlatFilesLoader {
 
-	private static String firstLine = "#Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs";
+//	private static String oldfirstLine = "#Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs";
+	private static String newfirstLine = "#tax_id	GeneID	Symbol	LocusTag	Synonyms	dbXrefs";
+
 	private String defaultTypeValue = "NEWENTRY";
 	private CSVFileConfigurations csvConfigurations;
 	private int columnTAXIDNumber = 0;
@@ -68,7 +70,7 @@ public class EntrezGeneFlatFileLoader extends DictionaryLoaderHelp implements ID
 	public final static String propertyHypthotethicalProteins = "Hypothetical protein";
 
 
-	public EntrezGeneFlatFileLoader() {
+	public NCBIGeneFlatFileLoader() {
 		super(GlobalSources.entrezgene);
 		initCSVConfigurations();
 	}
@@ -101,7 +103,7 @@ public class EntrezGeneFlatFileLoader extends DictionaryLoaderHelp implements ID
 		try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
 			getReport().updateFile(file);
 			String line = br.readLine();
-			if (line.startsWith(firstLine)) {
+			if (line.startsWith(newfirstLine)) {
 				return true;
 			}
 		} catch (IOException e) {
@@ -262,7 +264,7 @@ public class EntrezGeneFlatFileLoader extends DictionaryLoaderHelp implements ID
 		}
 		try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
 			String line = br.readLine();
-			if (line.startsWith(firstLine)) {
+			if (line.startsWith(newfirstLine)) {
 				return true;
 			}
 		} catch (IOException e) {
