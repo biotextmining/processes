@@ -1,7 +1,8 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -22,6 +23,9 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	public final static String opsProcessID = "ops.searchpatentmetainformation";
 
 	public final static String opsName= "Open Patent Services API from EPO";
+
+	private final static int minWaitTime=100;
+	private final static int maxWaitTime=1500;
 
 	public OPSPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -48,9 +52,11 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 						throw new ANoteException(e);
 					}
 				}
-				Set<String> possiblePatentIDs;
+				waitARandomTime();
+				List<String> possiblePatentIDs;
 				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
 				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
+
 			}
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e1) {
@@ -59,9 +65,19 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	}
 
 
+	private void waitARandomTime() throws ANoteException{ 
+		try {
+			Random r = new Random();
+			int Result = r.nextInt(maxWaitTime-minWaitTime) + minWaitTime;
+			Thread.sleep(Result);
+		} catch (InterruptedException e) {
+			throw new ANoteException(e);
+		}
+	}
+
 
 	private boolean searchInAllPatents(Map<String, IPublication> mapPatentIDPublication, String tokenaccess,
-			String patentID, Set<String> possiblePatentIDs) {
+			String patentID, List<String> possiblePatentIDs) {
 		boolean informationdownloaded =false;
 		//		if (!verifyPublicationMetadataDownload(mapPatentIDPublication, patentID)){
 		for (String id:possiblePatentIDs){
@@ -70,10 +86,6 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 				return true;
 			}
 		}
-		//		}
-		//		else{
-		//			return true;
-		//		}
 		return false;
 	}
 
@@ -93,8 +105,8 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	private boolean tryUpdatePatentMetaInformation(Map<String, IPublication> mapPatentIDPublication, String patentIDOriginal, String patentIDModified, String tokenaccess){
 		IPublication publiction = mapPatentIDPublication.get(patentIDOriginal);
 		try {
-			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified);
 			OPSUtils.getPatentFamily(tokenaccess, publiction, patentIDModified);
+			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified);
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e) {
 			return false;
@@ -103,6 +115,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		if (!downloadSuccess){
 			return false;
 		}
+//		System.out.println(publiction);
 		return true;
 	}
 
