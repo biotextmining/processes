@@ -99,10 +99,10 @@ public class OPSUtils {
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e) {
 		}
-		
+
 	}
-	
-	
+
+
 	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
@@ -447,33 +447,49 @@ public class OPSUtils {
 		//the patentID itself
 		patentIDs.add(patentID);
 		String newPatentID=OPSUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
-		patentIDs.add(newPatentID);
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 
 		newPatentID=OPSUtils.deleteChar0(newPatentID, 0);//uses the previous transformation and delete the central 0.
-		patentIDs.add(newPatentID);
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 
 		if(OPSUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
 			try {
 				newPatentID=OPSUtils.transformYear(newPatentID);
 				String newPatOnlyWithouYear=OPSUtils.transformYear(patentID);//year transformation only 
-				patentIDs.add(newPatentID);
-				patentIDs.add(newPatOnlyWithouYear);
+				if (!patentIDs.contains(newPatentID)){
+					patentIDs.add(newPatentID);
+				}
+				if (!patentIDs.contains(newPatOnlyWithouYear)){
+					patentIDs.add(newPatOnlyWithouYear);
+				}
 			} catch (ParseException e) {
 			}
 		}
 
 		newPatentID=OPSUtils.deleteChar0(newPatentID, -1);//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
-		patentIDs.add(newPatentID);
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 
 		int lettersOfSection = OPSUtils.verifySectionNumbers(patentID);
 		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
-		patentIDs.add(newPatentID);
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 
 		newPatentID=OPSUtils.deleteChar0(patentID, lettersOfSection-1);//special case with five numbers after 0 without year association
-		patentIDs.add(newPatentID);
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 
 		newPatentID=OPSUtils.deleteSectionNumbers(newPatentID);//delete section numbers on special case (last chance)
-		patentIDs.add(newPatentID);
+		if (!patentIDs.contains(newPatentID)){
+			patentIDs.add(newPatentID);
+		}
 
 		return patentIDs;
 	}
