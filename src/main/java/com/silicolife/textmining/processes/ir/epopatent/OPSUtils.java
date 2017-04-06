@@ -11,10 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -442,8 +442,8 @@ public class OPSUtils {
 	}
 
 
-	public static Set<String> createPatentIDPossibilities(String patentID){
-		Set<String> patentIDs=new HashSet<>();
+	public static List<String> createPatentIDPossibilities(String patentID){
+		List<String> patentIDs=new ArrayList<>();
 		//the patentID itself
 		patentIDs.add(patentID);
 		String newPatentID=OPSUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted

@@ -24,7 +24,7 @@ import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException
 
 public class OPSPatentFamilyHandler implements ResponseHandler<String>{
 
-	IPublication publication;
+	private IPublication publication;
 
 	public OPSPatentFamilyHandler(IPublication publication)
 	{

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 
@@ -86,7 +85,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			total = endRAnge;
 		}
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
-		Set<String> possiblePatentIDs;
+		List<String> possiblePatentIDs;
 		long startControlTime = System.currentTimeMillis();
 		for(IPublication pub:publications)
 		{
@@ -141,7 +140,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	}
 
 	private File searchINallpatentIds(String saveDocDirectory, String tokenaccess,
-			Set<String> possiblePatentIDs, IPublication pub) throws ANoteException {
+			List<String> possiblePatentIDs, IPublication pub) throws ANoteException {
 		File fileDownloaded;
 		for (String id:possiblePatentIDs){
 			fileDownloaded =getPDFAndUpdateReportUsingPatentID(tokenaccess, id, saveDocDirectory, pub.getId());

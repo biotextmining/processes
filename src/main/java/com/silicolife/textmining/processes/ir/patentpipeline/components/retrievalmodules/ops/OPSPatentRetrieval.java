@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,6 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.AIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalReport;
@@ -56,7 +56,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 			long actualtime=System.currentTimeMillis();
 			String docPDFFinal = getConfiguration().getOutputDirectory() +"/" + patentID + ".pdf";
 			if (!verifyPDFAlreadyDownloaded(docPDFFinal)){
-				Set<String> possiblePatentIDs;
+				List<String> possiblePatentIDs;
 				if(((float)(actualtime-starttime)/1000)>=900){//15min
 					try {
 						Thread.sleep(5000);
@@ -82,7 +82,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 		return report;
 	}
 
-	private File searchInAllPatents(String tokenaccess, String patentID, Set<String> possiblePatentIDs) throws ANoteException {
+	private File searchInAllPatents(String tokenaccess, String patentID, List<String> possiblePatentIDs) throws ANoteException {
 		File fileDownloaded=null;
 		for (String id:possiblePatentIDs){
 			try{
@@ -174,7 +174,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 			if ( tokenAcess== null || tokenAcess.isEmpty()) {
 				throw new WrongIRPatentRetrievalConfigurationException("The OPS AccessToken can not be null or empty!");
 			}
-			
+
 			String autentication = Utils.get64Base(tokenAcess);
 			try {
 				OPSUtils.postAuth(autentication);
