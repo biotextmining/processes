@@ -9,6 +9,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
@@ -54,7 +55,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 				}
 				waitARandomTime();
 				List<String> possiblePatentIDs;
-				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
+				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
 				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
 
 			}
@@ -115,7 +116,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		if (!downloadSuccess){
 			return false;
 		}
-//		System.out.println(publiction);
+		System.out.println(publiction);
 		return true;
 	}
 

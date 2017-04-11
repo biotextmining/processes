@@ -19,6 +19,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentImageHandler;
 import com.silicolife.textmining.processes.ir.epopatent.opshandler.OPSPatentgetPDFPageHandler;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.AIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalReport;
@@ -66,7 +67,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 						throw new ANoteException(e);
 					}
 				}
-				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
+				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
 				File fileDownloaded = searchInAllPatents(tokenaccess, patentID, possiblePatentIDs);
 				if (fileDownloaded==null){
 					report.addNotRetrievedPatents(patentID);				

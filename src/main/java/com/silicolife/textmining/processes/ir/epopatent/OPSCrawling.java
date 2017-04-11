@@ -29,6 +29,7 @@ import com.silicolife.textmining.core.interfaces.process.IR.IIRCrawl;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
 import com.silicolife.textmining.core.interfaces.process.utils.ISimpleTimeLeft;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
 import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
 import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
@@ -117,7 +118,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 					}
 				}
 
-				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
+				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
 				File fileDownloaded = searchINallpatentIds(saveDocDirectory, tokenaccess, possiblePatentIDs, pub);
 				if (fileDownloaded==null){
 					report.addFileNotDownloaded(pub);
