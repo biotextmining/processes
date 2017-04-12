@@ -19,6 +19,7 @@ import com.silicolife.textmining.core.datastructures.process.IEProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
+import com.silicolife.textmining.core.interfaces.core.corpora.CorpusCreateSourceEnum;
 import com.silicolife.textmining.core.interfaces.core.corpora.ICorpusCreateConfiguration;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
@@ -77,7 +78,7 @@ public class CreateCorpusFromBiocreativeFiles {
 		String notes = new String();
 		boolean journalRetrievalBefore = false;
 		CorpusCreation creation = new CorpusCreation();
-		ICorpusCreateConfiguration configuration = new CorpusCreateConfigurationImpl(corpusName , notes , docIds , textType , journalRetrievalBefore);
+		ICorpusCreateConfiguration configuration = new CorpusCreateConfigurationImpl(corpusName , notes , docIds , textType , journalRetrievalBefore,CorpusCreateSourceEnum.Other);
 		ICorpusCreateReport reportCreateCorpus = creation.createCorpus(configuration);
 		assertTrue(reportCreateCorpus.isFinishing());
 		return reportCreateCorpus;

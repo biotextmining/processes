@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.silicolife.textmining.core.datastructures.corpora.CorpusCreateConfigurationImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.interfaces.core.corpora.CorpusCreateSourceEnum;
 import com.silicolife.textmining.core.interfaces.core.corpora.ICorpusCreateConfiguration;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -41,7 +42,7 @@ public class CreateCorpusFromPublicationManagerTest {
 		Set<IPublication> docIds = new HashSet<>(publictions);
 		String notes = new String();
 		boolean journalRetrievalBefore = false;
-		ICorpusCreateConfiguration configuration = new CorpusCreateConfigurationImpl(corpusName , notes , docIds , textType , journalRetrievalBefore);
+		ICorpusCreateConfiguration configuration = new CorpusCreateConfigurationImpl(corpusName , notes , docIds , textType , journalRetrievalBefore,CorpusCreateSourceEnum.Other);
 		ICorpusCreateReport reportCreateCorpus = creation.createCorpus(configuration );
 		return reportCreateCorpus;
 	}
@@ -60,7 +61,7 @@ public class CreateCorpusFromPublicationManagerTest {
 		docIds.addAll(publictions2);
 		String notes = new String();
 		boolean journalRetrievalBefore = false;
-		ICorpusCreateConfiguration configuration = new CorpusCreateConfigurationImpl(corpusName , notes , docIds , textType , journalRetrievalBefore);
+		ICorpusCreateConfiguration configuration = new CorpusCreateConfigurationImpl(corpusName , notes , docIds , textType , journalRetrievalBefore,CorpusCreateSourceEnum.Other);
 		ICorpusCreateReport reportCreateCorpus = creation.createCorpus(configuration );
 		assertTrue(reportCreateCorpus.isFinishing());
 	}
