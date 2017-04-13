@@ -239,8 +239,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		if (patentIDsForMetainformation.size()>0){
 			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation);
 			patentMap=reportMetaInformation.getMapPatentIDPublication();
-			Map<String, List<String>> allPossibleSolutions = PatentPipelineUtils.getAllPatentIDPossibilitiesForAGivenSet(patentIds);
-			patentMap=PatentPipelineUtils.processPatentMapWithMetadata(patentMap, allPossibleSolutions);
+			
 		}
 		increaseStep();
 		//patentPipeline.runMetaInformationPipeline(searchConfiguration.getIRPatentPipelineSearchConfiguration());
@@ -258,6 +257,11 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			patentMap.put(patentID, pub);
 		}
 
+		//process the final metainformation map, removing the repeated patents
+		Map<String, List<String>> allPossibleSolutions = PatentPipelineUtils.getAllPatentIDPossibilitiesForAGivenSet(patentIds);
+		patentMap=PatentPipelineUtils.processPatentMapWithMetadata(patentMap, allPossibleSolutions);
+		
+		
 		for(String patentID:patentMap.keySet()){
 
 			// Get ID from publication
