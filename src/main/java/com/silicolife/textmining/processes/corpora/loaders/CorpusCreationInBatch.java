@@ -74,14 +74,10 @@ public class CorpusCreationInBatch {
 
 	public void addPublications(ICorpus corpus, Set<IPublication> publications) throws ANoteException, IOException{
 		
-		loadPublicationExternalIdsFromCorpusOnDB(corpus);
-		
-		CorpusTextType corpusType = getCorpusType(corpus);
-		
-		fixPossiblePublicationDuplicationFields(publications);
-		
-		Map<Long, IPublication> alreadyExistentPublications = addPublicationsToDatabase(publications);
-		
+		loadPublicationExternalIdsFromCorpusOnDB(corpus);	
+		CorpusTextType corpusType = getCorpusType(corpus);	
+		fixPossiblePublicationDuplicationFields(publications);		
+		Map<Long, IPublication> alreadyExistentPublications = addPublicationsToDatabase(publications);	
 
 		for(IPublication publication:publications){
 
@@ -118,8 +114,13 @@ public class CorpusCreationInBatch {
 
 			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
 			String pmcID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.pmc.name());
+			String patentID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.patent.name());
+			String usptoID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.uspto.name());
 			if(!getExternalIDAlreadyExistOnCorpus().contains(pubPMID) 
-					&& !getExternalIDAlreadyExistOnCorpus().contains(pmcID)){
+					&& !getExternalIDAlreadyExistOnCorpus().contains(pmcID)
+					&& !getExternalIDAlreadyExistOnCorpus().contains(patentID) 
+					&& !getExternalIDAlreadyExistOnCorpus().contains(usptoID) ){
+					
 				if(!(corpusType.equals(CorpusTextType.FullText) && (publication.getFullTextContent()==null || publication.getFullTextContent().isEmpty())))
 				{
 					associatePublicationToCorpusOnDatabase(corpus, publication);
@@ -128,6 +129,12 @@ public class CorpusCreationInBatch {
 					}
 					if(pmcID != null && !pmcID.isEmpty()){
 						getExternalIDAlreadyExistOnCorpus().add(pmcID);
+					}
+					if(patentID != null && !patentID.isEmpty()){
+						getExternalIDAlreadyExistOnCorpus().add(patentID);
+					}
+					if(usptoID != null && !usptoID.isEmpty()){
+						getExternalIDAlreadyExistOnCorpus().add(usptoID);
 					}
 				}
 			}
@@ -179,12 +186,16 @@ public class CorpusCreationInBatch {
 		if(getExternalIDAlreadyExistOnDB().isEmpty()){
 			Map<String, Long> alreadyExistOnDB = getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.PUBMED.name());
 			alreadyExistOnDB.putAll(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.pmc.name()));
+			alreadyExistOnDB.putAll(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.uspto.name()));
+			alreadyExistOnDB.putAll(getAllPublicationExternalIdFromSource(PublicationSourcesDefaultEnum.patent.name()));
 			setExternalIDAlreadyExistOnDB(alreadyExistOnDB);
 		}
 		
 		if(getExternalIDAlreadyExistOnCorpus().isEmpty()){
 			Set<String> alreadyExistOnCorpus = getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.PUBMED.name());
 			alreadyExistOnCorpus.addAll(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.pmc.name()));
+			alreadyExistOnCorpus.addAll(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.uspto.name()));
+			alreadyExistOnCorpus.addAll(getAllCorpusPublicationExternalIdFromSource(corpus, PublicationSourcesDefaultEnum.patent.name()));
 			setExternalIDAlreadyExistOnCorpus(alreadyExistOnCorpus);
 		}
 	}
@@ -196,17 +207,28 @@ public class CorpusCreationInBatch {
 		for(IPublication publication:publications){
 			String pubPMID = PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.PUBMED.name());
 			String pmcID =  PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.pmc.name());
+			String patentID =  PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.patent.name());
+			String usptoID =  PublicationImpl.getPublicationExternalIDForSource(publication,PublicationSourcesDefaultEnum.uspto.name());
+
 			if(getExternalIDAlreadyExistOnDB().containsKey(pubPMID)){
 				publication.setId(getExternalIDAlreadyExistOnDB().get(pubPMID));
 			}else if(getExternalIDAlreadyExistOnDB().containsKey(pmcID)){
 				publication.setId(getExternalIDAlreadyExistOnDB().get(pmcID));
+			}else if(getExternalIDAlreadyExistOnDB().containsKey(patentID)){
+				publication.setId(getExternalIDAlreadyExistOnDB().get(patentID));
+			}else if(getExternalIDAlreadyExistOnDB().containsKey(usptoID)){
+				publication.setId(getExternalIDAlreadyExistOnDB().get(usptoID));
+
 			}else{
 				if(pubPMID!= null && !pubPMID.isEmpty())
 					getExternalIDAlreadyExistOnDB().put(pubPMID, publication.getId());
 				if(pmcID!= null && !pmcID.isEmpty())
 					getExternalIDAlreadyExistOnDB().put(pmcID, publication.getId());
+				if(patentID!= null && !patentID.isEmpty())
+					getExternalIDAlreadyExistOnDB().put(patentID, publication.getId());
+				if(usptoID!= null && !usptoID.isEmpty())
+					getExternalIDAlreadyExistOnDB().put(usptoID, publication.getId());
 			}
-			
 			IPublication pub = getPublicationOnDatabaseByID(publication.getId());
 			if(pub==null){
 				// remove publication lables
