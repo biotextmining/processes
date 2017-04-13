@@ -39,10 +39,10 @@ public class PatentMetaFilesReader {
 			pub.setFullTextContent(NormalizationForm.removeOffsetProblemSituation(fullTextContent));
 			out.add(pub);
 			inStream.close();
+			return out;
 		} catch (IOException e) {
-			new ANoteException(e);
+			throw new ANoteException(e);
 		}
-		return null;
 	}
 
 	private IPublication PublicaitonMetaInfomration(InputStream inStream) throws IOException {
@@ -67,7 +67,7 @@ public class PatentMetaFilesReader {
 		String relativePath = null;
 		String volume = "";
 		String fulldate = prop.getProperty("Date");
-		String issue  = prop.getProperty("Classification");
+		String issue  = null;
 		String abstractSection = prop.getProperty("Abstract");		
 		List<IPublicationLabel> publicationLabels = new ArrayList<>();
 		String pages = "";
@@ -79,7 +79,12 @@ public class PatentMetaFilesReader {
 		String notes = new String();
 		if( !prop.getProperty("Owners").isEmpty())
 		{
-			notes = "Owners : "+prop.getProperty("Owners");
+			authors = authors + " Owners: "+prop.getProperty("Owners");
+		}
+		if(!prop.getProperty("Classification").isEmpty())
+		{
+			notes = "Classification :"+prop.getProperty("Classification");
+
 		}
 		IPublication pub = new PublicationImpl(title , authors , type , yeardate , fulldate , status , journal , volume , issue, pages , abstractSection , externalLink , freeFullText , notes, relativePath , publicationExternalIDSource , publicationFields , publicationLabels);
 		return pub;

@@ -21,6 +21,7 @@ import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusText
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
 import com.silicolife.textmining.core.interfaces.core.report.corpora.ICorpusCreateReport;
 
+@Deprecated
 public class CorpusCreationOld {
 
 	public CorpusCreationOld()
