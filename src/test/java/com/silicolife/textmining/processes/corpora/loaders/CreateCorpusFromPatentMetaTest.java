@@ -25,7 +25,7 @@ public class CreateCorpusFromPatentMetaTest {
 	@Test
 	public void fulltext() throws InvalidDatabaseAccess, ANoteException, IOException {
 		DatabaseConnectionInit.init("localhost","3306","textminingdatabase","root","admin");
-		File fileOrDirectory =  new File("C://Users//Hugo Costa//Desktop//confgetalpublmed//uspto//done");
+		File fileOrDirectory =  new File("src/test/resources/patentmetainfo");
 		String corpusName = "Patent FT";
 		String notes = "";
 		PatentMetaFilesCorpusLoader loader = new PatentMetaFilesCorpusLoader();		
@@ -53,10 +53,10 @@ public class CreateCorpusFromPatentMetaTest {
 		System.out.println("End " + corpusName);
 	}
 	
-//	@Test
+	@Test
 	public void abstractTest() throws InvalidDatabaseAccess, ANoteException, IOException {
 		DatabaseConnectionInit.init("localhost","3306","textminingdatabase","root","admin");
-		File fileOrDirectory =  new File("C://Users//Hugo Costa//Desktop//confgetalpublmed//uspto//done");
+		File fileOrDirectory =  new File("src/test/resources/patentmetainfo");
 		String corpusName = "Patent Meta";
 		String notes = "";
 		PatentMetaFilesCorpusLoader loader = new PatentMetaFilesCorpusLoader();		

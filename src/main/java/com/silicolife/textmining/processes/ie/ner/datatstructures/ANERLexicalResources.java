@@ -72,7 +72,7 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		IIEProcess processToResume = configuration.getIEProcess();
 		nerlogger.info("Resume NER");
 		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToResume);
-		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess());
+		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess(),500000);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessAddEntitiesImpl();
 		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
@@ -151,8 +151,8 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		return new CorpusPublicationPaginatorImpl(corpus);
 	}
 	
-	private ICorpusPublicationPaginator getUnprocessedPublicationsPaginator(IIEProcess process) throws ANoteException {
-		return new UnprocessedPublicationsStackPaginatorImpl(process);
+	private ICorpusPublicationPaginator getUnprocessedPublicationsPaginator(IIEProcess process, Integer pageframe) throws ANoteException {
+		return new UnprocessedPublicationsStackPaginatorImpl(process,pageframe);
 	}
 	
 	private ICorpusPublicationPaginator getOutdatedPublicationsPaginator(IIEProcess processToResume) {

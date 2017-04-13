@@ -1,0 +1,9 @@
+PatentID=US09609806
+OtherPatentIDs=US20160007531
+Title=Automatic calibration system for header height controller with operator feedback
+Authors=Robert Schlipf;Johnathan Rassi;Nathan Virkler
+Owners=Headsight, Inc.
+Abstract=Method of calibrating a header height controller responsive to signal outputs from a plurality of height sensors mounted to a header, the signal outputs are variable in magnitude with respect to changes in height of the header relative to a surface. The methods automatically and accurately calibrate header control systems to eliminate the need for manual calibration and provides feedback to the operator to ensure the quality of the calibration and to assist the operator in identify potential problems with sensors or header setup which could affect the operation and performance.
+Classification=A01D 41/14;A01D 41/127
+Date=20170404
+Link=https://patentscope.wipo.int/search/en/detail.jsf?docId=US20160007531

@@ -94,13 +94,36 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) configuration;
 		LinnauesExecutionData linnauesExecutionData = loadExecutionData(linnauesConfiguration);
 		Matcher matcher = getMatcher(linnauesConfiguration,linnauesExecutionData.getElements());
-		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+		long startime = GregorianCalendar.getInstance().getTimeInMillis();	
 		int size = (int) (long) publicationsPaginator.getPublicationsCount();
+		long measuretime5 = GregorianCalendar.getInstance().getTimeInMillis();	
+		long toprint5 = startime - measuretime5;
+		nerlogger.error("M1-M0 :" + toprint5);
+
 		int counter = 0; 
-		while(publicationsPaginator.hasNextDocumentSetPage()){
+		long measuretime4 = GregorianCalendar.getInstance().getTimeInMillis();
+		boolean run = true;
+		while(run){
+			long measuretime1 = GregorianCalendar.getInstance().getTimeInMillis();
+			long toprint4 = measuretime1 - measuretime4;
+			nerlogger.error("M4-M1 :" + toprint4);
 			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
-			DocumentIterator documents = getDocumentIterator(configuration, configuration.getIEProcess(), documentSet);
-			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime,linnauesExecutionData, matcher, report, documents, size, counter);
+			if(documentSet.size() > 0)
+			{
+				long measuretime2 = GregorianCalendar.getInstance().getTimeInMillis();
+				long toprint = measuretime2 - measuretime1;
+				nerlogger.error("M2-M1 :" + toprint);
+				DocumentIterator documents = getDocumentIterator(configuration, configuration.getIEProcess(), documentSet);
+				long measuretime3 = GregorianCalendar.getInstance().getTimeInMillis();
+				long toprint2 = measuretime3 - measuretime2;
+				nerlogger.error("M3-M2 :" + toprint2);
+				counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime,linnauesExecutionData, matcher, report, documents, size, counter);
+				measuretime4 = GregorianCalendar.getInstance().getTimeInMillis();
+				long toprint3 = measuretime4 - measuretime3;
+				nerlogger.error("M4-M3 :" + toprint3);
+			}
+			else
+				run = false;
 		}
 	}
 	
@@ -560,7 +583,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		Disambiguation disambiguationEnum = Disambiguation.OFF;
 		NERCaseSensativeEnum caseSensitiveEnum = NERCaseSensativeEnum.NONE;
 		boolean normalized = false;
-		int numThreads = 2;
+		int numThreads = 4;
 		ILexicalWords stopwords = null;
 		NERLinnaeusPreProcessingEnum preprocessing = NERLinnaeusPreProcessingEnum.No;
 		boolean usingOtherResourceInfoToImproveRuleAnnotations = false;
