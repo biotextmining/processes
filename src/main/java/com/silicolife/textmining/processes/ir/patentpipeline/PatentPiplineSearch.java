@@ -239,6 +239,8 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		if (patentIDsForMetainformation.size()>0){
 			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation);
 			patentMap=reportMetaInformation.getMapPatentIDPublication();
+			Map<String, List<String>> allPossibleSolutions = PatentPipelineUtils.getAllPatentIDPossibilitiesForAGivenSet(patentIds);
+			patentMap=PatentPipelineUtils.processPatentMapWithMetadata(patentMap, allPossibleSolutions);
 		}
 		increaseStep();
 		//patentPipeline.runMetaInformationPipeline(searchConfiguration.getIRPatentPipelineSearchConfiguration());
@@ -266,10 +268,10 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			for (IPublicationExternalSourceLink externaLink:externalLinksList){
 				pubExternalIDs.add(externaLink.getSourceInternalId());
 			}
-			
+
 			//if already exist on query or on other source that publication will be ignored 
 			if(patentidsAlreadyExistOnQuery.contains(pubpatentID)){}
-						
+
 			// Test if patentID already exists in System
 			else if(patentidsAlreadyExistOnDB.containsKey(pubpatentID))
 			{
@@ -315,7 +317,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 						// Test is abstract is available and if was not added previously
 						if(!pub.getAbstractSection().isEmpty() && pubAbstract.isEmpty()){
 							abs_count ++;}
-//						report.incrementDocumentRetrieval(1);
+						//						report.incrementDocumentRetrieval(1);
 						//add the updated pub into the list to be added to query					
 						documentsThatAlreayInDB.add(pub);
 					}
@@ -329,7 +331,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		if(!cancel && documentsToInsert.size()!=0){
 			insertPublications(documentsToInsert);
 		}
-		
+
 		//add to query process
 		Set<IPublication> publicationToAdd = new HashSet<>();
 		publicationToAdd.addAll(documentsThatAlreayInDB);
@@ -362,9 +364,9 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		return pub1;
 
 	}
-	
-	
-	
+
+
+
 	protected void increaseStep(){
 		if (actualProcessStep==1){
 			logger.info("Patent Retrieval IDs pipeline started");
