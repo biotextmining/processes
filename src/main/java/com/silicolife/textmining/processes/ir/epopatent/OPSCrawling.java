@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 
@@ -30,6 +29,7 @@ import com.silicolife.textmining.core.interfaces.process.IR.IIRCrawl;
 import com.silicolife.textmining.core.interfaces.process.IR.IIRSearchConfiguration;
 import com.silicolife.textmining.core.interfaces.process.utils.ISimpleTimeLeft;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
 import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
 import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
@@ -86,7 +86,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			total = endRAnge;
 		}
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
-		Set<String> possiblePatentIDs;
+		List<String> possiblePatentIDs;
 		long startControlTime = System.currentTimeMillis();
 		for(IPublication pub:publications)
 		{
@@ -118,7 +118,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 					}
 				}
 
-				possiblePatentIDs = OPSUtils.createPatentIDPossibilities(patentID);
+				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
 				File fileDownloaded = searchINallpatentIds(saveDocDirectory, tokenaccess, possiblePatentIDs, pub);
 				if (fileDownloaded==null){
 					report.addFileNotDownloaded(pub);
@@ -141,7 +141,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	}
 
 	private File searchINallpatentIds(String saveDocDirectory, String tokenaccess,
-			Set<String> possiblePatentIDs, IPublication pub) throws ANoteException {
+			List<String> possiblePatentIDs, IPublication pub) throws ANoteException {
 		File fileDownloaded;
 		for (String id:possiblePatentIDs){
 			fileDownloaded =getPDFAndUpdateReportUsingPatentID(tokenaccess, id, saveDocDirectory, pub.getId());

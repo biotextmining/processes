@@ -68,7 +68,6 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 							Reader reader = new InputStreamReader(inputstream,"UTF-8");//conversion to inputstream reader in order to encoding to UTF-8
 							InputSource is = new InputSource(reader);
 							is.setEncoding("UTF-8");
-
 							sp.parse(is,parseEventsHandler);
 
 //							long t2 = new Date().getTime();
