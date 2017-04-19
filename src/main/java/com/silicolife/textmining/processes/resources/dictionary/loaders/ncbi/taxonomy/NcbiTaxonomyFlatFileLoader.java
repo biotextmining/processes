@@ -10,11 +10,12 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.silicolife.textmining.core.datastructures.general.AnoteClass;
 import com.silicolife.textmining.core.datastructures.general.ExternalIDImpl;
 import com.silicolife.textmining.core.datastructures.general.SourceImpl;
+import com.silicolife.textmining.core.datastructures.resources.ResourceElementImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryLoaderHelp;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalSources;
@@ -23,17 +24,17 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.layer.resources
 import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.core.interfaces.core.general.source.ISource;
 import com.silicolife.textmining.core.interfaces.core.report.resources.IResourceUpdateReport;
+import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.core.interfaces.resource.dictionary.IDicionaryFlatFilesLoader;
 import com.silicolife.textmining.core.interfaces.resource.dictionary.IDictionary;
 import com.silicolife.textmining.core.interfaces.resource.dictionary.configuration.IDictionaryLoaderConfiguration;
 
 public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements IDicionaryFlatFilesLoader {
 
-	private Pattern idsentence = Pattern.compile("^(\\d+)\\s");
 	private Pattern organismMacthing = Pattern.compile("^\\d+\\s\\|\\s(.*?)\\s\\|");
 	private boolean cancel = false;
-	// private Pattern firstline =
-	// Pattern.compile("1\\s|\\sall\\s|\\s|\\ssynonym\\s|");
+	private ISource source = new SourceImpl(GlobalSources.ncbitaxonomy);
+
 	public final static String organism = "Organism";
 
 	public NcbiTaxonomyFlatFileLoader() {
@@ -47,9 +48,6 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 		getReport().addClassesAdding(1);
 		getReport().updateFile(file);
 		String line = new String();
-		String term = new String();
-		Set<String> termSynomns = new HashSet<String>();
-		Matcher m1, m2;
 		FileReader fr;
 		BufferedReader br;
 		getReport().addClassesAdding(1);
@@ -64,33 +62,19 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 		fr = new FileReader(file);
 		br = new BufferedReader(fr);
 		int lines = 0;
+		IResourceElement resourceElementToAdd = new ResourceElementImpl(new String(), new AnoteClass(organism), new ArrayList<IExternalID>(), new ArrayList<String>(), 0, true);
 		while ((line = br.readLine()) != null && !cancel) {
-
-			if (!line.startsWith(sentenceID)) {
-				List<IExternalID> externalIDs = new ArrayList<IExternalID>();
-				ISource source = new SourceImpl(GlobalSources.ncbitaxonomy);
-				externalIDs.add(new ExternalIDImpl(String.valueOf(sentenceID), source));
-				termSynomns = addSpecieAbbreviations(term, termSynomns);
-				super.addElementToBatch(term, organism, termSynomns, externalIDs, 0);
-				termSynomns = new HashSet<String>();
-				term = new String();
-				m1 = getIdsentence().matcher(line);
-				m1.find();
-				sentenceID = m1.group(1);
-				m2 = getOrganismMacthing().matcher(line);
-				if (m2.find()) {
-					term = m2.group(1);
-				}
-
-			} else {
-				if (line.contains("authority")) {
-
-				} else {
-					m2 = getOrganismMacthing().matcher(line);
-					m2.find();
-					termSynomns.add(m2.group(1));
-				}
-			}
+			String[] linePieces = line.split("\\|");
+			String organismID = linePieces[0].trim();
+			if (!organismID.equals(sentenceID)) {	
+				resourceElementToAdd.getExternalIDsInMemory().add(new ExternalIDImpl(sentenceID, source));
+				Set<String> newSynonyms = addSpecieAbbreviations(resourceElementToAdd.getTerm(), resourceElementToAdd.getSynonyms());
+				resourceElementToAdd.getSynonyms().addAll(newSynonyms);
+				super.addElementToBatch(resourceElementToAdd);
+				sentenceID = organismID;
+				resourceElementToAdd = new ResourceElementImpl(new String(), new AnoteClass(organism), new ArrayList<IExternalID>(), new ArrayList<String>(), 0, true);
+			}				
+			updateResourceElement(linePieces, resourceElementToAdd);
 			if (!cancel && isBatchSizeLimitOvertaken()) {
 				IResourceManagerReport reportBatchInserted = super.executeBatch();
 				super.updateReport(reportBatchInserted, getReport());
@@ -112,21 +96,83 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 		return getReport();
 
 	}
+	
+	private void updateResourceElement(String[] linePieces,IResourceElement resourceElementToAdd)
+	{
+		String name = linePieces[1].trim();
+		String meaning = linePieces[3].trim();
+		switch (meaning) {
+			case "scientific name" :
+				resourceElementToAdd.setTerm(name);
+				break;
+			case "common name" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "synonym" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "equivalent name" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "blast name" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "genbank common name" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "genbank synonym" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "genbank anamorph" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "genbank acronym" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "misspelling" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "acronym" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "teleomorph" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			case "anamorph" :
+				if(!resourceElementToAdd.getSynonyms().contains(name))
+					resourceElementToAdd.getSynonyms().add(name);
+				break;
+			default :
+				break;
+		}
 
-	private Set<String> addSpecieAbbreviations(String term, Set<String> termSynomns) {
+	}
+
+	private Set<String> addSpecieAbbreviations(String term, List<String> termSynomns) {
 		Set<String> abbreviations = new HashSet<>();
 		for(String synonim : termSynomns){
 			String abbreviation = convertStringToAbbreviation(synonim);
-			if(!abbreviation.isEmpty()){
+			if(!abbreviation.isEmpty() && abbreviation.length() > 5){
 				abbreviations.add(abbreviation);
 			}
 		}
 		String abb = convertStringToAbbreviation(term);
-		if(!abb.isEmpty()){
+		if(!abb.isEmpty() && abb.length() > 5){
 			abbreviations.add(abb);
 		}
-		termSynomns.addAll(abbreviations);
-		return termSynomns;
+		abbreviations.removeAll(termSynomns);
+		return abbreviations;
 	}
 
 	private String  convertStringToAbbreviation(String specieName) {
@@ -174,14 +220,6 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 				return true;
 			}
 		}
-	}
-
-	public Pattern getIdsentence() {
-		return idsentence;
-	}
-
-	public void setIdsentence(Pattern idsentence) {
-		this.idsentence = idsentence;
 	}
 
 	public Pattern getOrganismMacthing() {
@@ -232,5 +270,20 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 			}
 		}
 	}
-
+	
+//	public static void main(String[] args) throws IOException {
+//		File file = new File("S://Projectos//ANote2//Resources//Resources//dictionaries//ncbi taxonomy//names.dmp");
+//		FileReader fr = new FileReader(file);
+//		BufferedReader br = new BufferedReader(fr);
+//		String line;
+//		Set<String> meanings = new HashSet<>();
+//		while ((line = br.readLine()) != null) {
+//			String[] linePieces = line.split("\\|");
+//			String meaning = linePieces[3].trim();
+//			meanings.add(meaning);
+//		}
+//		br.close();
+//		for(String mean:meanings)
+//			System.out.println(mean);
+//	}
 }
