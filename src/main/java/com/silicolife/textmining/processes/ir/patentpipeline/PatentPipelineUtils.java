@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 
@@ -163,10 +161,7 @@ public class PatentPipelineUtils {
 
 
 	private static String deleteSectionNumbers(String patentID){
-
-		//char[] array = patentID.toCharArray();
 		String newPatentID = patentID;
-
 		try{
 			if(patentID.matches(".*[A-Z]{1}")){
 				newPatentID=patentID.substring(0, patentID.length()-1);
@@ -179,7 +174,6 @@ public class PatentPipelineUtils {
 		}catch(StringIndexOutOfBoundsException e){
 			return newPatentID;
 		}
-
 		return newPatentID;
 	}
 
@@ -206,16 +200,17 @@ public class PatentPipelineUtils {
 	}
 
 
-	private static Set<String> findRepeatedPatents (IPublication pub, Set<String> patentsToMaintain, Set<String> toRemoveIDs, Map<String, List<String>> allPossibleSolutions){
+	private static Set<String> findRepeatedPatents (String patentID , Set<String> pubExternalIDs, Set<String> patentsToMaintain, Map<String, List<String>> allPossibleSolutions){
+		Set<String> toRemoveIDs=new HashSet<>();
 		//find all patent possibilities for the given ID and the pub external IDs- with/without the kind code, etc..
-		String pubpatentID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
-		List<String> allIDPossibilities = PatentPipelineUtils.createPatentIDPossibilities(pubpatentID);
-		Set<String> pubExternalIDs = getAllExternalIDsPossibilities(pub);
+		List<String> allIDPossibilities = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+
 		for (String externalID:pubExternalIDs){
 			//process each external ID, verifying if it already exists on choosed pubs
 			if (!allIDPossibilities.contains(externalID) && 
 					existsOnCollection(externalID, allPossibleSolutions.values()) && 
-					!verifyChoosedPatents(getKeyForAValue(allPossibleSolutions,externalID), patentsToMaintain)){
+					//					!verifyChoosedPatents(getKeyForAValue(allPossibleSolutions,externalID), patentsToMaintain)){
+					!existsOnSet(externalID, patentsToMaintain)){
 				toRemoveIDs.add(getKeyForAValue(allPossibleSolutions,externalID));
 			}
 		}
@@ -224,17 +219,12 @@ public class PatentPipelineUtils {
 	}
 
 
-	private static boolean verifyChoosedPatents (String externalID, Set<String> choosedPatents) {
-		Map<String, List<String>> patentSet = getAllPatentIDPossibilitiesForAGivenSet(choosedPatents);
-		List<String> possibleIDs = PatentPipelineUtils.createPatentIDPossibilities(externalID);
-		for (String patentPossible:possibleIDs){
-			if (existsOnCollection(patentPossible, patentSet.values())){
-				return true;
-			}
+	public static boolean existsOnSet(String patent, Set<String> choosedPatents) {
+		if (choosedPatents.contains(patent)){
+			return true;
 		}
 		return false;
 	}
-
 
 
 	public static Map<String, IPublication> processPatentMapWithMetadata(Map<String, IPublication> patentMap, Map<String, List<String>> allPossibleSolutions){
@@ -243,9 +233,9 @@ public class PatentPipelineUtils {
 
 		for(String patentID:patentMap.keySet()){
 			IPublication pub = patentMap.get(patentID);
-			//			String pubpatentID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
-			toRemoveIDs=findRepeatedPatents(pub, choosedPatents, toRemoveIDs, allPossibleSolutions);
-			choosedPatents.add(patentID);
+			Set<String> pubExternalIDs = getAllExternalIDsPossibilities(pub);
+			toRemoveIDs.addAll(findRepeatedPatents(patentID, pubExternalIDs, choosedPatents, allPossibleSolutions));
+			choosedPatents.addAll(pubExternalIDs); 
 		}
 		for (String toRemoveID: toRemoveIDs){
 			patentMap.remove(toRemoveID);
@@ -255,30 +245,23 @@ public class PatentPipelineUtils {
 
 
 
-	private static boolean existsOnCollection(String patent, Collection<List<String>> patentLists) {
-		List<String> possibleIDs = PatentPipelineUtils.createPatentIDPossibilities(patent);
+	public static boolean existsOnCollection(String patent, Collection<List<String>> patentLists) {
 		Set<String> patentSet= new HashSet<>();
 		for (List<String> col: patentLists){
 			patentSet.addAll(col);
 		}
-		for (String patentPossible:possibleIDs){
-			if (patentSet.contains(patentPossible)){
-				return true;
-			}
-
-		}
-		return false;
+		return existsOnSet(patent, patentSet);
 	}
 
-	private static String getKeyForAValue(Map<String, List<String>> allPossibleSolutions, String patentID){
-		String keyString = new String();
+
+	public static String getKeyForAValue(Map<String, List<String>> allPossibleSolutions, String patentID){
 		for (String key:allPossibleSolutions.keySet()){
 			List<String> valueList = allPossibleSolutions.get(key);
 			if (valueList.contains(patentID)){
-				keyString=key;
+				return key;
 			}
 		}
-		return keyString;
+		return null;
 	}
 
 

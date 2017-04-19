@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryImpl;
 import com.silicolife.textmining.core.datastructures.documents.query.QueryOriginTypeImpl;
@@ -184,6 +183,15 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 	}
 
 
+	private String testExistOnSet(List<String> patentPossible, Set<String> patentsFromDatabase){
+		for (String id:patentPossible){
+			if (patentsFromDatabase.contains(id)){
+				return id;
+			}	
+		}
+		return null;
+	}
+
 	private void patentPipeline(IIRPatentPipelineConfiguration searchConfiguration,IQuery query,IIRSearchProcessReport report) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
 
 		PatentPipeline patentPipeline = new PatentPipeline(){
@@ -224,13 +232,15 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 		//create a new patent set which is not registered on database to performa the metainformation step		
 		Set<String> patentIDsForMetainformation = new HashSet<>();
-		Set<String> patentIDsAlreadyOnDB =new HashSet<>();
+		Map<String,String> patentIDsAlreadyOnDB =new HashMap<>();
 		for (String patent: patentIds){
-			if (!patentidsAlreadyExistOnDB.containsKey(patent)){
+			List<String> patentPossible = PatentPipelineUtils.createPatentIDPossibilities(patent);
+			String patentVariantRegistered = testExistOnSet(patentPossible, patentidsAlreadyExistOnDB.keySet());
+			if (patentVariantRegistered==null){
 				patentIDsForMetainformation.add(patent);
 			}
 			else{
-				patentIDsAlreadyOnDB.add(patent);
+				patentIDsAlreadyOnDB.put(patent,patentVariantRegistered);
 			}
 		}
 
@@ -239,7 +249,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		if (patentIDsForMetainformation.size()>0){
 			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation);
 			patentMap=reportMetaInformation.getMapPatentIDPublication();
-			
+
 		}
 		increaseStep();
 		//patentPipeline.runMetaInformationPipeline(searchConfiguration.getIRPatentPipelineSearchConfiguration());
@@ -251,43 +261,45 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		documentsThatAlreayInDB = new HashSet<>();
 
 		//add the previous publication into the map to be verified
-		for (String patentID: patentIDsAlreadyOnDB){
-			Long pubID = patentidsAlreadyExistOnDB.get(patentID);
+		for (String patentID: patentIDsAlreadyOnDB.keySet()){
+			String registeredID = patentIDsAlreadyOnDB.get(patentID);
+			Long pubID = patentidsAlreadyExistOnDB.get(registeredID);
 			IPublication pub = InitConfiguration.getDataAccess().getPublication(pubID);
 			patentMap.put(patentID, pub);
 		}
 
 		//process the final metainformation map, removing the repeated patents
 		Map<String, List<String>> allPossibleSolutions = PatentPipelineUtils.getAllPatentIDPossibilitiesForAGivenSet(patentIds);
-		patentMap=PatentPipelineUtils.processPatentMapWithMetadata(patentMap, allPossibleSolutions);
-		
-		
+		patentMap = PatentPipelineUtils.processPatentMapWithMetadata(patentMap, allPossibleSolutions);
+
+
 		for(String patentID:patentMap.keySet()){
 
 			// Get ID from publication
 			IPublication pub = patentMap.get(patentID);
-			String pubpatentID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
+			//			String pubpatentID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
 			List<IPublicationExternalSourceLink> externalLinksList = pub.getPublicationExternalIDSource();
 			Set<String> pubExternalIDs=new HashSet<>();
 			for (IPublicationExternalSourceLink externaLink:externalLinksList){
 				pubExternalIDs.add(externaLink.getSourceInternalId());
 			}
-
+			List<String> possibleIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+			String patentIDInDB=testExistOnSet(possibleIDs,patentidsAlreadyExistOnDB.keySet());
 			//if already exist on query or on other source that publication will be ignored 
-			if(patentidsAlreadyExistOnQuery.contains(pubpatentID)){}
+			if(testExistOnSet(possibleIDs, patentidsAlreadyExistOnQuery)!=null){}
 
 			// Test if patentID already exists in System
-			else if(patentidsAlreadyExistOnDB.containsKey(pubpatentID))
+			else if(patentIDInDB!=null)
 			{
 				// Test if Publication already exists on added list
-				if(!alreadyAdded.contains(patentidsAlreadyExistOnDB.get(pubpatentID)))
+				if(!alreadyAdded.contains(patentidsAlreadyExistOnDB.get(patentIDInDB)))
 				{
 					// If publication already exist in system give it the system ID
-					pub.setId(patentidsAlreadyExistOnDB.get(pubpatentID));
+					pub.setId(patentidsAlreadyExistOnDB.get(patentIDInDB));
 					// Add to already exist list to later add to the query
 					documentsThatAlreayInDB.add(pub);
 					// Add if to The added ids
-					alreadyAdded.add(patentidsAlreadyExistOnDB.get(pubpatentID));
+					alreadyAdded.add(patentidsAlreadyExistOnDB.get(patentIDInDB));
 					// Add new Document Relevance - Default
 					query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
 					// Test is abstract is available an increase report
@@ -298,32 +310,37 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			}
 			else
 			{
-				patentidsAlreadyExistOnDB.put(pubpatentID, pub.getId());
+				patentidsAlreadyExistOnDB.put(patentID, pub.getId());
 				documentsToInsert.add(pub);
 				query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
 				if(!pub.getAbstractSection().isEmpty()){
 					abs_count ++;}
 				report.incrementDocumentRetrieval(1);
-				for (String externalID:pubExternalIDs){
-					if (!externalID.equalsIgnoreCase(pubpatentID) && patentMap.keySet().contains(externalID)){
-						//remove the previous entry on the dataset to be added
-						documentsThatAlreayInDB.remove(pub);
-						//get each external publication
-						IPublication pubExternal = patentMap.get(externalID);
-						// get patent abstract to compare after this process with the final abstract section
-						String pubAbstract = pub.getAbstractSection();					
-						//add the publication into the patent Ids alredy existent on DB set
-						patentidsAlreadyExistOnDB.put(externalID, pub.getId());
-						// Add if to The added ids
-						alreadyAdded.add(patentidsAlreadyExistOnDB.get(externalID));
-						//update publication fields
-						pub=updatePublication(pub, pubExternal);						
-						// Test is abstract is available and if was not added previously
-						if(!pub.getAbstractSection().isEmpty() && pubAbstract.isEmpty()){
-							abs_count ++;}
-						//						report.incrementDocumentRetrieval(1);
-						//add the updated pub into the list to be added to query					
-						documentsThatAlreayInDB.add(pub);
+				String registeredExternalID=testExistOnSet(possibleIDs, pubExternalIDs);
+				if (registeredExternalID==null){
+					for (String externalID:pubExternalIDs){
+						//						if (!externalID.equalsIgnoreCase(patentID) && patentMap.keySet().contains(externalID)){
+						Map<String, List<String>> allMapIDs = PatentPipelineUtils.getAllPatentIDPossibilitiesForAGivenSet(patentMap.keySet());
+						if (PatentPipelineUtils.existsOnCollection(externalID,allMapIDs.values())){
+							//remove the previous entry on the dataset to be added
+							documentsThatAlreayInDB.remove(pub);
+							//get each external publication
+							IPublication pubExternal = patentMap.get(PatentPipelineUtils.getKeyForAValue(allMapIDs, externalID));
+							// get patent abstract to compare after this process with the final abstract section
+							String pubAbstract = pub.getAbstractSection();					
+							//add the publication into the patent Ids alredy existent on DB set
+							patentidsAlreadyExistOnDB.put(externalID, pub.getId());
+							// Add if to The added ids
+							alreadyAdded.add(patentidsAlreadyExistOnDB.get(externalID));
+							//update publication fields
+							pub=updatePublication(pub, pubExternal);						
+							// Test is abstract is available and if was not added previously
+							if(!pub.getAbstractSection().isEmpty() && pubAbstract.isEmpty()){
+								abs_count ++;}
+							//						report.incrementDocumentRetrieval(1);
+							//add the updated pub into the list to be added to query					
+							documentsThatAlreayInDB.add(pub);
+						}
 					}
 				}
 			}
