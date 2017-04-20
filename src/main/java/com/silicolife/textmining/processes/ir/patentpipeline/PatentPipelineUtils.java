@@ -210,20 +210,12 @@ public class PatentPipelineUtils {
 			if (!allIDPossibilities.contains(externalID) && 
 					existsOnCollection(externalID, allPossibleSolutions.values()) && 
 					//					!verifyChoosedPatents(getKeyForAValue(allPossibleSolutions,externalID), patentsToMaintain)){
-					!existsOnSet(externalID, patentsToMaintain)){
+					!patentsToMaintain.contains(externalID)){
 				toRemoveIDs.add(getKeyForAValue(allPossibleSolutions,externalID));
 			}
 		}
 		return toRemoveIDs;
 
-	}
-
-
-	public static boolean existsOnSet(String patent, Set<String> choosedPatents) {
-		if (choosedPatents.contains(patent)){
-			return true;
-		}
-		return false;
 	}
 
 
@@ -250,7 +242,7 @@ public class PatentPipelineUtils {
 		for (List<String> col: patentLists){
 			patentSet.addAll(col);
 		}
-		return existsOnSet(patent, patentSet);
+		return patentSet.contains(patent);
 	}
 
 
