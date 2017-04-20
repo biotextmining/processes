@@ -194,8 +194,8 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 			onto = getResource().getName();
 		}
 		IAnoteClass klass = new AnoteClass(onto);
-		IResourceElement root = new ResourceElementImpl("root",klass,new ArrayList<IExternalID>(),new ArrayList<String>(),0,true);
 		getReport().addClassesAdding(1);
+		IResourceElement root = new ResourceElementImpl("root",klass,new ArrayList<IExternalID>(),new ArrayList<String>(),0,true);
 		this.addElementToBatch(root);
 		Iterator<String> itOnto = fileData.keySet().iterator();;
 		while(itOnto.hasNext() && !cancel)
