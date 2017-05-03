@@ -72,6 +72,8 @@ public class BingUtils {
 			jsonMap = mapper.readValue(inputStreamObject, Map.class);
 			JSONObject json = new JSONObject(jsonMap);
 			LinkedHashMap<String,String> value = (LinkedHashMap<String, String>) json.get("webPages");
+			if(value==null)
+				return 0;
 			JSONObject newJson = new JSONObject(value);
 			totalResults =new Integer(newJson.get("totalEstimatedMatches").toString());
 
