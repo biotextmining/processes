@@ -26,6 +26,7 @@ public class NERParallelStep implements IParallelJob<Integer>{
 	private boolean stop = false;
 	private NERCaseSensativeEnum caseSensitive;
 	private boolean normalization;
+	private boolean finished = false;
 	
 	
 	public NERParallelStep(INERLexicalResourcesPreProcessingModel preprocessingmodel,IPublication doc,IIEProcess process,ICorpus corpus,String text,List<Long> classIdCaseSensative,NERCaseSensativeEnum caseSensitive,boolean normalization)
@@ -57,6 +58,7 @@ public class NERParallelStep implements IParallelJob<Integer>{
 		}
 		entitiesAdded = annotationsPositions.getAnnotations().size();
 		annotationsPositions = null;
+		finished=true;
 	}
 
 
@@ -68,6 +70,11 @@ public class NERParallelStep implements IParallelJob<Integer>{
 	public void kill() {
 		stop = true;
 		preprocessingmodel.stop();	
+	}
+
+	@Override
+	public boolean isFinished() {
+		return finished;
 	}
 
 }
