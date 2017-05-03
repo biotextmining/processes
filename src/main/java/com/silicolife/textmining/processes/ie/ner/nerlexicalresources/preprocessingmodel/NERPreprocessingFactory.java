@@ -14,6 +14,7 @@ public class NERPreprocessingFactory {
 	public static INERLexicalResourcesPreProcessingModel build(INERLexicalResourcesConfiguration lexicalResurcesConfiguration, NERLexicalResourcesPreProssecingEnum preprocessing) throws ANoteException {
 		
 		ElementToNer elemntsToNER = new ElementToNer(lexicalResurcesConfiguration.getResourceToNER(), lexicalResurcesConfiguration.isNormalized());
+		elemntsToNER.processingINfo();
 		List<IEntityAnnotation> elements = elemntsToNER.getTerms();
 		if(preprocessing.equals(NERLexicalResourcesPreProssecingEnum.No))
 		{
