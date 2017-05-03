@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -16,9 +18,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
@@ -77,9 +79,48 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 		publicationExternalIDSource.add(externalID);
 		List<IPublicationField> publicationFields = new ArrayList<IPublicationField>();
 		List<IPublicationLabel> publicationLabels = new ArrayList<IPublicationLabel>();
-		IPublication pub = new PublicationImpl(title, authors, "Patent", date,date,"", "", "", "","", abstractSection, extenalLink, true,new String(),
-				new String(),publicationExternalIDSource,publicationFields,publicationLabels);
+		String notes = getNotes(item);
+		String relativePath = new String();
+		IPublication pub = new PublicationImpl(title, authors, "Patent", date,date,"", "", "", "","", abstractSection, extenalLink, true,notes,
+				relativePath,publicationExternalIDSource,publicationFields,publicationLabels);
 		return pub;
+	}
+
+
+
+	private String getNotes(Node item) {
+		Set<String> classificationIPCRSet = getClassificationIPCR(item);
+		if(classificationIPCRSet.isEmpty())
+			return new String();
+		String notes = "Classification IPCR : ";
+		for(String classificationIPCR:classificationIPCRSet)
+		{
+			notes = notes + classificationIPCR +  " , ";
+		}
+		return notes;
+	}
+
+
+	private Set<String> getClassificationIPCR(Node item) {
+		Set<String> out = new HashSet<>();
+		Node bibliographicDate = item.getFirstChild();
+		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
+		for(int i=0;i<bibliographicDateChilds.getLength();i++)
+		{
+			Node bibliographicDateChild = bibliographicDateChilds.item(i);
+			String nodeNAme = bibliographicDateChild.getNodeName();
+			if(nodeNAme.equals("classifications-ipcr"))
+			{
+				Node classificationsipcrNode = bibliographicDateChild;
+				NodeList classificationsipcrChilds = classificationsipcrNode.getChildNodes();
+				for(int j=0;j<classificationsipcrChilds.getLength();j++)
+				{
+					Node classificationsipcrChild = classificationsipcrChilds.item(j);
+					out.add(classificationsipcrChild.getTextContent().trim());
+				}
+			}	
+		}
+		return out;
 	}
 
 
