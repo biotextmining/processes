@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/3.0/style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:meta name="elapsed-time" value="15"/>
+    <exchange-documents>
+        <exchange-document system="ops.epo.org" family-id="44435318" country="CN" doc-number="102153611" kind="A">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>CN</country>
+                        <doc-number>102153611</doc-number>
+                        <kind>A</kind>
+                        <date>20110817</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>CN102153611</doc-number>
+                        <date>20110817</date>
+                    </document-id>
+                </publication-reference>
+                <classifications-ipcr>
+                    <classification-ipcr sequence="1">
+                        <text>C07J  13/    00            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="2">
+                        <text>C07J  71/    00            A I                    </text>
+                    </classification-ipcr>
+                </classifications-ipcr>
+                <patent-classifications/>
+                <application-reference doc-id="336320553">
+                    <document-id document-id-type="docdb">
+                        <country>CN</country>
+                        <doc-number>201110040188</doc-number>
+                        <kind>A</kind>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>CN2011140188</doc-number>
+                        <date>20110218</date>
+                    </document-id>
+                    <document-id document-id-type="original">
+                        <doc-number>2011100401889</doc-number>
+                    </document-id>
+                </application-reference>
+                <priority-claims>
+                    <priority-claim sequence="1" kind="national">
+                        <document-id document-id-type="epodoc">
+                            <doc-number>CN2011140188</doc-number>
+                            <date>20110218</date>
+                        </document-id>
+                    </priority-claim>
+                </priority-claims>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>SHANGHAI INST ORGANIC CHEM</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>SHANGHAI INSTITUTE OF ORGANIC CHEMISTRY, CHINESE ACADEMY OF SCIENCES</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>WEISHENG TIAN</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="epodoc">
+                            <inventor-name>
+                                <name> JINGJING WU</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="3" data-format="epodoc">
+                            <inventor-name>
+                                <name> YUN WANG</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="4" data-format="epodoc">
+                            <inventor-name>
+                                <name> YONG SHI</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>TIAN WEISHENG, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="original">
+                            <inventor-name>
+                                <name>WU JINGJING, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="3" data-format="original">
+                            <inventor-name>
+                                <name>WANG YUN, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="4" data-format="original">
+                            <inventor-name>
+                                <name>SHI YONG</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="en">Method for synthesizing pregnenolol acetate and congener thereof</invention-title>
+                <references-cited>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                        <patcit dnum-type="publication number" num="1">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>CN1884297</doc-number>
+                                <date>20061227</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>CN</country>
+                                <doc-number>1884297</doc-number>
+                                <kind>A</kind>
+                            </document-id>
+                        </patcit>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                        <patcit dnum-type="publication number" num="2">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>CN101974058</doc-number>
+                                <date>20110216</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>CN</country>
+                                <doc-number>101974058</doc-number>
+                                <kind>A</kind>
+                            </document-id>
+                        </patcit>
+                    </citation>
+                </references-cited>
+            </bibliographic-data>
+            <abstract lang="en">
+                <p>The invention relates to a method for synthesizing a pregnenolol acetate and a congener thereof. In the method, a three-step reaction consisting of cracking, oxygen oxidation and rearrangement and elimination is undergone in a 'one-pot' based on steroid sapogenin to obtain the pregnenolol acetate and the congener thereof. By adopting the method, the problem of environmental pollution caused by the use of a metal compound and high-toxicity pyridine hydrochloride is solved in the reaction, and the problem of the harm of high-toxicity solvents, including acetonitrile, benzene and the like to operating personnel is eliminated. The method has the advantages of simple equipment, easiness and convenience for operation, mild condition and high total yield. A more environmentally-friendly and simpler method is provided for the industrial production of pregnenolone acetate.</p>
+            </abstract>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>

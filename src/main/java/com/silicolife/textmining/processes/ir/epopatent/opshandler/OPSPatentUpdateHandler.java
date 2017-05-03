@@ -3,9 +3,11 @@ package com.silicolife.textmining.processes.ir.epopatent.opshandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -127,6 +129,41 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		{
 			publication.getPublicationLabels().addAll(publicationLabels);
 		}
+		if(publication.getNotes().isEmpty())
+		{
+			Set<String> classificationIPCRSet = getClassificationIPCR(item);
+			if(!classificationIPCRSet.isEmpty())
+			{
+				String notes = "Classification IPCR : ";
+				for(String classificationIPCR:classificationIPCRSet)
+				{
+					notes = notes + classificationIPCR +  " , ";
+				}
+				publication.setNotes(notes);
+			}
+		}
+	}
+	
+	private Set<String> getClassificationIPCR(Node item) {
+		Set<String> out = new HashSet<>();
+		Node bibliographicDate = item.getFirstChild();
+		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
+		for(int i=0;i<bibliographicDateChilds.getLength();i++)
+		{
+			Node bibliographicDateChild = bibliographicDateChilds.item(i);
+			String nodeNAme = bibliographicDateChild.getNodeName();
+			if(nodeNAme.equals("classifications-ipcr"))
+			{
+				Node classificationsipcrNode = bibliographicDateChild;
+				NodeList classificationsipcrChilds = classificationsipcrNode.getChildNodes();
+				for(int j=0;j<classificationsipcrChilds.getLength();j++)
+				{
+					Node classificationsipcrChild = classificationsipcrChilds.item(j);
+					out.add(classificationsipcrChild.getTextContent().trim());
+				}
+			}	
+		}
+		return out;
 	}
 
 	private String getEpoDoc(Node item) {
