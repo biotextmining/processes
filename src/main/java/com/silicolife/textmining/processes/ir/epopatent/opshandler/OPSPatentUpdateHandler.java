@@ -159,7 +159,7 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 				for(int j=0;j<classificationsipcrChilds.getLength();j++)
 				{
 					Node classificationsipcrChild = classificationsipcrChilds.item(j);
-					out.add(classificationsipcrChild.getTextContent().trim());
+					out.add(classificationsipcrChild.getTextContent().trim().replace("A I", ""));
 				}
 			}	
 		}
@@ -347,6 +347,8 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 				}
 			}	
 		}
+		if(!titleInEngllish)
+			return new String();
 		return title;
 	}
 
