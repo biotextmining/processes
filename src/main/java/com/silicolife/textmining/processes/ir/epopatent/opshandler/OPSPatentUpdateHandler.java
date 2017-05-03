@@ -321,7 +321,8 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		String title = new String();
 		Node bibliographicDate = item.getFirstChild();
 		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
-		for(int i=0;i<bibliographicDateChilds.getLength();i++)
+		boolean titleInEngllish = false;
+		for(int i=0;i<bibliographicDateChilds.getLength()&&!titleInEngllish;i++)
 		{
 			Node bibliographicDateChild = bibliographicDateChilds.item(i);
 			String nodeNAme = bibliographicDateChild.getNodeName();
@@ -332,16 +333,17 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 					String langAtribute = bibliographicDateChild.getAttributes().getNamedItem("lang").getNodeValue();
 					if(langAtribute.equals("en"))
 					{
-						return bibliographicDateChild.getTextContent();
+						title = bibliographicDateChild.getTextContent();
+						titleInEngllish = true;
 					}
 					else
 					{
-						//						return bibliographicDateChild.getTextContent();
+						title = bibliographicDateChild.getTextContent();
 					}
 				}
 				else
 				{
-					return bibliographicDateChild.getTextContent();
+					title = bibliographicDateChild.getTextContent();
 				}
 			}	
 		}

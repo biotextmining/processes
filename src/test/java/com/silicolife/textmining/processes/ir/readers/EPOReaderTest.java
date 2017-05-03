@@ -28,7 +28,7 @@ public class EPOReaderTest {
 				| ResponseHandlingException e) {
 			tokenaccess = null;
 		}
-		String patentID = "CN102153611";
+		String patentID = "CN205586194U";
 		OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentID);
 		System.out.println(publiction.getTitle());
 		System.out.println(publiction.getAuthors());
