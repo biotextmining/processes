@@ -26,7 +26,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 
 public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implements INERLinnaeusConfiguration{
 	
-	public static String nerLinnaeusUID = "ner.linnaeus";
+	public static final String nerLinnaeusUID = "ner.linnaeus";
 
 	private Map<String, Pattern> patterns;
 	private ResourcesToNerAnote resourceToNER;
@@ -215,10 +215,10 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 	}
 
 
-	@Override
-	public void setConfigurationUID(String uid) {
-		NERLinnaeusConfigurationImpl.nerLinnaeusUID = uid;
-		
-	}
+//	@Override
+//	public void setConfigurationUID(String uid) {
+//		NERLinnaeusConfigurationImpl.nerLinnaeusUID = uid;
+//		
+//	}
 
 }
