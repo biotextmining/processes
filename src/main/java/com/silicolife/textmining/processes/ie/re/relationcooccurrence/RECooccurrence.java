@@ -19,6 +19,7 @@ import com.silicolife.textmining.core.datastructures.report.processes.REProcessR
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
+import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEventAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -132,21 +133,23 @@ public class RECooccurrence implements IREProcess{
 		IIEProcess reProcess =	configuration.getIEProcess();
 		reProcess.setName(name);
 		reProcess.setProperties(properties);
+		if(reProcess.getCorpus() == null)
+			reProcess.setCorpus(configuration.getCorpus());
 		return reProcess;
 	}
 	
 	@JsonIgnore
 	protected void memoryAndProgress(int step, int total) {
-//		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
 //		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 	@JsonIgnore
 	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
-//		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
+		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
 //		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 	

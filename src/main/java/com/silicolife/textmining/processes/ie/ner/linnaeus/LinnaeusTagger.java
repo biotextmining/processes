@@ -429,6 +429,8 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		IIEProcess processToRun = configuration.getIEProcess();
 		processToRun.setProperties(properties);
 		processToRun.setName(description);
+		if(processToRun.getCorpus() == null)
+			processToRun.setCorpus(configuration.getCorpus());
 		return processToRun;
 	}
 

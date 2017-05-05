@@ -80,6 +80,8 @@ public class NERLexicalResources implements INERProcess{
 		IIEProcess processToRun = lexicalResurcesConfiguration.getIEProcess();
 		processToRun.setName(description);
 		processToRun.setProperties(properties);
+		if(processToRun.getCorpus() == null)
+			processToRun.setCorpus(lexicalResurcesConfiguration.getCorpus());
 		return processToRun;
 	}
 

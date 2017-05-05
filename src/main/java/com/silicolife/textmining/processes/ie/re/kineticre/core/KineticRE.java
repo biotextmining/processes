@@ -112,6 +112,8 @@ public class KineticRE implements IREProcess {
 		IIEProcess reProcess = configuration.getIEProcess();
 		reProcess.setName(KineticRE.kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()));
 		reProcess.setProperties(generateConfiguration(reConfiguration));
+		if(reProcess.getCorpus() == null)
+			reProcess.setCorpus(configuration.getCorpus());
 		return reProcess;
 	}
 

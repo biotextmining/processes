@@ -26,7 +26,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 
 public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implements INERLinnaeusConfiguration{
 	
-	public static final String nerLinnaeusUID = "ner.linnaeus";
+	public static String nerLinnaeusUID = "ner.linnaeus";
 
 	private Map<String, Pattern> patterns;
 	private ResourcesToNerAnote resourceToNER;
@@ -48,13 +48,13 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 	
 	public NERLinnaeusConfigurationImpl(IIEProcess process,ProcessRunStatusConfigurationEnum processRunStatus)
 	{
-		super(process.getCorpus(),nerLinnaeusUID,process,processRunStatus);
+		super(process.getCorpus(),LinnaeusTagger.linneausTagger,process,processRunStatus);
 	}
 	
 	public NERLinnaeusConfigurationImpl(ICorpus corpus,ProcessRunStatusConfigurationEnum processRunStatus,Map<String, Pattern> patterns, ResourcesToNerAnote resourceToNER, boolean useabreviation,
 			Disambiguation disambiguation, NERCaseSensativeEnum caseSensitiveEnum,boolean normalized, int numThreads,ILexicalWords stopwords,
 			NERLinnaeusPreProcessingEnum preprocessing,boolean usingOtherResourceInfoToImproveRuleAnnotations, int sizeOfSmallWordsToBeNotAnnotated) {
-		super(corpus,nerLinnaeusUID, build(corpus),processRunStatus);
+		super(corpus,LinnaeusTagger.linneausTagger, build(corpus),processRunStatus);
 		this.patterns = patterns;
 		this.resourceToNER = resourceToNER;
 		this.useAbreviation = useabreviation;
@@ -208,9 +208,17 @@ public class NERLinnaeusConfigurationImpl extends NERConfigurationImpl implement
 			}
 		}
 	}
-
+	
+	@Override
 	public String getConfigurationUID() {
 		return NERLinnaeusConfigurationImpl.nerLinnaeusUID;
+	}
+
+
+	@Override
+	public void setConfigurationUID(String uid) {
+		NERLinnaeusConfigurationImpl.nerLinnaeusUID = uid;
+		
 	}
 
 }
