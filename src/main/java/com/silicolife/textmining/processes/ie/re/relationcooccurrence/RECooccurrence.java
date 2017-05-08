@@ -2,6 +2,8 @@ package com.silicolife.textmining.processes.ie.re.relationcooccurrence;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -83,11 +85,38 @@ public class RECooccurrence implements IREProcess{
 				break;
 			}
 			IPublication doc = itDocs.next();
-			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc,configuration.getEntityBasedProcess(), corpus);
-			List<IEntityAnnotation> allDoucmentSemanticLayer = annotDoc.getEntitiesAnnotations();
-			List<IEventAnnotation> relations = model.processDocumetAnnotations(annotDoc,allDoucmentSemanticLayer);
+			IAnnotatedDocument nerDocument = new AnnotatedDocumentImpl(doc,configuration.getEntityBasedProcess(), corpus);
+			List<IEntityAnnotation> entities = nerDocument.getEntitiesAnnotations();
+			
+			Collections.sort(entities, new Comparator<IEntityAnnotation>(){
+
+				@Override
+				public int compare(IEntityAnnotation o1, IEntityAnnotation o2) {
+					if(o1.getStartOffset() == o2.getStartOffset() && o1.getEndOffset() == o2.getEndOffset())
+						return 0;
+					
+					if(o1.getStartOffset()>o2.getStartOffset())
+						return 1;
+					
+					if(o1.getStartOffset()<o2.getStartOffset())
+						return -1;
+					
+					if(o1.getEndOffset()> o2.getEndOffset())
+						return 1;
+					
+					if(o1.getEndOffset()< o2.getEndOffset())
+						return -1;
+					
+					return 0;
+				}
+				
+			});
+			
+			List<IEventAnnotation> events = model.processDocumetAnnotations(nerDocument,entities);
+
+			IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(doc, reProcess, corpus, entities, events);
 			// Insert Entities and Relations in Database
-			insertAnnotationsInDatabse(report,annotDoc,allDoucmentSemanticLayer,relations);
+			insertAnnotationsInDatabse(report,annotDoc,entities,events);
 			position++;
 			memoryAndProgressAndTime(position, size, starttime);
 		}
@@ -104,21 +133,23 @@ public class RECooccurrence implements IREProcess{
 		IIEProcess reProcess =	configuration.getIEProcess();
 		reProcess.setName(name);
 		reProcess.setProperties(properties);
+		if(reProcess.getCorpus() == null)
+			reProcess.setCorpus(configuration.getCorpus());
 		return reProcess;
 	}
 	
 	@JsonIgnore
 	protected void memoryAndProgress(int step, int total) {
 		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.gc();
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 	@JsonIgnore
 	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.gc();
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 	

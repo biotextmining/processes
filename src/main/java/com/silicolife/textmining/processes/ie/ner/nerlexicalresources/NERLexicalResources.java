@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
@@ -16,8 +20,8 @@ import com.silicolife.textmining.core.datastructures.report.processes.NERProcess
 import com.silicolife.textmining.core.datastructures.utils.GenerateRandomId;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
+import com.silicolife.textmining.core.datastructures.utils.conf.OtherConfigurations;
 import com.silicolife.textmining.core.datastructures.utils.multithearding.IParallelJob;
-import com.silicolife.textmining.core.datastructures.utils.multithearding.ThreadProcessManager;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -39,7 +43,7 @@ public class NERLexicalResources implements INERProcess{
 	public static String nerlexicalresourcesTagger = "NER Lexical Resources Tagger";
 	public static final IProcessOrigin nerlexicalresourcesOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),nerlexicalresourcesTagger);
 	private boolean stop = false;
-	private ThreadProcessManager multi;
+	private ExecutorService executor;
 
 
 	public NERLexicalResources() {
@@ -52,7 +56,8 @@ public class NERLexicalResources implements INERProcess{
 		NERLexicalResourcesPreProssecingEnum preprocessing = lexicalResurcesConfiguration.getPreProcessingOption();
 		INERLexicalResourcesPreProcessingModel model = NERPreprocessingFactory.build(lexicalResurcesConfiguration,preprocessing);
 		IIEProcess processToRun = getIEProcess(lexicalResurcesConfiguration,model);
-		multi = new ThreadProcessManager(false);
+		// creates the thread executor that in each thread executes the ner for a document
+		executor = Executors.newFixedThreadPool(OtherConfigurations.getThreadsNumber());
 		InitConfiguration.getDataAccess().createIEProcess(processToRun);
 		InitConfiguration.getDataAccess().registerCorpusProcess(configuration.getCorpus(), processToRun);
 		NERProcessReportImpl report = new NERProcessReportImpl(nerlexicalresourcesTagger,processToRun);
@@ -75,6 +80,8 @@ public class NERLexicalResources implements INERProcess{
 		IIEProcess processToRun = lexicalResurcesConfiguration.getIEProcess();
 		processToRun.setName(description);
 		processToRun.setProperties(properties);
+		if(processToRun.getCorpus() == null)
+			processToRun.setCorpus(lexicalResurcesConfiguration.getCorpus());
 		return processToRun;
 	}
 
@@ -84,6 +91,7 @@ public class NERLexicalResources implements INERProcess{
 		long actualTime,differTime;
 		int i=0;
 		Collection<IPublication> docs = process.getCorpus().getArticlesCorpus().getAllDocuments().values();
+		List<IParallelJob<Integer>> jobs = new ArrayList<>();
 		for(IPublication pub:docs)
 		{
 			if(!stop)
@@ -99,7 +107,7 @@ public class NERLexicalResources implements INERProcess{
 				}
 				else
 				{
-					executeNER(process.getCorpus(), multi,classIdCaseSensative, annotDoc, text,configuration,model,process);
+					jobs.add(executeNER(process.getCorpus(), executor,classIdCaseSensative, annotDoc, text,configuration,model,process));
 				}
 				report.incrementDocument();
 			}
@@ -111,63 +119,67 @@ public class NERLexicalResources implements INERProcess{
 		}
 
 		startTime = Calendar.getInstance().getTimeInMillis();
-		multi.run();
-		while(!multi.isComplete() && !stop) {
+		executor.shutdown();
+
+		// loop to give the progress bar of jobs
+		while(!jobs.isEmpty() && !stop){
 			actualTime = Calendar.getInstance().getTimeInMillis();
 			differTime = actualTime - startTime;
-			if(differTime > 10000 * i) {
-				memoryAndProgressAndTime(multi.numberOfCompleteJobs(), size, startTime);
-				i++;
-			};
-		}
-		if(stop)
-		{
-			report.setFinishing(false);
-		}
-		else
-		{
-
-			try {
-				multi.join();
-
-				List<Object> list = multi.getResults();
-				for(Object elem:list)
-				{
-					if(elem instanceof Integer)
-					{
-						report.incrementEntitiesAnnotated((Integer) elem);
-					}	
+			Iterator<IParallelJob<Integer>> itjobs = jobs.iterator();
+			while(itjobs.hasNext() && !stop){
+				IParallelJob<Integer> job = itjobs.next();
+				if(job.isFinished()){
+					report.incrementEntitiesAnnotated(job.getResultJob());
+					itjobs.remove();
 				}
-				actualTime = Calendar.getInstance().getTimeInMillis();
-				report.setTime(actualTime-startTime);
-			} catch (InterruptedException e) {
-				throw new ANoteException(e);
+			}
+			if(differTime > 10000 * i) {
+				int step = size-jobs.size();
+				memoryAndProgressAndTime(step, size, startTime);
+				i++;
 			}
 		}
+		
+		//in case of stop, that will kill the running jobs
+		if(stop){
+			for(IParallelJob<Integer> job : jobs)
+				job.kill();
+		}
+		
+		try {
+			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			throw new ANoteException(e);
+		}
+		
+		actualTime = Calendar.getInstance().getTimeInMillis();
+		report.setTime(actualTime-startTime);
 	}
 
 	@JsonIgnore
 	protected void memoryAndProgress(int step, int total) {
 		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.gc();
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
 	@JsonIgnore
 	protected void memoryAndProgressAndTime(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double) step / (double) total * 100)) + " %...");
-		System.gc();
-		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
+//		System.gc();
+//		System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB ");
 	}
 
-	private void executeNER(ICorpus corpus,ThreadProcessManager multi,List<Long> classIdCaseSensative,IAnnotatedDocument annotDoc,String text,INERLexicalResourcesConfiguration confguration,INERLexicalResourcesPreProcessingModel nerpreprocessingmodel,IIEProcess process) {
+	private IParallelJob<Integer> executeNER(ICorpus corpus,ExecutorService executor,List<Long> classIdCaseSensative,IAnnotatedDocument annotDoc,String text,INERLexicalResourcesConfiguration confguration,INERLexicalResourcesPreProcessingModel nerpreprocessingmodel,IIEProcess process) {
 		IParallelJob<Integer> job = new NERParallelStep(nerpreprocessingmodel,annotDoc, process, corpus, text, classIdCaseSensative,confguration.getCaseSensitive(),confguration.isNormalized());
-		multi.addJob(job);
+		executor.submit(job);
+		return job;
 	}
 
 	public void stop() {
 		stop = true;
-		multi.kill();
+		//removes the jobs from executor and attempts to interrput the threads
+		executor.shutdownNow();
 	}
 
 	@Override

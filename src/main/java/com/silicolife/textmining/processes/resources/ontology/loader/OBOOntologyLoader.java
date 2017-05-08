@@ -115,7 +115,8 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 										int secondTwoPoints = blockpiece.indexOf(':')+1;
 										int lastAspas = blockpiece.indexOf('\"')-1;
 										String externalID = blockpiece.substring(secondTwoPoints,lastAspas);
-										externalIds.add(new ExternalIDImpl(externalID, new SourceImpl(source)));
+										if(externalID.length() < 200)
+											externalIds.add(new ExternalIDImpl(externalID, new SourceImpl(source)));
 									}
 								}
 							}
@@ -125,19 +126,29 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 								{
 									source = blockpiece.substring(5,blockpiece.lastIndexOf(':'));
 									String externalID = blockpiece.substring(blockpiece.lastIndexOf(':')+1);
-									externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));
+									if(externalID.length() < 200)
+										externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));
 								}
 							}
 						}
 					}
-					if(!id.equals("") && id.indexOf(':')!=-1 && id.lastIndexOf(':')!=-1)
+					if(id != null && !id.isEmpty())
 					{
-						String source = id.substring(0,id.indexOf(':'));
-						int secondTwoPoints = id.lastIndexOf(':')+1;
-						String externalID = id.substring(secondTwoPoints);
-						externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));	
-						classe = new OntologicalClass(name, def, isA,partof, syns,externalIds);
-						ontologicatermIDDetails.put(id, classe);
+						String externalID = new String();
+						String source = new String();
+						if(id.indexOf(':')!=-1 && id.lastIndexOf(':')!=-1){
+							int secondTwoPoints = id.lastIndexOf(':')+1;
+							externalID = id.substring(secondTwoPoints);
+							source = id.substring(0,id.indexOf(':'));
+						}else {
+							source = configuration.getOntology().getName();
+							externalID = id;
+						}
+						if(!externalID.isEmpty() && !source.isEmpty() && externalID.length() < 200){
+							externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));	
+							classe = new OntologicalClass(name, def, isA,partof, syns,externalIds);
+							ontologicatermIDDetails.put(id, classe);
+						}
 					}
 					id = new String();
 					name = new String();
@@ -207,8 +218,10 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 				List<String> synoyms = clO.getSynonyms();
 				Set<String> nonrepeatedSynoyms = new HashSet<>(synoyms);
 				IResourceElement elem = new ResourceElementImpl(clO.getName(),klass,clO.getExternalIDs(),new ArrayList<>(nonrepeatedSynoyms),0,true);
-				ontologyIDDatabaseIndex.put(cl, elem);
-				this.addElementToBatch(elem);
+				if(clO.getName() != null && !clO.getName().isEmpty()){
+					ontologyIDDatabaseIndex.put(cl, elem);
+					this.addElementToBatch(elem);
+				}
 			}
 			if(point % 100 == 0 )
 			{
@@ -261,7 +274,8 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 		for(String isA:clO.getIs_a())
 		{
 			IResourceElement father = ontologyIDDatabaseIndex.get(isA);
-			InitConfiguration.getDataAccess().addResourceElementsRelation(father, sun, relationType);
+			if(father != null && sun != null)
+				InitConfiguration.getDataAccess().addResourceElementsRelation(father, sun, relationType);
 		}
 	}
 
