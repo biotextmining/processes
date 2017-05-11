@@ -101,6 +101,7 @@ public class NERLexicalResourcesConfiguration extends NERConfigurationImpl imple
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put(NERLexicalResourcesDefaultSettings.USE_PARTIAL_MATCH_WITH_DICTIONARIES, String.valueOf(usingOtherResourceInfoToImproveRuleAnnotstions));
 		properties.put(NERLexicalResourcesDefaultSettings.CASE_SENSITIVE, String.valueOf(caseSensitive));
+		properties.put(NERLexicalResourcesDefaultSettings.SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED, String.valueOf(resourceToNER.getSizeOfSmallWordsToBeNotAnnotated()));
 		properties.put(NERLexicalResourcesDefaultSettings.PRE_PROCESSING, preProcessing.name());
 		properties.put(NERLexicalResourcesDefaultSettings.NORMALIZATION, String.valueOf(normalized));
 		long stopwordsID = 0;

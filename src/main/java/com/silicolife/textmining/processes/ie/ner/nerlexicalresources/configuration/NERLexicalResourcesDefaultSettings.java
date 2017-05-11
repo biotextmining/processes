@@ -10,7 +10,7 @@ public class NERLexicalResourcesDefaultSettings {
 	public static final String RULES_RESOURCE_ID = "NER.LexicalResources.Ruleset";
 	public static final String ONTOLOGY_RESOURCE_ID = "NER.LexicalResources.Ontology";
 	public static final String LOOKUPTABLE_RESOURCE_ID = "NER.LexicalResources.LookupTable";
-	public static final String SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED = "NER.SizeOfSmallWordsToBeNotAnnotated";
+	public static final String SIZE_OF_SMALL_WORDS_TO_BE_NOT_ANNOTATED = "NER.LexicalResources.SizeOfSmallWordsToBeNotAnnotated";
 
 	
 	public static final String ROOT = "NER.LexicalResources"; 
