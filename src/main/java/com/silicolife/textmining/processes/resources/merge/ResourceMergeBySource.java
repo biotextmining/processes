@@ -9,7 +9,6 @@ import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.report.resources.ResourceMergeReportImpl;
-import com.silicolife.textmining.core.datastructures.resources.ResourceElementImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.core.interfaces.core.general.source.ISource;
@@ -58,7 +57,6 @@ public class ResourceMergeBySource {
 		{
 			int finalStep = i+step;
 			IResourceElementSet<IResourceElement> elems = InitConfiguration.getDataAccess().getResourceElementsInBatchWithLimit(toMerge, i, i+step);
-			System.out.println(i + " ... "+finalStep);
 			for(IResourceElement elem:elems.getResourceElements())
 			{
 				List<IExternalID> extendsalIDs = elem.getExtenalIDs();
@@ -95,40 +93,6 @@ public class ResourceMergeBySource {
 							{
 //								InitConfiguration.getDataAccess().addResourceElementExternalIds(destiny, originalElem, extermalIdsToAdd); 
 							}
-						}
-						else
-						{
-//							System.out.println("["+extID.getExternalID()+":"+source.getSource()+"]");
-//							List<IResourceElement> elements = new ArrayList<>();
-//							List<String> synonyms = elem.getSynonyms();
-//							Set<String> synonymsToAdd = new HashSet<>();
-//							for(String syn:synonyms)
-//							{
-//								if(!alreadyUsedWords.contains(syn))
-//								{
-//									synonymsToAdd.add(syn);
-//								}
-//							}
-//							String primaryTerm = null;
-//							if(alreadyUsedWords.contains(elem.getTerm()) && synonymsToAdd.isEmpty())
-//							{
-//								
-//							}
-//							else if(alreadyUsedWords.contains(elem.getTerm()) )
-//							{
-//								primaryTerm = synonyms.get(0);
-//							}
-//							else
-//							{
-//								primaryTerm = elem.getTerm();
-//							}
-//							if(primaryTerm!=null)
-//							{
-//								IResourceElement elemAux = new ResourceElementImpl(primaryTerm, elem.getTermClass(), elem.getExtenalIDs(), new ArrayList<String>(synonymsToAdd), 0, true);
-//								elements.add(elemAux );				
-////								InitConfiguration.getDataAccess().addResourceElements(destiny, elements )
-//								System.out.println("\tAdd New Entry :"+elem.getTerm() + " " +elem.getSynonyms().toString());
-//							}
 						}
 					}
 				}

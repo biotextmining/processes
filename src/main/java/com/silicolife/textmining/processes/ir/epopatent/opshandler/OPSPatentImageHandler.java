@@ -24,9 +24,6 @@ public class OPSPatentImageHandler implements
 	public GenericPairImpl<Integer, String> buildResponse(InputStream response,String responseMessage, Map<String, List<String>> headerFields,int status) throws ResponseHandlingException {
 		Document doc;
 		try {
-		//	String print = OPSUtils.readString(response);
-	//	System.out.println(print);
-			
 			
 			doc = OPSUtils.createJDOMDocument(response);
 			

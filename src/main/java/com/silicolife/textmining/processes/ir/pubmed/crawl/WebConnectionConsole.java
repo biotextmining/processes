@@ -321,7 +321,6 @@ public class WebConnectionConsole {
 		}
 		if((text == null || text.isEmpty()) && ignoretextcontn)
 		{
-			System.out.print("... ignore text content..");
 			return true;
 		}
 

@@ -402,7 +402,6 @@ public class PMSearch {
 	
 	private static ESearchContext readXMLResultFileESearchContext(PostMethod post) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, InternetConnectionProblemException{
 		InputStream stream = post.getResponseBodyAsStream();
-//		System.out.println(readString(stream));
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder builder = factory.newDocumentBuilder();;
 	    org.w3c.dom.Document dDoc = builder.parse(stream);

@@ -48,8 +48,6 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
 		for(String patentID:mapPatentIDPublication.keySet())
 		{
-//			long t1 = new Date().getTime();
-//			System.out.println("Getting metainformation for patent:"+patentID);
 			IPublication publication = mapPatentIDPublication.get(patentID);
 			List<Doc> retour;
 			try {
@@ -69,11 +67,6 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 							InputSource is = new InputSource(reader);
 							is.setEncoding("UTF-8");
 							sp.parse(is,parseEventsHandler);
-
-//							long t2 = new Date().getTime();
-//							float downLoadingTime = ((float)(t2 - t1))/1000;
-//							System.out.println("getPatentMetaInformation(" + patentID + "," + pagesList.get(i) + "): "
-//									+ " downloaded in " + downLoadingTime + "s");
 
 						}
 					}

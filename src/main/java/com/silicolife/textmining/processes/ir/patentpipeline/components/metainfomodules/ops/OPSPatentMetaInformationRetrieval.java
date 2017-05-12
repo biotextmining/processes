@@ -116,7 +116,6 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		if (!downloadSuccess){
 			return false;
 		}
-		System.out.println(publiction);
 		return true;
 	}
 

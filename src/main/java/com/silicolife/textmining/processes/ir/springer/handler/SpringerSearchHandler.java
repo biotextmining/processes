@@ -46,8 +46,6 @@ public class SpringerSearchHandler  implements ResponseHandler<List<IPublication
 			throws ResponseHandlingException {
 		List<IPublication> pubs = new ArrayList<IPublication>();
 		try {
-//			System.out.println(readString(response));
-
 			Document doc = createJDOMDocument(response);
 			NodeList extchangeNode = doc.getElementsByTagName("pam:message");
 			for(int i=0;i<extchangeNode.getLength();i++)

@@ -352,8 +352,6 @@ public abstract class ABingQuery {
 		uri = new URI(uri.getScheme() + "://" + uri.getAuthority()
 		+ uri.getPath() + "?"
 		+ uri.getQuery());
-//		System.out.println(uri.toASCIIString());
-
 		return uri;
 	}
 

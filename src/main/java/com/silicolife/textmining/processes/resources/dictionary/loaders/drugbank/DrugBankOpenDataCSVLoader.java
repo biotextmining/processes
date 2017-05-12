@@ -167,10 +167,6 @@ public class DrugBankOpenDataCSVLoader extends DictionaryLoaderHelp implements I
 			externalIDs.add(new ExternalIDImpl(lineSplitered[lineSplitered.length-1].trim(), new SourceImpl(InCHIsource)));	
 		}
 		List<String> synonyms =  getSynonyms(line, lineSplitered,correctionfactor);
-//		System.out.println("#### Drug");
-//		System.out.println(primartyName.trim());
-//		System.out.println(synonyms);
-//		System.out.println(externalIDs);
 		super.addElementToBatch(primartyName.trim(), drug, new HashSet<>(synonyms), externalIDs, 0);
 		if (!cancel && isBatchSizeLimitOvertaken()) {
 			IResourceManagerReport reportBatchInserted = super.executeBatch();

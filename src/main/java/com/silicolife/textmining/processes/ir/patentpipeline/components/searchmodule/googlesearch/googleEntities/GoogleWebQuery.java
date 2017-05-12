@@ -105,36 +105,17 @@ public class GoogleWebQuery {
 		if(keywords==null)return null;
 
 		String google_arguments= "&key="+APIKey+"&cx="+customSearchEngineID+"&alt=json"+generateExtraParams()+"&q=";
-		//System.out.println(google_arguments);
-
 		URL url;
-
-		//encoding
-		//			String google_encoded = URLEncoder.encode(google_arguments, CHAR_SET)
-		//					.replaceAll("\\%28", "(") 
-		//					.replaceAll("\\%29", ")") 
-		//					.replaceAll("\\+", "%20") 
-		//					.replaceAll("\\%27", "'") 
-		//					.replaceAll("\\%21", "!") 
-		//					.replaceAll("\\%7E", "~");
 		String keywords_encoded;
 		try {
 			keywords_encoded = URLEncoder.encode(keywords, CHAR_SET);
-
-
 			url = new URL(GOOGLE_API_URL + google_arguments + keywords_encoded);
-			///////////////////////////////////////
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			//			System.out.println("Connection opened!");
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					(conn.getInputStream())));
-
-			//Reader reader = new InputStreamReader(url.openStream(), CHAR_SET);
 			GoogleResults results = new Gson().fromJson(br, GoogleResults.class);
-
-			////////////////
 			return results;
 		} catch (UnsupportedEncodingException e) {
 			throw new ANoteException(e);

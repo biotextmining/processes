@@ -226,13 +226,10 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 		return organismMacthing;
 	}
 
-	@Override
 	public IDictionary getDictionary() {
-		// TODO Auto-generated method stub
 		return (IDictionary) getResource();
 	}
 
-	@Override
 	public void stop() {
 		this.cancel = true;
 	}
@@ -270,20 +267,4 @@ public class NcbiTaxonomyFlatFileLoader extends DictionaryLoaderHelp implements 
 			}
 		}
 	}
-	
-//	public static void main(String[] args) throws IOException {
-//		File file = new File("S://Projectos//ANote2//Resources//Resources//dictionaries//ncbi taxonomy//names.dmp");
-//		FileReader fr = new FileReader(file);
-//		BufferedReader br = new BufferedReader(fr);
-//		String line;
-//		Set<String> meanings = new HashSet<>();
-//		while ((line = br.readLine()) != null) {
-//			String[] linePieces = line.split("\\|");
-//			String meaning = linePieces[3].trim();
-//			meanings.add(meaning);
-//		}
-//		br.close();
-//		for(String mean:meanings)
-//			System.out.println(mean);
-//	}
 }
