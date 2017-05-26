@@ -59,7 +59,20 @@ public class PMCReader {
 				List<IPublicationExternalSourceLink> externalIDsSource = processExternalIds(elements);
 
 				String title = processArticleTitle(elements);
+				if(title.length()>65000)
+				{
+					System.out.println("Title more that 65000 characteres ");
+					System.out.println("Title : " + title);
+					title = title.substring(0, 65000);
+				}
+				
 				String authorList = processAuthorList(elements);
+				if(authorList.length()>5000)
+				{
+					System.out.println("Authors more that 5000 characteres ");
+					System.out.println("Pages : " + authorList);
+					authorList = authorList.substring(0, 5000);
+				}
 
 				List<IPublicationField> fullTextfields = new ArrayList<IPublicationField>();
 				String abstractText = processAbstract(fullTextfields, elements);
