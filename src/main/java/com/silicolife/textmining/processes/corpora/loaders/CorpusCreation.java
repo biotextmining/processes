@@ -1,6 +1,7 @@
 package com.silicolife.textmining.processes.corpora.loaders;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
@@ -50,28 +51,18 @@ public class CorpusCreation {
 				}
 				if(configuration.getCorpusTextType().equals(CorpusTextType.Hybrid) || 
 						configuration.getCorpusTextType().equals(CorpusTextType.FullText)) {
-					// IF PDF is not available and source URL is a file put file in directory and update Full text COntent
-					if(publication.getSourceURL()!=null && !publication.isPDFAvailable()) {
-						publication.addPDFFile(new File(publication.getSourceURL()));
-						// update relative path
-						InitConfiguration.getDataAccess().updatePublication(publication);
-					}
-					// PDF is availbale and Full text are not available yet
-					if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty()) {
-						String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
-						// Get PDF to text from PDF file
-						System.out.println("Before PDFtotext.convert: " + publication + "\nTitle-> " + publication.getTitle() + "\n");
-						String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
-						publication.setFullTextContent(fullTextContent);
+					updatePDFInformationOnPublication(publication);
+					// If pub don't have fulltext and publication has a full text inserted. Then it will be added and associated to corpus
+					if(changefulltext(publication, pub)) {
 						updatePublicationFullTextOnfDatabase(publication);
-					}
-					// If pub don't have fulltext and publication has a full text inserted from other system. Then it will be added
-					else if(changefulltext(publication, pub)) {
-						updatePublicationFullTextOnfDatabase(publication);
+						InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
 					}
 				}
-
-				InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
+				else
+				{
+					InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
+				}
+				
 				step++;
 				memoryAndProgress(step,total);
 			}
@@ -80,6 +71,23 @@ public class CorpusCreation {
 		} catch (IOException e) {
 
 			throw new ANoteException(e);
+		}
+	}
+
+	private void updatePDFInformationOnPublication(IPublication publication)
+			throws IOException, ANoteException, FileNotFoundException {
+		// IF PDF is not available and source URL is a file put file in directory and update Full text COntent
+		if(publication.getSourceURL()!=null && !publication.isPDFAvailable()) {
+			publication.addPDFFile(new File(publication.getSourceURL()));
+			// update relative path
+			InitConfiguration.getDataAccess().updatePublication(publication);
+		}
+		// PDF is availbale and Full text are not available yet, transform it to string and insert it in publication object
+		if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty()) {
+			String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
+			// Get PDF to text from PDF file
+			String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
+			publication.setFullTextContent(fullTextContent);
 		}
 	}
 	
