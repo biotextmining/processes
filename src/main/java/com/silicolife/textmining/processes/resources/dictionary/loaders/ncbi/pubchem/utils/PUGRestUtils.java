@@ -31,6 +31,7 @@ public class PUGRestUtils {
 	private static String database= "compound";
 	private static String operationPatentIDs="xrefs/patentID";
 	private static String operationPUBMEDIDs="xrefs/PubMedID";
+
 	private static String operationNCBITaxonomyIDs="xrefs/TaxonomyID";
 
 	private static String outputFormat=PUGRestOutputEnum.xml.toString(); //xml,json,csv,sdf,txt,png
@@ -280,5 +281,26 @@ public class PUGRestUtils {
 			throw new ANoteException(e);
 		}
 		return patentIDs;
+	}
+	
+	public static String getPubChemCIDByCompoundName(String compoundName) throws ANoteException
+	{
+		String[] cFractions = compoundName.split(" ");
+		if (cFractions.length>1){
+			compoundName=buildCompoundName(cFractions);
+		}
+		HTTPClient client = new HTTPClient();
+		String urlPubchemForCompoundName= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.compoundName.toString() + SEPARATOR + compoundName
+				+ SEPARATOR + outputFormat;
+		System.out.println(urlPubchemForCompoundName);
+		Map<String, String> headers = new HashMap<String, String>();
+		try {
+			String pubchem = client.get(urlPubchemForCompoundName,headers, new PUGRestPubChemIDHandler());
+			return pubchem;
+		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+				| ResponseHandlingException e) {
+			throw new ANoteException(e);
+		}
 	}
 }

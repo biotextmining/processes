@@ -155,13 +155,31 @@ public class PubChemAPITest {
 		assertTrue(true);
 	}
 	
-	@Test
+//	@Test
 	public void getCBITaxonomyIdsByCompundName() throws ANoteException
 	{
 		String compoundName = "aspirin";
 		List<String> result = PubChemAPI.getNCBITaxonomyByCompoundName(compoundName);
 		System.out.println(result.toString());
 		System.out.println(result.size());
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubChemCIDByCompundName() throws ANoteException
+	{
+		String compoundName = "2-amino-3-oxo-3h-phenoxazine-1,9-dicarboxylic acid";
+		String result = PubChemAPI.getPubChemCIDByCompoundName(compoundName);
+		System.out.println(result.toString());
+		assertTrue(true);
+	}
+	
+	@Test
+	public void getPubChemCIDByCompundNameNotFound() throws ANoteException
+	{
+		String compoundName = "2-amino-3-oxo4-3h-phenoxazine-1,9-dicarboxylic acid";
+		String result = PubChemAPI.getPubChemCIDByCompoundName(compoundName);
+		System.out.println(result.toString());
 		assertTrue(true);
 	}
 }

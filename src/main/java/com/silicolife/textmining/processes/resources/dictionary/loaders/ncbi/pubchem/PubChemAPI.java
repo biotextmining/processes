@@ -242,4 +242,17 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
+	
+	/**
+	 * Method that return the PubChem CID associated with PubChem Compound Name.
+	 * 
+	 * @param compoundName
+	 * @return PubChem CID according to search on PubChem By Name
+	 * @throws ANoteException - return if not found any entity or error occur
+	 */
+	public static String getPubChemCIDByCompoundName(String compoundName) throws ANoteException
+	{
+		String out = PUGRestUtils.getPubChemCIDByCompoundName(compoundName);
+		return out;
+	}
 }
