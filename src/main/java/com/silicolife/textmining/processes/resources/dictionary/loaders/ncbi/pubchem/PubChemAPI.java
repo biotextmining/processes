@@ -255,4 +255,17 @@ public class PubChemAPI {
 		String out = PUGRestUtils.getPubChemCIDByCompoundName(compoundName);
 		return out;
 	}
+	
+	/**
+	 * Method that return all names associated to Pubchem CID ( Position Zero refer to prefer name)
+	 * 
+	 * @param cid - Pubchem CID
+	 * @return Compound name list for PubChem CID
+	 * @throws ANoteException throw if not found any name or error occur
+	 */
+	public static List<String> getPubChemNamesByCID(String cid) throws ANoteException
+	{
+		List<String> out = PUGRestUtils.getPubChemNamesByCID(cid);
+		return out;
+	}
 }

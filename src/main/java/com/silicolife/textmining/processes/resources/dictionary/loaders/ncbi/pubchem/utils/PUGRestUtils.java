@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,8 @@ public class PUGRestUtils {
 	private static String database= "compound";
 	private static String operationPatentIDs="xrefs/patentID";
 	private static String operationPUBMEDIDs="xrefs/PubMedID";
+	private static String operationSynonyms="synonyms";
+
 
 	private static String operationNCBITaxonomyIDs="xrefs/TaxonomyID";
 
@@ -293,7 +296,6 @@ public class PUGRestUtils {
 		String urlPubchemForCompoundName= generalURL + SEPARATOR + database + SEPARATOR 
 				+ PUGRestInputEnum.compoundName.toString() + SEPARATOR + compoundName
 				+ SEPARATOR + outputFormat;
-		System.out.println(urlPubchemForCompoundName);
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			String pubchem = client.get(urlPubchemForCompoundName,headers, new PUGRestPubChemIDHandler());
@@ -303,4 +305,21 @@ public class PUGRestUtils {
 			throw new ANoteException(e);
 		}
 	}
+	
+	public static List<String> getPubChemNamesByCID(String cid) throws ANoteException
+	{
+		HTTPClient client = new HTTPClient();
+		String urlPubchemSynomysByCID= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + cid
+				+ SEPARATOR + operationSynonyms +  SEPARATOR + outputFormat;
+		Map<String, String> headers = new HashMap<String, String>();
+		try {
+			List<String> names = client.get(urlPubchemSynomysByCID,headers, new PUGRestPubChemNamesHandler());
+			return names;
+		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+				| ResponseHandlingException e) {
+			throw new ANoteException(e);
+		}
+	}
+	
 }
