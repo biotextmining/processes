@@ -53,13 +53,17 @@ public class CorpusCreation {
 						configuration.getCorpusTextType().equals(CorpusTextType.FullText)) {
 					updatePDFInformationOnPublication(publication);
 					// If pub don't have fulltext and publication has a full text inserted. Then it will be added and associated to corpus
-					if(changefulltext(publication, pub)) {
+					if(changefulltext(publication, pub))
 						updatePublicationFullTextOnfDatabase(publication);
+					
+					//associate the document if it has fulltext content on fulltext corpus or the corpus is hybrid 
+					if(configuration.getCorpusTextType().equals(CorpusTextType.FullText) && !publication.getFullTextContent().isEmpty()
+							|| configuration.getCorpusTextType().equals(CorpusTextType.Hybrid))
 						InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
-					}
 				}
 				else
 				{
+					//on non full text or hybrid corpus, the document is always associated
 					InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
 				}
 				
@@ -92,14 +96,12 @@ public class CorpusCreation {
 	}
 	
 	private boolean changefulltext(IPublication publication, IPublication pub){
-		if(publication.getFullTextContent() == null || publication.getFullTextContent().isEmpty()){
+		if(publication.getFullTextContent() == null || publication.getFullTextContent().isEmpty())
 			return false;
-		}
-		if(pub != null){
-			if(pub.getFullTextContent() != null && !pub.getFullTextContent().isEmpty()){
-				return false;
-			}
-		}
+
+		if(pub != null && pub.getFullTextContent() != null && !pub.getFullTextContent().isEmpty())
+			return false;
+			
 		return true;
 	}
 
