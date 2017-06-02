@@ -77,11 +77,11 @@ public class PatentMetaFilesReader {
 		String yeardate = prop.getProperty("Date").substring(0,4);
 		List<IPublicationField> publicationFields = new ArrayList<>();
 		String notes = new String();
-		if( !prop.getProperty("Owners").isEmpty())
+		if(prop.getProperty("Owners")!=null && !prop.getProperty("Owners").isEmpty())
 		{
 			authors = authors + " Owners: "+prop.getProperty("Owners");
 		}
-		if(!prop.getProperty("Classification").isEmpty())
+		if(prop.getProperty("Classification")!=null && !prop.getProperty("Classification").isEmpty())
 		{
 			notes = "Classification :"+prop.getProperty("Classification");
 
