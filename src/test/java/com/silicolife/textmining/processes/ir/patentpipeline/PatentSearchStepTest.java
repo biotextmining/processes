@@ -29,7 +29,8 @@ public class PatentSearchStepTest {
 		//Step 1 - Retrieved Patent IDs Information	
 
 		String query = "bioprocess";
-		String basedServerURL = "http://localhost:8998/patentrepository";
+//		String basedServerURL = "http://localhost:8998/patentrepository";
+		String basedServerURL ="http://mendel.di.uminho.pt:8080/patentrepository";
 		String user = "guest";
 		String pwd = "r3p03i7oriUP@tantes!";
 		

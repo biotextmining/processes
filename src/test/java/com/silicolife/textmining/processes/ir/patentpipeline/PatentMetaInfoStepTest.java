@@ -26,7 +26,7 @@ public class PatentMetaInfoStepTest {
 	public void test() throws WrongIRPatentRetrievalConfigurationException, WrongIRPatentIDRecoverConfigurationException, PatentPipelineException, ANoteException, IOException, TesseractException, WrongIRPatentMetaInformationRetrievalConfigurationException {
 
 		
-		String basedServerURL = "http://localhost:8998/patentrepository";
+		String basedServerURL = "http://mendel.di.uminho.pt:8080/patentrepository";
 		String user = "";
 		String pwd = "";
 		

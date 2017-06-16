@@ -16,7 +16,8 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 public class PatentRepositoryPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 
-	public static String patentrepository = "Patent repository";
+	public final static String patentrepositoryName = "Patent Repository from SilicoLife";
+	public final static String patentrepositoryProcessID = "patentrepository.searchpatentid";
 		
 	public PatentRepositoryPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
@@ -42,7 +43,7 @@ public class PatentRepositoryPatentIDRecoverSource extends AIRPatentIDRecoverSou
 
 	@Override
 	public String getSourceName() {
-		return patentrepository;
+		return patentrepositoryName;
 	}
 
 	@Override
