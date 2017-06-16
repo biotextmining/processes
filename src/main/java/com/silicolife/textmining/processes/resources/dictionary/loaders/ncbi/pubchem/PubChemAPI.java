@@ -244,15 +244,15 @@ public class PubChemAPI {
 	}
 	
 	/**
-	 * Method that return the PubChem CID associated with PubChem Compound Name.
+	 * Method that return the PubChem CIDs associated with PubChem Compound Name.
 	 * 
 	 * @param compoundName
-	 * @return PubChem CID according to search on PubChem By Name
+	 * @return PubChem CIDs according to search on PubChem By Name
 	 * @throws ANoteException - return if not found any entity or error occur
 	 */
-	public static String getPubChemCIDByCompoundName(String compoundName) throws ANoteException
+	public static List<String> getPubChemCIDsByCompoundName(String compoundName) throws ANoteException
 	{
-		String out = PUGRestUtils.getPubChemCIDByCompoundName(compoundName);
+		List<String> out = PUGRestUtils.getPubChemCIDByCompoundName(compoundName);
 		return out;
 	}
 	

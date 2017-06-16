@@ -286,7 +286,7 @@ public class PUGRestUtils {
 		return patentIDs;
 	}
 	
-	public static String getPubChemCIDByCompoundName(String compoundName) throws ANoteException
+	public static List<String> getPubChemCIDByCompoundName(String compoundName) throws ANoteException
 	{
 		String[] cFractions = compoundName.split(" ");
 		if (cFractions.length>1){
@@ -298,8 +298,8 @@ public class PUGRestUtils {
 				+ SEPARATOR + outputFormat;
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
-			String pubchem = client.get(urlPubchemForCompoundName,headers, new PUGRestPubChemIDHandler());
-			return pubchem;
+			List<String> pubchemCIDs = client.get(urlPubchemForCompoundName,headers, new PUGRestPubChemIDHandler());
+			return pubchemCIDs;
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e) {
 			throw new ANoteException(e);
