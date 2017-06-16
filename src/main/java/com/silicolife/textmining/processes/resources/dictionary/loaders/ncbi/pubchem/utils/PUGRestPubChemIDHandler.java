@@ -2,6 +2,7 @@ package com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.pu
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import org.xml.sax.SAXException;
 import com.silicolife.textmining.utils.http.ResponseHandler;
 import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
-public class PUGRestPubChemIDHandler implements ResponseHandler<String>{
+public class PUGRestPubChemIDHandler implements ResponseHandler<List<String>>{
 
 
 	public PUGRestPubChemIDHandler() {
@@ -25,21 +26,25 @@ public class PUGRestPubChemIDHandler implements ResponseHandler<String>{
 
 
 	@Override
-	public String buildResponse(InputStream response, String responseMessage,
+	public List<String> buildResponse(InputStream response, String responseMessage,
 			Map<String, List<String>> headerFields, int status) throws ResponseHandlingException {
 		try {
+			List<String> out = new ArrayList<>(); 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(response);
 			doc.getDocumentElement().normalize();
 			NodeList nList = doc.getElementsByTagName("PC-CompoundType_id_cid");
-			Node item = nList.item(0);
-			if(item!=null)
+			for(int i=0;i<nList.getLength();i++)
 			{
-				String cid = item.getTextContent();
-				return cid;
+				Node item = nList.item(i);
+				if(item!=null)
+				{
+					String cid = item.getTextContent();
+					out.add(cid);
+				}
 			}
-			return null;
+			return out;
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			throw new ResponseHandlingException(e);
 		}
