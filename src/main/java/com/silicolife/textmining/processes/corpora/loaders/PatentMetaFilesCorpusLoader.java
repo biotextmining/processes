@@ -24,7 +24,6 @@ public class PatentMetaFilesCorpusLoader implements ICorpusLoader{
 		{
 			if(file.getName().endsWith(".meta"))
 			{
-				System.out.println(file.getAbsolutePath());
 				InputStream inStream = new FileInputStream(file);
 				out.addAll(reader.getPatent(inStream , file));
 			}

@@ -60,7 +60,6 @@ public class PUGRestUtils {
 		String urlPublicationsForAID= generalURL + SEPARATOR + database + SEPARATOR 
 				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + identifier
 				+ SEPARATOR + operationPUBMEDIDs + SEPARATOR + outputFormat;
-		System.out.println(urlPublicationsForAID);
 
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
