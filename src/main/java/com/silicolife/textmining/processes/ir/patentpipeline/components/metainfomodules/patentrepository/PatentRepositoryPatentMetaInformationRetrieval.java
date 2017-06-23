@@ -18,7 +18,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 
 public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
 	
-	public final static String patentrepositoryName = "Patent Repository from SilicoLife";
+	public final static String patentrepositoryName = "Patent Repository from SilicoLife and CEB (UMinho)";
 	public final static String patentrepositoryProcessID = "patentrepository.searchpatentmetainformation";
 	private static String url = "patent/metainformation";
 
