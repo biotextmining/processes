@@ -16,7 +16,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 public class PatentRepositoryPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 
-	public final static String patentrepositoryName = "Patent Repository from SilicoLife";
+	public final static String patentrepositoryName = "Patent Repository from SilicoLife and CEB (UMinho)";
 	public final static String patentrepositoryProcessID = "patentrepository.searchpatentid";
 		
 	public PatentRepositoryPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
