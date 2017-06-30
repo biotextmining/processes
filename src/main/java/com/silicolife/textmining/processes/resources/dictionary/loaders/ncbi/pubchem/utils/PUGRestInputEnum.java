@@ -27,6 +27,12 @@ public enum PUGRestInputEnum {
 		public String toString() {
 			return "inchikey";
 		}
+	},	
+	inchi{
+		@Override
+		public String toString() {
+			return "inchi";
+		}
 	}
 	
 }

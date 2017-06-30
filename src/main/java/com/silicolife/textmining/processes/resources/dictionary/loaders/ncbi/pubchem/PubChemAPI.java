@@ -10,7 +10,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.pubchem.utils.PUGRestUtils;
 
 public class PubChemAPI {
-	
+
 	/**
 	 * Method that return a list of Patent Id associated with  PubChem ID (CID)
 	 * 
@@ -87,7 +87,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of Pubmed Id associated with  PubChem ID (CID)
 	 * 
@@ -106,7 +106,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of Publications Id associated with PubChem SMILES Entity
 	 * 
@@ -125,7 +125,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 
 	/**
 	 * Method that return a list of Patent Id associated with PubChem InchIKey Entity 
@@ -145,7 +145,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of Publications Id associated with PubChem Compound Name
 	 * Important Note that compound name could be ambiguous and the result are a combination of multiple Pubchem Entities 
@@ -165,7 +165,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem ID (CID)
 	 * 
@@ -184,7 +184,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem SMILES Entity
 	 * 
@@ -203,7 +203,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem InchIKey Entity 
 	 * 
@@ -222,7 +222,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem Compound Name
 	 * Important Note that compound name could be ambiguous and the result are a combination of multiple Pubchem Entities 
@@ -242,7 +242,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return the PubChem CIDs associated with PubChem Compound Name.
 	 * 
@@ -255,7 +255,7 @@ public class PubChemAPI {
 		List<String> out = PUGRestUtils.getPubChemCIDByCompoundName(compoundName);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return all names associated to Pubchem CID ( Position Zero refer to prefer name)
 	 * 
@@ -266,6 +266,19 @@ public class PubChemAPI {
 	public static List<String> getPubChemNamesByCID(String cid) throws ANoteException
 	{
 		List<String> out = PUGRestUtils.getPubChemNamesByCID(cid);
+		return out;
+	}
+
+	/**
+	 * Method that return the PubChem CIDs associated with Inchie. 
+	 * 
+	 * @param inchi - IUPAC International Chemical Identifier
+	 * @return
+	 * @throws ANoteException
+	 */
+	public static List<String> getPubChemCIDsByInchi(String inchi) throws ANoteException
+	{
+		List<String> out = PUGRestUtils.getPubChemCIDByInchi(inchi);
 		return out;
 	}
 }

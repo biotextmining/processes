@@ -165,7 +165,7 @@ public class PubChemAPITest {
 		assertTrue(true);
 	}
 	
-	@Test
+//	@Test
 	public void getPubChemCIDByCompundName() throws ANoteException
 	{
 		String compoundName = "2-amino-3-oxo-3h-phenoxazine-1,9-dicarboxylic acid";
@@ -198,6 +198,15 @@ public class PubChemAPITest {
 		String cid = "118367700005";
 		List<String> names = PubChemAPI.getPubChemNamesByCID(cid);
 		System.out.println(names.toString());
+		assertTrue(true);
+	}
+	
+	@Test
+	public void getPubChemCIDsByInchi() throws ANoteException
+	{
+		String inchi = "InChI=1S/C8H8O3/c1-11-8-4-6(5-9)2-3-7(8)10/h2-5,10H,1H3";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchi(inchi);
+		System.out.println(result.toString());
 		assertTrue(true);
 	}
 }
