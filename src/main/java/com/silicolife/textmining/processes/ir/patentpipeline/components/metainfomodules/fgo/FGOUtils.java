@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 import com.silicolife.textmining.core.datastructures.utils.GenericPairComparable;
 
-class FGOUtils {
+public class FGOUtils {
 
 	private final static boolean _AddSynonymsToQuery = true;
 	private final static boolean _UseGoogleCustomSearchAPI = false;

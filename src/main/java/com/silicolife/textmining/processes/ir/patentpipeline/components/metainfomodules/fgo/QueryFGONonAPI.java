@@ -15,7 +15,7 @@ This class is the naive crawler that traverses google search result pages
 We can make this much faster by using Google's custom search engines and
  querying within our quota, without delays...
  */
-class QueryFGONonAPI {
+public class QueryFGONonAPI {
 
 	private static final int MAX_RESULTS = 10000;
 	

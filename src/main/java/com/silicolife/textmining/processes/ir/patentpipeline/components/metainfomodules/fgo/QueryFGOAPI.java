@@ -8,7 +8,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-class QueryFGOAPI {
+public class QueryFGOAPI {
 	// You can find the CSE and API_KEY here:
 	// https://cse.google.com/cse/all
 	//   - Go to the custom engine you created (& paid)
