@@ -418,7 +418,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		if(configurations.getSizeOfSmallWordsToBeNotAnnotated()>0){
 			properties.put(GlobalNames.sizeOfNonAnnotatedSmallWords, String.valueOf(configurations.getSizeOfSmallWordsToBeNotAnnotated()));
 		}
-		properties.put(GlobalNames.numberThreads, configurations.getNumberOfThreads());
+		properties.put(GlobalNames.numberThreads, String.valueOf(configurations.getNumberOfThreads()));
 		return properties;
 	}
 
