@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -20,8 +21,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.silicolife.textmining.core.datastructures.general.ExternalIDImpl;
+import com.silicolife.textmining.core.datastructures.general.SourceImpl;
+import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.GenericPairComparable;
+import com.silicolife.textmining.core.datastructures.utils.GenericTriple;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.utils.http.HTTPClient;
 import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
 import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
@@ -37,20 +43,24 @@ public class PUGRestUtils {
 	private static String operationPatentIDs="xrefs/patentID";
 	private static String operationPUBMEDIDs="xrefs/PubMedID";
 	private static String operationSynonyms="synonyms";
-	private static String operationCID="cid";
-
+	private static String operationInchi="property/Inchi";
+	private static String operationInchiKey="property/InchiKey";
+	private static String operationCanonicalSmiles="property/CanonicalSMILES";
+	private static String operationXrefsSBUR="xrefs/SBURL";
 	private static String operationNCBITaxonomyIDs="xrefs/TaxonomyID";
 
 	private static String outputFormat=PUGRestOutputEnum.xml.toString(); //xml,json,csv,sdf,txt,png
 	private static String outputFormatJson=PUGRestOutputEnum.json.toString(); //xml,json,csv,sdf,txt,png
 
 	private static String fastidentityString="fastidentity";
+	
 
 	public static Map<String, Set<String>> getPatentIDsUsingCID(String identifier) throws ANoteException{
 		HTTPClient client = new HTTPClient();
 		String urlPatentsForAID= generalURL + SEPARATOR + database + SEPARATOR 
 				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + identifier
 				+ SEPARATOR + operationPatentIDs + SEPARATOR + outputFormat;
+		System.out.println(urlPatentsForAID);
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			Map<String, Set<String>> mapPubchemIDPatentIDs = client.get(urlPatentsForAID,headers, new PUGRestPatentIDSHandler());
@@ -351,6 +361,163 @@ public class PUGRestUtils {
 			throw new ANoteException(e);
 		}
 	}
+	
+	public static List<String> getPubChemCIDByInchiKey(String inchikey) throws ANoteException {
+		String urlPubchemForCompoundName= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.inchikey.toString()  + SEPARATOR + outputFormatJson;
+		List<GenericPairComparable<String, String>> data = new ArrayList<>();
+		data.add(new GenericPairComparable<String, String>("inchikey",inchikey));
+		try {
+			List<String> out = new ArrayList<>();
+			String jsonStr = fetch(urlPubchemForCompoundName, data);
+			org.json.JSONObject json = new org.json.JSONObject(jsonStr);
+			org.json.JSONArray pcCompoundsArray = json.getJSONArray("PC_Compounds");
+			for(int i=0;i<pcCompoundsArray.length();i++)
+			{
+				org.json.JSONObject compoundData = (org.json.JSONObject) pcCompoundsArray.get(i);
+				org.json.JSONObject  ids = (org.json.JSONObject) compoundData.get("id");
+				org.json.JSONObject  id = (org.json.JSONObject) ids.get("id");
+				Integer  cid = id.getInt("cid");
+				out.add(String.valueOf(cid));
+			}
+			return out;
+		} catch (IOException e) {
+			throw new ANoteException(e);
+		}
+	}
+	
+	public static List<String> getPubChemCIDBySmiles(String smiles) throws ANoteException {
+		String urlPubchemForCompoundName= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.smiles.toString()  + SEPARATOR + outputFormatJson;
+		List<GenericPairComparable<String, String>> data = new ArrayList<>();
+		data.add(new GenericPairComparable<String, String>("smiles",smiles));
+		try {
+			List<String> out = new ArrayList<>();
+			String jsonStr = fetch(urlPubchemForCompoundName, data);
+			org.json.JSONObject json = new org.json.JSONObject(jsonStr);
+			org.json.JSONArray pcCompoundsArray = json.getJSONArray("PC_Compounds");
+			for(int i=0;i<pcCompoundsArray.length();i++)
+			{
+				org.json.JSONObject compoundData = (org.json.JSONObject) pcCompoundsArray.get(i);
+				org.json.JSONObject  ids = (org.json.JSONObject) compoundData.get("id");
+				org.json.JSONObject  id = (org.json.JSONObject) ids.get("id");
+				Integer  cid = id.getInt("cid");
+				out.add(String.valueOf(cid));
+			}
+			return out;
+		} catch (IOException e) {
+			throw new ANoteException(e);
+		}
+	}
+	
+	public static String getInchiByPubchemCID(String cid) throws ANoteException
+	{
+		String urlInchiByCID= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + cid
+				+ SEPARATOR + operationInchi + SEPARATOR + outputFormatJson;
+		try {
+			URL u = new URL(urlInchiByCID);
+			String jsonStr = FileHandling.convertImputStream(u.openStream());
+			org.json.JSONObject json = new org.json.JSONObject(jsonStr);
+			org.json.JSONObject propertyPropertyTableJson = json.getJSONObject("PropertyTable");
+			org.json.JSONArray propertyPropertiesJsonArray = propertyPropertyTableJson.getJSONArray("Properties");
+			org.json.JSONObject propertyPropertiesJson  = propertyPropertiesJsonArray.getJSONObject(0);
+			return propertyPropertiesJson.getString("InChI");
+		} catch (MalformedURLException e) {
+			throw new ANoteException(e);
+		} catch (IOException e) {
+			throw new ANoteException(e);
+		}	
+	}
+	
+	public static String getInchiKeyByPubchemCID(String cid) throws ANoteException
+	{
+		String urlInchiByCID= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + cid
+				+ SEPARATOR + operationInchiKey + SEPARATOR + outputFormatJson;
+		try {
+			URL u = new URL(urlInchiByCID);
+			String jsonStr = FileHandling.convertImputStream(u.openStream());
+			org.json.JSONObject json = new org.json.JSONObject(jsonStr);
+			org.json.JSONObject propertyPropertyTableJson = json.getJSONObject("PropertyTable");
+			org.json.JSONArray propertyPropertiesJsonArray = propertyPropertyTableJson.getJSONArray("Properties");
+			org.json.JSONObject propertyPropertiesJson  = propertyPropertiesJsonArray.getJSONObject(0);
+			return propertyPropertiesJson.getString("InChIKey");
+		} catch (MalformedURLException e) {
+			throw new ANoteException(e);
+		} catch (IOException e) {
+			throw new ANoteException(e);
+		}	
+	}
+	
+	public static String getCanonicalSmilesyByPubchemCID(String cid) throws ANoteException
+	{
+		String urlInchiByCID= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + cid
+				+ SEPARATOR + operationCanonicalSmiles + SEPARATOR + outputFormatJson;
+		try {
+			URL u = new URL(urlInchiByCID);
+			String jsonStr = FileHandling.convertImputStream(u.openStream());
+			org.json.JSONObject json = new org.json.JSONObject(jsonStr);
+			org.json.JSONObject propertyPropertyTableJson = json.getJSONObject("PropertyTable");
+			org.json.JSONArray propertyPropertiesJsonArray = propertyPropertyTableJson.getJSONArray("Properties");
+			org.json.JSONObject propertyPropertiesJson  = propertyPropertiesJsonArray.getJSONObject(0);
+			return propertyPropertiesJson.getString("CanonicalSMILES");
+		} catch (MalformedURLException e) {
+			throw new ANoteException(e);
+		} catch (IOException e) {
+			throw new ANoteException(e);
+		}	
+	}
+	
+	public static List<IExternalID> getExternalIdsGivenPubchemCID(String cid) throws ANoteException
+	{
+		List<IExternalID> out = new ArrayList<>();
+		List<String> urls = getExternalURLLinks(cid);
+		Map<String,GenericTriple<String, String,String>> urlmapper = getURLMap();
+		for(String url:urls)
+		{
+			for(String startsentenceDBLinkMap:urlmapper.keySet())
+			{
+				if(url.startsWith(startsentenceDBLinkMap))
+				{
+					String database = urlmapper.get(startsentenceDBLinkMap).getZ();
+					String externalID = url;
+					externalID = externalID.replace(urlmapper.get(startsentenceDBLinkMap).getX(), "");
+					externalID = externalID.replace(urlmapper.get(startsentenceDBLinkMap).getY(), "");
+					out.add(new ExternalIDImpl(externalID, new SourceImpl(database)));
+				}
+			}
+		}
+		return out;
+	}
+	
+	private static List<String> getExternalURLLinks(String cid) throws ANoteException
+	{
+		String urlInchiByCID= generalURL + SEPARATOR + database + SEPARATOR 
+				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + cid
+				+ SEPARATOR + operationXrefsSBUR + SEPARATOR + outputFormatJson;
+		try {
+			List<String> out = new ArrayList<>();
+			URL u = new URL(urlInchiByCID);
+			String jsonStr = FileHandling.convertImputStream(u.openStream());
+			org.json.JSONObject json = new org.json.JSONObject(jsonStr);
+			org.json.JSONObject propertyPropertyTableJson = json.getJSONObject("InformationList");
+			org.json.JSONArray propertyPropertiesJsonArray = propertyPropertyTableJson.getJSONArray("Information");
+			org.json.JSONObject propertyPropertiesJson  = propertyPropertiesJsonArray.getJSONObject(0);
+			org.json.JSONArray propertySBURLJsonArray = propertyPropertiesJson.getJSONArray("SBURL");
+			for(int i=0;i<propertySBURLJsonArray.length();i++)
+			{
+				out.add(propertySBURLJsonArray.getString(i));
+			}
+			return out;
+			
+		} catch (MalformedURLException e) {
+			throw new ANoteException(e);
+		} catch (IOException e) {
+			throw new ANoteException(e);
+		}	
+	}
 
 	private static String fetch(String link, List<GenericPairComparable<String, String>> data) throws IOException {
 		StringBuilder postData = new StringBuilder();
@@ -376,8 +543,6 @@ public class PUGRestUtils {
 		conn.getOutputStream().write(postDataBytes);
 
 		int respCode = conn.getResponseCode();
-		System.err.println("\nSearch Sending 'GET' request to URL : " + url);
-		System.err.println("Response Code : " + respCode);
 
 		if (respCode != 200) {
 			throw new IOException("StatusCode = " + respCode + " - GET returned not OK.\n" + url);
@@ -392,5 +557,21 @@ public class PUGRestUtils {
 
 		return resp.toString();
 	}
-
+	
+	public static Map<String,GenericTriple<String, String,String>> getURLMap()
+	{
+		 Map<String,GenericTriple<String,String, String>> out = new HashMap<>();
+		 out.put("http://www.ebi.ac.uk/chebi", new GenericTriple<String,String, String>("http://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:","", "CHEBI"));
+		 out.put("http://chembank.broadinstitute.org/chemistryi", new GenericTriple<String,String, String>("http://chembank.broadinstitute.org/chemistry/viewMolecule.htm?cbid=","", "CHEMBANK"));
+		 out.put("http://chemdb.niaid.nih.gov/CompoundDetails", new GenericTriple<String,String, String>("http://chemdb.niaid.nih.gov/CompoundDetails.aspx?AIDSNO=","", "CHEMDB"));
+		 out.put("http://ctdbase.org/detail.go?type", new GenericTriple<String,String, String>("http://ctdbase.org/detail.go?type=chem&acc=","", "CTDBASE"));
+		 out.put("http://www.cambridgechem.com/", new GenericTriple<String,String, String>("http://www.cambridgechem.com/","", "CAMBRIDGECHEM"));
+		 out.put("http://www.chembase.cn/molecule-", new GenericTriple<String,String, String>("http://www.chembase.cn/molecule-",".html", "CHEMBASE"));
+		 out.put("http://www.chemspider.com/Chemical-Structure.", new GenericTriple<String,String, String>("http://www.chemspider.com/Chemical-Structure.",".html", "CHEMSPIDER"));
+		 out.put("http://www.drugbank.ca/drugs/", new GenericTriple<String,String, String>("http://www.drugbank.ca/drugs/","", "DRUGBANK"));
+		 out.put("http://zinc.docking.org/substances/", new GenericTriple<String,String, String>("http://zinc.docking.org/substances/","", "ZINC"));
+		 out.put("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/", new GenericTriple<String,String, String>("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/CHEMBL","", "CHEMBL"));
+		 out.put("https://www.molport.com/shop/molecule-link/", new GenericTriple<String,String, String>("https://www.molport.com/shop/molecule-link/","", "MOLPORT"));
+		 return out;
+	}
 }

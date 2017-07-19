@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.pubchem.utils.PUGRestUtils;
 
 public class PubChemAPI {
@@ -281,4 +282,81 @@ public class PubChemAPI {
 		List<String> out = PUGRestUtils.getPubChemCIDByInchi(inchi);
 		return out;
 	}
+	
+	/**
+	 * Method that return the Inchi associated with Pubchem CID. 
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException Inchi not found
+	 */
+	public static String getInchiByPubchemID(String pubchemID) throws ANoteException
+	{
+		String out = PUGRestUtils.getInchiByPubchemCID(pubchemID);
+		return out;
+	}
+	
+	/**
+	 *  Method that return the InchiKey associated with Pubchem CID.
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException InchiKey not found
+	 */
+	public static String getInchiKeyByPubchemID(String pubchemID) throws ANoteException
+	{
+		String out = PUGRestUtils.getInchiKeyByPubchemCID(pubchemID);
+		return out;
+	}
+	
+	/**
+	 *  Method that return the Canonical associated with Pubchem CID.
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException Canonical Smiles not found
+	 */
+	public static String getCanonicalSmilesByPubchemID(String pubchemID) throws ANoteException
+	{
+		String out = PUGRestUtils.getCanonicalSmilesyByPubchemCID(pubchemID);
+		return out;
+	}
+	
+	/**
+	 * Method that return external Ids associated to Pubchem CID
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException
+	 */
+	public static List<IExternalID> getExternalIdsByPubchemID(String pubchemID) throws ANoteException
+	{
+		List<IExternalID> out = PUGRestUtils.getExternalIdsGivenPubchemCID(pubchemID);
+		return out;
+	}
+
+	/**
+	 * Method that return Pubchem Ids associated with inchikey
+	 * 
+	 * @param inchi
+	 * @return
+	 * @throws ANoteException 
+	 */
+	public static List<String> getPubChemCIDsByInchiKey(String inchikey) throws ANoteException {
+		List<String> out = PUGRestUtils.getPubChemCIDByInchiKey(inchikey);
+		return out;
+	}
+
+	/**
+	 * Method that return Pubchem Ids associated with Smiles
+	 * 
+	 * @param smiles
+	 * @return
+	 * @throws ANoteException 
+	 */
+	public static List<String> getPubChemCIDsBySmiles(String smiles) throws ANoteException {
+		List<String> out = PUGRestUtils.getPubChemCIDBySmiles(smiles);
+		return out;
+	}
+	
 }
