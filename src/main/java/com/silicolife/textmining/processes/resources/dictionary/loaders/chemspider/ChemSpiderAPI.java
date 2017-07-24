@@ -72,7 +72,7 @@ public class ChemSpiderAPI {
 			JSONObject element = (JSONObject) jsonArray.get(i);
 			if(element.has("ds_name")&& element.has("ext_id"))
 			{
-				String source = element.get("ds_name").toString();;
+				String source = element.get("ds_name").toString().toUpperCase();;
 				String externalID = element.get("ext_id").toString();
 				IExternalID ext = new ExternalIDImpl(externalID, new SourceImpl(source));
 				out.add(ext);
