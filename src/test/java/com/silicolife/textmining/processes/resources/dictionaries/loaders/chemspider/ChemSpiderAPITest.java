@@ -28,7 +28,7 @@ public class ChemSpiderAPITest {
 	
 	@Test
 	public void getExternalVendorsIdsGivenCSID() throws ANoteException {
-		String csid = "13860434";
+		String csid = "14157950";
 		String accessToken = "b3d12bfe-1bcd-4960-a30f-ba876fe7a0fb";
 		List<IExternalID> result = ChemSpiderAPI.getExternalVendorsIdsGivenCSID(accessToken, csid);
 		System.out.println(result);
