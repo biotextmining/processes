@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.junit.Test;
+
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.pubchem.PubChemAPI;
@@ -272,10 +274,10 @@ public class PubChemAPITest {
 		assertTrue(true);
 	}
 	
-//	@Test
+	@Test
 	public void getExternalIdsByPubChemCID() throws ANoteException
 	{
-		String cid = "1183";
+		String cid = "15342072";
 		List<IExternalID> result = PubChemAPI.getExternalIdsByPubchemID(cid);
 		System.out.println(result);
 		assertTrue(true);

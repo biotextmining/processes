@@ -572,7 +572,7 @@ public class PUGRestUtils {
 		 out.put("http://zinc.docking.org/substances/", new GenericTriple<String,String, String>("http://zinc.docking.org/substances/","", "ZINC"));
 		 out.put("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/", new GenericTriple<String,String, String>("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/CHEMBL","", "CHEMBL"));
 		 out.put("https://www.molport.com/shop/molecule-link/", new GenericTriple<String,String, String>("https://www.molport.com/shop/molecule-link/","", "MOLPORT"));
-		 out.put("https://chem-space.com/", new GenericTriple<String,String, String>("https://chem-space.com/","", "CHEMSPACE"));
+		 out.put("https://chem-space.com/", new GenericTriple<String,String, String>("https://chem-space.com/",".html", "CHEMSPACE"));
 		 out.put("http://www.ox-chem.com/pc", new GenericTriple<String,String, String>("http://www.ox-chem.com/pc/en/product_item.aspx?ID=","", "OXCHEM"));
 		 return out;
 	}
