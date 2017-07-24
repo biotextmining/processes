@@ -562,7 +562,7 @@ public class PUGRestUtils {
 	{
 		 Map<String,GenericTriple<String,String, String>> out = new HashMap<>();
 		 out.put("http://www.ebi.ac.uk/chebi", new GenericTriple<String,String, String>("http://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:","", "CHEBI"));
-		 out.put("http://chembank.broadinstitute.org/chemistryi", new GenericTriple<String,String, String>("http://chembank.broadinstitute.org/chemistry/viewMolecule.htm?cbid=","", "CHEMBANK"));
+		 out.put("http://chembank.broadinstitute.org/chemistry", new GenericTriple<String,String, String>("http://chembank.broadinstitute.org/chemistry/viewMolecule.htm?cbid=","", "CHEMBANK"));
 		 out.put("http://chemdb.niaid.nih.gov/CompoundDetails", new GenericTriple<String,String, String>("http://chemdb.niaid.nih.gov/CompoundDetails.aspx?AIDSNO=","", "CHEMDB"));
 		 out.put("http://ctdbase.org/detail.go?type", new GenericTriple<String,String, String>("http://ctdbase.org/detail.go?type=chem&acc=","", "CTDBASE"));
 		 out.put("http://www.cambridgechem.com/", new GenericTriple<String,String, String>("http://www.cambridgechem.com/","", "CAMBRIDGECHEM"));
@@ -572,6 +572,8 @@ public class PUGRestUtils {
 		 out.put("http://zinc.docking.org/substances/", new GenericTriple<String,String, String>("http://zinc.docking.org/substances/","", "ZINC"));
 		 out.put("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/", new GenericTriple<String,String, String>("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/CHEMBL","", "CHEMBL"));
 		 out.put("https://www.molport.com/shop/molecule-link/", new GenericTriple<String,String, String>("https://www.molport.com/shop/molecule-link/","", "MOLPORT"));
+		 out.put("https://chem-space.com/", new GenericTriple<String,String, String>("https://chem-space.com/","", "CHEMSPACE"));
+		 out.put("http://www.ox-chem.com/pc", new GenericTriple<String,String, String>("http://www.ox-chem.com/pc/en/product_item.aspx?ID=","", "OXCHEM"));
 		 return out;
 	}
 }
