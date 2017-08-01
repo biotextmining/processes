@@ -33,8 +33,13 @@ public class ChemSpiderAPI {
 			// <?xml version="1.0" encoding="utf-8"?><string xmlns="http://www.chemspider.com/">1906</string>
 			JSONObject toJSON = XML.toJSONObject(xml);
 			// toJSON.string.content should have the ID
-			Integer id = toJSON.getJSONObject("string").getInt("content");
-			return String.valueOf(id);
+			if(toJSON.getJSONObject("string").has("content"))
+			{
+				Integer id = toJSON.getJSONObject("string").getInt("content");
+				return String.valueOf(id);
+			}
+			else
+				return null;
 		} catch (IOException e) {
 			throw new ANoteException(e);
 		}
@@ -114,7 +119,7 @@ public class ChemSpiderAPI {
 	private static JSONArray getExternalLinks(String token,String csid, List<String> externalSources) throws IOException {
 		String xml = apiCall(urlCSID2ExtRefs, apiCSID2ExtRefsdata(csid, token,externalSources));
 		JSONObject toJSON = XML.toJSONObject(xml);
-		if(toJSON.getJSONObject("ArrayOfExtRef")!=null)
+		if(toJSON.getJSONObject("ArrayOfExtRef")!=null && toJSON.getJSONObject("ArrayOfExtRef").has("ExtRef"))
 		{
 			Object externalIdslist = toJSON.getJSONObject("ArrayOfExtRef").get("ExtRef");
 			JSONArray wrapped = new JSONArray();
