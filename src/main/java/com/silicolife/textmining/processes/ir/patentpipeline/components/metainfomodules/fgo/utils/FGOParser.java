@@ -16,11 +16,11 @@ import org.jsoup.select.Elements;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.FGOPatentDataObject;
 
 public class FGOParser {
-	
+
 	private static SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd"); 
 	private static Set<String> removeSourceOtherPatentIds;
 	private static String link = "https://www.google.com/patents/";
-	
+
 	public static FGOPatentDataObject retrieveMetaInformation(String patentID)
 	{
 		String html = FGOUtils.getPatentTextHTML(patentID);
@@ -29,7 +29,7 @@ public class FGOParser {
 		FGOPatentDataObject out = parseMetaInformation(patentID,html);
 		return out;
 	}
-	
+
 	public static FGOPatentDataObject retrieveFullInformation(String patentID)
 	{
 		String html = FGOUtils.getPatentTextHTML(patentID);
@@ -70,26 +70,26 @@ public class FGOParser {
 		out.setLink(link+patentID);
 		return out;
 	}
-	
+
 	private static List<String> getClaims(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
 		Elements nodesMeta = document.select("div*[class=claim-text]");
 		for(Element nodeMeta:nodesMeta)
 		{
-			out.add(nodeMeta.text());
+			out.add(replaceCaracters(nodeMeta.text()).trim());
 		}
 		return out;
 	}
 
-	
+
 	private static List<String> getDescription(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
 		Elements nodesMeta = document.select("div*[class=description-line]");
 		for(Element nodeMeta:nodesMeta)
 		{
-			out.add(nodeMeta.text());
+			out.add(replaceCaracters(nodeMeta.text()).trim());
 		}
 		return out;
 	}
@@ -117,7 +117,7 @@ public class FGOParser {
 		}
 		return out;
 	}
-	
+
 	private static Set<String> getRemovedSourceOtherIds()
 	{
 		if(removeSourceOtherPatentIds==null)
@@ -134,26 +134,33 @@ public class FGOParser {
 		Elements nodesMeta = document.select("meta*[name=DC.description]");
 		if(nodesMeta.size()==1)
 		{
-			return nodesMeta.get(0).attr("content");
+			return replaceCaracters(nodesMeta.get(0).attr("content")).trim();
 		}
 		return "";
 	}
 
 	private static Date getDate(Document document) {
+		Date date = null;
 		Elements elementsMeta = document.select("meta*[name=DC.date]");
 		for(Element elementMeta:elementsMeta)
 		{
-			if(elementMeta.attr("scheme").isEmpty())
-			{
+			try {
+
 				String dateStr = elementMeta.attr("content");
-				try {
-					return dt.parse(dateStr);
-				} catch (ParseException e) {
-					e.printStackTrace();
+				if(elementMeta.attr("scheme").isEmpty())
+				{
+					date = dt.parse(dateStr);
+					return date;
 				}
+				else
+				{
+					date = dt.parse(dateStr);
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 		}
-		return null;
+		return date;
 	}
 
 	private static List<String> getOwners(Document document) {
@@ -180,9 +187,14 @@ public class FGOParser {
 		Elements nodesMeta = document.select("meta*[name=DC.title]");
 		if(nodesMeta.size()==1)
 		{
-			return nodesMeta.get(0).attr("content");
+			return replaceCaracters(nodesMeta.get(0).attr("content")).trim();
 		}
 		return "";
+	}
+	
+	private static String replaceCaracters(String original)
+	{
+		return original.replaceAll("[^\\x00-\\x7F]", "");
 	}
 
 }

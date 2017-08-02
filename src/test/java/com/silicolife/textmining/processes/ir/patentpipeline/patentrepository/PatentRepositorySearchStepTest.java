@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline;
+package com.silicolife.textmining.processes.ir.patentpipeline.patentrepository;
 
 import java.io.IOException;
 import java.util.Set;
@@ -6,6 +6,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineException;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.patentrepository.IRPatentIDRetrievalPatentRepositorySearchConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.patentrepository.PatentRepositoryPatentIDRecoverSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
@@ -19,7 +20,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 import net.sourceforge.tess4j.TesseractException;
 
-public class PatentSearchStepTest {
+public class PatentRepositorySearchStepTest {
 
 	@Test
 	public void test() throws WrongIRPatentRetrievalConfigurationException, WrongIRPatentIDRecoverConfigurationException, PatentPipelineException, ANoteException, IOException, TesseractException, WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -29,10 +30,9 @@ public class PatentSearchStepTest {
 		//Step 1 - Retrieved Patent IDs Information	
 
 		String query = "bioprocess";
-//		String basedServerURL = "http://localhost:8998/patentrepository";
-		String basedServerURL ="http://mendel.di.uminho.pt:8080/patentrepository";
+		String basedServerURL ="url";
 		String user = "guest";
-		String pwd = "r3p03i7oriUP@tantes!";
+		String pwd = "guest";
 		
 		IIRPatentPipelineSearchConfiguration patentPipelineSearchConfiguration = new IRPatentPipelineSearchConfigurationImpl(query);
 		

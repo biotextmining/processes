@@ -6,6 +6,9 @@ import com.silicolife.textmining.core.interfaces.core.configuration.IProxy;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.IROPSPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.OPSPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.IROPSPatentRetrievalConfigurationImpl;
@@ -43,6 +46,10 @@ public class PatentPipelineCompleteTest {
 		String customSearchID = "customSearchID";
 		String usernameWIPO = "username";
 		String pwdWIPO = "pwd";
+		String patentRepositoryURL = "patentRepositoryURL";
+		String patentRepositoryUser = "patentRepositoryUser";
+		String patentRepositoryPassword = "patentRepositoryPassword";
+		
 		String outputDir = "src/test/resource";
 		IProxy proxy = null;
 		PatentPipeline patentPipeline = new PatentPipeline();
@@ -76,9 +83,12 @@ public class PatentPipelineCompleteTest {
 		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
 		patentPipeline.addPatentsMetaInformationRetrieval(opsMetaInformationretrieval);
 		
+		IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration configurationPatentRepository = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(proxy, patentRepositoryURL, patentRepositoryUser, patentRepositoryPassword);
+		IIRPatentMetainformationRetrievalSource patentRepository = new PatentRepositoryPatentMetaInformationRetrieval(configurationPatentRepository);
+		patentPipeline.addPatentsMetaInformationRetrieval(patentRepository);
+
 		//Step 3 - Retrieved PDF
 
-		
 		IIRPatentRetrievalConfiguration configuration = new IRWIPOPatentRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, outputDir, proxy );
 		IIRPatentRetrieval WIPOpatentRetrievalProcess = new WIPOPatentRetrieval(configuration);
 		patentPipeline.addPatentIDRetrieval(WIPOpatentRetrievalProcess);
@@ -87,15 +97,8 @@ public class PatentPipelineCompleteTest {
 		IIRPatentRetrieval OPSpatentRetrievalProcess = new OPSPatentRetrieval(configuration2 );
 		patentPipeline.addPatentIDRetrieval(OPSpatentRetrievalProcess);
 		
-		
-		
-		//String path = "D:/Desktop/ATCC 55618 OR Actinobacillus succinogenes OR CCUG 43843 OR CIP 106512 OR strain 130Z.txt";
-		//String path="src/test/resources/data/teste_ids_google.txt";
-//		patentPipeline.runPipelineWithpatentIdsFromFile(patentPipeline.patentIDsloaderFromFile(path));
-		patentPipeline.runCompletePipeline(patentPipelineSearchConfiguration);
-		
-//		patentPipeline.applyOCRengine();
-//		patentPipeline.saveTXTwithPatentsText("teste02_real.txt");
+		// Run 
+		patentPipeline.runCompletePipeline(patentPipelineSearchConfiguration);	
 	}
 
 }

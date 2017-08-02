@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir;
+package com.silicolife.textmining.processes.ir.patentpipeline;
 
 import java.net.MalformedURLException;
 import java.util.Properties;
@@ -12,9 +12,11 @@ import com.silicolife.textmining.core.interfaces.core.configuration.IProxy;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
-import com.silicolife.textmining.processes.ir.patentpipeline.PatentPiplineSearch;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.IROPSPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.OPSPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.BingSearchPatentIDRecoverSource;
@@ -55,6 +57,9 @@ public class PatentPipelineSearchTest {
 		String accessTokenOPS = "accessTokenOPS";
 		String usernameWIPO = "wipousername";
 		String pwdWIPO = "wipousernamepwd";
+		String patentRepositoryURL = "patentRepositoryURL";
+		String patentRepositoryUser = "patentRepositoryUser";
+		String patentRepositoryPassword = "patentRepositoryPassword";
 
 		IProxy proxy = null;
 		Properties prop=null;
@@ -78,6 +83,10 @@ public class PatentPipelineSearchTest {
 		
 		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
 		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
+		
+		IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration configurationPatentRepository = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(proxy, patentRepositoryURL, patentRepositoryUser, patentRepositoryPassword);
+		IIRPatentMetainformationRetrievalSource patentRepository = new PatentRepositoryPatentMetaInformationRetrieval(configurationPatentRepository);
+		
 			
 		IIRPatentPipelineSearchStepsConfiguration configurationPipeline=new IRPatentPipelineSearchStepsConfigurationImpl();
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceEPO);
@@ -85,6 +94,8 @@ public class PatentPipelineSearchTest {
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceGoogle);
 		configurationPipeline.addIRPatentRetrievalMetaInformation(wipoMetaInformationRetrieval);
 		configurationPipeline.addIRPatentRetrievalMetaInformation(opsMetaInformationretrieval);
+		configurationPipeline.addIRPatentRetrievalMetaInformation(patentRepository);
+
 		
 		IIRPatentPipelineConfiguration configuration = new IRPatentSearchConfigurationImpl(patentPipelineSearchConfiguration,"Teste23062016",prop,configurationPipeline);
 		PatentPiplineSearch runnerIQueryMaker = new PatentPiplineSearch();

@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline;
+package com.silicolife.textmining.processes.ir.patentpipeline.fgo;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -6,12 +6,12 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineException;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.FGOPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.PatentPipeline;
-import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalReport;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
@@ -20,41 +20,32 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.W
 
 import net.sourceforge.tess4j.TesseractException;
 
-public class PatentMetaInfoStepTest {
-
+public class FGOMetaInfoStepTest {
+	
 	@Test
 	public void test() throws WrongIRPatentRetrievalConfigurationException, WrongIRPatentIDRecoverConfigurationException, PatentPipelineException, ANoteException, IOException, TesseractException, WrongIRPatentMetaInformationRetrievalConfigurationException {
 
-		
-		String basedServerURL = "http://mendel.di.uminho.pt:8080/patentrepository";
-		String user = "";
-		String pwd = "";
 		
 		PatentPipeline patentPipeline = new PatentPipeline();
 		
 		//Step 2 - Retrieved Patent meta Information	
 		
-		IIRPatentMetaInformationRetrievalConfiguration configuration = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(null,basedServerURL,user,pwd);
-		IIRPatentMetainformationRetrievalSource patentIDrecoverSource = new PatentRepositoryPatentMetaInformationRetrieval(configuration);
+		IIRPatentMetainformationRetrievalSource patentIDrecoverSource = new FGOPatentMetaInformationRetrieval();
 		patentPipeline.addPatentsMetaInformationRetrieval(patentIDrecoverSource);
 		
 		Set<String> patentids = new HashSet<>();
-		patentids.add("US09630165");
-		patentids.add("USRE046376");
-		patentids.add("US09630961");
+		patentids.add("WO2006010252");
+		patentids.add("US7157562");
+		patentids.add("EP0540210");
 		patentids.add("US09631023");
-		patentids.add("US09631057");
-		patentids.add("US09629882");
-		patentids.add("US09630988");
-		patentids.add("US09631219");
-		patentids.add("US09631189");
-		patentids.add("US09631181");
-		patentids.add("US09631208");
+		patentids.add("CN103796727");
+		patentids.add("CA2077921");
+		patentids.add("EP2010641");
 		
 		IIRPatentMetaInformationRetrievalReport result = patentPipeline.executePatentRetrievalMetaInformationStep(patentids);
 		for(IPublication pub:result.getMapPatentIDPublication().values())
 		{
-			System.out.println(pub.toString());
+			System.out.println(((PublicationImpl)pub).toString2());
 		}
 
 	}
