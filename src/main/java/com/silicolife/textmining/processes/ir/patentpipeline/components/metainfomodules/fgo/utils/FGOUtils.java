@@ -25,7 +25,6 @@ public class FGOUtils {
 		try {
 			return fetch("https://www.google.com/patents/" + patentID+ "?cl=en");
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
 			return null;
 		}
 	}

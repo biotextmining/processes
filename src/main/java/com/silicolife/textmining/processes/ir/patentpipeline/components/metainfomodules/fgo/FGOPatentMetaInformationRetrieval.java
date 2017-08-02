@@ -16,6 +16,9 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 
 public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
 	
+	public final static String fgoProcessID = "fgo.searchpatentmetainformation";
+	public final static String fgoName= "FGO Crawling";
+	
 	private int delayseconds = 2;
 
 
