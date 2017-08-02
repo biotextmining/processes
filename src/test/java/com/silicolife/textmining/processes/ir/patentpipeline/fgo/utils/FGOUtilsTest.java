@@ -1,9 +1,11 @@
-package com.silicolife.textmining.processes.ir.patentpipeline;
+package com.silicolife.textmining.processes.ir.patentpipeline.fgo.utils;
 
 import java.io.IOException;
 
 
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.*;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils.FGOUtils;
+
 import org.junit.Test;
 
 public class FGOUtilsTest {

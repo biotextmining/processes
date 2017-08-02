@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo;
+package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils;
 
 import java.io.IOException;
 import java.net.URLEncoder;

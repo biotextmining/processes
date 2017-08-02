@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo;
+package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,8 +21,13 @@ public class FGOUtils {
 	private final static boolean _AddSynonymsToQuery = true;
 	private final static boolean _UseGoogleCustomSearchAPI = false;
 
-	public static String getPatentTextHTML(String patentID) throws IOException {
-		return fetch("https://www.google.com/patents/" + patentID);
+	public static String getPatentTextHTML(String patentID){
+		try {
+			return fetch("https://www.google.com/patents/" + patentID);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 	}
 
 	public static Set<String> getPatentIDsForCompanyPatentsGivenInchi(String inchi, String company_name) throws IOException {
@@ -113,10 +118,7 @@ public class FGOUtils {
 
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("User-Agent", USER_AGENT);
-
 		int respCode = conn.getResponseCode();
-		System.err.println("\nSearch Sending 'GET' request to URL : " + url);
-		System.err.println("Response Code : " + respCode);
 
 		if (respCode != 200) {
 			throw new IOException("StatusCode = " + respCode + " - GET returned not OK.\n" + url);
