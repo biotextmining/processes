@@ -57,7 +57,6 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 					| ServerErrorException | ConnectionException
 					| ResponseHandlingException e) {
 				break;//query limits reached (verification is made previously)
-//				throw new ANoteException(new InternetConnectionProblemException(e));
 			}
 			patentIDs.addAll(patentIDsReturned);
 			memoryAndProgressAndTime(step + OPSConfiguration.STEP,results+1,startTime);

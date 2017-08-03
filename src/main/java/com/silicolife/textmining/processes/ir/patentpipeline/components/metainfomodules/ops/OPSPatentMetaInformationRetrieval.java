@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -26,7 +27,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	public final static String opsName= "Open Patent Services API from EPO";
 
 	private final static int minWaitTime=100;
-	private final static int maxWaitTime=1500;
+	private final static int maxWaitTime=800;
 
 	public OPSPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -40,9 +41,10 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		String tokenaccess;
 		try {
 			tokenaccess = OPSUtils.postAuth(autentication);
-
-			for(String patentID:mapPatentIDPublication.keySet())
+			Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+			while(iterator.hasNext() && !stop)
 			{
+				String patentID = iterator.next();
 				long t2 = System.currentTimeMillis();
 				if(((float)(t2-t1)/1000)>=900){//15min
 					try {
@@ -80,7 +82,6 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	private boolean searchInAllPatents(Map<String, IPublication> mapPatentIDPublication, String tokenaccess,
 			String patentID, List<String> possiblePatentIDs) {
 		boolean informationdownloaded =false;
-		//		if (!verifyPublicationMetadataDownload(mapPatentIDPublication, patentID)){
 		for (String id:possiblePatentIDs){
 			informationdownloaded = tryUpdatePatentMetaInformation(mapPatentIDPublication, patentID, id, tokenaccess);
 			if (informationdownloaded){

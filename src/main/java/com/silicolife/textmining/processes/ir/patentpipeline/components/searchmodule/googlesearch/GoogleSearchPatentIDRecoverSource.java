@@ -40,7 +40,7 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 		String query = transformQueryToGoogleSearchOperators(configuration.getQuery());
 		s.addExtraParam("siteSearch", "www.google.com/patents");//to search only on specified sites
 		s.addExtraParam("siteSearchFilter", "i");
-		for (int i = 0; i < 91; i+=10) {
+		for (int i = 0; i < 91 && !stop; i+=10) {
 			s.setStartIndexOfResult(i);	
 			try {
 				GoogleResults r = s.search(query);

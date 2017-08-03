@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,8 +53,10 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 		String tokenaccess=null;
 		tokenaccess=OPSUtils.loginOPS(autentication);
 		long starttime = System.currentTimeMillis();
-		for(String patentID:patentsIds)
+		Iterator<String> iterator = patentsIds.iterator();
+		while(iterator.hasNext() && !stop)
 		{
+			String patentID = iterator.next();
 			long actualtime=System.currentTimeMillis();
 			String docPDFFinal = getConfiguration().getOutputDirectory() +"/" + patentID + ".pdf";
 			if (!verifyPDFAlreadyDownloaded(docPDFFinal)){

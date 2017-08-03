@@ -2,6 +2,7 @@ package com.silicolife.textmining.processes.ir.patentpipeline.components.metainf
 
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
@@ -29,10 +30,12 @@ public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
-		for(String patentID:mapPatentIDPublication.keySet())
+		Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+		while(iterator.hasNext() && !stop)
 		{
+			String patentID = iterator.next();
 			FGOPatentDataObject patentEntity = FGOParser.retrieveMetaInformation(patentID);
-			if(patentEntity!=null)
+			if(patentEntity!=null && !stop)
 			{
 				IPublication publication = mapPatentIDPublication.get(patentID);
 				updatePublication(mapPatentIDPublication,publication, patentEntity);

@@ -58,12 +58,12 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 	private int totalProcessSteps=3;//PatIDsSearch,PatMetSearch and Updatedatabase
 	private int actualProcessStep=0;
 
-
 	private List<IPublication> listPublicacoes;
 
 	private int actuaPubs;
-	private boolean cancel = false;
+	private boolean stop = false;
 	private IQuery query;
+	private PatentPipeline patentPipeline;
 
 	public PatentPiplineSearch() {
 		super();
@@ -101,12 +101,12 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		IQueryOriginType queryType = new QueryOriginTypeImpl(PublicationSourcesDefaultEnum.patent.name());
 		query = new QueryImpl(queryType, date , configuration.getIRPatentPipelineSearchConfiguration().getQuery(),"", configuration.getIRPatentPipelineSearchConfiguration().getQuery(), 0, 0, name, new String(),new HashMap<Long, IQueryPublicationRelevance>(), generateProperties(configuration));
 		IIRSearchProcessReport report = searchMethod(query,configuration);
-		if(cancel)
+		if(stop)
 			report.setcancel();
 		return report;
 	}
 
-	public Properties generateProperties(IIRPatentPipelineConfiguration configuration)
+	private Properties generateProperties(IIRPatentPipelineConfiguration configuration)
 	{
 		Properties properties = new Properties();
 		List<IIRPatentIDRetrievalSource> searchIDs = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentIDRecoverSource();
@@ -194,35 +194,24 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 	private void patentPipeline(IIRPatentPipelineConfiguration searchConfiguration,IQuery query,IIRSearchProcessReport report) throws ANoteException, InternetConnectionProblemException, PatentPipelineException, IOException, WrongIRPatentIDRecoverConfigurationException {
 
-		PatentPipeline patentPipeline = new PatentPipeline(){
-			protected void memoryProgressAndTime(int step, int total, long startTime) {
-				memoryAndProgress(step, total, startTime);
-			}
-		};
-
+		initPatentPipeline();
 		//init the process counter
 		actualProcessStep=1;
 		increaseStep();
 
-		Set<IPublication> documentsToInsert;
-		Set<IPublication> documentsThatAlreayInDB;
+		Set<IPublication> documentsToInsert,documentsThatAlreayInDB;
 		int abs_count=0;
-		int step=0;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 
 		//add configurations to pipeline class in order to get the all the requisites to search for the IDs and retrieve their PDFs
-		IIRPatentPipelineSearchStepsConfiguration pipelineSearchConfiguration = searchConfiguration.getIIRPatentPipelineSearchConfiguration();
-		for (IIRPatentIDRetrievalSource patentIDrecoverSource:pipelineSearchConfiguration.getIIRPatentIDRecoverSource()){
-			patentPipeline.addPatentIDRecoverSource(patentIDrecoverSource);
-		}
-
-		for (IIRPatentMetainformationRetrievalSource patentmetaInformationRetrieval:pipelineSearchConfiguration.getIIRPatentRetrievalMetaInformation()){
-			patentPipeline.addPatentsMetaInformationRetrieval(patentmetaInformationRetrieval);
-		}
+		if(stop)
+			return;
+		addConfigurations(searchConfiguration);
 
 		//execute the search step
-		Set<String> patentIds = patentPipeline.executePatentIDSearchStep(searchConfiguration.getIRPatentPipelineSearchConfiguration());
-		increaseStep();		
+		if(stop)
+			return;
+		Set<String> patentIds = searchIds(searchConfiguration);		
 
 
 		// Previously download the existent documentID for PMID,PMC and DOI documents from System and Query
@@ -245,14 +234,9 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		}
 
 		//execute the metainformation step
-		Map<String, IPublication> patentMap =new HashMap<>();
-		if (patentIDsForMetainformation.size()>0){
-			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation);
-			patentMap=reportMetaInformation.getMapPatentIDPublication();
-
-		}
-		increaseStep();
-		//patentPipeline.runMetaInformationPipeline(searchConfiguration.getIRPatentPipelineSearchConfiguration());
+		if(stop)
+			return;
+		Map<String, IPublication> patentMap = metaInformationStep(patentIDsForMetainformation);
 
 
 		//Ids processed
@@ -272,7 +256,38 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		Map<String, List<String>> allPossibleSolutions = PatentPipelineUtils.getAllPatentIDPossibilitiesForAGivenSet(patentIds);
 		patentMap = PatentPipelineUtils.processPatentMapWithMetadata(patentMap, allPossibleSolutions);
 
+		abs_count = processResults(query, report, documentsToInsert, documentsThatAlreayInDB, abs_count, startTime,
+				patentidsAlreadyExistOnDB, patentidsAlreadyExistOnQuery, patentMap, alreadyAdded);
 
+		// Insert publications in System
+		if(!stop && !documentsToInsert.isEmpty()){
+			insertPublications(documentsToInsert);
+		}
+		//add to query process
+		addQueryInformation(query, documentsToInsert, documentsThatAlreayInDB, abs_count);	
+	}
+
+	private void addQueryInformation(IQuery query, Set<IPublication> documentsToInsert,
+			Set<IPublication> documentsThatAlreayInDB, int abs_count) throws ANoteException {
+		Set<IPublication> publicationToAdd = new HashSet<>();
+		publicationToAdd.addAll(documentsThatAlreayInDB);
+		publicationToAdd.addAll(documentsToInsert);
+		listPublicacoes.addAll(publicationToAdd);
+		if(!stop)
+		{
+			insertQueryPublications(query,publicationToAdd);
+			addToCounts(publicationToAdd.size(), abs_count);
+			query.setAvailableAbstracts(nAbstracts);
+			query.setPublicationsSize(nPublicacoes);
+			updateQueryOnDatabase(query);
+		}
+	}
+
+	private int processResults(IQuery query, IIRSearchProcessReport report, Set<IPublication> documentsToInsert,
+			Set<IPublication> documentsThatAlreayInDB, int abs_count, long startTime,
+			Map<String, Long> patentidsAlreadyExistOnDB, Set<String> patentidsAlreadyExistOnQuery,
+			Map<String, IPublication> patentMap, Set<Long> alreadyAdded) {
+		int step=0;
 		for(String patentID:patentMap.keySet()){
 
 			// Get ID from publication
@@ -347,26 +362,45 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			step++;
 			memoryAndProgress(step,patentMap.size(),startTime);
 		}
+		return abs_count;
+	}
 
-		// Insert publications in System
-		if(!cancel && documentsToInsert.size()!=0){
-			insertPublications(documentsToInsert);
+	private Map<String, IPublication> metaInformationStep(Set<String> patentIDsForMetainformation)
+			throws ANoteException {
+		Map<String, IPublication> patentMap =new HashMap<>();
+		if (patentIDsForMetainformation.size()>0){
+			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation);
+			patentMap=reportMetaInformation.getMapPatentIDPublication();
+
 		}
+		increaseStep();
+		return patentMap;
+	}
 
-		//add to query process
-		Set<IPublication> publicationToAdd = new HashSet<>();
-		publicationToAdd.addAll(documentsThatAlreayInDB);
-		publicationToAdd.addAll(documentsToInsert);
-		listPublicacoes.addAll(publicationToAdd);
-		if(!cancel)
-		{
-			insertQueryPublications(query,publicationToAdd);
-			addToCounts(publicationToAdd.size(), abs_count);
-			query.setAvailableAbstracts(nAbstracts);
-			query.setPublicationsSize(nPublicacoes);
-			updateQueryOnDatabase(query);
-		}	
+	private Set<String> searchIds(IIRPatentPipelineConfiguration searchConfiguration)
+			throws ANoteException, WrongIRPatentIDRecoverConfigurationException {
+		Set<String> patentIds = patentPipeline.executePatentIDSearchStep(searchConfiguration.getIRPatentPipelineSearchConfiguration());
+		increaseStep();
+		return patentIds;
+	}
 
+	private void addConfigurations(IIRPatentPipelineConfiguration searchConfiguration) throws PatentPipelineException {
+		IIRPatentPipelineSearchStepsConfiguration pipelineSearchConfiguration = searchConfiguration.getIIRPatentPipelineSearchConfiguration();
+		for (IIRPatentIDRetrievalSource patentIDrecoverSource:pipelineSearchConfiguration.getIIRPatentIDRecoverSource()){
+			patentPipeline.addPatentIDRecoverSource(patentIDrecoverSource);
+		}
+		
+		for (IIRPatentMetainformationRetrievalSource patentmetaInformationRetrieval:pipelineSearchConfiguration.getIIRPatentRetrievalMetaInformation()){
+			patentPipeline.addPatentsMetaInformationRetrieval(patentmetaInformationRetrieval);
+		}
+	}
+
+	private void initPatentPipeline() {
+		patentPipeline = new PatentPipeline(){
+			protected void memoryProgressAndTime(int step, int total, long startTime) {
+				memoryAndProgress(step, total, startTime);
+			}
+		};
 	}
 
 	protected IPublication updatePublication (IPublication pub1, IPublication pub2){
@@ -421,7 +455,9 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 
 	@Override
 	public void stop() {
-		cancel = true;		
+		stop = true;
+		if(patentPipeline!=null)
+			patentPipeline.stop();
 	}
 
 
@@ -486,7 +522,6 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		}	
 		else
 			throw new InvalidConfigurationException("Configuration is not a IIRPatentPipelineConfiguration instance");
-
 	}
 
 	@Override

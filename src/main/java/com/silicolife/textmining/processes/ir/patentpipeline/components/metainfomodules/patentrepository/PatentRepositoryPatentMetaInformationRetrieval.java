@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +31,10 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
-
-		for(String patentID:mapPatentIDPublication.keySet())
+		Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+		while(iterator.hasNext() && !stop)
 		{
+			String patentID = iterator.next();
 			PatentEntity patentEntity = searchPatentEntity(patentID);
 			if(patentEntity!=null)
 			{
@@ -52,9 +54,8 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			PatentEntity result = objectMapper.readValue(imputstream,PatentEntity.class);
 			return result;
 		} catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	
 	private IPublication getPublicationToChange(String patentID,Map<String, IPublication> mapPatentIDPublication,PatentEntity patentEntity)
