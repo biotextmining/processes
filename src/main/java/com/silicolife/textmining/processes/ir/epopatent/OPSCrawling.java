@@ -44,7 +44,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 	private Integer startRange;
 	private Integer endRAnge;
 	private Long startTime;
-	private static long reconnectiontimeSeconds = 900;
+	private static long reconnectiontimeSeconds = 1900;
 
 
 	public OPSCrawling()

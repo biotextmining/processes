@@ -53,7 +53,7 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSUtils {
 
-	private static String version = "3.1";
+	private static String version = "3.2";
 	private static String autenticationURL = "https://ops.epo.org/" + version + "/auth/accesstoken";
 	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio/?q=";
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
@@ -140,8 +140,11 @@ public class OPSUtils {
 		return patentIds;
 	}
 
-	public static int getSearchResults(String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+	public static int getSearchResults(String tokenaccess,String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
 		Map<String, String> headers = new HashMap<String, String>();
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
 		Integer result = client.get(searchURL + query, headers, new OPSSearchResultHandler());
 		return result;
 	}

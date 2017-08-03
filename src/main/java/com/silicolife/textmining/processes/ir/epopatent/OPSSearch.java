@@ -79,11 +79,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	
 	@Override
 	public int getExpectedQueryResults(String query) throws InternetConnectionProblemException {
-		try {
-			return OPSUtils.getSearchResults(query);
-		} catch (Exception e) {
-			throw new InternetConnectionProblemException(e);
-		}
+		return 0;
 	}
 	
 	@Override

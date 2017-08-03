@@ -39,7 +39,7 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 		try {
 			String tokenaccess = Utils.get64Base(((IIRPatentIDRecoverEPOSearchConfiguration)getConfiguration()).getAccessToken());
 			autentication = OPSUtils.postAuth(tokenaccess);
-			results = OPSUtils.getSearchResults(query);
+			results = OPSUtils.getSearchResults(autentication,query);
 		} catch (RedirectionException | ClientErrorException| ServerErrorException | ConnectionException| ResponseHandlingException e) {
 			throw new ANoteException(new InternetConnectionProblemException(e));
 		}
