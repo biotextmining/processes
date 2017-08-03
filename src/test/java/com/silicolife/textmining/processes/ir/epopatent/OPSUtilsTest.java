@@ -17,7 +17,7 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSUtilsTest {
 	
-	private static String accessTokenEPO = "LLCAsGwQHRQAi9sKU3L83tMcKszoVnhi:q9sxdjCvGbLDsWrc";
+	private static String accessTokenEPO = "accesstoken";
 	
 	@Test
 	public void getAuthentication() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
