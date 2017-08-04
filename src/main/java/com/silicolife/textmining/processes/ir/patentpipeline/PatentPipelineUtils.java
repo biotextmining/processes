@@ -30,7 +30,7 @@ public class PatentPipelineUtils {
 
 
 	public static List<String> createPatentIDPossibilities(String patentID){
-		List<String> patentIDs=new ArrayList<>();
+		Set<String> patentIDs=new HashSet<>();
 		//the patentID itself
 		patentIDs.add(patentID);
 		String newPatentID=PatentPipelineUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
@@ -77,8 +77,7 @@ public class PatentPipelineUtils {
 		if (!patentIDs.contains(newPatentID)){
 			patentIDs.add(newPatentID);
 		}
-
-		return patentIDs;
+		return new ArrayList<>(patentIDs);
 	}
 
 

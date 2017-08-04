@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,8 @@ public class OPSUtils {
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
 	private static String generalURL = "http://ops.epo.org/" + version + "/rest-services/";
 	private static String publicationFamily = "http://ops.epo.org/" + version + "/rest-services/family/publication/epodoc/";
+	
+	private static Set<String> excludePatentStartLetterSet;
 
 	private static HTTPClient client = new HTTPClient();
 
@@ -439,5 +442,28 @@ public class OPSUtils {
 			tokenaccess = null;
 		}
 		return tokenaccess;
+	}
+	
+	public static boolean isAcceptablePatentLanguage(String patentID)
+	{
+		if(excludePatentStartLetterSet==null)
+			createExcluseStartSettings();
+		for(String excludePatentStartLetter:excludePatentStartLetterSet)
+		{
+			if(patentID.startsWith(excludePatentStartLetter))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static void createExcluseStartSettings() {
+		excludePatentStartLetterSet = new HashSet<>();
+		excludePatentStartLetterSet.add("JP");
+		excludePatentStartLetterSet.add("CN");
+		excludePatentStartLetterSet.add("RU");
+		excludePatentStartLetterSet.add("DE");
+		excludePatentStartLetterSet.add("TW");
 	}
 }
