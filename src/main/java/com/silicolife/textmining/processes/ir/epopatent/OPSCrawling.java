@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 
 	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.patent.name());
-	private boolean cancel ;
+	private boolean stop ;
 	private ISimpleTimeLeft progress;
 	private Integer startRange;
 	private Integer endRAnge;
@@ -72,7 +73,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			throw new ANoteException("To Add a document user needs to configure ACCESS_TOKEN (PatentSearchDefaultSettings.ACCESS_TOKEN)");
 		}
 
-		cancel = false;
+		stop = false;
 		long start = GregorianCalendar.getInstance().getTimeInMillis();
 		if(this.startTime!=null){
 			start = startTime;
@@ -89,14 +90,11 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		}
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
 		long startControlTime = System.currentTimeMillis();
-		for(IPublication pub:publications)
+		Iterator<IPublication> iterator = publications.iterator();
+		while(iterator.hasNext() && !stop)
 		{
+			IPublication pub = iterator.next();
 			Set<String> patentIDs = PublicationImpl.getPublicationExternalIDSetForSource(pub, PublicationSourcesDefaultEnum.patent.name());
-			if(cancel)
-			{
-				report.setcancel();
-				break;
-			}
 			if(pub.isPDFAvailable())
 			{
 				report.addFileAlreadyDownloaded(pub);
@@ -132,7 +130,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			step++;
 		}
 
-		if(cancel)
+		if(stop)
 			report.setcancel();
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-start);
@@ -222,12 +220,9 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		return 0;
 	}
 
-
-	@Override
 	public void stop() {
-		cancel = true;		
+		stop = true;		
 	}
-
 
 	@Override
 	public IProcessOrigin getProcessOrigin() {

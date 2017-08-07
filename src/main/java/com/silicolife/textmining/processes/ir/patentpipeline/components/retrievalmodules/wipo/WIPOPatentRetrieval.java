@@ -72,17 +72,6 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 		return report;
 	}
 
-
-	private boolean verifyPDFAlreadyDownloaded(String filePathway){
-		File file=new File(filePathway);
-		if(file.exists() && file.isFile()){
-			return true;
-		}
-		return false;
-
-	}
-
-
 	private void getPatentDocumentOCRBYID(String patentID)throws UnknownApplicationException_Exception,UnknownDocumentException_Exception, IOException, DocumentException {
 		List<Doc> retour = serviceHelper.getStub().getAvailableDocuments(patentID);
 		File pathStock = new File(getConfiguration().getOutputDirectory() +"/"+ patentID + ".pdf");

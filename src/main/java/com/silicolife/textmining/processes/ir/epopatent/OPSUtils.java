@@ -296,8 +296,12 @@ public class OPSUtils {
 		return new File(docPDFFinal);
 	}
 
+	
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID, File outDir) throws COSVisitorException, RedirectionException, ClientErrorException, ServerErrorException, IOException, ConnectionException, ResponseHandlingException, InterruptedException {
+		return getPatentFullTextPDFUsingPatentID(tokenaccess,patentID ,outDir.getPath(),null);
+	}
 
-	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,Long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
@@ -328,13 +332,18 @@ public class OPSUtils {
 				}
 			}
 		}
-
-		String docPDFFinal = path +"/" + pubID + ".pdf";
+		String docPDFFinal;
+		if(pubID==null)
+		{
+			docPDFFinal = path +"/" + pubID + ".pdf";
+		}
+		else
+		{
+			docPDFFinal = path +"/" + patentID + ".pdf";
+		}
 		merger.setDestinationFileName(docPDFFinal);
 		merger.mergeDocuments();
-
 		recursiveDelete(docPath.toFile());
-
 		return new File(docPDFFinal);
 	}
 
@@ -466,4 +475,6 @@ public class OPSUtils {
 		excludePatentStartLetterSet.add("DE");
 		excludePatentStartLetterSet.add("TW");
 	}
+
+
 }

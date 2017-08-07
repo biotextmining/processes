@@ -116,6 +116,14 @@ public class PatentEntity {
 	public void setSources(List<String> sources) {
 		this.sources = sources;
 	}
+
+	@Override
+	public String toString() {
+		return "PatentEntity [id=" + id + ", otherIds=" + otherIds + ", title=" + title + ", authors=" + authors
+				+ ", owners=" + owners + ", abstractText=" + abstractText + ", classifications=" + classifications
+				+ ", date=" + date + ", link=" + link + ", fullTextContent=" + fullTextContent + ", sources=" + sources
+				+ "]";
+	}
 	
 	
 }

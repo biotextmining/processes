@@ -1,14 +1,11 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -16,13 +13,12 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
+import com.silicolife.textmining.processes.ir.patentrepository.PatentRepositoryAPI;
 
 public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
 	
 	public final static String patentrepositoryName = "Patent Repository from SilicoLife and CEB (UMinho)";
 	public final static String patentrepositoryProcessID = "patentrepository.searchpatentmetainformation";
-	private static String url = "patent/metainformation";
-
 
 	public PatentRepositoryPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -48,10 +44,7 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 	{
 		try {
 			IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration conf = (IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration) getConfiguration();
-			String urlGetPatentInformation = conf.getPatentRepositoryServerBasedUrl() + "/" + url +"/" + patentID;
-			InputStream imputstream = new URL(urlGetPatentInformation).openStream();
-			ObjectMapper objectMapper = new ObjectMapper();
-			PatentEntity result = objectMapper.readValue(imputstream,PatentEntity.class);
+			PatentEntity result = PatentRepositoryAPI.getPatentMetaInformationByID(conf.getPatentRepositoryServerBasedUrl(), patentID);
 			return result;
 		} catch (IOException e) {
 			return null;
@@ -106,7 +99,6 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 		if(patentEntity.getClassifications()!=null && patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
 		{
 			notes = notes + " Classification: "+convertListStringIntoString(patentEntity.getClassifications());
-
 		}
 		publication.setNotes(notes);
 	}

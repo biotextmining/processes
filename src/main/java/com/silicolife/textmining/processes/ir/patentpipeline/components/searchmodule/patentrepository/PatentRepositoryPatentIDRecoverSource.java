@@ -1,18 +1,15 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.patentrepository;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.AIRPatentIDRecoverSource;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.WrongIRPatentIDRecoverConfigurationException;
+import com.silicolife.textmining.processes.ir.patentrepository.PatentRepositoryAPI;
 
 public class PatentRepositoryPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 
@@ -26,19 +23,14 @@ public class PatentRepositoryPatentIDRecoverSource extends AIRPatentIDRecoverSou
 
 	@Override
 	public Set<String> retrievalPatentIds(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
-
+		Set<String> out = new HashSet<>();
 		IIRPatentIDRecoverPatentRepositorySearchConfiguration moduleConf = (IIRPatentIDRecoverPatentRepositorySearchConfiguration) getConfiguration();
 		try {
-			String urlgetKeywordsSearch =  moduleConf.getPatentRepositoryServerBasedUrl() + "/search/patentkeywords/" + configuration.getQuery();
-			InputStream imputstream = new URL(urlgetKeywordsSearch).openStream();
-			ObjectMapper objectMapper = new ObjectMapper();
-			@SuppressWarnings("unchecked")
-			List<String> result = objectMapper.readValue(imputstream,List.class);
-			return new HashSet<>(result);
+			out = PatentRepositoryAPI.getPatentIdsGivenTextQuery(moduleConf.getPatentRepositoryServerBasedUrl(), configuration.getQuery());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new HashSet<String>();
+		return out;
 	}
 
 	@Override
