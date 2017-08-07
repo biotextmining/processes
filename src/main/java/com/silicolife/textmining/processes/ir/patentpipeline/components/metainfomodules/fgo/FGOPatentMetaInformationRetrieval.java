@@ -9,8 +9,9 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationExtern
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils.FGOParser;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils.FGOUtils;
+import com.silicolife.textmining.processes.ir.fgo.FGOParser;
+import com.silicolife.textmining.processes.ir.fgo.FGOPatentDataObject;
+import com.silicolife.textmining.processes.ir.fgo.FGOAPI;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
@@ -39,7 +40,7 @@ public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			{
 				IPublication publication = mapPatentIDPublication.get(patentID);
 				updatePublication(mapPatentIDPublication,publication, patentEntity);
-				FGOUtils.delay(delayseconds);
+				FGOAPI.delay(delayseconds);
 			}
 		}
 	}

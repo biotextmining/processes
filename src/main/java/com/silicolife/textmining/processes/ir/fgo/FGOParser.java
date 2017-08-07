@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils;
+package com.silicolife.textmining.processes.ir.fgo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,8 +13,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.FGOPatentDataObject;
-
 public class FGOParser {
 
 	private static SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd"); 
@@ -23,7 +21,7 @@ public class FGOParser {
 
 	public static FGOPatentDataObject retrieveMetaInformation(String patentID)
 	{
-		String html = FGOUtils.getPatentTextHTML(patentID);
+		String html = FGOAPI.getPatentTextHTML(patentID);
 		if(html==null)
 			return null;
 		FGOPatentDataObject out = parseMetaInformation(patentID,html);
@@ -32,7 +30,7 @@ public class FGOParser {
 
 	public static FGOPatentDataObject retrieveFullInformation(String patentID)
 	{
-		String html = FGOUtils.getPatentTextHTML(patentID);
+		String html = FGOAPI.getPatentTextHTML(patentID);
 		if(html==null)
 			return null;
 		FGOPatentDataObject out = parseFullInformation(patentID,html);

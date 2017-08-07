@@ -1,11 +1,11 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.fgo.utils;
+package com.silicolife.textmining.processes.ir.fgo;
 
 import java.io.IOException;
 
 import org.junit.Test;
 
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.FGOPatentDataObject;
-import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils.FGOParser;
+import com.silicolife.textmining.processes.ir.fgo.FGOParser;
+import com.silicolife.textmining.processes.ir.fgo.FGOPatentDataObject;
 
 public class FGOParserTest {
 	

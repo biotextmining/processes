@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils;
+package com.silicolife.textmining.processes.ir.fgo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 import com.silicolife.textmining.core.datastructures.utils.GenericPairComparable;
 
-public class FGOUtils {
+public class FGOAPI {
 
 	private final static boolean _AddSynonymsToQuery = true;
 	private final static boolean _UseGoogleCustomSearchAPI = false;
@@ -86,12 +86,12 @@ public class FGOUtils {
 			String base = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchi/synonyms/json";
 			List<GenericPairComparable<String, String>> post_data = new ArrayList<>();
 			post_data.add(new GenericPairComparable<String, String>("inchi", name));
-			jsonStr = FGOUtils.fetch(base, post_data);
+			jsonStr = FGOAPI.fetch(base, post_data);
 		} else {
 			String base = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/";
 			name = URLEncoder.encode(name, "UTF-8");
 			String pubchem_query = base + name + "/synonyms/json";
-			jsonStr = FGOUtils.fetch(pubchem_query);
+			jsonStr = FGOAPI.fetch(pubchem_query);
 		}
 
 		JSONObject json = new JSONObject(jsonStr);

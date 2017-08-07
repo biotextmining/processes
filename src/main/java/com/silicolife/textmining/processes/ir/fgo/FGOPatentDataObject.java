@@ -1,8 +1,10 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo;
+package com.silicolife.textmining.processes.ir.fgo;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class FGOPatentDataObject {
 	
@@ -246,6 +248,48 @@ public class FGOPatentDataObject {
 		this.link = link;
 	}
 
+	@JsonIgnore
+	public String getTextContent() {
+		StringBuffer out = new StringBuffer();
+		if(this.getTitle()!=null && !this.getTitle().isEmpty())
+			out.append("Title : "+normalizeText(this.getTitle()));
+		if(this.getAbstractText()!=null && !this.getAbstractText().isEmpty())
+			out.append("Abstract : "+normalizeText(this.getAbstractText()));
+		if(this.getDescription()!=null && !this.getDescription().isEmpty())
+		{
+			out.append("Description : ");
 
+			for(String description : this.getDescription())
+			{
+				out.append(normalizeText(description));
+			}
+		}
+		if(this.getClaims()!=null && !this.getClaims().isEmpty())
+		{
+			out.append("Claims : ");
+
+			for(String claim : this.getClaims())
+			{
+				out.append(normalizeText(claim));
+			}
+		}
+		if(out.length() > 6000000)
+		{
+			return out.substring(0, 6000000);
+		}				
+		return out.toString();
+	}
+	
+	private static String normalizeText(String text)
+	{
+		if(text.endsWith("."))
+		{
+			return text + " \n";
+		}
+		else
+		{
+			return text + ". \n";
+		}
+	}
 
 }

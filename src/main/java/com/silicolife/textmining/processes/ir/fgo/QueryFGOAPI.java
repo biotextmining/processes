@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils;
+package com.silicolife.textmining.processes.ir.fgo;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -31,7 +31,7 @@ public class QueryFGOAPI {
 	    int page = 0;
 	    while (hasNext) {
 	      String url = base + "&num=10" + (start == 0 ? "" : "&start=" + start);
-	      String json_str = FGOUtils.fetch(url);
+	      String json_str = FGOAPI.fetch(url);
 	      JSONObject json = new JSONObject(json_str);
 	      System.err.println("Total: " + json.getJSONObject("searchInformation").get("totalResults"));
 

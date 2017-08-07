@@ -1,4 +1,4 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo.utils;
+package com.silicolife.textmining.processes.ir.fgo;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -30,8 +30,8 @@ public class QueryFGONonAPI {
 			String pageStart = Integer.toString(i*100);
 			String url = base.replaceAll("INSERTSTARTINDEX", pageStart);
 			try {
-				FGOUtils.delay(5);
-				String text = FGOUtils.fetch(url);
+				FGOAPI.delay(5);
+				String text = FGOAPI.fetch(url);
 				List<String> ids = extractAllIDs(text);
 
 				//Break if it is duplicating a page

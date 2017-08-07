@@ -11,8 +11,11 @@ import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfo
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.fgo.FGOPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.IROPSPatentRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.OPSPatentRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.patentrepository.IRPatentRepositoryPatentRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.patentrepository.PatentRepositoryPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.wipo.IRWIPOPatentRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.wipo.WIPOPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.BingSearchPatentIDRecoverSource;
@@ -29,6 +32,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IRPatentRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.WrongIRPatentRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
@@ -48,7 +52,10 @@ public class PatentPipelineCompleteTest {
 		String pwdWIPO = "pwd";
 		String patentRepositoryURL = "patentRepositoryURL";
 		String patentRepositoryUser = "patentRepositoryUser";
-		String patentRepositoryPassword = "patentRepositoryPassword";
+		String patentRepositoryPassword = "patentRepositoryPassword";		
+		String userPassword = "patentrepositoryPwd";
+		String patentRepositoryServerBasedUrl = "patentrepositoryURL";
+		String userName = "patentrepositoryUser";
 		
 		String outputDir = "src/test/resource";
 		IProxy proxy = null;
@@ -96,6 +103,14 @@ public class PatentPipelineCompleteTest {
 		IIRPatentRetrievalConfiguration configuration2 = new IROPSPatentRetrievalConfigurationImpl(outputDir, proxy, accessTokenOPS);
 		IIRPatentRetrieval OPSpatentRetrievalProcess = new OPSPatentRetrieval(configuration2 );
 		patentPipeline.addPatentIDRetrieval(OPSpatentRetrievalProcess);
+
+		IIRPatentRetrievalConfiguration configurationPatentRepositoryREtrieval = new IRPatentRepositoryPatentRetrievalConfigurationImpl(proxy, outputDir, patentRepositoryServerBasedUrl, userName, userPassword);
+		IIRPatentRetrieval patentRetrievalProcessPatentRepository = new PatentRepositoryPatentRetrieval(configurationPatentRepositoryREtrieval );
+		patentPipeline.addPatentIDRetrieval(patentRetrievalProcessPatentRepository);
+		
+		IIRPatentRetrievalConfiguration configurationFGOREtrieval = new IRPatentRetrievalConfigurationImpl(outputDir, proxy);
+		IIRPatentRetrieval patentRetrievalProcessFGO = new FGOPatentRetrieval(configurationFGOREtrieval);
+		patentPipeline.addPatentIDRetrieval(patentRetrievalProcessFGO);
 		
 		// Run 
 		patentPipeline.runCompletePipeline(patentPipelineSearchConfiguration);	
