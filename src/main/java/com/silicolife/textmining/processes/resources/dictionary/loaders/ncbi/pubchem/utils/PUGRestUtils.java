@@ -569,7 +569,7 @@ public class PUGRestUtils {
 		 out.put("http://www.chembase.cn/molecule-", new GenericTriple<String,String, String>("http://www.chembase.cn/molecule-",".html", "CHEMBASE"));
 		 out.put("http://www.chemspider.com/Chemical-Structure.", new GenericTriple<String,String, String>("http://www.chemspider.com/Chemical-Structure.",".html", "CHEMSPIDER"));
 		 out.put("http://www.drugbank.ca/drugs/", new GenericTriple<String,String, String>("http://www.drugbank.ca/drugs/","", "DRUGBANK"));
-		 out.put("http://zinc.docking.org/substances/", new GenericTriple<String,String, String>("http://zinc.docking.org/substances/","", "ZINC"));
+		 out.put("http://zinc.docking.org/substances/", new GenericTriple<String,String, String>("http://zinc.docking.org/substances/","/", "ZINC"));
 		 out.put("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/", new GenericTriple<String,String, String>("https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/CHEMBL","", "CHEMBL"));
 		 out.put("https://www.molport.com/shop/molecule-link/", new GenericTriple<String,String, String>("https://www.molport.com/shop/molecule-link/","", "MOLPORT"));
 		 out.put("https://chem-space.com/", new GenericTriple<String,String, String>("https://chem-space.com/",".html", "CHEMSPACE"));
