@@ -88,7 +88,7 @@ public class CorpusCreation {
 		}
 		// PDF is availbale and Full text are not available yet, transform it to string and insert it in publication object
 		if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty()) {
-			String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
+			String saveDocDirectoty = (String) InitConfiguration.getPropertyValueFromInitOrProperties(GeneralDefaultSettings.PDFDOCDIRECTORY);
 			// Get PDF to text from PDF file
 			String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
 			publication.setFullTextContent(fullTextContent);

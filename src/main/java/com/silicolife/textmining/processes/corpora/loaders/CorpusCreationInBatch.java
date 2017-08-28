@@ -96,7 +96,7 @@ public class CorpusCreationInBatch {
 				// PDF is availbale and Full text are not available yet
 				if(publication.isPDFAvailable() && getPublicationFullTextOnDatabase(publication).isEmpty())
 				{
-					String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
+					String saveDocDirectoty = (String) InitConfiguration.getPropertyValueFromInitOrProperties(GeneralDefaultSettings.PDFDOCDIRECTORY);
 					// Get PDF to text from PDF file
 					String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
 					publication.setFullTextContent(fullTextContent);
