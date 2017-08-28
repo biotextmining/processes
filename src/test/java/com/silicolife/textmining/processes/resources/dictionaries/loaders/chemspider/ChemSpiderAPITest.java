@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.resources.dictionaries.loaders.chemspider;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
@@ -26,12 +27,20 @@ public class ChemSpiderAPITest {
 		System.out.println(result);
 	}
 	
-	@Test
+//	@Test
 	public void getExternalVendorsIdsGivenCSID() throws ANoteException {
 		String csid = "14157950";
 		String accessToken = "b3d12bfe-1bcd-4960-a30f-ba876fe7a0fb";
 		List<IExternalID> result = ChemSpiderAPI.getExternalVendorsIdsGivenCSID(accessToken, csid);
 		System.out.println(result);
+	}
+	
+	@Test
+	public void getCompoundInfo() throws ANoteException, IOException {
+		String csid = "14157950";
+		String accessToken = "b3d12bfe-1bcd-4960-a30f-ba876fe7a0fb";
+		String[] out = ChemSpiderAPI.getCompoundInformation(accessToken, csid);
+		System.out.println(out[2]);
 	}
 
 }

@@ -21,6 +21,9 @@ import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 
 public class ChemSpiderAPI {
 
+//	private static String urlGetCompoundInfo = "http://www.chemspider.com/Search.asmx/GetExtendedCompoundInfo";
+	private static String urlGetCompoundExtendedInfo = "http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo";
+
 	private static String urlGetCSIDByInchi  = "http://www.chemspider.com/InChI.asmx/InChIToCSID";
 	private static String urlCSID2ExtRefs = "http://www.chemspider.com/Search.asmx/CSID2ExtRefs";
 
@@ -43,6 +46,30 @@ public class ChemSpiderAPI {
 		} catch (IOException e) {
 			throw new ANoteException(e);
 		}
+	}
+	
+	/**
+	 * Return set of information about compound CSID
+	 * 
+	 * @param token
+	 * @param csid
+	 * @return String[0] - InChIKey, String[1] - InChI, String[2] - Smiles,  String[3] - Prefer Name
+	 * @throws IOException
+	 */
+	public static String[] getCompoundInformation(String token,String csid) throws IOException
+	{
+		String[] out = new String[4];
+		String xml = apiCall(urlGetCompoundExtendedInfo, apiCSIDCompoundInfodata(csid, token));
+		JSONObject toJSON = XML.toJSONObject(xml);
+		System.out.println(toJSON);
+		if(toJSON.getJSONObject("ExtendedCompoundInfo")!=null)
+		{
+			out[0] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChIKey").toString();
+			out[1] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChI").toString();
+			out[2] = toJSON.getJSONObject("ExtendedCompoundInfo").get("SMILES").toString();
+			out[3] = toJSON.getJSONObject("ExtendedCompoundInfo").get("CommonName").toString();
+		}
+		return out;
 	}
 
 	public static List<IExternalID> getExternalIdsGivenCSID(String token,String csid) throws ANoteException
@@ -115,6 +142,8 @@ public class ChemSpiderAPI {
 		data.add(new GenericPairComparable<String, String>("token", token));
 		return data;
 	}
+	
+
 
 	private static JSONArray getExternalLinks(String token,String csid, List<String> externalSources) throws IOException {
 		String xml = apiCall(urlCSID2ExtRefs, apiCSID2ExtRefsdata(csid, token,externalSources));
@@ -133,6 +162,13 @@ public class ChemSpiderAPI {
 			return wrapped;
 		}
 		return new JSONArray();
+	}
+	
+	private static List<GenericPairComparable<String, String>> apiCSIDCompoundInfodata(String csid, String token) {
+		List<GenericPairComparable<String, String>> data = new ArrayList<>();
+		data.add(new GenericPairComparable<String, String>("CSID", csid.toString()));
+		data.add(new GenericPairComparable<String, String>("token", token));
+		return data;
 	}
 
 	private static List<GenericPairComparable<String, String>> apiCSID2ExtRefsdata(String csid, String token, List<String> externalSources) {
