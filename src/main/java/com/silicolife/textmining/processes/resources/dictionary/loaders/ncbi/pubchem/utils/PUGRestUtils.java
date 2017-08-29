@@ -168,6 +168,7 @@ public class PUGRestUtils {
 	private static ListIterator<Long> getJsonIteratorUsingURL(String urlPatentsForAID) throws IOException, ParseException{
 		URL url = new URL(urlPatentsForAID);
 		URLConnection connection = url.openConnection();
+		connection.setConnectTimeout(50000);
 		InputStream in = connection.getInputStream();
 		JSONParser parser= new JSONParser();
 		JSONObject jsonObj = (JSONObject) parser.parse(new InputStreamReader(in));
@@ -539,6 +540,8 @@ public class PUGRestUtils {
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 		conn.setDoOutput(true);
+		conn.setConnectTimeout(50000);
+		conn.setReadTimeout(50000);
 
 		conn.getOutputStream().write(postDataBytes);
 

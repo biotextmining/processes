@@ -11,7 +11,6 @@ import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
 import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
-import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
 import com.silicolife.textmining.core.datastructures.report.corpora.CorpusCreateReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;

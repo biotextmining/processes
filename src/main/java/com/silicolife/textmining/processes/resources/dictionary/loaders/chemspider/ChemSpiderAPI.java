@@ -21,7 +21,7 @@ import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 
 public class ChemSpiderAPI {
 
-//	private static String urlGetCompoundInfo = "http://www.chemspider.com/Search.asmx/GetExtendedCompoundInfo";
+	//	private static String urlGetCompoundInfo = "http://www.chemspider.com/Search.asmx/GetExtendedCompoundInfo";
 	private static String urlGetCompoundExtendedInfo = "http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo";
 
 	private static String urlGetCSIDByInchi  = "http://www.chemspider.com/InChI.asmx/InChIToCSID";
@@ -47,7 +47,7 @@ public class ChemSpiderAPI {
 			throw new ANoteException(e);
 		}
 	}
-	
+
 	/**
 	 * Return set of information about compound CSID
 	 * 
@@ -56,18 +56,21 @@ public class ChemSpiderAPI {
 	 * @return String[0] - InChIKey, String[1] - InChI, String[2] - Smiles,  String[3] - Prefer Name
 	 * @throws IOException
 	 */
-	public static String[] getCompoundInformation(String token,String csid) throws IOException
+	public static String[] getCompoundInformation(String token,String csid) throws ANoteException
 	{
 		String[] out = new String[4];
-		String xml = apiCall(urlGetCompoundExtendedInfo, apiCSIDCompoundInfodata(csid, token));
-		JSONObject toJSON = XML.toJSONObject(xml);
-		System.out.println(toJSON);
-		if(toJSON.getJSONObject("ExtendedCompoundInfo")!=null)
-		{
-			out[0] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChIKey").toString();
-			out[1] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChI").toString();
-			out[2] = toJSON.getJSONObject("ExtendedCompoundInfo").get("SMILES").toString();
-			out[3] = toJSON.getJSONObject("ExtendedCompoundInfo").get("CommonName").toString();
+		try {
+			String xml = apiCall(urlGetCompoundExtendedInfo, apiCSIDCompoundInfodata(csid, token));
+			JSONObject toJSON = XML.toJSONObject(xml);
+			if(toJSON.getJSONObject("ExtendedCompoundInfo")!=null)
+			{
+				out[0] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChIKey").toString();
+				out[1] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChI").toString().toUpperCase();
+				out[2] = toJSON.getJSONObject("ExtendedCompoundInfo").get("SMILES").toString();
+				out[3] = toJSON.getJSONObject("ExtendedCompoundInfo").get("CommonName").toString();
+			}
+		} catch (IOException e) {
+			throw new ANoteException(e);
 		}
 		return out;
 	}
@@ -130,6 +133,8 @@ public class ChemSpiderAPI {
 		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
+		conn.setConnectTimeout(50000);
+		conn.setReadTimeout(50000);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(conn.getInputStream(), writer);
 		String theString = writer.toString();
@@ -142,7 +147,7 @@ public class ChemSpiderAPI {
 		data.add(new GenericPairComparable<String, String>("token", token));
 		return data;
 	}
-	
+
 
 
 	private static JSONArray getExternalLinks(String token,String csid, List<String> externalSources) throws IOException {
@@ -163,7 +168,7 @@ public class ChemSpiderAPI {
 		}
 		return new JSONArray();
 	}
-	
+
 	private static List<GenericPairComparable<String, String>> apiCSIDCompoundInfodata(String csid, String token) {
 		List<GenericPairComparable<String, String>> data = new ArrayList<>();
 		data.add(new GenericPairComparable<String, String>("CSID", csid.toString()));
