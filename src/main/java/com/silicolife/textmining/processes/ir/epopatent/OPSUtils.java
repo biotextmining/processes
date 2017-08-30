@@ -474,6 +474,7 @@ public class OPSUtils {
 		excludePatentStartLetterSet.add("RU");
 		excludePatentStartLetterSet.add("DE");
 		excludePatentStartLetterSet.add("TW");
+		excludePatentStartLetterSet.add("KR");
 	}
 
 
