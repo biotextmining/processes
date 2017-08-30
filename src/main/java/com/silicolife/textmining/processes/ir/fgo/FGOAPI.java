@@ -23,7 +23,7 @@ public class FGOAPI {
 
 	public static String getPatentTextHTML(String patentID){
 		try {
-			return fetch("https://www.google.com/patents/" + patentID+ "?cl=en");
+			return fetch("https://www.google.com/patents/" + patentID+ "?cl=en&hl=en");
 		} catch (IOException e) {
 			return null;
 		}

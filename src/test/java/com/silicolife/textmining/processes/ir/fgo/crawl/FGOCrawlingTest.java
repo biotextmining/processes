@@ -9,8 +9,8 @@ public class FGOCrawlingTest {
 	@Test
 	public void test() throws ANoteException {
 		FGOCrawling fgo = new FGOCrawling();
-		long pubID = 1000;
-		String patentID = "US20110177564";
+		long pubID =2002007850L;
+		String patentID = "WO2002007850";
 		String saveDocDirectoty = "src/test/resources";
 		fgo.getPDFAndUpdateReportUsingPatentID(patentID, saveDocDirectoty, pubID);
 	}

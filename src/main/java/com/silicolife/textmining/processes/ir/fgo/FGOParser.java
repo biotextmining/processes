@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 public class FGOParser {
@@ -39,9 +40,15 @@ public class FGOParser {
 
 	private static FGOPatentDataObject parseFullInformation(String patentID, String html) {
 		FGOPatentDataObject metainformation = parseMetaInformation(patentID,html);
-		List<String> description = getDescription(html);
+		List<String> description = getDescriptionInEnglish(html);
+		if(description.isEmpty())
+			description = getDescriptionInMultiLanguage(html);
+		if(description.isEmpty())
+			description = getDescriptionOCR(html);
 		metainformation.setDescription(description);
-		List<String> claims = getClaims(html);
+		List<String> claims = getClaimsInEnglish(html);
+		if(claims.isEmpty())
+			claims = getClaimsMultiLanguage(html);
 		metainformation.setClaims(claims);
 		return metainformation;
 	}
@@ -69,25 +76,83 @@ public class FGOParser {
 		return out;
 	}
 
-	private static List<String> getClaims(String html) {
+	private static List<String> getClaimsInEnglish(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
 		Elements nodesMeta = document.select("div*[class=claim-text]");
 		for(Element nodeMeta:nodesMeta)
 		{
-			out.add(replaceCaracters(nodeMeta.text()).trim());
+			// find if is bi-lingual
+			if(nodeMeta.siblingIndex() != 0)
+			{
+				out.add(replaceCaracters(nodeMeta.text()).trim());
+			}
+		}
+		return out;
+	}
+	
+	
+	
+	private static List<String> getClaimsMultiLanguage(String html) {
+		List<String> out = new ArrayList<>();
+		Document document = Jsoup.parse(html);
+		Elements nodesMeta = document.select("div*[class=claim-text]");
+		for(Element nodeMeta:nodesMeta)
+		{
+			Elements elementsSpan = nodeMeta.getElementsByTag("span");
+			// find if is bi-lingual
+			if(nodeMeta.siblingIndex() == 0 && !elementsSpan.isEmpty())
+			{
+				for(Element elementSpan:elementsSpan)
+				{
+					if(!elementSpan.attr("class").equals("google-src-text"))
+					{
+						Node englishNode = elementSpan.childNodes().get(1);
+						out.add(replaceCaracters(englishNode.toString().trim()));
+					}
+				}
+			}
 		}
 		return out;
 	}
 
 
-	private static List<String> getDescription(String html) {
+	private static List<String> getDescriptionInEnglish(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
 		Elements nodesMeta = document.select("div*[class=description-line]");
 		for(Element nodeMeta:nodesMeta)
 		{
 			out.add(replaceCaracters(nodeMeta.text()).trim());
+		}
+		return out;
+	}
+	
+	private static List<String> getDescriptionOCR(String html) {
+		List<String> out = new ArrayList<>();
+		Document document = Jsoup.parse(html);
+		Elements nodesMeta = document.select("div*[load-source=WIPO-OCR][class=description]");
+		for(Element nodeMeta:nodesMeta)
+		{
+			String desc = nodeMeta.text();
+			out.add(replaceCaracters(desc).trim());
+		}
+		return out;
+	}
+	
+	private static List<String> getDescriptionInMultiLanguage(String html) {
+		List<String> out = new ArrayList<>();
+		Document document = Jsoup.parse(html);
+		Elements nodesMeta = document.select("div[class=description]");
+		Element nodeMeta = nodesMeta.get(0);
+		Elements elementsSpan = nodeMeta.getElementsByTag("span");
+		for(Element elementSpan:elementsSpan)
+		{
+			if(!elementSpan.attr("class").equals("google-src-text"))
+			{
+				Node englishNode = elementSpan.childNodes().get(1);
+				out.add(replaceCaracters(englishNode.toString().trim()));
+			}
 		}
 		return out;
 	}
