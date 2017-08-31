@@ -308,6 +308,8 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 								authors = authors + inventor.getTextContent() + ", ";
 							}
 						}
+						if(authors.isEmpty())
+							return new String();
 						return authors.substring(0, authors.length()-2);
 					}
 				}
