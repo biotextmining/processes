@@ -8,7 +8,7 @@ public class FGOAOITest {
 
 	@Test
 	public void getpatent() throws IOException {
-		String patentID = "WO2002007850";
+		String patentID = "CA2295049";
 		String html = FGOAPI.getPatentTextHTML(patentID);
 		System.out.println(html);
 	}

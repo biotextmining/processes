@@ -15,7 +15,7 @@ public class FGOParserTest {
 	
 	@Test
 	public void getpatentFull() throws IOException {
-		String patentID = "WO2002007850";
+		String patentID = "CN105061174";
 		FGOPatentDataObject fgoPatentDataObject = FGOParser.retrieveFullInformation(patentID);
 		System.out.println(fgoPatentDataObject);
 	}

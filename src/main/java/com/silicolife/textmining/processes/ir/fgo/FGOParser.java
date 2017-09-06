@@ -90,9 +90,9 @@ public class FGOParser {
 		}
 		return out;
 	}
-	
-	
-	
+
+
+
 	private static List<String> getClaimsMultiLanguage(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
@@ -127,11 +127,11 @@ public class FGOParser {
 		}
 		return out;
 	}
-	
+
 	private static List<String> getDescriptionOCR(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
-		Elements nodesMeta = document.select("div*[load-source=WIPO-OCR][class=description]");
+		Elements nodesMeta = document.select("div*[load-source~=WIPO|patent-office][class=description]");
 		for(Element nodeMeta:nodesMeta)
 		{
 			String desc = nodeMeta.text();
@@ -139,19 +139,25 @@ public class FGOParser {
 		}
 		return out;
 	}
-	
+
 	private static List<String> getDescriptionInMultiLanguage(String html) {
 		List<String> out = new ArrayList<>();
 		Document document = Jsoup.parse(html);
 		Elements nodesMeta = document.select("div[class=description]");
-		Element nodeMeta = nodesMeta.get(0);
-		Elements elementsSpan = nodeMeta.getElementsByTag("span");
-		for(Element elementSpan:elementsSpan)
+		if(!nodesMeta.isEmpty())
 		{
-			if(!elementSpan.attr("class").equals("google-src-text"))
+			Element nodeMeta = nodesMeta.get(0);
+			Elements elementsSpan = nodeMeta.getElementsByTag("span");
+			for(Element elementSpan:elementsSpan)
 			{
-				Node englishNode = elementSpan.childNodes().get(1);
-				out.add(replaceCaracters(englishNode.toString().trim()));
+				if(!elementSpan.attr("class").equals("google-src-text"))
+				{
+					if(elementSpan.childNodes().size() > 1)
+					{
+						Node englishNode = elementSpan.childNodes().get(1);
+						out.add(replaceCaracters(englishNode.toString().trim()));
+					}
+				}
 			}
 		}
 		return out;
@@ -254,7 +260,7 @@ public class FGOParser {
 		}
 		return "";
 	}
-	
+
 	private static String replaceCaracters(String original)
 	{
 		return original.replaceAll("[^\\x00-\\x7F]", "");

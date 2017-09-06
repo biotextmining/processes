@@ -110,6 +110,9 @@ public class FGOCrawling extends IRProcessImpl implements IIRCrawl{
 	
 	private File searchINallpatentIds(String saveDocDirectory,Set<String> patentIDs, IPublication pub) throws ANoteException {
 		File fileDownloaded;
+		// Securety reasson
+		if(patentIDs.size()>20)
+			return null;
 		for (String patentID:patentIDs){
 			// Try Download
 			fileDownloaded =getPDFAndUpdateReportUsingPatentID(patentID, saveDocDirectory, pub.getId());

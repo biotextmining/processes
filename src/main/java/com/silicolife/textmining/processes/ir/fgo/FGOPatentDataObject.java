@@ -251,6 +251,8 @@ public class FGOPatentDataObject {
 	@JsonIgnore
 	public String getTextContent() {
 		StringBuffer out = new StringBuffer();
+		if(this.getPatentID()!=null && !this.getPatentID().isEmpty())
+			out.append("Patent : "+normalizeText(this.getPatentID()));
 		if(this.getTitle()!=null && !this.getTitle().isEmpty())
 			out.append("Title : "+normalizeText(this.getTitle()));
 		if(this.getAbstractText()!=null && !this.getAbstractText().isEmpty())
