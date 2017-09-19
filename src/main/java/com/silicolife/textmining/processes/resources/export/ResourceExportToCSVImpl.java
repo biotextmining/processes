@@ -22,6 +22,8 @@ import com.silicolife.textmining.core.interfaces.resource.export.tsv.IResourceEx
 import com.silicolife.textmining.processes.resources.dictionary.loaders.csvstandard.ResourceIOColumnNames;
 
 public class ResourceExportToCSVImpl implements IResourceExportToCSV{
+	
+	public static String processUID = "resource.export";
 
 	@Override
 	public void exportCSVFile(IResource<IResourceElement> resource,IResourceExportConfiguration configuration) throws ANoteException,IOException {
