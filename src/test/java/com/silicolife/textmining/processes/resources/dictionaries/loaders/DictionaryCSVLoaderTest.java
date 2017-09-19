@@ -10,6 +10,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.init.exception.InvalidDatabaseAccess;
+import com.silicolife.textmining.core.datastructures.resources.export.ResourceExportColumnEnum;
 import com.silicolife.textmining.core.datastructures.utils.generic.CSVFileConfigurations;
 import com.silicolife.textmining.core.datastructures.utils.generic.ColumnDelemiterDefaultValue;
 import com.silicolife.textmining.core.datastructures.utils.generic.ColumnParameters;
@@ -23,7 +24,6 @@ import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 import com.silicolife.textmining.processes.DatabaseConnectionInit;
 import com.silicolife.textmining.processes.resources.dictionaries.CreateDictionaryTest;
 import com.silicolife.textmining.processes.resources.dictionary.loaders.csvstandard.DictionaryStandardCSVLoader;
-import com.silicolife.textmining.processes.resources.dictionary.loaders.csvstandard.ResourceIOColumnNames;
 
 public class DictionaryCSVLoaderTest {
 
@@ -36,19 +36,19 @@ public class DictionaryCSVLoaderTest {
 		Map<String, ColumnParameters> columnNameColumnParameters = new HashMap<String, ColumnParameters>();
 		ColumnParameters value = new ColumnParameters(0, null, null);
 		// Primary Term
-		columnNameColumnParameters.put(ResourceIOColumnNames.term, value );
+		columnNameColumnParameters.put(ResourceExportColumnEnum.term.toString(), value );
 		// Class
 		ColumnParameters klassColumn = new ColumnParameters(1, null, null);
-		columnNameColumnParameters.put(ResourceIOColumnNames.classe, klassColumn );
+		columnNameColumnParameters.put(ResourceExportColumnEnum.classe.toString(), klassColumn );
 		// Synonyms
 		ColumnParameters synonymColumn = new ColumnParameters(2, Delimiter.VERTICAL_BAR, DefaultDelimiterValue.HYPHEN);
-		columnNameColumnParameters.put(ResourceIOColumnNames.synonyms, synonymColumn );
+		columnNameColumnParameters.put(ResourceExportColumnEnum.synonyms.toString(), synonymColumn );
 		ColumnDelemiterDefaultValue columsDelemiterDefaultValue = new ColumnDelemiterDefaultValue(columnNameColumnParameters);
 		// External Ids
 		Delimiter subdelimiter = Delimiter.USER;
 		subdelimiter.setUserDelimiter(":");
 		ColumnParameters externalIdsColumn = new ColumnParameters(3, Delimiter.VERTICAL_BAR, DefaultDelimiterValue.HYPHEN,subdelimiter);
-		columnNameColumnParameters.put(ResourceIOColumnNames.externalID, externalIdsColumn );
+		columnNameColumnParameters.put(ResourceExportColumnEnum.externalID.toString(), externalIdsColumn );
 		
 		// General 
 		Delimiter generalDelimiter = Delimiter.TAB;

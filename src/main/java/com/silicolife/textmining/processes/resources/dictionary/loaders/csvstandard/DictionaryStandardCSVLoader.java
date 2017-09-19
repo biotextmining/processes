@@ -16,6 +16,7 @@ import com.silicolife.textmining.core.datastructures.general.SourceImpl;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
 import com.silicolife.textmining.core.datastructures.report.resources.ResourceUpdateReportImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryLoaderHelp;
+import com.silicolife.textmining.core.datastructures.resources.export.ResourceExportColumnEnum;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.generic.CSVFileConfigurations;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -126,20 +127,20 @@ public class DictionaryStandardCSVLoader extends DictionaryLoaderHelp implements
 	}
 	
 	private List<IExternalID> getExternalIds(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		if(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.externalID)==null)
+		if(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString())==null)
 		{
 			return new ArrayList<IExternalID>();
 		}
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.externalID).getColumnNumber()];
-		if(value.equals(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.externalID).getDefaultValue().getValue()))
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getColumnNumber()];
+		if(value.equals(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getDefaultValue().getValue()))
 		{
 			return new ArrayList<IExternalID>();
 		}
-		String[] extIDs = value.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.externalID).getDelimiter().getValue());
+		String[] extIDs = value.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getDelimiter().getValue());
 		List<IExternalID> listExtID = new ArrayList<IExternalID>();
 		for(String extID:extIDs)
 		{
-			String[] ex = extID.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.externalID).getSubDelimiter().getValue());
+			String[] ex = extID.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getSubDelimiter().getValue());
 			if(ex.length>1)
 			{
 				String id = ex[0].replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
@@ -151,18 +152,18 @@ public class DictionaryStandardCSVLoader extends DictionaryLoaderHelp implements
 	}
 	
 	private String getClass(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.classe).getColumnNumber()];
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.classe.toString()).getColumnNumber()];
 		value = value.replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
 		return value;
 	}
 
 	private Set<String> getSynonyms(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		if(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.synonyms)==null)
+		if(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.synonyms.toString())==null)
 		{
 			return new HashSet<String>();
 		}
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.synonyms).getColumnNumber()];
-		if(value.equals(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.synonyms).getDefaultValue().getValue()))
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.synonyms.toString()).getColumnNumber()];
+		if(value.equals(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.synonyms.toString()).getDefaultValue().getValue()))
 		{
 			return new HashSet<String>();
 		}
@@ -170,7 +171,7 @@ public class DictionaryStandardCSVLoader extends DictionaryLoaderHelp implements
 		{
 			return new HashSet<String>();
 		}
-		String[] syns = value.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.synonyms).getDelimiter().getValue());
+		String[] syns = value.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.synonyms.toString()).getDelimiter().getValue());
 		HashSet<String> synList = new HashSet<String>();
 		String synElem;
 		for(int i=0;i<syns.length;i++)
@@ -183,7 +184,7 @@ public class DictionaryStandardCSVLoader extends DictionaryLoaderHelp implements
 	}
 
 	protected String getTerm(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceIOColumnNames.term).getColumnNumber()];
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.term.toString()).getColumnNumber()];
 		if(value!=null)
 			value = value.replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
 		return value;
