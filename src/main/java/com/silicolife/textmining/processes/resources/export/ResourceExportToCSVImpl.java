@@ -23,7 +23,7 @@ import com.silicolife.textmining.processes.resources.dictionary.loaders.csvstand
 
 public class ResourceExportToCSVImpl implements IResourceExportToCSV{
 	
-	public static String processUID = "resource.export";
+	public static final String processUID = "resource.export";
 
 	@Override
 	public void exportCSVFile(IResource<IResourceElement> resource,IResourceExportConfiguration configuration) throws ANoteException,IOException {
