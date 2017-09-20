@@ -1,8 +1,8 @@
-package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository;
+package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.fgo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,19 +14,24 @@ import com.silicolife.textmining.core.datastructures.documents.lables.Publicatio
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
+import com.silicolife.textmining.processes.ir.fgo.FGOAPI;
+import com.silicolife.textmining.processes.ir.fgo.FGOParser;
+import com.silicolife.textmining.processes.ir.fgo.FGOPatentDataObject;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
-import com.silicolife.textmining.processes.ir.patentrepository.PatentRepositoryAPI;
 
-public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
+public class FGOPatentMetaInformationRetrievalMulti extends AIRPatentMetaInformationRetrieval{
 	
-	public final static String patentrepositoryName = "Patent Repository from SilicoLife and CEB (UMinho)";
-	public final static String patentrepositoryProcessID = "patentrepository.searchpatentmetainformation";
+	public final static String fgoProcessID = "fgo.searchpatentmetainformation";
+	public final static String fgoName= "FGO Crawling";
+	
+	private int delayseconds = 2;
 
-	public PatentRepositoryPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
+
+	public FGOPatentMetaInformationRetrievalMulti()
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
-		super(configuration);
+		super(null);
 	}
 
 	@Override
@@ -41,60 +46,31 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			patentIds.addAll(PublicationImpl.getPublicationExternalIDSetForSource(publication, PublicationSourcesDefaultEnum.patent.toString()));
 			for(String patentID:patentIds)
 			{
-				PatentEntity patentEntity = searchPatentEntity(patentID);
-				if(patentEntity!=null)
+				FGOPatentDataObject patentEntity = FGOParser.retrieveMetaInformation(patentID);
+				if(patentEntity!=null && !stop)
 				{
-					publication = getPublicationToChange(patentIDPrimary,mapPatentIDPublication,patentEntity);
 					updatePublication(mapPatentIDPublication,publication, patentEntity);
 					break;
 				}
+				FGOAPI.delay(delayseconds);
 			}
 		}
 	}
-	
-	private PatentEntity searchPatentEntity(String patentID)
-	{
-		try {
-			IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration conf = (IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration) getConfiguration();
-			PatentEntity result = PatentRepositoryAPI.getPatentMetaInformationByID(conf.getPatentRepositoryServerBasedUrl(), patentID);
-			return result;
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
-	private IPublication getPublicationToChange(String patentID,Map<String, IPublication> mapPatentIDPublication,PatentEntity patentEntity)
-	{
-		IPublication out = mapPatentIDPublication.get(patentID);
-		if(patentEntity.getSources()!=null && !patentEntity.getSources().isEmpty())
-		{
-			for(String id:patentEntity.getSources())
-			{
-				if(mapPatentIDPublication.containsKey(id))
-				{
-					return mapPatentIDPublication.get(id);
-				}
-			}
-		}	
-		return out;
-	}
-	
-	public void updatePublication(Map<String, IPublication> mapPatentIDPublication,IPublication publication,PatentEntity patentEntity)
-	{
-		if(publication.getPublicationExternalIDSource()==null)
-			publication.setPublicationExternalIDSource(new ArrayList<>());
-		publication.getPublicationExternalIDSource().add(new PublicationExternalSourceLinkImpl(patentEntity.getId(), PublicationSourcesDefaultEnum.patent.toString()));
+
+
+	private void updatePublication(Map<String, IPublication> mapPatentIDPublication, IPublication publication,
+			FGOPatentDataObject patentEntity) {
 		if(publication.getTitle().isEmpty() && patentEntity.getTitle()!=null && !patentEntity.getTitle().isEmpty())
 			publication.setTitle(patentEntity.getTitle());
 		if(publication.getAbstractSection().isEmpty() && patentEntity.getAbstractText()!=null &&!patentEntity.getAbstractText().isEmpty())
 			publication.setAbstractSection(patentEntity.getAbstractText());
-		for(String otherids : patentEntity.getOtherIds())
+		for(String otherids : patentEntity.getOtherPatentIDs())
 		{
 			publication.getPublicationExternalIDSource().add(new PublicationExternalSourceLinkImpl(otherids, PublicationSourcesDefaultEnum.patent.toString()));
 		}
-		if(publication.getAuthors().isEmpty() && patentEntity.getAuthors()!=null && !patentEntity.getAuthors().isEmpty())
+		if(publication.getAuthors().isEmpty() && patentEntity.getInventors()!=null && !patentEntity.getInventors().isEmpty())
 		{
-			publication.setAuthors(convertListStringIntoString(patentEntity.getAuthors()));
+			publication.setAuthors(convertListStringIntoString(patentEntity.getInventors()));
 		}
 		if(publication.getYeardate().isEmpty() && patentEntity.getDate()!=null)
 		{
@@ -110,14 +86,14 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 		{
 			notes = notes + "[ Owners: "+convertListStringIntoString(patentEntity.getOwners()) + "]";
 		}
-		if(!notes.contains("Classification") && patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
+		if(!notes.contains("Classification") && patentEntity.getPatentClassifications()!=null &&!patentEntity.getPatentClassifications().isEmpty())
 		{
-			notes = notes + "[ Classification IPC: "+convertListStringIntoString(patentEntity.getClassifications()) + "]";
+			notes = notes + "[ Classification IPC: "+convertListStringIntoString(patentEntity.getPatentClassifications()) + "]";
 		}
-		if(patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
+		if(patentEntity.getPatentClassifications()!=null &&!patentEntity.getPatentClassifications().isEmpty())
 		{
 			List<IPublicationLabel> labelsToAdd = new ArrayList<>();
-			for(String classification:patentEntity.getClassifications())
+			for(String classification:patentEntity.getPatentClassifications())
 			{
 				String labelClassification = "Classification IPC: "+classification.trim();
 				labelsToAdd.add(new PublicationLabelImpl(labelClassification));
@@ -128,10 +104,12 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			else
 				publication.getPublicationLabels().addAll(labelsToAdd);
 		}
-		publication.setNotes(notes);	
+		publication.setNotes(notes);		
 	}
 	
-	private String convertListStringIntoString(List<String> in)
+	
+	
+	private String convertListStringIntoString(Collection<String> in)
 	{
 		String out = new String();
 		for(String item:in)
@@ -142,25 +120,18 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			out = out.substring(0,out.length()-2);
 		return out;
 	}
+	
+	
 
-	@Override
 	public String getSourceName() {
-		return "Patent Repository Metainformation Retrieval";
+		return "FGO Patent Metainformation Retrieval";
 	}
 
+	
 	@Override
 	public void validate(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
-		if(configuration instanceof IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration)
-		{
-			IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration moduleConf = (IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration) configuration;
-			if(moduleConf.getPatentRepositoryServerBasedUrl() == null || moduleConf.getPatentRepositoryServerBasedUrl().isEmpty())
-			{
-				throw new WrongIRPatentMetaInformationRetrievalConfigurationException("PatentRepositoryServerBasedUrl can not be null or empty");		
-			}
-		}
-		else
-			throw new WrongIRPatentMetaInformationRetrievalConfigurationException("Configuration is not a IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration");	
+
 	}
 
 }

@@ -215,6 +215,15 @@ public class PatentPipeline {
 			memoryProgressAndTime(step, totalSize, startTime);
 		}
 	}
+	
+	public void runMetaInformationForTheGivenSourcesLogOff (Map<String, IPublication> mapPatentIDPublication) throws ANoteException{
+		Iterator<IIRPatentMetainformationRetrievalSource> iterator = patentMetaInformationRetrievelSourceList.iterator();
+		while(iterator.hasNext() && !stop)
+		{
+			IIRPatentMetainformationRetrievalSource patentMetaInformationRetrievelSource = iterator.next();
+			patentMetaInformationRetrievelSource.retrievePatentsMetaInformation(mapPatentIDPublication);
+		}
+	}
 
 	/**
 	 * Method designed to iterate over the different patent retrieval systems

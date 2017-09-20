@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -45,6 +47,8 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			while(iterator.hasNext() && !stop)
 			{
 				String patentID = iterator.next();
+				IPublication publication = mapPatentIDPublication.get(patentID);
+
 				long t2 = System.currentTimeMillis();
 				if(((float)(t2-t1)/1000)>=900){//15min
 					try {
@@ -56,10 +60,12 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 					}
 				}
 				waitARandomTime();
-				List<String> possiblePatentIDs;
-				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+				List<String> possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+				for(String patentIDAlternative :PublicationImpl.getPublicationExternalIDSetForSource(publication, PublicationSourcesDefaultEnum.patent.toString()))
+				{
+					possiblePatentIDs.addAll(PatentPipelineUtils.createPatentIDPossibilities(patentIDAlternative));
+				}
 				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
-
 			}
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e1) {
