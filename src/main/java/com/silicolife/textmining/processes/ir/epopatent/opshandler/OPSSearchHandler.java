@@ -125,6 +125,8 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 								applicants= applicants + applicant.getTextContent() + ", ";
 							}
 						}
+						if(applicants.isEmpty())
+							return new String(); 
 						return applicants.substring(0, applicants.length()-2);
 					}
 				}
