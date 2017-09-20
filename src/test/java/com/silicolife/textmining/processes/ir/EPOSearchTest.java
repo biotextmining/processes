@@ -18,7 +18,7 @@ public class EPOSearchTest {
 	@Test
 	public void test() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
 		IPublication publiction = new PublicationImpl();
-		String accessTokenEPO = "aceswswtoken";
+		String accessTokenEPO = "LLCAsGwQHRQAi9sKU3L83tMcKszoVnhi:q9sxdjCvGbLDsWrc";
 		String autentication = Utils.get64Base(accessTokenEPO);
 		String tokenaccess = null;
 		try {
@@ -27,13 +27,15 @@ public class EPOSearchTest {
 				| ResponseHandlingException e) {
 			tokenaccess = null;
 		}
-		String patentID = "CN102153611";
+		String patentID = "	CN105079057";
 		OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentID);
 		System.out.println(publiction.getTitle());
 		System.out.println(publiction.getAuthors());
 		System.out.println(publiction.getAbstractSection());
 		System.out.println(publiction.getYeardate());
 		System.out.println(PublicationImpl.getPublicationExternalIDForSource(publiction, PublicationSourcesDefaultEnum.patent.name()));
+		System.out.println(publiction.getNotes());
+		System.out.println(publiction.getPublicationLabels());
 
 	}
 

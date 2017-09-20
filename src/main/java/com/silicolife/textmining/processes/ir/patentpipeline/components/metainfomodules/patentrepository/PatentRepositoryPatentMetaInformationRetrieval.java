@@ -1,15 +1,19 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
+import com.silicolife.textmining.core.datastructures.documents.lables.PublicationLabelImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
+import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
@@ -94,13 +98,27 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 		String notes = publication.getNotes();
 		if(patentEntity.getOwners()!=null && !patentEntity.getOwners().isEmpty())
 		{
-			notes = notes + " Owners: "+convertListStringIntoString(patentEntity.getOwners());
+			notes = notes + "[ Owners: "+convertListStringIntoString(patentEntity.getOwners()) + "]";
 		}
-		if(patentEntity.getClassifications()!=null && patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
+		if(!notes.contains("Classification") && patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
 		{
-			notes = notes + " Classification: "+convertListStringIntoString(patentEntity.getClassifications());
+			notes = notes + "[ Classification IPC: "+convertListStringIntoString(patentEntity.getClassifications()) + "]";
 		}
-		publication.setNotes(notes);
+		if(patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
+		{
+			List<IPublicationLabel> labelsToAdd = new ArrayList<>();
+			for(String classification:patentEntity.getClassifications())
+			{
+				String labelClassification = "Classification IPC: "+classification.trim();
+				labelsToAdd.add(new PublicationLabelImpl(labelClassification));
+			}
+			labelsToAdd =  PublicationImpl.getNotExistentLabels(publication,labelsToAdd);
+			if(publication.getPublicationLabels()==null)
+				publication.setPublicationLabels(labelsToAdd);
+			else
+				publication.getPublicationLabels().addAll(labelsToAdd);
+		}
+		publication.setNotes(notes);	
 	}
 	
 	private String convertListStringIntoString(List<String> in)
