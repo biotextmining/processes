@@ -61,10 +61,10 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 				}
 				waitARandomTime();
 				List<String> possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
-				for(String patentIDAlternative :PublicationImpl.getPublicationExternalIDSetForSource(publication, PublicationSourcesDefaultEnum.patent.toString()))
-				{
-					possiblePatentIDs.addAll(PatentPipelineUtils.createPatentIDPossibilities(patentIDAlternative));
-				}
+//				for(String patentIDAlternative :PublicationImpl.getPublicationExternalIDSetForSource(publication, PublicationSourcesDefaultEnum.patent.toString()))
+//				{
+//					possiblePatentIDs.addAll(PatentPipelineUtils.createPatentIDPossibilities(patentIDAlternative));
+//				}
 				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
 			}
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException

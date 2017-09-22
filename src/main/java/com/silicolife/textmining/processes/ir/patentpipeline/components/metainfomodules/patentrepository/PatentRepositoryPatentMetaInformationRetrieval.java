@@ -103,7 +103,7 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			int year = cal.get(Calendar.YEAR);
 			publication.setYeardate(String.valueOf(year));
 		}
-		if(publication.getExternalLink().isEmpty() && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
+		if((publication.getExternalLink() == null ||publication.getExternalLink().isEmpty()) && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
 			publication.setExternalLink(patentEntity.getLink());
 		String notes = publication.getNotes();
 		if(patentEntity.getOwners()!=null && !patentEntity.getOwners().isEmpty())

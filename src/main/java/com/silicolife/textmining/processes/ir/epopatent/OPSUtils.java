@@ -333,7 +333,7 @@ public class OPSUtils {
 			}
 		}
 		String docPDFFinal;
-		if(pubID==null)
+		if(pubID!=null)
 		{
 			docPDFFinal = path +"/" + pubID + ".pdf";
 		}
@@ -482,7 +482,7 @@ public class OPSUtils {
 		excludePatentStartLetterSet.add("ES");
 		excludePatentStartLetterSet.add("DK");
 		excludePatentStartLetterSet.add("HRP");
-
+		excludePatentStartLetterSet.add("CZ");
 	}
 
 
