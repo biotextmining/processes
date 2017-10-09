@@ -64,10 +64,15 @@ public class ChemSpiderAPI {
 			JSONObject toJSON = XML.toJSONObject(xml);
 			if(toJSON.getJSONObject("ExtendedCompoundInfo")!=null)
 			{
-				out[0] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChIKey").toString();
-				out[1] = toJSON.getJSONObject("ExtendedCompoundInfo").get("InChI").toString().toUpperCase();
-				out[2] = toJSON.getJSONObject("ExtendedCompoundInfo").get("SMILES").toString();
-				out[3] = toJSON.getJSONObject("ExtendedCompoundInfo").get("CommonName").toString();
+				JSONObject extendedCompoundInfo = toJSON.getJSONObject("ExtendedCompoundInfo");
+				if(extendedCompoundInfo.has("InChIKey"))
+					out[0] = extendedCompoundInfo.get("InChIKey").toString();
+				if(extendedCompoundInfo.has("InChIKey"))
+					out[1] = extendedCompoundInfo.get("InChIKey").toString().toUpperCase();
+				if(extendedCompoundInfo.has("SMILES"))
+					out[2] = extendedCompoundInfo.get("SMILES").toString();
+				if(extendedCompoundInfo.has("CommonName"))
+					out[3] = extendedCompoundInfo.get("CommonName").toString();
 			}
 		} catch (IOException e) {
 			throw new ANoteException(e);
