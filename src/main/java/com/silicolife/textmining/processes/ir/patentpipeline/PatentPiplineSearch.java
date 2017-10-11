@@ -39,6 +39,7 @@ import com.silicolife.textmining.core.interfaces.process.IR.IQuery;
 import com.silicolife.textmining.core.interfaces.process.IR.IQueryOriginType;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchStepsConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.PatentPipeline;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalReport;
@@ -113,6 +114,20 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentIDs, getIIRPatentIDRecoverSourceString(searchIDs));
 		List<IIRPatentMetainformationRetrievalSource> patentRetrievalMetaInformations = configuration.getIIRPatentPipelineSearchConfiguration().getIIRPatentRetrievalMetaInformation();
 		properties.put(PatentPipelineSettings.patentPipelineSearchPatentMetaInfo, getIIRPatentRetrievalMetaInformation(patentRetrievalMetaInformations));
+		IIRPatentPipelineSearchConfiguration queryConfiguration = configuration.getIRPatentPipelineSearchConfiguration();
+		if(queryConfiguration.getPatentClassificationIPCAllowed()!=null && !queryConfiguration.getPatentClassificationIPCAllowed().isEmpty())
+		{
+			properties.put(PatentPipelineSettings.patentPipelineSearchYearMax, queryConfiguration.getPatentClassificationIPCAllowed().toString());
+		}
+		if(queryConfiguration.getYearMax()!=null)
+		{
+			properties.put(PatentPipelineSettings.patentPipelineSearchYearMax, queryConfiguration.getYearMax());
+
+		}
+		if(queryConfiguration.getYearMin()!=null)
+		{
+			properties.put(PatentPipelineSettings.patentPipelineSearchYearMin, queryConfiguration.getYearMin());
+		}
 		return properties;
 	}
 
@@ -236,7 +251,7 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		//execute the metainformation step
 		if(stop)
 			return;
-		Map<String, IPublication> patentMap = metaInformationStep(patentIDsForMetainformation);
+		Map<String, IPublication> patentMap = metaInformationStep(patentIDsForMetainformation,searchConfiguration.getIRPatentPipelineSearchConfiguration());
 
 
 		//Ids processed
@@ -365,13 +380,12 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 		return abs_count;
 	}
 
-	private Map<String, IPublication> metaInformationStep(Set<String> patentIDsForMetainformation)
+	private Map<String, IPublication> metaInformationStep(Set<String> patentIDsForMetainformation, IIRPatentPipelineSearchConfiguration searchConfiguration)
 			throws ANoteException {
 		Map<String, IPublication> patentMap =new HashMap<>();
-		if (patentIDsForMetainformation.size()>0){
-			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation);
+		if (!patentIDsForMetainformation.isEmpty()){
+			IIRPatentMetaInformationRetrievalReport reportMetaInformation = patentPipeline.executePatentRetrievalMetaInformationStep(patentIDsForMetainformation,searchConfiguration);
 			patentMap=reportMetaInformation.getMapPatentIDPublication();
-
 		}
 		increaseStep();
 		return patentMap;

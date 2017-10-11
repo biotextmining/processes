@@ -9,6 +9,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 public class IRPatentMetaInformationRetrievalReportImpl implements IIRPatentMetaInformationRetrievalReport{
 
 	private Map<String, IPublication> mapPatentIDPublication;
+	private Map<String, IPublication> mapPatentIDPublicationExcluded;
 
 
 	public IRPatentMetaInformationRetrievalReportImpl() {
@@ -38,6 +39,15 @@ public class IRPatentMetaInformationRetrievalReportImpl implements IIRPatentMeta
 			}
 		}
 
+	}
+
+	public Map<String, IPublication> getMapPatentIDPublicationExcluded() {
+		return mapPatentIDPublicationExcluded;
+	}
+
+	@Override
+	public void setMapPatentIDPublicationExcluded(Map<String, IPublication> mapPatentIDPublicationExcluded) {
+		this.mapPatentIDPublicationExcluded=mapPatentIDPublicationExcluded;
 	}
 
 }

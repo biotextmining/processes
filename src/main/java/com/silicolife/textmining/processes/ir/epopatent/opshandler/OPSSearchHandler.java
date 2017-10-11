@@ -29,6 +29,7 @@ import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicati
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.utils.http.ResponseHandler;
 import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
@@ -91,7 +92,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 		List<IPublicationLabel> out = new ArrayList<>();
 		Set<String> classificationsIPC = getClassificationIPCR(item);
 		for(String classificationIPC:classificationsIPC)
-			out.add(new PublicationLabelImpl("Classification IPC : " + classificationIPC));
+			out.add(new PublicationLabelImpl(PatentPipelineUtils.labelIPCStart+": " + classificationIPC));
 		return out;
 	}
 

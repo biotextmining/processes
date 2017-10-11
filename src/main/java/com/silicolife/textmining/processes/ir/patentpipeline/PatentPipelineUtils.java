@@ -17,6 +17,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublicationExter
 
 public class PatentPipelineUtils {
 
+	public static String labelIPCStart = "Classification IPC";
 
 	private static int verifySectionNumbers(String patentID){
 		if(patentID.matches(".*[A-Z]{1}")){

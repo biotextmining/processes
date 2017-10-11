@@ -42,7 +42,7 @@ public class FGOMetaInfoStepTest {
 		patentids.add("CA2077921");
 		patentids.add("EP2010641");
 		
-		IIRPatentMetaInformationRetrievalReport result = patentPipeline.executePatentRetrievalMetaInformationStep(patentids);
+		IIRPatentMetaInformationRetrievalReport result = patentPipeline.executePatentRetrievalMetaInformationStep(patentids,null);
 		for(IPublication pub:result.getMapPatentIDPublication().values())
 		{
 			System.out.println(((PublicationImpl)pub).toString2());

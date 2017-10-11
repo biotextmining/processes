@@ -52,7 +52,7 @@ public class PatentMetaInfoStepTest {
 		patentids.add("US09631181");
 		patentids.add("US09631208");
 		
-		IIRPatentMetaInformationRetrievalReport result = patentPipeline.executePatentRetrievalMetaInformationStep(patentids);
+		IIRPatentMetaInformationRetrievalReport result = patentPipeline.executePatentRetrievalMetaInformationStep(patentids,null);
 		for(IPublication pub:result.getMapPatentIDPublication().values())
 		{
 			System.out.println(pub.toString());

@@ -14,6 +14,7 @@ import com.silicolife.textmining.core.datastructures.documents.lables.Publicatio
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
@@ -119,7 +120,7 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			List<IPublicationLabel> labelsToAdd = new ArrayList<>();
 			for(String classification:patentEntity.getClassifications())
 			{
-				String labelClassification = "Classification IPC: "+classification.trim();
+				String labelClassification = PatentPipelineUtils.labelIPCStart+ ": "+classification.trim();
 				labelsToAdd.add(new PublicationLabelImpl(labelClassification));
 			}
 			labelsToAdd =  PublicationImpl.getNotExistentLabels(publication,labelsToAdd);
