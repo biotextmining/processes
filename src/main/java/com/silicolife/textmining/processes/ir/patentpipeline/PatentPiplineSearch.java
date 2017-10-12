@@ -562,8 +562,4 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 			throw new InvalidConfigurationException("Configuration is not a IIRPatentPipelineConfiguration instance");
 	}
 
-	@Override
-	public int getExpectedQueryResults(String query) throws InternetConnectionProblemException {
-		return 0;
-	}
 }

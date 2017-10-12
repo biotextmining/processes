@@ -14,11 +14,14 @@ import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException
 import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class EPOSearchTest {
+	
+	private static String accessTokenEPO = "access";
+	
+	
 
 	@Test
-	public void test() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+	public void updatePublication() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
 		IPublication publiction = new PublicationImpl();
-		String accessTokenEPO = "LLCAsGwQHRQAi9sKU3L83tMcKszoVnhi:q9sxdjCvGbLDsWrc";
 		String autentication = Utils.get64Base(accessTokenEPO);
 		String tokenaccess = null;
 		try {

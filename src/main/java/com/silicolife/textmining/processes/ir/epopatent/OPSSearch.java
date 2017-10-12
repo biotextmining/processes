@@ -29,6 +29,7 @@ import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.DaemonException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
+import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.core.interfaces.core.document.relevance.IQueryPublicationRelevance;
 import com.silicolife.textmining.core.interfaces.core.report.processes.ir.IIRSearchProcessReport;
 import com.silicolife.textmining.core.interfaces.core.report.processes.ir.IIRSearchUpdateReport;
@@ -42,6 +43,8 @@ import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetCo
 import com.silicolife.textmining.processes.ir.epopatent.configuration.IIREPOSearchConfiguration;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.PatentSearchDefaultSettings;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineSettings;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.utils.http.exceptions.ClientErrorException;
 import com.silicolife.textmining.utils.http.exceptions.ConnectionException;
 import com.silicolife.textmining.utils.http.exceptions.RedirectionException;
@@ -76,11 +79,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	{
 		super();
 	}
-	
-	@Override
-	public int getExpectedQueryResults(String query) throws InternetConnectionProblemException {
-		return 0;
-	}
+
 	
 	@Override
 	public IIRSearchProcessReport search(IIRSearchConfiguration configuration) throws ANoteException,InvalidConfigurationException, InternetConnectionProblemException {
@@ -108,11 +107,11 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		String name = generateQueryName(configurationEPOSearch,date);
 		String completeQuery = buildQuery(configurationEPOSearch.getKeywords(), configurationEPOSearch.getOrganism(), configurationEPOSearch.getProperties());
 		query = new QueryImpl(queryOrigin,date,configurationEPOSearch.getKeywords(),configurationEPOSearch.getOrganism(),completeQuery,0,0,
-				name,new String(),new HashMap<Long, IQueryPublicationRelevance>(),configurationEPOSearch.getProperties());		
+				name,new String(),new HashMap<Long, IQueryPublicationRelevance>(),generateProperties(configurationEPOSearch));		
 		IIRSearchProcessReport report = new IRSearchReportImpl(query);
 		InitConfiguration.getDataAccess().createQuery(query);
 		try {
-			findDocuments(report,completeQuery,configurationEPOSearch.getProperties());
+			findDocuments(report,completeQuery,configurationEPOSearch);
 		} catch (RedirectionException e) {
 			throw new InternetConnectionProblemException(e);
 		} catch (ClientErrorException e) {
@@ -127,6 +126,24 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-startTime);
 		return report;
+	}
+	
+	private Properties generateProperties(IIREPOSearchConfiguration configurationEPOSearch)
+	{
+		Properties out = new Properties();
+		if(configurationEPOSearch.getMinYear()!=null)
+		{
+			out.put(PatentSearchDefaultSettings.MINYEAR, String.valueOf(configurationEPOSearch.getMinYear()));
+		}
+		if(configurationEPOSearch.getMaxYear()!=null)
+		{
+			out.put(PatentSearchDefaultSettings.MAXYEAR, String.valueOf(configurationEPOSearch.getMaxYear()));
+		}
+		if(configurationEPOSearch.getClassificationIPCFilter()!=null && !configurationEPOSearch.getClassificationIPCFilter().isEmpty())
+		{
+			out.put(PatentPipelineSettings.patentPipelineSearchYearMin, String.valueOf(configurationEPOSearch.getClassificationIPCFilter()));
+		}
+		return out;
 	}
 	
 	private String generateQueryName(IIREPOSearchConfiguration configuration,Date date) {
@@ -196,7 +213,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 		nPubs = query.getPublicationsSize();
 		abstractAvailable = query.getAvailableAbstracts();
-		int results = getExpectedQueryResults(query.getCompleteQuery());
+		int results = getExpectedQueryResults(tokenaccess,query.getCompleteQuery());
 		if(results > OPSConfiguration.MAX_RESULTS)
 			results = OPSConfiguration.MAX_RESULTS;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
@@ -283,14 +300,24 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 
 	}
 
-	private void findDocuments(IIRSearchProcessReport report,String query, Properties properties) throws ANoteException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InternetConnectionProblemException {
+	private int getExpectedQueryResults(String autentication,String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+		return OPSUtils.getSearchResults(autentication, query);
+	}
+	
+	public int getExpectedQueryResults(String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+		return this.getExpectedQueryResults(autentication, query);
+	}
+	
+
+
+	private void findDocuments(IIRSearchProcessReport report,String query, IIREPOSearchConfiguration configurationEPOSearch) throws ANoteException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InternetConnectionProblemException {
 		if(autentication!=null && !cancel)
 		{
 			tokenacess();
 		}
 		nPubs = 0;
 		abstractAvailable = 0;
-		int results = getExpectedQueryResults(query);
+		int results = getExpectedQueryResults(tokenaccess,query);
 		if(results > OPSConfiguration.MAX_RESULTS)
 			results = OPSConfiguration.MAX_RESULTS;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
@@ -312,19 +339,18 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 					pub.setId(epodocAlreadyExistOnDB.get(epoDocPMID));
 					documentsThatAlreayInDB.add(pub);
 					// Add new Document Relevance - Default
-					this.query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
-					
+					this.query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());				
 				}
 				else
 				{
 					documentsToInsert.add(pub);
 					this.query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
 				}
-				report.incrementDocumentRetrieval(1);
-				if(!pub.getAbstractSection().isEmpty())
-					abstractAvailable ++;
-				nPubs++;
 			}
+			
+			// Filter result by year and classification
+			documentsToInsert = filterByClassification(configurationEPOSearch, documentsToInsert);
+			documentsThatAlreayInDB = filterByClassification(configurationEPOSearch, documentsThatAlreayInDB);
 			
 			if( !cancel && documentsToInsert.size()!=0)
 			{
@@ -335,19 +361,14 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			Set<IPublication> publications = new HashSet<>();
 			publications.addAll(documentsToInsert);
 			publications.addAll(documentsThatAlreayInDB);
+			nPubs = nPubs + publications.size();
+			abstractAvailable = abstractAvailable + calculateAvailableAbstracts(publications);
+
 			if(!cancel)
 				InitConfiguration.getDataAccess().addQueryPublications(this.query, publications );
 			this.query.setAvailableAbstracts(abstractAvailable);
 			this.query.setPublicationsSize(nPubs);
-			try {
-				if(autentication==null && !cancel)
-				{
-					System.out.println("sleeping...62 seconds");
-					Thread.sleep(62000);
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			report.incrementDocumentRetrieval(publications.size());
 			InitConfiguration.getDataAccess().updateQuery(this.query);
 			memoryAndProgressAndTime(step + OPSConfiguration.STEP,results+1,startTime);
 		}
@@ -361,6 +382,87 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			InitConfiguration.getDataAccess().removeQuery(this.query);
 		}
 
+	}
+	
+	private int calculateAvailableAbstracts(Set<IPublication> publicationsToAdd) {
+		int out = 0;
+		for(IPublication pub:publicationsToAdd)
+		{
+			if(!pub.getAbstractSection().trim().isEmpty())
+				out++;
+		}
+		return out;
+	}
+	
+	private Set<IPublication> filterByClassification(IIREPOSearchConfiguration configuration,Set<IPublication> publications) {
+		Set<IPublication> out = new HashSet<>();
+		for(IPublication publication:publications)
+		{
+			if(validPatentAccordingToSearchConfiguration(publication, configuration))
+			{
+				out.add(publication);
+			}
+		}
+		return out;
+	}
+	
+	private static boolean validPatentAccordingToSearchConfiguration(IPublication patent,IIREPOSearchConfiguration configuration)
+	{
+		if(!validateMinYear(patent.getYeardate(),configuration.getMinYear()))
+		{
+			return false;
+		}
+		if(!validateMaxYear(patent.getYeardate(),configuration.getMaxYear()))
+		{
+			return false;
+		}
+		if(!validateAllowedClassification(patent.getPublicationLabels(),configuration.getClassificationIPCFilter()))
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	private static boolean validateMinYear(String yeardate, Integer yearMin) {
+		if(yearMin==null)
+			return true;
+		if(yeardate==null || yeardate.isEmpty() || !Utils.isIntNumber(yeardate))
+			return false;
+		return Integer.valueOf(yeardate) >= yearMin;
+	}
+
+	private static boolean validateMaxYear(String yeardate, Integer yearMax) {
+		if(yearMax==null)
+			return true;
+		if(yeardate==null || yeardate.isEmpty() || !Utils.isIntNumber(yeardate))
+			return false;
+		return Integer.valueOf(yeardate) <= yearMax;
+	}
+
+	private static boolean validateAllowedClassification(List<IPublicationLabel> publicationLabels,
+			Set<String> patentClassificationIPCAllowed) {
+		if(patentClassificationIPCAllowed==null || patentClassificationIPCAllowed.isEmpty())
+			return true;
+		if(publicationLabels==null || publicationLabels.isEmpty())
+			return false;
+		for(IPublicationLabel label:publicationLabels)
+		{
+			if(label.getLabel().startsWith(PatentPipelineUtils.labelIPCStart))
+			{
+				String classification = label.getLabel().replaceAll(PatentPipelineUtils.labelIPCStart, "").replaceAll(":", "").trim();
+				if(!classification.isEmpty())
+				{
+					for(String classificationAllowed:patentClassificationIPCAllowed)
+					{
+						if(classification.startsWith(classificationAllowed))
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private void getPatentDetails(IIRSearchProcessReport report,Map<String, Long> patentIDAlreadyExistOnDB,
@@ -448,5 +550,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			throw new InvalidConfigurationException("Configuration is not a IIREPOSearchConfiguration instance");
 		
 	}
-	
+
+
+
 }
