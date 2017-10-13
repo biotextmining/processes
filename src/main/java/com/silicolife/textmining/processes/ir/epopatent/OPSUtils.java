@@ -56,7 +56,7 @@ public class OPSUtils {
 
 	private static String version = "3.2";
 	private static String autenticationURL = "https://ops.epo.org/" + version + "/auth/accesstoken";
-	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio/?q=";
+	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio";
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
 	private static String generalURL = "http://ops.epo.org/" + version + "/rest-services/";
 	private static String publicationFamily = "http://ops.epo.org/" + version + "/rest-services/family/publication/epodoc/";
@@ -80,7 +80,8 @@ public class OPSUtils {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
-		List<IPublication> pubs = client.get(searchURL + query, headers, new OPSSearchHandler());
+		String body = "q="+query;
+		List<IPublication> pubs = client.post(searchURL,body, headers, new OPSSearchHandler());
 		return pubs;
 	}
 
@@ -148,7 +149,8 @@ public class OPSUtils {
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
-		Integer result = client.get(searchURL + query, headers, new OPSSearchResultHandler());
+		String body = "q="+query;
+		Integer result = client.post(searchURL,body, headers, new OPSSearchResultHandler());
 		return result;
 	}
 
@@ -397,43 +399,33 @@ public class OPSUtils {
 	public static String queryBuilder(String query)
 	{
 		query = tranform(query);
-		query = query.replaceAll("\\?", "%3F");
-		query = query.replaceAll("@", "%40");
-		query = query.replaceAll("#", "%23");
-		query = query.replaceAll("%", "%25");
-		query = query.replaceAll("\\$", "%24");
-		query = query.replaceAll("&", "%26");
-		query = query.replaceAll("\\+", "%2B");
-		query = query.replaceAll(",", "%2C");
-		query = query.replaceAll(":", "%3A");
-		query = query.replaceAll(" ", "%20");
-		query = query.replaceAll("=", "%3D");
-		query = query.replaceAll("\"", "%22");
-		query = query.replaceAll("<", "%3C");
-		query = query.replaceAll(">", "%3E");
-		query = query.replaceAll("\\{", "%7B");
-		query = query.replaceAll("\\}", "%7D");
-		query = query.replaceAll("\\|", "%7C");
-		query = query.replaceAll("\\^", "%5E");
-		query = query.replaceAll("~", "%7E");
-		query = query.replaceAll("\\[", "%5B");
-		query = query.replaceAll("\\]", "%5D");
-		query = query.replaceAll("`", "%60");
-		return query.toLowerCase();
+//		query = query.replaceAll("\\?", "%3F");
+//		query = query.replaceAll("@", "%40");
+//		query = query.replaceAll("#", "%23");
+//		query = query.replaceAll("%", "%25");
+//		query = query.replaceAll("\\$", "%24");
+//		query = query.replaceAll("&", "%26");
+//		query = query.replaceAll("\\+", "%2B");
+//		query = query.replaceAll(",", "%2C");
+//		query = query.replaceAll(":", "%3A");
+//		query = query.replaceAll(" ", "%20");
+//		query = query.replaceAll("=", "%3D");
+//		query = query.replaceAll("\"", "%22");
+//		query = query.replaceAll("<", "%3C");
+//		query = query.replaceAll(">", "%3E");
+//		query = query.replaceAll("\\{", "%7B");
+//		query = query.replaceAll("\\}", "%7D");
+//		query = query.replaceAll("\\|", "%7C");
+//		query = query.replaceAll("\\^", "%5E");
+//		query = query.replaceAll("~", "%7E");
+//		query = query.replaceAll("\\[", "%5B");
+//		query = query.replaceAll("\\]", "%5D");
+//		query = query.replaceAll("`", "%60");
+		return query;
 	}
 
 	private static String tranform(String keywords) {
 		keywords = keywords.trim();
-		String[] keywordsParts = keywords.split("AND|OR");
-		for(String part : keywordsParts)
-		{
-			part = part.trim();
-			//			String partLower = part.toLowerCase();
-			if(!part.isEmpty())
-			{
-				keywords = keywords.replace(part, "\""+part+"\"");
-			}
-		}
 		keywords = keywords.replace("AND"," AND ");
 		keywords = keywords.replace("OR"," OR ");
 		keywords = keywords.replace("\"\"", "\"");
