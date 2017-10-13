@@ -18,7 +18,6 @@ import com.silicolife.textmining.core.datastructures.documents.query.QueryOrigin
 import com.silicolife.textmining.core.datastructures.documents.query.QueryPublicationRelevanceImpl;
 import com.silicolife.textmining.core.datastructures.exceptions.process.InvalidConfigurationException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
-import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
 import com.silicolife.textmining.core.datastructures.process.IRProcessImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessOriginImpl;
 import com.silicolife.textmining.core.datastructures.process.ProcessTypeImpl;
@@ -60,47 +59,31 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
  *
  */
 public class OPSSearch  extends IRProcessImpl implements IIRSearch{
-	
-	
+
+
 	/**
 	 * Logger
 	 */
 	static Logger logger = Logger.getLogger(OPSSearch.class.getName());
-	
-	
+
+
 	private boolean cancel = false;
 	private IQuery query;
-	private String autentication;
-	private String tokenaccess;
 	private int nPubs;
 	private int abstractAvailable;
-	
+
 	public OPSSearch()
 	{
 		super();
 	}
 
-	
+
 	@Override
 	public IIRSearchProcessReport search(IIRSearchConfiguration configuration) throws ANoteException,InvalidConfigurationException, InternetConnectionProblemException {
 		cancel = false;
 		validateConfiguration(configuration);
 		IIREPOSearchConfiguration configurationEPOSearch = (IIREPOSearchConfiguration) configuration;
-		String autentication = configurationEPOSearch.getAuthentication();
-		if(autentication!=null && !autentication.isEmpty())
-		{
-			this.autentication = Utils.get64Base(autentication);
-			configurationEPOSearch.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, autentication);
-		}
-		else
-		{
-			autentication = PropertiesManager.getPManager().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN).toString();
-			if(!autentication.isEmpty())
-			{
-				this.autentication = Utils.get64Base(autentication);
-				configurationEPOSearch.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, autentication);
-			}
-		}
+		configurationEPOSearch.getProperties().put(PatentSearchDefaultSettings.ACCESS_TOKEN, configurationEPOSearch.getAuthentication());
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		IQueryOriginType queryOrigin = new QueryOriginTypeImpl(OPSConfiguration.opssearch);
 		Date date = new Date();
@@ -127,7 +110,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		report.setTime(endTime-startTime);
 		return report;
 	}
-	
+
 	private Properties generateProperties(IIREPOSearchConfiguration configurationEPOSearch)
 	{
 		Properties out = new Properties();
@@ -145,7 +128,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 		return out;
 	}
-	
+
 	private String generateQueryName(IIREPOSearchConfiguration configuration,Date date) {
 		if(configuration.getQueryName()!=null && !configuration.getQueryName().isEmpty())
 		{
@@ -175,7 +158,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			return result;
 		}
 	}
-	
+
 	public IIRSearchUpdateReport updateQuery(IQuery queryInfo) throws ANoteException, InternetConnectionProblemException {
 		this.cancel = false;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
@@ -199,18 +182,8 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	}
 
 	private void updateDocuments(IIRSearchProcessReport report,IQuery query) throws ANoteException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InternetConnectionProblemException, DaemonException {
-		if(query.getProperties().stringPropertyNames().contains(PatentSearchDefaultSettings.ACCESS_TOKEN))
-		{
-			this.autentication = Utils.get64Base(query.getProperties().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN));
-		}
-		else
-		{
-			this.autentication = Utils.get64Base(PropertiesManager.getPManager().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN).toString());
-		}
-		if(autentication!=null && !cancel)
-		{
-			tokenacess();
-		}
+		String autentication = query.getProperties().getProperty(PatentSearchDefaultSettings.ACCESS_TOKEN);
+		String tokenaccess = getTokenAccess(autentication);
 		nPubs = query.getPublicationsSize();
 		abstractAvailable = query.getAvailableAbstracts();
 		int results = getExpectedQueryResults(tokenaccess,query.getCompleteQuery());
@@ -233,7 +206,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 				// If Query already contains document
 				if(patentsIds.contains(patentID))
 				{
-	
+
 				}
 				// If DataBase already contains document
 				else if(patentIDAlreadyExistOnDB.containsKey(patentID))
@@ -265,7 +238,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			}
 			if( !cancel && documentsToInsert.size()!=0)
 			{
-				getPatentDetails(report, patentIDAlreadyExistOnDB, documentsToInsert);
+				getPatentDetails(report, patentIDAlreadyExistOnDB, documentsToInsert,tokenaccess);
 				nPubs = nPubs +documentsToInsert.size();
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
 			}
@@ -300,31 +273,29 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 
 	}
 
-	private int getExpectedQueryResults(String autentication,String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
-		return OPSUtils.getSearchResults(autentication, query);
+	private int getExpectedQueryResults(String tokenaccess,String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+		return OPSUtils.getSearchResults(tokenaccess, query);
 	}
-	
-	public int getExpectedQueryResults(String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
-		return this.getExpectedQueryResults(autentication, query);
-	}
-	
 
 
 	private void findDocuments(IIRSearchProcessReport report,String query, IIREPOSearchConfiguration configurationEPOSearch) throws ANoteException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InternetConnectionProblemException {
-		if(autentication!=null && !cancel)
-		{
-			tokenacess();
-		}
+		String tokenaccess = getTokenAccess(configurationEPOSearch.getAuthentication());
 		nPubs = 0;
 		abstractAvailable = 0;
 		int results = getExpectedQueryResults(tokenaccess,query);
 		if(results > OPSConfiguration.MAX_RESULTS)
 			results = OPSConfiguration.MAX_RESULTS;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
+
 		for(int step=1;step<=results && !cancel;step = step + OPSConfiguration.STEP)
 		{
 			// Get All EPO ID in Dtabase
 			Map<String, Long> epodocAlreadyExistOnDB = InitConfiguration.getDataAccess().getAllPublicationsExternalIDFromSource(PublicationSourcesDefaultEnum.patent.name());
+
+
+			// Patent ID to Insert - Merge patent family results
+			Map<String, Long> patentIdsToInsert = new HashMap<>();
+
 			// Documents to Insert into databse 
 			Set<IPublication> documentsToInsert = new HashSet<>();
 			// Documents already present in DB - Just to add to Query
@@ -332,32 +303,44 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 			// Step Document retrieved
 			List<IPublication> pubs  = OPSUtils.getSearch(tokenaccess,query,step);
 			for(IPublication pub:pubs)
-			{
-				String epoDocPMID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
-				if(epodocAlreadyExistOnDB.containsKey(epoDocPMID))
+			{	
+				// Main patent ID
+				String patentID = PublicationImpl.getPublicationExternalIDForSource(pub,PublicationSourcesDefaultEnum.patent.name());
+				// Update Patent Family Ids ( Add Extrnal Id to Publication External Ids)
+				OPSUtils.getPatentFamily(tokenaccess, pub, patentID);
+				Set<String> patentIds = PublicationImpl.getPublicationExternalIDSetForSource(pub, PublicationSourcesDefaultEnum.patent.name());
+				Long existINQuery =  calculateIfAlreadyExistInDatabaseAnReturnPatentID(patentIdsToInsert,patentIds);
+				Long existInDatabseID = calculateIfAlreadyExistInDatabaseAnReturnPatentID(epodocAlreadyExistOnDB,patentIds);
+				if(existINQuery!=null) // AlreadyAdded
 				{
-					pub.setId(epodocAlreadyExistOnDB.get(epoDocPMID));
+
+				}
+				else if(existInDatabseID!=null)
+				{
+					pub.setId(epodocAlreadyExistOnDB.get(patentID));
 					documentsThatAlreayInDB.add(pub);
 					// Add new Document Relevance - Default
 					this.query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());				
 				}
 				else
 				{
+					for(String patentIDToAdd:patentIds)
+						patentIdsToInsert.put(patentIDToAdd, pub.getId());
 					documentsToInsert.add(pub);
 					this.query.getPublicationsRelevance().put(pub.getId(), new QueryPublicationRelevanceImpl());
 				}
 			}
-			
+
 			// Filter result by year and classification
 			documentsToInsert = filterByClassification(configurationEPOSearch, documentsToInsert);
 			documentsThatAlreayInDB = filterByClassification(configurationEPOSearch, documentsThatAlreayInDB);
-			
+
 			if( !cancel && documentsToInsert.size()!=0)
 			{
-				getPatentDetails(report, epodocAlreadyExistOnDB, documentsToInsert);
+				getPatentDetails(report, epodocAlreadyExistOnDB, documentsToInsert,tokenaccess);
 				InitConfiguration.getDataAccess().addPublications(documentsToInsert);
 			}
-			
+
 			Set<IPublication> publications = new HashSet<>();
 			publications.addAll(documentsToInsert);
 			publications.addAll(documentsThatAlreayInDB);
@@ -383,7 +366,17 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 
 	}
-	
+
+	private Long calculateIfAlreadyExistInDatabaseAnReturnPatentID(Map<String, Long> epodocAlreadyExistOnDB, Set<String> patentIds) {
+		for(String patentId:patentIds)
+		{
+			if(epodocAlreadyExistOnDB.containsKey(patentId))
+				return epodocAlreadyExistOnDB.get(patentId);
+		}
+		return null;
+	}
+
+
 	private int calculateAvailableAbstracts(Set<IPublication> publicationsToAdd) {
 		int out = 0;
 		for(IPublication pub:publicationsToAdd)
@@ -393,7 +386,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 		return out;
 	}
-	
+
 	private Set<IPublication> filterByClassification(IIREPOSearchConfiguration configuration,Set<IPublication> publications) {
 		Set<IPublication> out = new HashSet<>();
 		for(IPublication publication:publications)
@@ -405,7 +398,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 		return out;
 	}
-	
+
 	private static boolean validPatentAccordingToSearchConfiguration(IPublication patent,IIREPOSearchConfiguration configuration)
 	{
 		if(!validateMinYear(patent.getYeardate(),configuration.getMinYear()))
@@ -422,7 +415,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		}
 		return true;
 	}
-	
+
 	private static boolean validateMinYear(String yeardate, Integer yearMin) {
 		if(yearMin==null)
 			return true;
@@ -466,7 +459,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	}
 
 	private void getPatentDetails(IIRSearchProcessReport report,Map<String, Long> patentIDAlreadyExistOnDB,
-			Set<IPublication> pubs) throws ANoteException, InternetConnectionProblemException
+			Set<IPublication> pubs,String tokenaccess) throws ANoteException, InternetConnectionProblemException
 	{
 		{
 			for(IPublication pub:pubs)
@@ -481,40 +474,18 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
 	}
 
-	private void tokenacess() {
-		try {
-			tokenaccess = OPSUtils.postAuth(autentication);
-		} catch (RedirectionException e) {
-			logger.warn(e.getMessage());
-			OPSConfiguration.STEP = 10;
-			return;
-		} catch (ClientErrorException e) {
-			logger.warn(e.getMessage());
-			OPSConfiguration.STEP = 10;
-			return;
-		} catch (ServerErrorException e) {
-			logger.warn(e.getMessage());
-			OPSConfiguration.STEP = 10;
-			return;
-		} catch (ConnectionException e) {
-			logger.warn(e.getMessage());
-			OPSConfiguration.STEP = 10;
-			return;
-		} catch (ResponseHandlingException e) {
-			logger.warn(e.getMessage());
-			OPSConfiguration.STEP = 10;
-			return;
-		}
+	private String getTokenAccess(String autentication) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+		String tokenaccess = OPSUtils.postAuth(Utils.get64Base(autentication));
 		OPSConfiguration.STEP = 100;
-		
+		return tokenaccess;
 	}
-	
+
 	public static String buildQuery(String keywords,String organism,Properties properties) {
 		return OPSUtils.queryBuilder(keywords);
 	}
-	
 
-	
+
+
 	@Override
 	public IProcessType getType() {
 		return new ProcessTypeImpl(1, "IRSearch");
@@ -529,7 +500,7 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	public void stop() {
 		this.cancel = true ;
 	}
-	
+
 	@Override
 	public IQuery getQuery() {
 		return query;
@@ -544,11 +515,11 @@ public class OPSSearch  extends IRProcessImpl implements IIRSearch{
 	public void validateConfiguration(IIRSearchConfiguration configuration)throws InvalidConfigurationException {
 		if(configuration instanceof IIREPOSearchConfiguration)
 		{
-			
+
 		}
 		else
 			throw new InvalidConfigurationException("Configuration is not a IIREPOSearchConfiguration instance");
-		
+
 	}
 
 
