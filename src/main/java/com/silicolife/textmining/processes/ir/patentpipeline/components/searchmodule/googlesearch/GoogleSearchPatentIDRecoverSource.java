@@ -70,22 +70,22 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 
 	public static String transformQueryToGoogleSearchOperators(String query){
 		String queryTransformed = query.trim();
-		String[] keywordsParts = queryTransformed.split("AND|OR|NOT");
-		for(String part : keywordsParts)
-		{
-			part = part.trim();
-			if(!part.isEmpty())
-			{
-				queryTransformed = queryTransformed.replace(part, "\""+part+"\"");
-			}
-		}
-		queryTransformed = queryTransformed.replace("AND"," + ");
-		queryTransformed=queryTransformed.replace("NOT", " - ");
-		queryTransformed = queryTransformed.replace("OR"," OR ");
-		queryTransformed = queryTransformed.replace("\"\"", "\"");
-		queryTransformed = queryTransformed.replace("  ", " ");
-		queryTransformed= queryTransformed.replace("+ ", "+");
-		queryTransformed= queryTransformed.replace("- ", "-");
+//		String[] keywordsParts = queryTransformed.split("AND|OR|NOT");
+//		for(String part : keywordsParts)
+//		{
+//			part = part.trim();
+//			if(!part.isEmpty())
+//			{
+//				queryTransformed = queryTransformed.replace(part, "\""+part+"\"");
+//			}
+//		}
+//		queryTransformed = queryTransformed.replace("AND"," + ");
+//		queryTransformed=queryTransformed.replace("NOT", " - ");
+//		queryTransformed = queryTransformed.replace("OR"," OR ");
+		queryTransformed = queryTransformed.replace("\"", "'");
+//		queryTransformed = queryTransformed.replace("  ", " ");
+//		queryTransformed= queryTransformed.replace("+ ", "+");
+//		queryTransformed= queryTransformed.replace("- ", "-");
 		return queryTransformed;
 	}
 

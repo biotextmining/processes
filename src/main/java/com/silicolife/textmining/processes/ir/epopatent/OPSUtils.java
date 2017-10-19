@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +61,7 @@ public class OPSUtils {
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
 	private static String generalURL = "http://ops.epo.org/" + version + "/rest-services/";
 	private static String publicationFamily = "http://ops.epo.org/" + version + "/rest-services/family/publication/epodoc/";
-	
+
 	private static Set<String> excludePatentStartLetterSet;
 
 	private static HTTPClient client = new HTTPClient();
@@ -81,8 +82,16 @@ public class OPSUtils {
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
 		String body = "q="+query;
-		List<IPublication> pubs = client.post(searchURL,body, headers, new OPSSearchHandler());
-		return pubs;
+		try {
+			List<IPublication> pubs = client.post(searchURL,body, headers, new OPSSearchHandler());
+			return pubs;
+		} catch (ClientErrorException e) {
+			if(e.getMessage().startsWith("404"))
+			{
+				return new ArrayList<IPublication>();
+			}
+			throw e;
+		}
 	}
 
 
@@ -140,17 +149,34 @@ public class OPSUtils {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
-		Set<String> patentIds = client.get(searchURL + query, headers, new OPSPatentIDSearchHandler());
-		return patentIds;
+		try {
+			Set<String> patentIds = client.get(searchURL + query, headers, new OPSPatentIDSearchHandler());
+			return patentIds;
+		} catch (ClientErrorException e) {
+			if(e.getMessage().startsWith("404"))
+			{
+				return new HashSet<String>();
+			}
+			throw e;
+		}
 	}
 
-	public static int getSearchResults(String tokenaccess,String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+	public static int getSearchResults(String tokenaccess,String query) throws RedirectionException, ServerErrorException, ConnectionException, ResponseHandlingException, ClientErrorException {
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		String body = "q="+query;
-		Integer result = client.post(searchURL,body, headers, new OPSSearchResultHandler());
+		Integer result;
+		try {
+			result = client.post(searchURL,body, headers, new OPSSearchResultHandler());
+		} catch (ClientErrorException e) {
+			if(e.getMessage().startsWith("404"))
+			{
+				return 0;
+			}
+			throw e;
+		}
 		return result;
 	}
 
@@ -298,7 +324,7 @@ public class OPSUtils {
 		return new File(docPDFFinal);
 	}
 
-	
+
 	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID, File outDir) throws COSVisitorException, RedirectionException, ClientErrorException, ServerErrorException, IOException, ConnectionException, ResponseHandlingException, InterruptedException {
 		return getPatentFullTextPDFUsingPatentID(tokenaccess,patentID ,outDir.getPath(),null);
 	}
@@ -399,28 +425,28 @@ public class OPSUtils {
 	public static String queryBuilder(String query)
 	{
 		query = tranform(query);
-//		query = query.replaceAll("\\?", "%3F");
-//		query = query.replaceAll("@", "%40");
-//		query = query.replaceAll("#", "%23");
-//		query = query.replaceAll("%", "%25");
-//		query = query.replaceAll("\\$", "%24");
-//		query = query.replaceAll("&", "%26");
-//		query = query.replaceAll("\\+", "%2B");
-//		query = query.replaceAll(",", "%2C");
-//		query = query.replaceAll(":", "%3A");
-//		query = query.replaceAll(" ", "%20");
-//		query = query.replaceAll("=", "%3D");
-//		query = query.replaceAll("\"", "%22");
-//		query = query.replaceAll("<", "%3C");
-//		query = query.replaceAll(">", "%3E");
-//		query = query.replaceAll("\\{", "%7B");
-//		query = query.replaceAll("\\}", "%7D");
-//		query = query.replaceAll("\\|", "%7C");
-//		query = query.replaceAll("\\^", "%5E");
-//		query = query.replaceAll("~", "%7E");
-//		query = query.replaceAll("\\[", "%5B");
-//		query = query.replaceAll("\\]", "%5D");
-//		query = query.replaceAll("`", "%60");
+		//		query = query.replaceAll("\\?", "%3F");
+		//		query = query.replaceAll("@", "%40");
+		//		query = query.replaceAll("#", "%23");
+		//		query = query.replaceAll("%", "%25");
+		//		query = query.replaceAll("\\$", "%24");
+		//		query = query.replaceAll("&", "%26");
+		//		query = query.replaceAll("\\+", "%2B");
+		//		query = query.replaceAll(",", "%2C");
+		//		query = query.replaceAll(":", "%3A");
+		//		query = query.replaceAll(" ", "%20");
+		//		query = query.replaceAll("=", "%3D");
+		//		query = query.replaceAll("\"", "%22");
+		//		query = query.replaceAll("<", "%3C");
+		//		query = query.replaceAll(">", "%3E");
+		//		query = query.replaceAll("\\{", "%7B");
+		//		query = query.replaceAll("\\}", "%7D");
+		//		query = query.replaceAll("\\|", "%7C");
+		//		query = query.replaceAll("\\^", "%5E");
+		//		query = query.replaceAll("~", "%7E");
+		//		query = query.replaceAll("\\[", "%5B");
+		//		query = query.replaceAll("\\]", "%5D");
+		//		query = query.replaceAll("`", "%60");
 		return query;
 	}
 
@@ -432,8 +458,8 @@ public class OPSUtils {
 		keywords = keywords.replace("  ", " ");
 		return keywords;
 	}
-	
-	
+
+
 	public static String loginOPS(String authentication){
 		String tokenaccess=null;
 		try {
@@ -444,7 +470,7 @@ public class OPSUtils {
 		}
 		return tokenaccess;
 	}
-	
+
 	public static boolean isAcceptablePatentLanguage(String patentID)
 	{
 		if(excludePatentStartLetterSet==null)

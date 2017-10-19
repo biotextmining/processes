@@ -2,10 +2,10 @@ package com.silicolife.textmining.processes.ir.patentrepository;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,12 +15,19 @@ import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfo
 public class PatentRepositoryAPI {
 	
 	public static Set<String> getPatentIdsGivenTextQuery(String url,String query) throws MalformedURLException, IOException {
-		String urlgetKeywordsSearch = url + "/search/patentkeywords/" + query;
-		InputStream imputstream = new URL(urlgetKeywordsSearch).openStream();
-		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
+		URL u = new URL(url + "/search/patentkeywords/");
+		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+		conn.setDoOutput(true);
+		conn.setRequestMethod("POST");
+		String type = "application/json";
+		conn.setRequestProperty( "Content-Type", type );
+		conn.setRequestProperty( "Content-Length", String.valueOf(query.length()));
+		OutputStream os = conn.getOutputStream();
+		os.write(query.getBytes());
 		@SuppressWarnings("unchecked")
-		List<String> result = objectMapper.readValue(imputstream,List.class);
-		return new HashSet<>(result);
+		Set<String> result = mapper.readValue(conn.getInputStream(),Set.class);
+		return result;
 	}
 
 	public static PatentEntity getPatentMetaInformationByID(String url,String patentID) throws MalformedURLException, IOException

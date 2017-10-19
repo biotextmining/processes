@@ -41,6 +41,13 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 			autentication = OPSUtils.postAuth(tokenaccess);
 			results = OPSUtils.getSearchResults(autentication,query);
 		} catch (RedirectionException | ClientErrorException| ServerErrorException | ConnectionException| ResponseHandlingException e) {
+			if(e instanceof ClientErrorException)
+			{
+				if(e.getMessage().contains("Entity Too Large"))
+				{
+					return new HashSet<String>();
+				}
+			}
 			throw new ANoteException(new InternetConnectionProblemException(e));
 		}
 		if(results > OPSConfiguration.MAX_RESULTS)
