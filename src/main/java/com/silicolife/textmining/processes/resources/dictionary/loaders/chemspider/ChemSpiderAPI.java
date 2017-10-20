@@ -138,8 +138,8 @@ public class ChemSpiderAPI {
 		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 		conn.setDoOutput(true);
 		conn.getOutputStream().write(postDataBytes);
-		conn.setConnectTimeout(50000);
-		conn.setReadTimeout(50000);
+		conn.setConnectTimeout(60000);
+		conn.setReadTimeout(60000);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(conn.getInputStream(), writer);
 		String theString = writer.toString();

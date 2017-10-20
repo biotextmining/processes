@@ -540,8 +540,8 @@ public class PUGRestUtils {
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 		conn.setDoOutput(true);
-		conn.setConnectTimeout(50000);
-		conn.setReadTimeout(50000);
+		conn.setConnectTimeout(60000);
+		conn.setReadTimeout(60000);
 
 		conn.getOutputStream().write(postDataBytes);
 
