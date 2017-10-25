@@ -145,17 +145,19 @@ public class OPSUtils {
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
 		Map<String, String> headers = new HashMap<String, String>();
+		
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
+		String body = "q="+query;
 		try {
-			Set<String> patentIds = client.get(searchURL + query, headers, new OPSPatentIDSearchHandler());
-			return patentIds;
+			Set<String> pubs = client.post(searchURL,body, headers, new OPSPatentIDSearchHandler());
+			return pubs;
 		} catch (ClientErrorException e) {
 			if(e.getMessage().startsWith("404"))
 			{
-				return new HashSet<String>();
+				return new HashSet<>();
 			}
 			throw e;
 		}
