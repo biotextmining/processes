@@ -289,7 +289,9 @@ public class PatentPipeline {
 		Map<String, IPublication> mapPatentIDPublication = new HashMap<>();
 		for(String patentID:patentIds)
 		{
-			mapPatentIDPublication.put(patentID, new PublicationImpl());
+			IPublication pub = new PublicationImpl();
+			pub.setType("Patent");
+			mapPatentIDPublication.put(patentID, pub);
 			IPublicationExternalSourceLink e = new PublicationExternalSourceLinkImpl(patentID, PublicationSourcesDefaultEnum.patent.name());
 			mapPatentIDPublication.get(patentID).getPublicationExternalIDSource().add(e );
 		}
