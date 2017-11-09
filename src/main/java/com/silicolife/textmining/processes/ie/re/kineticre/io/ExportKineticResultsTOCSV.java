@@ -100,7 +100,10 @@ public class ExportKineticResultsTOCSV {
 		toWrite[7] = textDelimiter.getValue() +toStringEntities(organisms) + textDelimiter.getValue();
 		toWrite[8] = textDelimiter.getValue() +toStringEntitiesExternalIds(organisms) + textDelimiter.getValue();
 		toWrite[9] = textDelimiter.getValue() +ev.getEventProperties().getGeneralProperties("organism_score_penalty")!=null ? ev.getEventProperties().getGeneralProperties("organism_score_penalty"): "Na" + textDelimiter.getValue() ;
-		toWrite[10] = textDelimiter.getValue() +PublicationImpl.getPublicationExternalIDForSource(docAnnot, PublicationSourcesDefaultEnum.PUBMED.toString()) + textDelimiter.getValue();
+		String pubmedorpmc = PublicationImpl.getPublicationExternalIDForSource(docAnnot, PublicationSourcesDefaultEnum.PUBMED.toString());
+		if(pubmedorpmc==null)
+			pubmedorpmc = PublicationImpl.getPublicationExternalIDForSource(docAnnot, PublicationSourcesDefaultEnum.pmc.toString());
+		toWrite[10] = textDelimiter.getValue() + pubmedorpmc + textDelimiter.getValue();
 		toWrite[11] = getSentenceAnnotationIgnoreOrganism(configuration,docAnnot,ev,classConfiguration.getOrganismClasses());
 		toWrite[12] = getSentenceAnnotationIgnoreOrganism(configuration,docAnnot,ev,new HashSet<IAnoteClass>());
 		toWrite[13] = textDelimiter.getValue() + docAnnot.getId() + textDelimiter.getValue();
@@ -125,7 +128,7 @@ public class ExportKineticResultsTOCSV {
 		toWrite[7] = "Organism(s)";
 		toWrite[8] = "Organism(s) External Ids";
 		toWrite[9] = "Organism Score";
-		toWrite[10] = "Pubmed";
+		toWrite[10] = "Pubmed/PMC";
 		toWrite[11] = "Sentence";
 		toWrite[12] = "Sentence (Organism)";
 		toWrite[13] = "Publication (ID)";
