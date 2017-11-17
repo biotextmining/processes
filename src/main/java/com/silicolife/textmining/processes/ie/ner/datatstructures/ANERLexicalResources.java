@@ -72,7 +72,7 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		IIEProcess processToResume = configuration.getIEProcess();
 		nerlogger.info("Resume NER");
 		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToResume);
-		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess(),500000);
+		ICorpusPublicationPaginator publicationsPaginator = getUnprocessedPublicationsPaginator(configuration.getIEProcess(),10000);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessAddEntitiesImpl();
 		INERConfiguration processConfiguration = getProcessConfiguration(processToResume,configuration.getProcessRunStatus());
@@ -114,7 +114,7 @@ public abstract class ANERLexicalResources implements INERProcess, INERProcessRe
 		IIEProcess processToUpdateResume = configuration.getIEProcess();
 		nerlogger.info("Update Resume NER");
 		INERProcessReport report = new NERProcessReportImpl(configuration.getIEProcess().getName() + " report", processToUpdateResume);
-		ICorpusPublicationPaginator publicationsPaginator = getOutdatedPublicationsPaginator(processToUpdateResume,500000);
+		ICorpusPublicationPaginator publicationsPaginator = getOutdatedPublicationsPaginator(processToUpdateResume,10000);
 		long startime = GregorianCalendar.getInstance().getTimeInMillis();
 		INERPosProccessAddEntities nerPosProccessAddEntities = new NERPosProcessRemoveExistentEntitiesAddEntitiesImpl();
 		INERConfiguration processConfiguration = getProcessConfiguration(processToUpdateResume,configuration.getProcessRunStatus());

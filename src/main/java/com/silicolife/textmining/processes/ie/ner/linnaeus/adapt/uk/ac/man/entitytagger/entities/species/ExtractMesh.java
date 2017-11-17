@@ -1,19 +1,9 @@
 package com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.entities.species;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.ArgParser;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.DocumentParser;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.dataholders.Document;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.input.DocumentIterator;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.Mention;
 
 public class ExtractMesh {
 
@@ -39,39 +29,5 @@ public class ExtractMesh {
 			System.exit(-1);
 		}
 		return res;
-	}
-
-	private static void tag(ArgParser ap){
-		try{
-			DocumentIterator documents = DocumentParser.getDocuments(ap);
-			HashMap<String,Integer> meshToTax = loadMeshToTaxFile(ap.getFile("meshToTax"));
-			BufferedWriter outStream = new BufferedWriter(new FileWriter(ap.getFile("out")));
-
-			while (documents.hasNext()){
-				Document d = documents.next();
-				HashSet<Integer> speciesSet = d.getMeshTaxIDs(meshToTax);
-				Iterator<Integer> iter = speciesSet.iterator();
-				String id = d.getID();
-				while (iter.hasNext()){
-					Mention m = new Mention(new String[]{""+iter.next()});
-					m.setDocid(id);
-					outStream.write(m.toString() + "\n");
-				}
-			}
-			
-			outStream.close();
-		} catch (Exception e){
-			System.err.println(e);
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		ArgParser ap = new ArgParser(args);
-		tag(ap);
 	}
 }
