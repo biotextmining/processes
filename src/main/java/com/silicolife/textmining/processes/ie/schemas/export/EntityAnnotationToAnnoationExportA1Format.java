@@ -10,7 +10,7 @@ import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 
 public class EntityAnnotationToAnnoationExportA1Format {
 	
-	public List<AnnotationExportA1Format> convert(List<IEntityAnnotation> entities) throws ANoteException
+	public static List<AnnotationExportA1Format> convert(List<IEntityAnnotation> entities) throws ANoteException
 	{
 		List<AnnotationExportA1Format> out = new ArrayList<>();
 		
@@ -21,7 +21,7 @@ public class EntityAnnotationToAnnoationExportA1Format {
 		return out;
 	}
 
-	private AnnotationExportA1Format convertEntity(IEntityAnnotation entity) throws ANoteException {
+	private static AnnotationExportA1Format convertEntity(IEntityAnnotation entity) throws ANoteException {
 		String startOffset = String.valueOf(entity.getStartOffset());
 		String endOffset = String.valueOf(entity.getEndOffset());;
 		String tagEntity = entity.getAnnotationValue();
@@ -35,7 +35,7 @@ public class EntityAnnotationToAnnoationExportA1Format {
 		return out;
 	}
 
-	private String processDatabaseNormalization(IResourceElement resourceElement) throws ANoteException {
+	private static String processDatabaseNormalization(IResourceElement resourceElement) throws ANoteException {
 		String out = new String();
 		List<IExternalID> externalIds = resourceElement.getExtenalIDs();
 		for(IExternalID externalId:externalIds)
