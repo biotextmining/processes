@@ -57,6 +57,11 @@ public class LinnauesTaggerByDocumentSingleton {
 		}
 	}
 	
+	public boolean isInit()
+	{
+		return linnaeusTaggerByDocument != null;
+	}
+	
 	public void updateConfiguration(INERLinnaeusConfiguration configuration) throws ANoteException
 	{
 		logger.info("Update Linnaues Tagger By Document configurations");
@@ -68,6 +73,14 @@ public class LinnauesTaggerByDocumentSingleton {
 		if(linnaeusTaggerByDocument==null)
 			throw new ANoteException("Linnaues Tagger By Document not initialized");
 		List<IEntityAnnotation> entities = linnaeusTaggerByDocument.executeDocument(annotationDoc);
+		return entities;
+	}
+	
+	public List<IEntityAnnotation> execute(String textStream) throws ANoteException
+	{
+		if(linnaeusTaggerByDocument==null)
+			throw new ANoteException("Linnaues Tagger By Document not initialized");
+		List<IEntityAnnotation> entities = linnaeusTaggerByDocument.executeDocument(textStream);
 		return entities;
 	}
 
