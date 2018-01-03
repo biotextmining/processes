@@ -1,18 +1,25 @@
-package com.silicolife.textmining.processes.ie.pipelines.kineticparameters.steps;
+package com.silicolife.textmining.processes.ie.ner.linnaeus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPosition;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositions;
+import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
+import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
+import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTagger;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.PublicationIt;
+import com.silicolife.textmining.core.interfaces.core.document.IPublication;
+import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusTextType;
+import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.process.IE.INERProcessByDocument;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.compthreads.IteratorBasedMaster;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.input.DocumentIterator;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.doc.TaggedDocument;
@@ -20,7 +27,6 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entit
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.entitytagger.matching.matchers.ConcurrentMatcher;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.LinnauesExecutionData;
-import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.INERProcessByDocument;
 
 public class LinnaeusTaggerByDocument extends LinnaeusTagger implements INERProcessByDocument{
 	
@@ -41,6 +47,16 @@ public class LinnaeusTaggerByDocument extends LinnaeusTagger implements INERProc
 	private void loaddata(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		linnauesExecutionData = loadExecutionData(linnauesConfiguration);
 		matcher = getMatcher(linnauesConfiguration,linnauesExecutionData.getElements());
+	}
+	
+	public List<IEntityAnnotation> executeDocument(String textStream) throws ANoteException {
+		IPublication publication = new PublicationImpl();
+		publication.setFullTextContent(textStream);
+		Properties properties = new Properties();
+		properties.setProperty(GlobalNames.textType, CorpusTextType.FullText.toString());
+		ICorpus corpus = new CorpusImpl("","",properties );
+		IAnnotatedDocument annotatedDocument = new AnnotatedDocumentImpl(publication,  linnauesConfiguration.getIEProcess(),corpus );
+		return executeDocument(annotatedDocument);
 	}
 
 	public List<IEntityAnnotation> executeDocument(IAnnotatedDocument annotatedDocument) throws ANoteException
@@ -88,5 +104,8 @@ public class LinnaeusTaggerByDocument extends LinnaeusTagger implements INERProc
 		}
 		return  annotationsPositionsResult.getEntitiesFromAnnoattionPositions();
 	}
+
+
+
 	
 }
