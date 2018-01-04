@@ -51,11 +51,11 @@ public class LinnaeusTaggerByDocument extends LinnaeusTagger implements INERProc
 	
 	public List<IEntityAnnotation> executeDocument(String textStream) throws ANoteException {
 		IPublication publication = new PublicationImpl();
-		publication.setFullTextContent(textStream);
 		Properties properties = new Properties();
 		properties.setProperty(GlobalNames.textType, CorpusTextType.FullText.toString());
 		ICorpus corpus = new CorpusImpl("","",properties );
 		IAnnotatedDocument annotatedDocument = new AnnotatedDocumentImpl(publication,  linnauesConfiguration.getIEProcess(),corpus );
+		annotatedDocument.setFullTextContent(textStream);
 		return executeDocument(annotatedDocument);
 	}
 
