@@ -274,4 +274,10 @@ public class Document implements Serializable {
 	public void setAbs(String abs) {
 		this.abs = abs;
 	}
+
+
+	@Override
+	public String toString() {
+		return body;
+	}
 }
