@@ -24,6 +24,8 @@ public class PubChemWebServiceLoader  extends DictionaryLoaderHelp implements ID
 
 	public final static String compound = "Compound";
 	public final static String source = "PubChem";
+	
+	private Set<String> startsWithSynonymFilterSet;
 
 	
 	public PubChemWebServiceLoader() {
@@ -42,6 +44,8 @@ public class PubChemWebServiceLoader  extends DictionaryLoaderHelp implements ID
 		{
 			getReport().addClassesAdding(1);
 			IPubChemDictionaryLoaderConfiguration pubchemConfiguration = (IPubChemDictionaryLoaderConfiguration) configuration;
+			if(pubchemConfiguration.filterSynonyms())
+				startsWithSynonymFilterSet();
 			Set<String> pubchemTOImport = pubchemConfiguration.getPubChemIds();
 			long start = GregorianCalendar.getInstance().getTimeInMillis();
 			int total = pubchemTOImport.size();
@@ -49,7 +53,7 @@ public class PubChemWebServiceLoader  extends DictionaryLoaderHelp implements ID
 			for(String pubchemId:pubchemTOImport)
 			{
 				try {
-					processPubChemID(pubchemId);
+					processPubChemID(pubchemId,pubchemConfiguration);
 				} catch (ANoteException e) {
 				}
 				step ++;
@@ -76,7 +80,7 @@ public class PubChemWebServiceLoader  extends DictionaryLoaderHelp implements ID
 			throw new ANoteException("PubChemWebServiceLoader: Configuration must be a IPubChemDictionaryLoaderConfiguration implementation");
 	}
 
-	private void processPubChemID(String pubchemId) throws ANoteException {
+	private void processPubChemID(String pubchemId, IPubChemDictionaryLoaderConfiguration pubchemConfiguration) throws ANoteException {
 		List<String> names = PubChemAPI.getPubChemNamesByCID(pubchemId);
 		if(!names.isEmpty())
 		{
@@ -86,10 +90,70 @@ public class PubChemWebServiceLoader  extends DictionaryLoaderHelp implements ID
 			// For get all external id
 //			List<IExternalID> externalIDs = PubChemAPI.getExternalIdsByPubchemID(pubchemId);
 			// For add only Pubchem
+			if(pubchemConfiguration.filterSynonyms())
+			{
+				synonyms = removeUnnecessarySynonyms(synonyms);
+			}
 			List<IExternalID> externalIDs = new ArrayList<>();
 			externalIDs.add(new ExternalIDImpl(pubchemId, new SourceImpl(source)));
 			super.addElementToBatch(term, compound, synonyms, externalIDs, 0);		
 		}
 	}
+
+	private Set<String> removeUnnecessarySynonyms(Set<String> synonyms) {
+		Set<String> out = new HashSet<>();
+		for(String synonym:synonyms)
+		{
+			if(passFilter(synonym))
+				out.add(synonym);
+		}
+		return out;
+	}
+	
+	private boolean passFilter(String synonym)
+	{
+		if(!validStartString(synonym))
+			return false;
+		for(String filterTest:startsWithSynonymFilterSet)
+		{
+			if(synonym.startsWith(filterTest))
+			{
+				return false;
+			}
+			
+		}
+		return true;
+	}
+	
+	public boolean validStartString(String synonym)
+	{
+		if(synonym.length()>1)
+		{
+			char[] charset = synonym.toCharArray();
+			if(Character.isUpperCase(charset[0]) && Character.isUpperCase(charset[1]))
+				return false;
+			if(Character.isUpperCase(charset[0]) && Character.isDigit(charset[1]))
+				return false;
+			if(Character.isUpperCase(charset[0]) && Character.isSpaceChar(charset[1]))
+				return false;
+			if(Character.isUpperCase(charset[0]) && charset[1] == '-')
+				return false;
+			if(Character.isDigit(charset[0]) && Character.isDigit(charset[1]))
+				return false;
+		}
+	    return true;
+	}
+	
+	private void startsWithSynonymFilterSet() {
+		startsWithSynonymFilterSet = new HashSet<>();
+		startsWithSynonymFilterSet.add("Prestwick");
+		startsWithSynonymFilterSet.add("cid");
+		startsWithSynonymFilterSet.add("MolPort");
+		startsWithSynonymFilterSet.add("Spectrum");
+		startsWithSynonymFilterSet.add("Tox21");
+		startsWithSynonymFilterSet.add("InChI");
+	}
+	
+	
 
 }

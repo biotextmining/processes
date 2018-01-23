@@ -10,14 +10,21 @@ public class PubChemDicitionayLoaderConfigurationImpl extends DictionaryLoaderCo
 
 	private static String uid = "pubchem";
 	private Set<String> pubChemIds;
+	private boolean filterSynonyms;
 	
-	public PubChemDicitionayLoaderConfigurationImpl(IDictionary dictionary,Set<String> pubChemIds) {
+	public PubChemDicitionayLoaderConfigurationImpl(IDictionary dictionary,Set<String> pubChemIds,boolean filterSynonyms) {
 		super(uid, dictionary, null, new Properties(), true);
 		this.pubChemIds=pubChemIds;
+		this.filterSynonyms=filterSynonyms;
 	}
 
 	public Set<String> getPubChemIds() {
 		return pubChemIds;
+	}
+
+	@Override
+	public boolean filterSynonyms() {
+		return filterSynonyms;
 	}
 
 }

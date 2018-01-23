@@ -6,5 +6,6 @@ import com.silicolife.textmining.core.interfaces.resource.dictionary.configurati
 
 public interface IPubChemDictionaryLoaderConfiguration extends IDictionaryLoaderConfiguration{
 	public Set<String> getPubChemIds();
+	public boolean filterSynonyms();
 
 }

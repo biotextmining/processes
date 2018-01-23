@@ -31,7 +31,7 @@ public class PubChemWebServiceLoaderTest {
 		pubChemIds.add("12345");
 		pubChemIds.add("3847");
 		pubChemIds.add("32094");
-		IDictionaryLoaderConfiguration pubchemConfiguration = new PubChemDicitionayLoaderConfigurationImpl(dictionary, pubChemIds );
+		IDictionaryLoaderConfiguration pubchemConfiguration = new PubChemDicitionayLoaderConfigurationImpl(dictionary, pubChemIds,true );
 		loader.loadTerms(pubchemConfiguration );
 	}
 	
