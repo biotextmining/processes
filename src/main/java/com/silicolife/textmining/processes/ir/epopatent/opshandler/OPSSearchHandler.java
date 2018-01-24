@@ -83,8 +83,10 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 		List<IPublicationLabel> publicationLabels = getLabels(item);
 		String notes = getNotes(item);
 		String relativePath = new String();
-		IPublication pub = new PublicationImpl(title, authors, "Patent", date,date,"", "", "", "","", abstractSection, extenalLink, true,notes,
-				relativePath,publicationExternalIDSource,publicationFields,publicationLabels);
+		String type = "Patent";
+		String category = "EPO Patent";
+		IPublication pub = new PublicationImpl(title, authors,category , date,date,"", "", "", "","", abstractSection, extenalLink, true,notes,
+				relativePath,type,publicationExternalIDSource,publicationFields,publicationLabels);
 		return pub;
 	}
 	

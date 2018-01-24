@@ -255,11 +255,11 @@ public class NewPMSearch {
 					}
 				}
 			}
-			String type = new String();
+			String category = new String();
 			// Publciation Type
 			NodeList publictionTypeNode = elements.getElementsByTagName("PublicationType");
 			if (publictionTypeNode.item(0) != null) {
-				type = publictionTypeNode.item(0).getTextContent();
+				category = publictionTypeNode.item(0).getTextContent();
 			}
 			// Mesh Terms -> Keywords
 			List<IPublicationLabel> labels = new ArrayList<IPublicationLabel>();
@@ -348,8 +348,9 @@ public class NewPMSearch {
 			String yearDate = new String();
 			if(date.length()>3)
 				yearDate = date.substring(0,4);
-			pub = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-					issues, pages, abstractText, pubmedLink+pubmedID, false, new String(), new String(), externalIDsSource, fullTextfields , labels );
+			String type = "Publication";
+			pub = new PublicationImpl(title, authorList, category, yearDate, date, status, journal, volume,
+					issues, pages, abstractText, pubmedLink+pubmedID, false, new String(), new String(),type, externalIDsSource, fullTextfields , labels );
 			publications.add(pub);
 		}
 		return publications;

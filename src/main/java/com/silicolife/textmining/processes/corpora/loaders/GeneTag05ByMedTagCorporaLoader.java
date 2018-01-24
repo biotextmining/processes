@@ -203,7 +203,7 @@ public class GeneTag05ByMedTagCorporaLoader implements ICorpusEntityLoader{
 				IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(mapExcerptIDAndPubmedID.get(exceprtID), pubmedExternalLink);
 				List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<>();
 				publicationExternalIDSource.add(externalID);
-				IPublication pub = new PublicationImpl("", "MedTag Team", "", "", "", "", "", "", "", "", mapExcerptIDAndText.get(exceprtID), medtaglink+mapExcerptIDAndPubmedID.get(exceprtID), false, "", "", publicationExternalIDSource, new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
+				IPublication pub = new PublicationImpl("", "MedTag Team", "", "", "", "", "", "", "", "", mapExcerptIDAndText.get(exceprtID), medtaglink+mapExcerptIDAndPubmedID.get(exceprtID), false, "", "","", publicationExternalIDSource, new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
 				getDocuments().add(pub);
 				if(mapExcerptIDAndAnnotationOffsets.containsKey(exceprtID)){
 					IAnnotatedDocument annotDoc = new AnnotatedDocumentImpl(pub,null, null,getEntities(mapExcerptIDAndAnnotationOffsets.get(exceprtID), mapExcerptIDAndText.get(exceprtID)));

@@ -76,7 +76,7 @@ public class PMCReader {
 
 				List<IPublicationField> fullTextfields = new ArrayList<IPublicationField>();
 				String abstractText = processAbstract(fullTextfields, elements);
-				String type = "" ; //processSimpleElementTagName(elements, "PublicationType");
+				String category = "" ; //processSimpleElementTagName(elements, "PublicationType");
 
 				List<IPublicationLabel> labels = new ArrayList<IPublicationLabel>();
 
@@ -128,8 +128,9 @@ public class PMCReader {
 				if(!title.isEmpty())
 					fullText = title +  ". " + fullText;
 				String link = "";
-				IPublication publication = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-						issues, pages, abstractText, link , true, new String(), new String(), externalIDsSource, new ArrayList<IPublicationField>() , labels );
+				String type = "Publication";
+				IPublication publication = new PublicationImpl(title, authorList, category, yearDate, date, status, journal, volume,
+						issues, pages, abstractText, link , true, new String(), new String(),type, externalIDsSource, new ArrayList<IPublicationField>() , labels );
 				publication.setFullTextContent(fullText);
 				String pmid = PublicationImpl.getPublicationExternalIDForSource(publication, "pmid");
 				if(pmid!=null && !pmid.isEmpty())

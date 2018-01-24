@@ -73,7 +73,7 @@ public class MedLineReader {
 
 				List<IPublicationField> fullTextfields = new ArrayList<IPublicationField>();
 				String abstractText = processAbstract(fullTextfields, elements);
-				String type = processSimpleElementTagName(elements, "PublicationType");
+				String category = processSimpleElementTagName(elements, "PublicationType");
 
 				List<IPublicationLabel> labels = new ArrayList<IPublicationLabel>();
 				processMeshTerms(elements, labels, "Keyword");
@@ -116,12 +116,12 @@ public class MedLineReader {
 					System.out.println("Date : "+date);
 					date = date.substring(0, 24);
 				}
-
+				String type = "Publication";
 				String yearDate = new String();
 				if(date.length()>3)
 					yearDate = date.substring(0,4);
-				IPublication pub = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-						issues, pages, abstractText, PubmedReader.pubmedLink+pubmedID, false, new String(), new String(), externalIDsSource, fullTextfields , labels );
+				IPublication pub = new PublicationImpl(title, authorList, category, yearDate, date, status, journal, volume,
+						issues, pages, abstractText, PubmedReader.pubmedLink+pubmedID, false, new String(), new String(),type, externalIDsSource, fullTextfields , labels );
 				addPublication(publicationsResulty, pub);
 			}
 			return publicationsResulty;

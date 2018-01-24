@@ -347,7 +347,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 			IPublication document =  new PublicationImpl(id,
 					"", "", "", "", "",
 					"", "", "", "", "", "",
-					"", false, "", "",
+					"", false, "", "","",
 					publicationExternalIDSource ,
 					publicationFields ,
 					publicationLabels );

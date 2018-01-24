@@ -71,7 +71,9 @@ public class PatentMetaFilesReader {
 		String abstractSection = prop.getProperty("Abstract");		
 		List<IPublicationLabel> publicationLabels = new ArrayList<>();
 		String pages = "";
+		String category = "USPTO";
 		String type = "Patent";
+
 		String status = "";
 		String title = prop.getProperty("Title");	
 		String yeardate = prop.getProperty("Date").substring(0,4);
@@ -86,7 +88,7 @@ public class PatentMetaFilesReader {
 			notes = "Classification :"+prop.getProperty("Classification");
 
 		}
-		IPublication pub = new PublicationImpl(title , authors , type , yeardate , fulldate , status , journal , volume , issue, pages , abstractSection , externalLink , freeFullText , notes, relativePath , publicationExternalIDSource , publicationFields , publicationLabels);
+		IPublication pub = new PublicationImpl(title , authors , category , yeardate , fulldate , status , journal , volume , issue, pages , abstractSection , externalLink , freeFullText , notes, relativePath ,type, publicationExternalIDSource , publicationFields , publicationLabels);
 		return pub;
 	}
 	
