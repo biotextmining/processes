@@ -61,13 +61,13 @@ public class PubChemWebServiceLoader  extends DictionaryLoaderHelp implements ID
 					memoryAndProgress(step, total);
 				}
 				if (!cancel && isBatchSizeLimitOvertaken()) {
-					IResourceManagerReport reportBatchInserted = super.executeBatch();
+					IResourceManagerReport reportBatchInserted = super.executeBatchWithoutValidation();
 					super.updateReport(reportBatchInserted, getReport());
 				}
 			}
 
 			if (!cancel) {
-				IResourceManagerReport reportBatchInserted = super.executeBatch();
+				IResourceManagerReport reportBatchInserted = super.executeBatchWithoutValidation();
 				super.updateReport(reportBatchInserted, getReport());
 			} else {
 				getReport().setcancel();
