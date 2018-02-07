@@ -22,11 +22,11 @@ import com.silicolife.textmining.core.interfaces.resource.dictionary.configurati
 public class KeggWebserviceDictionaryLoader extends DictionaryLoaderHelp implements IDictionaryWebServiceLoader{
 
 	private boolean cancel;
-	private String keggSource = "Kegg";
+	private static String keggSource = "Kegg";
 
 
 	public KeggWebserviceDictionaryLoader() {
-		super("Kegg");
+		super(keggSource);
 	}
 
 	@Override
