@@ -7,7 +7,7 @@ import com.silicolife.textmining.core.interfaces.resource.dictionary.IDictionary
 
 public class KeggWebserviceGenesDictionaryLoaderConfigurationImpl extends DictionaryLoaderConfigurationImpl implements IKeggWebserviceGenesDictionaryLoaderConfiguration{
 
-	private static String loaderUID = "kegg.genes";
+	private static String loaderUID = "Kegg.genes";
 	private String organism;
 	
 	public KeggWebserviceGenesDictionaryLoaderConfigurationImpl(IDictionary dictionary,boolean loadExtendalIDds, String organism) {
