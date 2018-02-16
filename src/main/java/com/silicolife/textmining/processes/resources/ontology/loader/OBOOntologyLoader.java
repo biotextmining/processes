@@ -41,134 +41,7 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 	public OBOOntologyLoader()
 	{
 		super(".obo");
-	}
-	
-	private Map<String,OntologicalClass> loadFile(IOntologyLoaderConfiguration configuration) throws IOException
-	{
-		FileReader fr;
-		BufferedReader br;
-		fr = new FileReader(configuration.getFilePath());
-		br = new BufferedReader(fr);		
-		String lineread,id = new String(),name = new String(),def = new String();
-		List<String> isA = new ArrayList<String>();
-		List<String> syns = new ArrayList<String>();
-		List<IExternalID> externalIds = new ArrayList<IExternalID>();
-		OntologicalClass classe;
-		List<String> block  = new ArrayList<String>();
-		List<String> partof = new ArrayList<String>();
-		Map<String,OntologicalClass> ontologicatermIDDetails = new HashMap<String, OntologicalClass>();;
-		while((lineread = br.readLine())!=null && !cancel)
-		{
-			if(lineread.isEmpty() && !cancel)
-			{
-				// Treat Block Data
-				if(!block.isEmpty() && block.get(0).contains("[Term]"))
-				{
-					for(String blockpiece:block)
-					{
-						if(blockpiece.startsWith("id: "))
-						{
-							id = blockpiece.substring(4);
-						}
-						else if(blockpiece.startsWith("name:"))
-						{
-							name = blockpiece.substring(6);
-						}
-						else if(blockpiece.startsWith("def:"))
-						{
-							def = blockpiece.substring(5);
-						}
-						else if(blockpiece.startsWith("is_a:"))
-						{
-							if(blockpiece.contains("!"))
-								isA.add(blockpiece.substring(6, blockpiece.indexOf("!")-1));
-							else
-								isA.add(blockpiece.substring(6));
-						}
-						else if(blockpiece.startsWith("synonym:"))
-						{
-							String newSynonym = blockpiece.substring(blockpiece.indexOf('\"')+1,blockpiece.lastIndexOf('\"'));
-							if(newSynonym.length()>TableResourcesElements.mimimumSynonymSize && newSynonym.length()<TableResourcesElements.synonymSize)
-								syns.add(blockpiece.substring(blockpiece.indexOf('\"')+1,blockpiece.lastIndexOf('\"')));
-						}
-						else if(blockpiece.startsWith("is_obsolete"))
-						{
-							id = "";
-						}
-						else if(blockpiece.startsWith("relationship: part_of"))
-						{
-							if(blockpiece.contains("!"))
-								partof.add(blockpiece.substring(22, blockpiece.indexOf("!")-1));
-							else
-								partof.add(blockpiece.substring(22));
-						}
-						else if(blockpiece.startsWith("xref:"))
-						{
-							String source;
-							if(blockpiece.lastIndexOf('\"')!=-1)
-							{
-								if(blockpiece.lastIndexOf(':')!=-1)
-								{
-									source = blockpiece.substring(5,blockpiece.lastIndexOf(':'));
-									if(blockpiece.indexOf(':')!=-1 && blockpiece.indexOf('\"')!=-1)
-									{
-										int secondTwoPoints = blockpiece.indexOf(':')+1;
-										int lastAspas = blockpiece.indexOf('\"')-1;
-										String externalID = blockpiece.substring(secondTwoPoints,lastAspas);
-										if(externalID.length() < 200)
-											externalIds.add(new ExternalIDImpl(externalID, new SourceImpl(source)));
-									}
-								}
-							}
-							else
-							{
-								if(blockpiece.lastIndexOf(':')!=-1)
-								{
-									source = blockpiece.substring(5,blockpiece.lastIndexOf(':'));
-									String externalID = blockpiece.substring(blockpiece.lastIndexOf(':')+1);
-									if(externalID.length() < 200)
-										externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));
-								}
-							}
-						}
-					}
-					if(id != null && !id.isEmpty())
-					{
-						String externalID = new String();
-						String source = new String();
-						if(id.indexOf(':')!=-1 && id.lastIndexOf(':')!=-1){
-							int secondTwoPoints = id.lastIndexOf(':')+1;
-							externalID = id.substring(secondTwoPoints);
-							source = id.substring(0,id.indexOf(':'));
-						}else {
-							source = configuration.getOntology().getName();
-							externalID = id;
-						}
-						if(!externalID.isEmpty() && !source.isEmpty() && externalID.length() < 200){
-							externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));	
-							classe = new OntologicalClass(name, def, isA,partof, syns,externalIds);
-							ontologicatermIDDetails.put(id, classe);
-						}
-					}
-					id = new String();
-					name = new String();
-					def = new String();
-					isA = new ArrayList<String>();
-					partof = new ArrayList<String>();
-					syns = new ArrayList<String>();
-					externalIds = new ArrayList<IExternalID>();
-				}
-				block = new ArrayList<String>();
-			}
-			else
-			{
-				block.add(lineread);
-			}
-			
-		}
-		br.close();
-		return ontologicatermIDDetails;
-	}
+	}	
 
 	public boolean validateFile(File file) throws IOException {
 		FileReader fr;
@@ -253,6 +126,136 @@ public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntology
 		report.setTime(endTime-startTime);
 		return report;
 
+	}
+	
+	private Map<String,OntologicalClass> loadFile(IOntologyLoaderConfiguration configuration) throws IOException
+	{
+		FileReader fr;
+		BufferedReader br;
+		fr = new FileReader(configuration.getFilePath());
+		br = new BufferedReader(fr);		
+		String lineread,id = new String(),name = new String(),def = new String();
+		List<String> isA = new ArrayList<String>();
+		List<String> syns = new ArrayList<String>();
+		List<IExternalID> externalIds = new ArrayList<IExternalID>();
+		OntologicalClass classe;
+		List<String> block  = new ArrayList<String>();
+		List<String> partof = new ArrayList<String>();
+		Map<String,OntologicalClass> ontologicatermIDDetails = new HashMap<String, OntologicalClass>();;
+		while((lineread = br.readLine())!=null && !cancel)
+		{
+			if(lineread.isEmpty() && !cancel)
+			{
+				// Treat Block Data
+				if(!block.isEmpty() && block.get(0).contains("[Term]"))
+				{
+					for(String blockpiece:block)
+					{
+						if(blockpiece.startsWith("id: "))
+						{
+							id = blockpiece.substring(4);
+						}
+						else if(blockpiece.startsWith("name:"))
+						{
+							name = blockpiece.substring(6);
+						}
+						else if(blockpiece.startsWith("def:"))
+						{
+							def = blockpiece.substring(5);
+						}
+						else if(blockpiece.startsWith("is_a:"))
+						{
+							if(blockpiece.contains("!"))
+								isA.add(blockpiece.substring(6, blockpiece.indexOf("!")-1));
+							else
+								isA.add(blockpiece.substring(6));
+						}
+						else if(blockpiece.startsWith("synonym:"))
+						{
+							String newSynonym = blockpiece.substring(blockpiece.indexOf('\"')+1,blockpiece.lastIndexOf('\"'));
+							if(newSynonym.length()>TableResourcesElements.mimimumSynonymSize && newSynonym.length()<TableResourcesElements.synonymSize)
+								syns.add(blockpiece.substring(blockpiece.indexOf('\"')+1,blockpiece.lastIndexOf('\"')));
+						}
+						else if(blockpiece.startsWith("is_obsolete"))
+						{
+							id = "";
+						}
+						else if(blockpiece.startsWith("relationship: part_of"))
+						{
+							if(blockpiece.contains("!"))
+								partof.add(blockpiece.substring(22, blockpiece.indexOf("!")-1));
+							else
+								partof.add(blockpiece.substring(22));
+						}
+						else if(configuration.importExternalIds() && !configuration.importOnlyMaintExternalIds() && blockpiece.startsWith("xref:"))
+						{
+							String source;
+							if(blockpiece.lastIndexOf('\"')!=-1)
+							{
+								if(blockpiece.lastIndexOf(':')!=-1)
+								{
+									source = blockpiece.substring(5,blockpiece.lastIndexOf(':'));
+									if(blockpiece.indexOf(':')!=-1 && blockpiece.indexOf('\"')!=-1)
+									{
+										int secondTwoPoints = blockpiece.indexOf(':')+1;
+										int lastAspas = blockpiece.indexOf('\"')-1;
+										String externalID = blockpiece.substring(secondTwoPoints,lastAspas);
+										if(externalID.length() < 200)
+											externalIds.add(new ExternalIDImpl(externalID, new SourceImpl(source)));
+									}
+								}
+							}
+							else
+							{
+								if(blockpiece.lastIndexOf(':')!=-1)
+								{
+									source = blockpiece.substring(5,blockpiece.lastIndexOf(':'));
+									String externalID = blockpiece.substring(blockpiece.lastIndexOf(':')+1);
+									if(externalID.length() < 200)
+										externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));
+								}
+							}
+						}
+					}
+					if(id != null && !id.isEmpty())
+					{
+						String externalID = new String();
+						String source = new String();
+						if(id.indexOf(':')!=-1 && id.lastIndexOf(':')!=-1){
+							int secondTwoPoints = id.lastIndexOf(':')+1;
+							externalID = id.substring(secondTwoPoints);
+							source = id.substring(0,id.indexOf(':'));
+						}else {
+							source = configuration.getOntology().getName();
+							externalID = id;
+						}
+						if(!externalID.isEmpty() && !source.isEmpty() && externalID.length() < 200){
+							if(configuration.importExternalIds())
+							{
+								externalIds.add(new ExternalIDImpl(externalID,  new SourceImpl(source)));	
+							}
+							classe = new OntologicalClass(name, def, isA,partof, syns,externalIds);
+							ontologicatermIDDetails.put(id, classe);
+						}
+					}
+					id = new String();
+					name = new String();
+					def = new String();
+					isA = new ArrayList<String>();
+					partof = new ArrayList<String>();
+					syns = new ArrayList<String>();
+					externalIds = new ArrayList<IExternalID>();
+				}
+				block = new ArrayList<String>();
+			}
+			else
+			{
+				block.add(lineread);
+			}
+			
+		}
+		br.close();
+		return ontologicatermIDDetails;
 	}
 
 	private void porcessRelations(Iterator<String> itOnto,Map<String, OntologicalClass> fileData,Map<String, IResourceElement> ontologyIDDatabaseIndex, IResourceElement root,String string) throws ANoteException {
