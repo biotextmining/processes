@@ -27,7 +27,63 @@ public class CorpusCreation {
 	{
 
 	}
+	
+	
+	public ICorpusCreateReport createCorpusByIds(ICorpusCreateConfiguration configuration) throws ANoteException
+	{
+	
+			Properties properties = configuration.getProperties();
+			properties.put(GlobalNames.textType, CorpusTextType.convertCorpusTetTypeToString(configuration.getCorpusTextType()));
+			ICorpus newCorpus = new CorpusImpl(configuration.getCorpusName(), configuration.getCorpusNotes(), configuration.getProperties());
+			createCorpusOnDatabase(newCorpus);
+			InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, false);
+			Set<Long> documentIds = configuration.getDocumentsIDs();
+			int step = 0;
+			int total = documentIds.size();
+			
+			for(Long publicationId:documentIds) {
+				IPublication publication = InitConfiguration.getDataAccess().getPublication(publicationId);
+				if(publication!=null)
+				{
+					InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
+				}
+				step++;
+				memoryAndProgress(step,total);
+			}
+			InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, true);
+			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocumentsIDs().size());
+			return report;
 
+	}
+	
+	public ICorpusCreateReport createCorpusByLuceneSearch(ICorpusCreateConfiguration configuration) throws ANoteException
+	{
+	
+			Properties properties = configuration.getProperties();
+			properties.put(GlobalNames.textType, CorpusTextType.convertCorpusTetTypeToString(configuration.getCorpusTextType()));
+			ICorpus newCorpus = new CorpusImpl(configuration.getCorpusName(), configuration.getCorpusNotes(), configuration.getProperties());
+			int size = 0;
+			int offset = 0;
+			int paginationSize = 100;
+			boolean allDocs = false;
+			/*createCorpusOnDatabase(newCorpus);
+			Set<Long> documentIds = configuration.getDocumentsIDs();
+			int step = 0;
+			int total = documentIds.size();
+			
+			for(Long publicationId:documentIds) {
+				InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publicationId);
+				step++;
+				memoryAndProgress(step,total);
+			}
+			*/
+			
+			
+			
+			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),size);
+			return report;
+
+	}
 
 	public ICorpusCreateReport createCorpus(ICorpusCreateConfiguration configuration) throws ANoteException
 	{
