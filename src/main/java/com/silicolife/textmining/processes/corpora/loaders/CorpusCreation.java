@@ -3,12 +3,16 @@ package com.silicolife.textmining.processes.corpora.loaders;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
+import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.DataProcessStatusEnum;
+import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.ProcessStatusResourceTypesEnum;
 import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
+import com.silicolife.textmining.core.datastructures.general.DataProcessStatusImpl;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
 import com.silicolife.textmining.core.datastructures.report.corpora.CorpusCreateReportImpl;
@@ -19,6 +23,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusTextType;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.core.general.IDataProcessStatus;
 import com.silicolife.textmining.core.interfaces.core.report.corpora.ICorpusCreateReport;
 
 public class CorpusCreation {
@@ -31,7 +36,6 @@ public class CorpusCreation {
 	
 	public ICorpusCreateReport createCorpusByIds(ICorpusCreateConfiguration configuration) throws ANoteException
 	{
-	
 			Properties properties = configuration.getProperties();
 			properties.put(GlobalNames.textType, CorpusTextType.convertCorpusTetTypeToString(configuration.getCorpusTextType()));
 			ICorpus newCorpus = new CorpusImpl(configuration.getCorpusName(), configuration.getCorpusNotes(), configuration.getProperties());
@@ -40,7 +44,9 @@ public class CorpusCreation {
 			Set<Long> documentIds = configuration.getDocumentsIDs();
 			int step = 0;
 			int total = documentIds.size();
-			
+			IDataProcessStatus dataprocessStatus = new DataProcessStatusImpl(newCorpus.getId(),ProcessStatusResourceTypesEnum.corpus);
+			InitConfiguration.getDataAccess().addDataProcessStatus(dataprocessStatus);
+			dataprocessStatus.setStatus(DataProcessStatusEnum.running);
 			for(Long publicationId:documentIds) {
 				IPublication publication = InitConfiguration.getDataAccess().getPublication(publicationId);
 				if(publication!=null)
@@ -48,12 +54,24 @@ public class CorpusCreation {
 					InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
 				}
 				step++;
+				float progress = memoryAndProgressOut(step,total);
+				if(progress!=-1) {
+					dataprocessStatus.setProgress(progress);
+					dataprocessStatus.setUpdateDate(new Date());
+					InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+				}
 				memoryAndProgress(step,total);
 			}
 			InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, true);
 			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocumentsIDs().size());
+			dataprocessStatus.setStatus(DataProcessStatusEnum.finished);
+			dataprocessStatus.setProgress(100);
+			Date finishDate = new Date();
+			dataprocessStatus.setFinishedDate(finishDate);
+			dataprocessStatus.setUpdateDate(finishDate);
+			dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+configuration.getDocumentsIDs().size()+ " documents added");
+			InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
 			return report;
-
 	}
 	
 	public ICorpusCreateReport createCorpusByLuceneSearch(ICorpusCreateConfiguration configuration) throws ANoteException
@@ -185,6 +203,14 @@ public class CorpusCreation {
 		{
 			System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 		}
+	}
+	
+	protected float memoryAndProgressOut(int step, int total) {
+		if(step%10==0)
+		{
+			return (float) ((double)step/ (double) total * 100);
+		}
+		else return -1;
 	}
 
 }
