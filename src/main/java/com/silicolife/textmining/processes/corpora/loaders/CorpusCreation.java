@@ -74,33 +74,43 @@ public class CorpusCreation {
 			return report;
 	}
 	
-	public ICorpusCreateReport createCorpusByLuceneSearch(ICorpusCreateConfiguration configuration) throws ANoteException
+	public int createCorpusByLuceneSearch(ICorpusCreateConfiguration configuration, 
+			ICorpus newCorpus,IDataProcessStatus dataprocessStatus, int step, int total) throws ANoteException
 	{
-	
-			Properties properties = configuration.getProperties();
-			properties.put(GlobalNames.textType, CorpusTextType.convertCorpusTetTypeToString(configuration.getCorpusTextType()));
-			ICorpus newCorpus = new CorpusImpl(configuration.getCorpusName(), configuration.getCorpusNotes(), configuration.getProperties());
-			int size = 0;
-			int offset = 0;
-			int paginationSize = 100;
-			boolean allDocs = false;
-			/*createCorpusOnDatabase(newCorpus);
-			Set<Long> documentIds = configuration.getDocumentsIDs();
-			int step = 0;
-			int total = documentIds.size();
-			
-			for(Long publicationId:documentIds) {
-				InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publicationId);
-				step++;
-				memoryAndProgress(step,total);
+		
+		if(step ==0) {
+		createCorpusOnDatabase(newCorpus);
+		InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, false);
+		InitConfiguration.getDataAccess().addDataProcessStatus(dataprocessStatus);
+		}
+		dataprocessStatus.setStatus(DataProcessStatusEnum.running);
+		Set<IPublication> documents = configuration.getDocuments();
+		for(IPublication publication : documents) {
+			if(publication!=null)
+			{
+				InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
 			}
-			*/
-			
-			
-			
-			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),size);
-			return report;
-
+			step++;
+			float progress = memoryAndProgressOut(step,total);
+			if(progress!=-1) {
+				dataprocessStatus.setProgress(progress);
+				dataprocessStatus.setUpdateDate(new Date());
+				InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+			}
+			memoryAndProgress(step,total);
+		}
+		if(step == total) {
+		InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, true);
+		//ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocumentsIDs().size());
+		dataprocessStatus.setStatus(DataProcessStatusEnum.finished);
+		dataprocessStatus.setProgress(100);
+		Date finishDate = new Date();
+		dataprocessStatus.setFinishedDate(finishDate);
+		dataprocessStatus.setUpdateDate(finishDate);
+		dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+total+ " documents added");
+		InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+		}
+		return step;
 	}
 
 	public ICorpusCreateReport createCorpus(ICorpusCreateConfiguration configuration) throws ANoteException
