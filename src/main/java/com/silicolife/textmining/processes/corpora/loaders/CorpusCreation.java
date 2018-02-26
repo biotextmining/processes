@@ -34,18 +34,14 @@ public class CorpusCreation {
 	}
 	
 	
-	public ICorpusCreateReport createCorpusByIds(ICorpusCreateConfiguration configuration) throws ANoteException
+	public ICorpusCreateReport createCorpusByIds(ICorpusCreateConfiguration configuration
+			,ICorpus newCorpus, IDataProcessStatus dataprocessStatus) throws ANoteException
 	{
-			Properties properties = configuration.getProperties();
-			properties.put(GlobalNames.textType, CorpusTextType.convertCorpusTetTypeToString(configuration.getCorpusTextType()));
-			ICorpus newCorpus = new CorpusImpl(configuration.getCorpusName(), configuration.getCorpusNotes(), configuration.getProperties());
-			createCorpusOnDatabase(newCorpus);
+						createCorpusOnDatabase(newCorpus);
 			InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, false);
 			Set<Long> documentIds = configuration.getDocumentsIDs();
 			int step = 0;
 			int total = documentIds.size();
-			IDataProcessStatus dataprocessStatus = new DataProcessStatusImpl(newCorpus.getId(),ProcessStatusResourceTypesEnum.corpus);
-			InitConfiguration.getDataAccess().addDataProcessStatus(dataprocessStatus);
 			dataprocessStatus.setStatus(DataProcessStatusEnum.running);
 			for(Long publicationId:documentIds) {
 				IPublication publication = InitConfiguration.getDataAccess().getPublication(publicationId);
@@ -69,7 +65,8 @@ public class CorpusCreation {
 			Date finishDate = new Date();
 			dataprocessStatus.setFinishedDate(finishDate);
 			dataprocessStatus.setUpdateDate(finishDate);
-			dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+configuration.getDocumentsIDs().size()+ " documents added");
+			//dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+configuration.getDocumentsIDs().size()+ " documents added");
+			dataprocessStatus.setReport(configuration.htmlReport(total));
 			InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
 			return report;
 	}
@@ -81,7 +78,7 @@ public class CorpusCreation {
 		if(step ==0) {
 		createCorpusOnDatabase(newCorpus);
 		InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, false);
-		InitConfiguration.getDataAccess().addDataProcessStatus(dataprocessStatus);
+		
 		}
 		dataprocessStatus.setStatus(DataProcessStatusEnum.running);
 		Set<IPublication> documents = configuration.getDocuments();
@@ -107,7 +104,8 @@ public class CorpusCreation {
 		Date finishDate = new Date();
 		dataprocessStatus.setFinishedDate(finishDate);
 		dataprocessStatus.setUpdateDate(finishDate);
-		dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+total+ " documents added");
+		//dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+total+ " documents added");
+		dataprocessStatus.setReport(configuration.htmlReport(total));
 		InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
 		}
 		return step;
