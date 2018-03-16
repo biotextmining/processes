@@ -160,7 +160,7 @@ public class PatentPipelineUtils {
 	}
 
 
-	private static String deleteSectionNumbers(String patentID){
+	public static String deleteSectionNumbers(String patentID){
 		String newPatentID = patentID;
 		try{
 			if(patentID.matches(".*[A-Z]{1}")){
