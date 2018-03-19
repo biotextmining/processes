@@ -9,6 +9,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfo
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.pubchem.PubchemPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.fgo.FGOPatentRetrieval;
@@ -93,6 +94,10 @@ public class PatentPipelineCompleteTest {
 		IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration configurationPatentRepository = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(proxy, patentRepositoryURL, patentRepositoryUser, patentRepositoryPassword);
 		IIRPatentMetainformationRetrievalSource patentRepository = new PatentRepositoryPatentMetaInformationRetrieval(configurationPatentRepository);
 		patentPipeline.addPatentsMetaInformationRetrieval(patentRepository);
+		
+		IIRPatentMetainformationRetrievalSource pubchemMetaInformation = new PubchemPatentMetaInformationRetrieval();
+		patentPipeline.addPatentsMetaInformationRetrieval(pubchemMetaInformation);
+
 
 		//Step 3 - Retrieved PDF
 

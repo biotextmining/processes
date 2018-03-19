@@ -17,6 +17,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfo
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.pubchem.PubchemPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.BingSearchPatentIDRecoverSource;
@@ -87,6 +88,7 @@ public class PatentPipelineSearchTest {
 		IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration configurationPatentRepository = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(proxy, patentRepositoryURL, patentRepositoryUser, patentRepositoryPassword);
 		IIRPatentMetainformationRetrievalSource patentRepository = new PatentRepositoryPatentMetaInformationRetrieval(configurationPatentRepository);
 		
+		IIRPatentMetainformationRetrievalSource pubchemMetaInformation = new PubchemPatentMetaInformationRetrieval();
 			
 		IIRPatentPipelineSearchStepsConfiguration configurationPipeline=new IRPatentPipelineSearchStepsConfigurationImpl();
 		configurationPipeline.addIRPatentIDRecoverSource(patentIDrecoverSourceEPO);
@@ -95,7 +97,7 @@ public class PatentPipelineSearchTest {
 		configurationPipeline.addIRPatentRetrievalMetaInformation(wipoMetaInformationRetrieval);
 		configurationPipeline.addIRPatentRetrievalMetaInformation(opsMetaInformationretrieval);
 		configurationPipeline.addIRPatentRetrievalMetaInformation(patentRepository);
-
+		configurationPipeline.addIRPatentRetrievalMetaInformation(pubchemMetaInformation);
 		
 		IIRPatentPipelineConfiguration configuration = new IRPatentSearchConfigurationImpl(patentPipelineSearchConfiguration,"Teste23062016",prop,configurationPipeline);
 		PatentPiplineSearch runnerIQueryMaker = new PatentPiplineSearch();

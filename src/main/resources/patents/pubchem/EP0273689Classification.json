@@ -1,0 +1,772 @@
+{
+	"Hierarchies": {
+		"Hierarchy": [
+			{
+				"RootID": "root",
+				"HID": 58,
+				"SourceID": "IPC",
+				"Node": [
+					{
+						"ParentID": [
+							"node_23389"
+						],
+						"NodeID": "node_23390",
+						"Information": {
+							"HNID": 1460998,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 611746
+								},
+								{
+									"Type": "CID",
+									"Count": 358398
+								},
+								{
+									"Type": "PID",
+									"Count": 6831
+								}
+							],
+							"ChildID": [
+								"node_23394",
+								"node_23391",
+								"node_23392",
+								"node_23393",
+								"node_23396"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07K0005060000",
+							"Name": "C07K5/06 - Dipeptides",
+							"Match": true
+						}
+					},
+					{
+						"ParentID": [
+							"node_23382"
+						],
+						"NodeID": "node_23389",
+						"Information": {
+							"HNID": 1460997,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 877431
+								},
+								{
+									"Type": "CID",
+									"Count": 495953
+								},
+								{
+									"Type": "PID",
+									"Count": 10509
+								}
+							],
+							"ChildID": [
+								"node_23390",
+								"node_23397",
+								"node_23403",
+								"node_23409"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07K0005040000",
+							"Name": "C07K5/04 - containing only normal peptide links"
+						}
+					},
+					{
+						"ParentID": [
+							"node_23351"
+						],
+						"NodeID": "node_23382",
+						"Information": {
+							"HNID": 1460990,
+							"Description": [
+								"Peptides having up to four amino acids in a fully defined sequence; Derivatives thereof"
+							],
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 978777
+								},
+								{
+									"Type": "CID",
+									"Count": 555031
+								},
+								{
+									"Type": "PID",
+									"Count": 13088
+								}
+							],
+							"ChildID": [
+								"node_23383",
+								"node_23389"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07K0005000000",
+							"Name": "C07K5/00 - Peptides having up to four amino acids in a fully defined sequence; Derivativ..."
+						}
+					},
+					{
+						"ParentID": [
+							"node_23350"
+						],
+						"NodeID": "node_23351",
+						"Information": {
+							"HNID": 1460959,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 1699155
+								},
+								{
+									"Type": "CID",
+									"Count": 938116
+								},
+								{
+									"Type": "PID",
+									"Count": 139716
+								}
+							],
+							"ChildID": [
+								"node_23352",
+								"node_23431",
+								"node_23433",
+								"node_23599",
+								"node_23623",
+								"node_23375",
+								"node_23382",
+								"node_23410",
+								"node_23631",
+								"node_23374",
+								"node_23430"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07K",
+							"Name": "C07K - PEPTIDES"
+						}
+					},
+					{
+						"ParentID": [
+							"node_17270"
+						],
+						"NodeID": "node_23350",
+						"Information": {
+							"HNID": 1501530,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 28895894
+								},
+								{
+									"Type": "CID",
+									"Count": 14718815
+								},
+								{
+									"Type": "PID",
+									"Count": 582682
+								}
+							],
+							"ChildID": [
+								"node_23632",
+								"node_23678",
+								"node_26656",
+								"node_28342",
+								"node_28499",
+								"node_28508",
+								"node_28614",
+								"node_23351"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07",
+							"Name": "C07 - ORGANIC CHEMISTRY"
+						}
+					},
+					{
+						"ParentID": [
+							"node_17269"
+						],
+						"NodeID": "node_17270",
+						"Information": {
+							"HNID": 1459339,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 30816974
+								},
+								{
+									"Type": "CID",
+									"Count": 15753459
+								},
+								{
+									"Type": "PID",
+									"Count": 1251713
+								}
+							],
+							"ChildID": [
+								"node_17271",
+								"node_22709",
+								"node_22838",
+								"node_18064",
+								"node_20603",
+								"node_20695",
+								"node_23350",
+								"node_18511",
+								"node_20854",
+								"node_28640",
+								"node_22476",
+								"node_29838",
+								"node_20444",
+								"node_20506"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C01",
+							"Name": "CHEMISTRY Category"
+						}
+					},
+					{
+						"ParentID": [
+							"root"
+						],
+						"NodeID": "node_17269",
+						"Information": {
+							"HNID": 1459338,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 30839126
+								},
+								{
+									"Type": "CID",
+									"Count": 15764417
+								},
+								{
+									"Type": "PID",
+									"Count": 1309256
+								}
+							],
+							"ChildID": [
+								"node_17270",
+								"node_32019",
+								"node_30575"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C",
+							"Name": "CHEMISTRY; METALLURGY"
+						}
+					},
+					{
+						"ParentID": [
+							"node_26998"
+						],
+						"NodeID": "node_26999",
+						"Information": {
+							"HNID": 1478416,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 409657
+								},
+								{
+									"Type": "CID",
+									"Count": 228955
+								},
+								{
+									"Type": "PID",
+									"Count": 2094
+								}
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0295185000",
+							"Name": "C07D295/185 - from aliphatic carboxylic acids",
+							"Match": true
+						}
+					},
+					{
+						"ParentID": [
+							"node_26997"
+						],
+						"NodeID": "node_26998",
+						"Information": {
+							"HNID": 1478415,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 616752
+								},
+								{
+									"Type": "CID",
+									"Count": 334958
+								},
+								{
+									"Type": "PID",
+									"Count": 2907
+								}
+							],
+							"ChildID": [
+								"node_26999",
+								"node_27000"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0295182000",
+							"Name": "C07D295/182 - Radicals derived from carboxylic acids"
+						}
+					},
+					{
+						"ParentID": [
+							"node_26996"
+						],
+						"NodeID": "node_26997",
+						"Information": {
+							"HNID": 1478414,
+							"Description": [
+								"by radicals derived from carboxylic acids, or sulfur or nitrogen analogues thereof"
+							],
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 728677
+								},
+								{
+									"Type": "CID",
+									"Count": 396089
+								},
+								{
+									"Type": "PID",
+									"Count": 3689
+								}
+							],
+							"ChildID": [
+								"node_26998",
+								"node_27001",
+								"node_27002"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0295180000",
+							"Name": "C07D295/18 - by radicals derived from carboxylic acids, or sulfur or nitrogen analogues th..."
+						}
+					},
+					{
+						"ParentID": [
+							"node_26967"
+						],
+						"NodeID": "node_26996",
+						"Information": {
+							"HNID": 1478413,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 905980
+								},
+								{
+									"Type": "CID",
+									"Count": 499522
+								},
+								{
+									"Type": "PID",
+									"Count": 5169
+								}
+							],
+							"ChildID": [
+								"node_26997",
+								"node_27003"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0295160000",
+							"Name": "C07D295/16 - acylated on ring nitrogen atoms"
+						}
+					},
+					{
+						"ParentID": [
+							"node_26656"
+						],
+						"NodeID": "node_26967",
+						"Information": {
+							"HNID": 1460918,
+							"Description": [
+								"Heterocyclic compounds containing polymethylene-imine rings with at least five ring members, 3-azabicyclo [3.2.2] nonane, piperazine, morpholine or thiomorpholine rings, having only hydrogen atoms directly attached to the ring carbon atoms"
+							],
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 2232356
+								},
+								{
+									"Type": "CID",
+									"Count": 1190933
+								},
+								{
+									"Type": "PID",
+									"Count": 14917
+								}
+							],
+							"ChildID": [
+								"node_26968",
+								"node_26974",
+								"node_26996",
+								"node_27007"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0295000000",
+							"Name": "C07D295/00 - Heterocyclic compounds containing polymethylene-imine rings with at least fiv..."
+						}
+					},
+					{
+						"ParentID": [
+							"node_23350"
+						],
+						"NodeID": "node_26656",
+						"Information": {
+							"HNID": 1502411,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 25316485
+								},
+								{
+									"Type": "CID",
+									"Count": 12752501
+								},
+								{
+									"Type": "PID",
+									"Count": 245103
+								}
+							],
+							"ChildID": [
+								"node_27341",
+								"node_27351",
+								"node_27365",
+								"node_27375",
+								"node_27422",
+								"node_27473",
+								"node_27523",
+								"node_27964",
+								"node_27997",
+								"node_28011",
+								"node_28020",
+								"node_28035",
+								"node_28052",
+								"node_28057",
+								"node_28066",
+								"node_28068",
+								"node_28097",
+								"node_28150",
+								"node_28167",
+								"node_28186",
+								"node_28243",
+								"node_26657",
+								"node_26677",
+								"node_26681",
+								"node_26683",
+								"node_26696",
+								"node_26733",
+								"node_26742",
+								"node_26745",
+								"node_26753",
+								"node_26764",
+								"node_26798",
+								"node_26819",
+								"node_26831",
+								"node_26833",
+								"node_26843",
+								"node_26849",
+								"node_26854",
+								"node_26899",
+								"node_26918",
+								"node_26928",
+								"node_26930",
+								"node_26955",
+								"node_26960",
+								"node_26967",
+								"node_27013",
+								"node_27033",
+								"node_27062",
+								"node_27070",
+								"node_27135",
+								"node_27156",
+								"node_27205",
+								"node_27217",
+								"node_27254",
+								"node_27267",
+								"node_27274",
+								"node_27279",
+								"node_27286",
+								"node_27289",
+								"node_27330",
+								"node_27596",
+								"node_27605",
+								"node_27614",
+								"node_27622",
+								"node_27630",
+								"node_27638",
+								"node_27646",
+								"node_27654",
+								"node_27662",
+								"node_27671",
+								"node_27679",
+								"node_27687",
+								"node_27695",
+								"node_27703",
+								"node_27707",
+								"node_27713",
+								"node_27723",
+								"node_27735",
+								"node_27747",
+								"node_27768",
+								"node_27776",
+								"node_27790",
+								"node_27802",
+								"node_27810",
+								"node_27830",
+								"node_27842",
+								"node_27854",
+								"node_27866",
+								"node_27878",
+								"node_27930",
+								"node_28271",
+								"node_28283",
+								"node_28296",
+								"node_28301",
+								"node_28313",
+								"node_28325",
+								"node_28337",
+								"node_26752",
+								"node_27216",
+								"node_27278",
+								"node_27285",
+								"node_27610",
+								"node_27611",
+								"node_27612",
+								"node_27613",
+								"node_27670",
+								"node_27721",
+								"node_27722",
+								"node_28341"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D",
+							"Name": "C07D - HETEROCYCLIC COMPOUNDS"
+						}
+					},
+					{
+						"ParentID": [
+							"node_27431"
+						],
+						"NodeID": "node_27432",
+						"Information": {
+							"HNID": 1502503,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 153271
+								},
+								{
+									"Type": "CID",
+									"Count": 86350
+								},
+								{
+									"Type": "PID",
+									"Count": 1015
+								}
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0209200000",
+							"Name": "C07D209/20 - substituted additionally by nitrogen atoms, e.g. tryptophane",
+							"Match": true
+						}
+					},
+					{
+						"ParentID": [
+							"node_27427"
+						],
+						"NodeID": "node_27431",
+						"Information": {
+							"HNID": 1502502,
+							"Description": [
+								"Radicals substituted by carbon atoms having three bonds to hetero atoms with at the most one bond to halogen, e.g. ester or nitrile radicals"
+							],
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 414863
+								},
+								{
+									"Type": "CID",
+									"Count": 230156
+								},
+								{
+									"Type": "PID",
+									"Count": 2633
+								}
+							],
+							"ChildID": [
+								"node_27435",
+								"node_27432",
+								"node_27433",
+								"node_27434"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0209180000",
+							"Name": "C07D209/18 - Radicals substituted by carbon atoms having three bonds to hetero atoms with ..."
+						}
+					},
+					{
+						"ParentID": [
+							"node_27424"
+						],
+						"NodeID": "node_27427",
+						"Information": {
+							"HNID": 1502498,
+							"Description": [
+								"with substituted hydrocarbon radicals attached to carbon atoms of the hetero ring"
+							],
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 894465
+								},
+								{
+									"Type": "CID",
+									"Count": 477406
+								},
+								{
+									"Type": "PID",
+									"Count": 5462
+								}
+							],
+							"ChildID": [
+								"node_27429",
+								"node_27431",
+								"node_27428"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0209100000",
+							"Name": "C07D209/10 - with substituted hydrocarbon radicals attached to carbon atoms of the hetero ..."
+						}
+					},
+					{
+						"ParentID": [
+							"node_27423"
+						],
+						"NodeID": "node_27424",
+						"Information": {
+							"HNID": 1502495,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 1804633
+								},
+								{
+									"Type": "CID",
+									"Count": 947486
+								},
+								{
+									"Type": "PID",
+									"Count": 10460
+								}
+							],
+							"ChildID": [
+								"node_27427",
+								"node_27437",
+								"node_27425",
+								"node_27426",
+								"node_27444"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0209040000",
+							"Name": "C07D209/04 - Indoles; Hydrogenated indoles"
+						}
+					},
+					{
+						"ParentID": [
+							"node_27422"
+						],
+						"NodeID": "node_27423",
+						"Information": {
+							"HNID": 1502494,
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 2389724
+								},
+								{
+									"Type": "CID",
+									"Count": 1259057
+								},
+								{
+									"Type": "PID",
+									"Count": 15381
+								}
+							],
+							"ChildID": [
+								"node_27424",
+								"node_27445",
+								"node_27450",
+								"node_27451"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0209020000",
+							"Name": "C07D209/02 - condensed with one carbocyclic ring"
+						}
+					},
+					{
+						"ParentID": [
+							"node_26656"
+						],
+						"NodeID": "node_27422",
+						"Information": {
+							"HNID": 1502493,
+							"Description": [
+								"Heterocyclic compounds containing five-membered rings, condensed with other rings, with one nitrogen atom as the only ring hetero atom"
+							],
+							"Counts": [
+								{
+									"Type": "SID",
+									"Count": 2757868
+								},
+								{
+									"Type": "CID",
+									"Count": 1456952
+								},
+								{
+									"Type": "PID",
+									"Count": 18225
+								}
+							],
+							"ChildID": [
+								"node_27423",
+								"node_27452"
+							],
+							"URL": "http://web2.wipo.int/classifications/ipc/ipcpub/?notion=scheme&symbol=C07D0209000000",
+							"Name": "C07D209/00 - Heterocyclic compounds containing five-membered rings, condensed with other r..."
+						}
+					}
+				],
+				"SourceName": "WIPO",
+				"Information": {
+					"HNID": 1453532,
+					"Description": [
+						"The World Intellectual Property Organization (WIPO) International Patent Classification (IPC), established by the Strasbourg Agreement 1971, provides for a hierarchical system of language independent symbols for the classification of patents and utility models according to the different areas of technology to which they pertain."
+					],
+					"Counts": [
+						{
+							"Type": "SID",
+							"Count": 32935964
+						},
+						{
+							"Type": "CID",
+							"Count": 16780390
+						},
+						{
+							"Type": "PID",
+							"Count": 3021012
+						}
+					],
+					"ChildID": [
+						"node_17269",
+						"node_56317",
+						"node_35195",
+						"node_65448",
+						"node_47053",
+						"node_1",
+						"node_38682",
+						"node_32068"
+					],
+					"Comments": [
+						"The IPC divides technology into eight sections with approximately 70,000 subdivisions. Each subdivision has a symbol consisting of Arabic numerals and letters of the Latin alphabet. The appropriate IPC symbols are indicated on each patent document, of which more than 1,000,000 were issued each year in the last 10 years. The IPC symbols are allotted by the national or regional industrial property office that publishes the patent document.  For PCT documents, IPC symbols are allotted by the International Searching Authority (ISA). The Classification is indispensable for the retrieval of patent documents in the search for \"prior art.\" Such retrieval is needed by patent-issuing authorities, potential inventors, research and development units, and others concerned with the application or development of technology."
+					],
+					"HasCountsOfType": [
+						"SID",
+						"CID",
+						"PID"
+					],
+					"URL": "http://www.wipo.int/classifications/ipc/",
+					"Name": "International Patent Classification"
+				}
+			}
+		],
+		"MatchesTotal": 3,
+		"MatchesStart": 0,
+		"MatchesReturned": 3
+	}
+}
