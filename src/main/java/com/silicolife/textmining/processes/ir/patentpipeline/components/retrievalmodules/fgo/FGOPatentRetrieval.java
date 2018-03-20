@@ -48,18 +48,22 @@ public class FGOPatentRetrieval extends AIRPatentRetrieval{
 		}
 		return report;
 	}
-	
+
 	protected File getPDFAndUpdateReportUsingPatentID(String patentID,String saveDocDirectoty) throws ANoteException{
 		try {
 			FGOPatentDataObject fgoPatentDataObject = FGOParser.retrieveFullInformation(patentID);
-			String fullTextContent = fgoPatentDataObject.getTextContent();
-			if(fullTextContent!=null && !fullTextContent.isEmpty())
+			if(fgoPatentDataObject!=null)
 			{
-				String filepath = saveDocDirectoty + "/" + patentID + ".pdf";
-				FileHandling.createPDFFileWithText(filepath,fullTextContent);
-				return new File(filepath);
+				String fullTextContent = fgoPatentDataObject.getTextContent();
+				if(fullTextContent!=null && !fullTextContent.isEmpty())
+				{
+					String filepath = saveDocDirectoty + "/" + patentID + ".pdf";
+					FileHandling.createPDFFileWithText(filepath,fullTextContent);
+					return new File(filepath);
+				}
 			}
 		} catch (IOException | COSVisitorException | DocumentException e) {
+			System.out.println();
 		}
 		return null;
 	}

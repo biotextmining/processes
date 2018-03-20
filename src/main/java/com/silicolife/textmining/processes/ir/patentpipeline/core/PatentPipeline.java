@@ -338,7 +338,7 @@ public class PatentPipeline {
 		while(iterator.hasNext() && !stop)
 		{	
 			IIRPatentRetrieval patentRetrievalProcess = iterator.next();
-			IIRPatentRetrievalReport result = patentRetrievalProcess .retrievedPatents(patentsIDs);
+			IIRPatentRetrievalReport result = patentRetrievalProcess.retrievedPatents(patentsIDs);
 			retrievedPatents.addAll(result.getRetrievedPatents());
 			patentsIDs.removeAll(result.getRetrievedPatents());
 			notRetrievedPatents.removeAll(result.getRetrievedPatents());
