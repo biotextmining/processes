@@ -14,6 +14,7 @@ import com.silicolife.textmining.core.datastructures.documents.lables.Publicatio
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
@@ -22,7 +23,7 @@ import com.silicolife.textmining.processes.ir.pubchem.PubchemPatentParser;
 import com.silicolife.textmining.processes.ir.pubchem.PubchemPatentRetrievalAPI;
 
 public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
-	
+
 	public final static String pubchemProcessID = "pubchem.searchpatentmetainformation";
 	public final static String pubchemName= "PubChem Crawling";
 
@@ -37,16 +38,23 @@ public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformat
 		while(iterator.hasNext() && !stop)
 		{
 			String patentID = iterator.next();
-			PubchemPatentDataObject patentEntity = PubchemPatentParser.retrieveMetaInformation(patentID);
-			if(patentEntity!=null && !stop)
+			List<String> patentPossibilities = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+			for(String patentId:patentPossibilities)
 			{
-				IPublication publication = mapPatentIDPublication.get(patentID);
-				updatePublication(mapPatentIDPublication,publication, patentEntity);
+				PubchemPatentDataObject patentEntity = PubchemPatentParser.retrieveMetaInformation(patentId);
+				if(patentEntity!=null && !stop)
+				{
+					IPublication publication = mapPatentIDPublication.get(patentID);
+					updatePublication(mapPatentIDPublication,publication, patentEntity);
+					break;
+				}
 				PubchemPatentRetrievalAPI.delay(2);			
 			}
 		}		
 	}
-	
+
+
+
 	private void updatePublication(Map<String, IPublication> mapPatentIDPublication, IPublication publication,PubchemPatentDataObject patentEntity) {
 		if(publication.getTitle().isEmpty() && patentEntity.getTitle()!=null && !patentEntity.getTitle().isEmpty())
 			publication.setTitle(patentEntity.getTitle());
@@ -94,7 +102,7 @@ public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformat
 		}
 		publication.setNotes(notes);		
 	}
-	
+
 	private String convertListStringIntoString(Collection<String> in)
 	{
 		String out = new String();
@@ -114,7 +122,7 @@ public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformat
 
 	@Override
 	public void validate(IIRPatentMetaInformationRetrievalConfiguration configuration) throws WrongIRPatentMetaInformationRetrievalConfigurationException {
-		
+
 	}
 
 }

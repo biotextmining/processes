@@ -186,7 +186,6 @@ public class PubchemPatentParser {
 	}
 
 	private static List<String> getOwners(JSONObject patentbodyjson) {
-		System.out.println(patentbodyjson);
 		List<String> out = new ArrayList<>();
 		JSONObject getPatentApplicantsFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent Applicant");
 		if(getPatentApplicantsFieldRoot!=null)

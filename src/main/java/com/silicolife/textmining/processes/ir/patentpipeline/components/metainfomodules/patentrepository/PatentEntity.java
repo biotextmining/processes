@@ -9,6 +9,10 @@ public class PatentEntity {
 
 	private String	id;
 	
+	private String kind;
+	
+	private String patentStatus;
+	
 	private List<String> otherIds;
 	
 	private String	title;
@@ -116,6 +120,23 @@ public class PatentEntity {
 	public void setSources(List<String> sources) {
 		this.sources = sources;
 	}
+	
+	public String getKind() {
+		return kind;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	public String getPatentStatus() {
+		return patentStatus;
+	}
+
+	public void setPatentStatus(String patentStatus) {
+		this.patentStatus = patentStatus;
+	}
+
 
 	@Override
 	public String toString() {
