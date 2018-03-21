@@ -31,6 +31,8 @@ public class OPSSearchResultHandler implements ResponseHandler<Integer>{
 			Document doc = OPSUtils.createJDOMDocument(response);
 			NodeList nodeList = doc.getElementsByTagName("ops:biblio-search");
 			Node node = nodeList.item(0);	
+//			NodeList childnodeList = node.getChildNodes();
+//			System.out.println("CQL :" + childnodeList.item(0).getTextContent());
 			String resString = node.getAttributes().getNamedItem("total-result-count").getTextContent();
 			result = Integer.valueOf(resString);
 		} catch (ParserConfigurationException e) {

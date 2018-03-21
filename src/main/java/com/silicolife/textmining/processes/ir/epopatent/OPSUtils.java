@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -172,6 +174,7 @@ public class OPSUtils {
 		String linkEnds = "q="+query;
 		Integer result;
 		try {
+			System.out.println(searchURLGet + linkEnds);
 			result = client.get(searchURLGet + linkEnds, headers, new OPSSearchResultHandler());
 		} catch (ClientErrorException e) {
 			if(e.getMessage().startsWith("404"))
@@ -450,6 +453,11 @@ public class OPSUtils {
 		//		query = query.replaceAll("\\[", "%5B");
 		//		query = query.replaceAll("\\]", "%5D");
 		//		query = query.replaceAll("`", "%60");
+		try {
+			query=URLEncoder.encode(query,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return query;
 	}
 
@@ -505,6 +513,5 @@ public class OPSUtils {
 		excludePatentStartLetterSet.add("HRP");
 		excludePatentStartLetterSet.add("CZ");
 	}
-
 
 }
