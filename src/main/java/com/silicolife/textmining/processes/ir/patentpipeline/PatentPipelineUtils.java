@@ -43,6 +43,9 @@ public class PatentPipelineUtils {
 		if (!patentIDs.contains(newPatentID)){
 			patentIDs.add(newPatentID);
 		}
+		
+		String addZeroPatent = addZeroAfterInitialLetters(patentID);
+		patentIDs.add(addZeroPatent);
 
 		if(PatentPipelineUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
 			try {
@@ -79,6 +82,16 @@ public class PatentPipelineUtils {
 			patentIDs.add(newPatentID);
 		}
 		return new ArrayList<>(patentIDs);
+	}
+
+
+	public static String addZeroAfterInitialLetters(String patentID) {
+		String out = patentID;
+		if(patentID.length() > 2 && patentID.charAt(2) != '0')
+		{
+			out = patentID.substring(0, 2) + '0' + patentID.substring(2);
+		}
+		return out;
 	}
 
 
