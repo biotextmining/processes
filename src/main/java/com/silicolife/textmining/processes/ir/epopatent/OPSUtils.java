@@ -57,7 +57,8 @@ public class OPSUtils {
 
 	private static String version = "3.2";
 	private static String autenticationURL = "https://ops.epo.org/" + version + "/auth/accesstoken";
-	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio";
+//	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio";
+	private static String searchURLGet = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio?";
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
 	private static String generalURL = "http://ops.epo.org/" + version + "/rest-services/";
 	private static String publicationFamily = "http://ops.epo.org/" + version + "/rest-services/family/publication/epodoc/";
@@ -81,9 +82,9 @@ public class OPSUtils {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
-		String body = "q="+query;
+		String linkEnds = "q="+query;
 		try {
-			List<IPublication> pubs = client.post(searchURL,body, headers, new OPSSearchHandler());
+			List<IPublication> pubs = client.get(searchURLGet+linkEnds, headers, new OPSSearchHandler());
 			return pubs;
 		} catch (ClientErrorException e) {
 			if(e.getMessage().startsWith("404"))
@@ -150,9 +151,9 @@ public class OPSUtils {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
-		String body = "q="+query;
+		String linkEnds = "q="+query;
 		try {
-			Set<String> pubs = client.post(searchURL,body, headers, new OPSPatentIDSearchHandler());
+			Set<String> pubs = client.get(searchURLGet+linkEnds, headers, new OPSPatentIDSearchHandler());
 			return pubs;
 		} catch (ClientErrorException e) {
 			if(e.getMessage().startsWith("404"))
@@ -168,10 +169,10 @@ public class OPSUtils {
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
-		String body = "q="+query;
+		String linkEnds = "q="+query;
 		Integer result;
 		try {
-			result = client.post(searchURL,body, headers, new OPSSearchResultHandler());
+			result = client.get(searchURLGet + linkEnds, headers, new OPSSearchResultHandler());
 		} catch (ClientErrorException e) {
 			if(e.getMessage().startsWith("404"))
 			{
