@@ -101,28 +101,35 @@ public class PubchemPatentParser {
 
 	private static String getURL(JSONObject patentbodyjson) {
 		JSONObject getPatentURLFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent URL");
-		JSONArray getPatentURLInformationArray = getPatentURLFieldRoot.getJSONArray("Information");
-		JSONObject getPatentURLInformationObject = getPatentURLInformationArray.getJSONObject(0);
-		String url = getPatentURLInformationObject.getString("StringValue");
-		return url;
+		if(getPatentURLFieldRoot!=null)
+		{
+			JSONArray getPatentURLInformationArray = getPatentURLFieldRoot.getJSONArray("Information");
+			JSONObject getPatentURLInformationObject = getPatentURLInformationArray.getJSONObject(0);
+			String url = getPatentURLInformationObject.getString("StringValue");
+			return url;
+		}
+		return "";
 	}
 
 
 	private static Set<String> getClassification(JSONObject patentClassificationJson) {
 		Set<String> out = new HashSet<>();
 		JSONObject hierarchiesJSONObject = patentClassificationJson.getJSONObject("Hierarchies");
-		JSONArray hierarchyJSONArray = hierarchiesJSONObject.getJSONArray("Hierarchy");
-		JSONObject hierarchyJSONObject = hierarchyJSONArray.getJSONObject(0);
-		JSONArray nodesArray = hierarchyJSONObject.getJSONArray("Node");
-		for(int i=0;i<nodesArray.length();i++)
+		if(hierarchiesJSONObject!=null)
 		{
-			JSONObject nodeJsonObject = nodesArray.getJSONObject(i);
-			JSONObject informationJsonObject =  nodeJsonObject.getJSONObject("Information");
-			if(informationJsonObject.has("Match"))
+			JSONArray hierarchyJSONArray = hierarchiesJSONObject.getJSONArray("Hierarchy");
+			JSONObject hierarchyJSONObject = hierarchyJSONArray.getJSONObject(0);
+			JSONArray nodesArray = hierarchyJSONObject.getJSONArray("Node");
+			for(int i=0;i<nodesArray.length();i++)
 			{
-				String code = informationJsonObject.getString("Name");
-				code = code.substring(0,code.indexOf(" "));
-				out.add(code);
+				JSONObject nodeJsonObject = nodesArray.getJSONObject(i);
+				JSONObject informationJsonObject =  nodeJsonObject.getJSONObject("Information");
+				if(informationJsonObject.has("Match"))
+				{
+					String code = informationJsonObject.getString("Name");
+					code = code.substring(0,code.indexOf(" "));
+					out.add(code);
+				}
 			}
 		}
 		return out;
@@ -134,21 +141,31 @@ public class PubchemPatentParser {
 		JSONObject getPatentIdentifierSynonymsFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent Identifier Synonyms");
 		// Process Primary Identifier
 		JSONArray getPatentPrimaryIndentifierInformationArray = getPatentPrimaryIndentifierFieldRoot.getJSONArray("Information");
-		JSONObject getPatentPrimaryIndentifierInformationObject = getPatentPrimaryIndentifierInformationArray.getJSONObject(0);
-		String patentPrimaryIndentifierString = getPatentPrimaryIndentifierInformationObject.getString("StringValue");
-		patentPrimaryIndentifierString = PatentPipelineUtils.deleteSectionNumbers(patentPrimaryIndentifierString);
-		out.add(patentPrimaryIndentifierString);
-		// Process Patent Identifier Synonyms
-		JSONArray getPatentIdentifierSynonymsInformationArray = getPatentIdentifierSynonymsFieldRoot.getJSONArray("Information");
-		JSONObject getPatentIdentifierSynonymsInformationObject = getPatentIdentifierSynonymsInformationArray.getJSONObject(0);
-		JSONArray getPatentIdentifierSynonymsInformationIds = getPatentIdentifierSynonymsInformationObject.getJSONArray("StringValueList");
-		for(int i=0;i<getPatentIdentifierSynonymsInformationIds.length();i++)
+		if(getPatentPrimaryIndentifierInformationArray!=null)
 		{
-			String candidateId = getPatentIdentifierSynonymsInformationIds.getString(i);
-			if(!candidateId.contains("."))
+			JSONObject getPatentPrimaryIndentifierInformationObject = getPatentPrimaryIndentifierInformationArray.getJSONObject(0);
+			String patentPrimaryIndentifierString = getPatentPrimaryIndentifierInformationObject.getString("StringValue");
+			patentPrimaryIndentifierString = PatentPipelineUtils.deleteSectionNumbers(patentPrimaryIndentifierString);
+			out.add(patentPrimaryIndentifierString);
+			// Process Patent Identifier Synonyms
+			if(getPatentIdentifierSynonymsFieldRoot!=null)
 			{
-				candidateId = PatentPipelineUtils.deleteSectionNumbers(candidateId);
-				out.add(candidateId);
+				JSONArray getPatentIdentifierSynonymsInformationArray = getPatentIdentifierSynonymsFieldRoot.getJSONArray("Information");
+				JSONObject getPatentIdentifierSynonymsInformationObject = getPatentIdentifierSynonymsInformationArray.getJSONObject(0);
+				JSONArray getPatentIdentifierSynonymsInformationIds = getPatentIdentifierSynonymsInformationObject.getJSONArray("StringValueList");
+				for(int i=0;i<getPatentIdentifierSynonymsInformationIds.length();i++)
+				{
+					String candidateId = getPatentIdentifierSynonymsInformationIds.getString(i);
+					if(!candidateId.contains("."))
+					{
+						candidateId = PatentPipelineUtils.deleteSectionNumbers(candidateId);
+						out.add(candidateId);
+					}
+				}
+			}
+			else
+			{
+				System.out.println("ERR " +patentPrimaryIndentifierString);
 			}
 		}
 		return out;
@@ -156,10 +173,14 @@ public class PubchemPatentParser {
 
 	private static String getAbstract(JSONObject patentbodyjson) {
 		JSONObject getPatentAbstractFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent Abstract");
-		JSONArray getPatentAbstractInformationArray = getPatentAbstractFieldRoot.getJSONArray("Information");
-		JSONObject getPatentAbstractInformationObject = getPatentAbstractInformationArray.getJSONObject(0);
-		String abstractText = getPatentAbstractInformationObject.getString("StringValue");
-		return abstractText;
+		if(getPatentAbstractFieldRoot!=null)
+		{
+			JSONArray getPatentAbstractInformationArray = getPatentAbstractFieldRoot.getJSONArray("Information");
+			JSONObject getPatentAbstractInformationObject = getPatentAbstractInformationArray.getJSONObject(0);
+			String abstractText = getPatentAbstractInformationObject.getString("StringValue");
+			return abstractText;
+		}
+		return "";
 	}
 
 	private static Date getDate(JSONObject patentbodyjson) {
@@ -205,23 +226,30 @@ public class PubchemPatentParser {
 	private static List<String> getInventors(JSONObject patentbodyjson) {
 		List<String> out = new ArrayList<>();
 		JSONObject getPatentInventorsFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent Inventor");
-		JSONArray getPatentInventorsInformationArray = getPatentInventorsFieldRoot.getJSONArray("Information");
-		JSONObject getPatentInventorsInformationObject = getPatentInventorsInformationArray.getJSONObject(0);
-		JSONArray getPatentInventorsInformationNames = getPatentInventorsInformationObject.getJSONArray("StringValueList");
-		for(int i=0;i<getPatentInventorsInformationNames.length();i++)
+		if(getPatentInventorsFieldRoot!=null)
 		{
-			String inventor = getPatentInventorsInformationNames.getString(i);
-			out.add(inventor);
+			JSONArray getPatentInventorsInformationArray = getPatentInventorsFieldRoot.getJSONArray("Information");
+			JSONObject getPatentInventorsInformationObject = getPatentInventorsInformationArray.getJSONObject(0);
+			JSONArray getPatentInventorsInformationNames = getPatentInventorsInformationObject.getJSONArray("StringValueList");
+			for(int i=0;i<getPatentInventorsInformationNames.length();i++)
+			{
+				String inventor = getPatentInventorsInformationNames.getString(i);
+				out.add(inventor);
+			}
 		}
 		return out;
 	}
 
 	private static String getTitle(JSONObject patentbodyjson) {
 		JSONObject getPatentTitleFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent Title");
-		JSONArray getPatentTitleInformationArray = getPatentTitleFieldRoot.getJSONArray("Information");
-		JSONObject getPatentTitleInformationObject = getPatentTitleInformationArray.getJSONObject(0);
-		String title = getPatentTitleInformationObject.getString("StringValue");
-		return title;
+		if(getPatentTitleFieldRoot!=null)
+		{
+			JSONArray getPatentTitleInformationArray = getPatentTitleFieldRoot.getJSONArray("Information");
+			JSONObject getPatentTitleInformationObject = getPatentTitleInformationArray.getJSONObject(0);
+			String title = getPatentTitleInformationObject.getString("StringValue");
+			return title;
+		}
+		return "";
 	}
 
 }
