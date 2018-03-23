@@ -47,8 +47,6 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			while(iterator.hasNext() && !stop)
 			{
 				String patentID = iterator.next();
-				IPublication publication = mapPatentIDPublication.get(patentID);
-
 				long t2 = System.currentTimeMillis();
 				if(((float)(t2-t1)/1000)>=900){//15min
 					try {
