@@ -194,6 +194,13 @@ public class PatentPipeline {
 	public IIRPatentMetaInformationRetrievalReport executePatentRetrievalMetaInformationStep(Set<String> patentIds) throws ANoteException {
 		return this.executePatentRetrievalMetaInformationStep(patentIds,null);
 	}
+	
+	public IPublication executePatentRetrievalMetaInformationStep(String patentID) throws ANoteException
+	{
+		Set<String> patentIds = new HashSet<>();
+		IIRPatentMetaInformationRetrievalReport report = this.executePatentRetrievalMetaInformationStep(patentIds,null);
+		return report.getMapPatentIDPublication().get(patentID);
+	}
 
 	private IIRPatentMetaInformationRetrievalReport filterResults(Map<String, IPublication> mapPatentIDPublication,IIRPatentPipelineSearchConfiguration configuration)
 	{
