@@ -198,6 +198,7 @@ public class PatentPipeline {
 	public IPublication executePatentRetrievalMetaInformationStep(String patentID) throws ANoteException
 	{
 		Set<String> patentIds = new HashSet<>();
+		patentIds.add(patentID);
 		IIRPatentMetaInformationRetrievalReport report = this.executePatentRetrievalMetaInformationStep(patentIds,null);
 		return report.getMapPatentIDPublication().get(patentID);
 	}
