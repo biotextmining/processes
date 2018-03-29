@@ -69,6 +69,8 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 				if(items!=null)
 				{
 					items = r.getItems();
+					if(items==null)
+						throw new ANoteException("");
 					for(Items it:items){
 						out.add(it.getLink());
 					}
