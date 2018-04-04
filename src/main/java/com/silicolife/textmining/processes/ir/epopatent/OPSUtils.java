@@ -114,7 +114,7 @@ public class OPSUtils {
 	}
 
 
-	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
+	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID,boolean updateAbstarctWithClaimsAndDescription) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
@@ -125,7 +125,8 @@ public class OPSUtils {
 		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
 		// Try to add claims and description to abstract
 		if (!publiction.getNotes().startsWith("NF")){//STATUS - not found
-			updateAbstractwithDescritionandclaims(tokenaccess, publiction);
+			if(updateAbstarctWithClaimsAndDescription)
+				updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 		}
 		else{
 			publiction.setNotes(publiction.getNotes().substring(2, publiction.getNotes().length()));//return to the previous note state

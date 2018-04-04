@@ -64,7 +64,7 @@ public class OPSUtilsTest {
 		pub.setAuthors("");
 		System.out.println(pub.toString());
 		String patentID = pub.getPublicationExternalIDSource().get(0).getSourceInternalId();
-		OPSUtils.updatePatentMetaInformation(token, pub, patentID);
+		OPSUtils.updatePatentMetaInformation(token, pub, patentID,true);
 		System.out.println(pub.toString());
 	}
 	

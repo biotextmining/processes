@@ -5,5 +5,6 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 public interface IIROPSPatentMetaInformationRetrievalConfiguration extends IIRPatentMetaInformationRetrievalConfiguration{
 	
 	public String getAccessToken();
+	public boolean isAbstarctIncludeClaimsAndDescription();
 
 }

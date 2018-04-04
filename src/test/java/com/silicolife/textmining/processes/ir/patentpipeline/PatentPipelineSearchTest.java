@@ -82,7 +82,7 @@ public class PatentPipelineSearchTest {
 		IIRPatentMetaInformationRetrievalConfiguration configurationWIPO = new IRWIPOPatentMetaInformationRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, proxy );
 		IIRPatentMetainformationRetrievalSource wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
 		
-		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
+		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS,false);
 		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
 		
 		IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration configurationPatentRepository = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(proxy, patentRepositoryURL, patentRepositoryUser, patentRepositoryPassword);

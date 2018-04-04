@@ -25,9 +25,13 @@ public class PubchemPatentParser {
 		JSONObject patentbodyjson = new JSONObject(patentbody);
 		String hid = getClassificationHId(patentbodyjson);
 		String patentClassification = null;
+		JSONObject patentClassificationJson = null;
 		if(hid!=null)
+		{
 			patentClassification = PubchemPatentRetrievalAPI.getPatentClassificationJson(hid);
-		JSONObject patentClassificationJson = new JSONObject(patentClassification);
+			if(patentClassification!=null)
+				patentClassificationJson = new JSONObject(patentClassification);
+		}
 		PubchemPatentDataObject out = parseMetaInformation(patentID,patentbodyjson,patentClassificationJson);
 		return out;
 	}
@@ -35,22 +39,25 @@ public class PubchemPatentParser {
 
 	private static String getClassificationHId(JSONObject patentbodyjson) {
 		JSONObject getPatentInformationFieldRoot = getPatentInformationFieldRoot(patentbodyjson,"Patent Classification");
-		JSONArray sectionArrayClassification = getPatentInformationFieldRoot.getJSONArray("Section");
-		for(int j=0;j<getPatentInformationFieldRoot.length();j++)
+		if(getPatentInformationFieldRoot!=null)
 		{
-			JSONObject classificationSection = sectionArrayClassification.getJSONObject(j);
-			Object tocHeadingClassification = classificationSection.get("TOCHeading");
-			if(tocHeadingClassification.equals("WIPO IPC"))
+			JSONArray sectionArrayClassification = getPatentInformationFieldRoot.getJSONArray("Section");
+			for(int j=0;j<getPatentInformationFieldRoot.length();j++)
 			{
-				JSONArray classificationInformation = classificationSection.getJSONArray("Information");
-				for(int k=0;k<classificationInformation.length();k++)
+				JSONObject classificationSection = sectionArrayClassification.getJSONObject(j);
+				Object tocHeadingClassification = classificationSection.get("TOCHeading");
+				if(tocHeadingClassification.equals("WIPO IPC"))
 				{
-					JSONObject classificationInformationData = classificationInformation.getJSONObject(k);						
-					String hidName = classificationInformationData.getString("Name");
-					if(hidName.equals("HID"))
+					JSONArray classificationInformation = classificationSection.getJSONArray("Information");
+					for(int k=0;k<classificationInformation.length();k++)
 					{
-						int hid = classificationInformationData.getInt("NumValue");
-						return String.valueOf(hid);
+						JSONObject classificationInformationData = classificationInformation.getJSONObject(k);						
+						String hidName = classificationInformationData.getString("Name");
+						if(hidName.equals("HID"))
+						{
+							int hid = classificationInformationData.getInt("NumValue");
+							return String.valueOf(hid);
+						}
 					}
 				}
 			}
@@ -114,21 +121,24 @@ public class PubchemPatentParser {
 
 	private static Set<String> getClassification(JSONObject patentClassificationJson) {
 		Set<String> out = new HashSet<>();
-		JSONObject hierarchiesJSONObject = patentClassificationJson.getJSONObject("Hierarchies");
-		if(hierarchiesJSONObject!=null)
+		if(patentClassificationJson!=null)
 		{
-			JSONArray hierarchyJSONArray = hierarchiesJSONObject.getJSONArray("Hierarchy");
-			JSONObject hierarchyJSONObject = hierarchyJSONArray.getJSONObject(0);
-			JSONArray nodesArray = hierarchyJSONObject.getJSONArray("Node");
-			for(int i=0;i<nodesArray.length();i++)
+			JSONObject hierarchiesJSONObject = patentClassificationJson.getJSONObject("Hierarchies");
+			if(hierarchiesJSONObject!=null)
 			{
-				JSONObject nodeJsonObject = nodesArray.getJSONObject(i);
-				JSONObject informationJsonObject =  nodeJsonObject.getJSONObject("Information");
-				if(informationJsonObject.has("Match"))
+				JSONArray hierarchyJSONArray = hierarchiesJSONObject.getJSONArray("Hierarchy");
+				JSONObject hierarchyJSONObject = hierarchyJSONArray.getJSONObject(0);
+				JSONArray nodesArray = hierarchyJSONObject.getJSONArray("Node");
+				for(int i=0;i<nodesArray.length();i++)
 				{
-					String code = informationJsonObject.getString("Name");
-					code = code.substring(0,code.indexOf(" "));
-					out.add(code);
+					JSONObject nodeJsonObject = nodesArray.getJSONObject(i);
+					JSONObject informationJsonObject =  nodeJsonObject.getJSONObject("Information");
+					if(informationJsonObject.has("Match"))
+					{
+						String code = informationJsonObject.getString("Name");
+						code = code.substring(0,code.indexOf(" "));
+						out.add(code);
+					}
 				}
 			}
 		}

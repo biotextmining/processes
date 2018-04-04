@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
-import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
@@ -39,7 +37,9 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
 		long t1 = System.currentTimeMillis();
-		String autentication = Utils.get64Base(((IIROPSPatentMetaInformationRetrievalConfiguration)getConfiguration()).getAccessToken());
+		IIROPSPatentMetaInformationRetrievalConfiguration configuration = (IIROPSPatentMetaInformationRetrievalConfiguration) getConfiguration();
+		String autentication = Utils.get64Base(configuration.getAccessToken());
+		boolean updateAbstarctWitClaimsAndDescription = configuration.isAbstarctIncludeClaimsAndDescription();
 		String tokenaccess;
 		try {
 			tokenaccess = OPSUtils.postAuth(autentication);
@@ -63,7 +63,7 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 //				{
 //					possiblePatentIDs.addAll(PatentPipelineUtils.createPatentIDPossibilities(patentIDAlternative));
 //				}
-				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
+				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID,possiblePatentIDs, updateAbstarctWitClaimsAndDescription);
 			}
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e1) {
@@ -84,10 +84,10 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 
 
 	private boolean searchInAllPatents(Map<String, IPublication> mapPatentIDPublication, String tokenaccess,
-			String patentID, List<String> possiblePatentIDs) {
+			String patentID, List<String> possiblePatentIDs,boolean updateAbstractWithClaimsAndDescription) {
 		boolean informationdownloaded =false;
 		for (String id:possiblePatentIDs){
-			informationdownloaded = tryUpdatePatentMetaInformation(mapPatentIDPublication, patentID, id, tokenaccess);
+			informationdownloaded = tryUpdatePatentMetaInformation(mapPatentIDPublication, patentID, id, tokenaccess,updateAbstractWithClaimsAndDescription);
 			if (informationdownloaded){
 				return true;
 			}
@@ -108,11 +108,11 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		}
 	}
 
-	private boolean tryUpdatePatentMetaInformation(Map<String, IPublication> mapPatentIDPublication, String patentIDOriginal, String patentIDModified, String tokenaccess){
+	private boolean tryUpdatePatentMetaInformation(Map<String, IPublication> mapPatentIDPublication, String patentIDOriginal, String patentIDModified, String tokenaccess, boolean updateAbstractWithClaimsAndDescription){
 		IPublication publiction = mapPatentIDPublication.get(patentIDOriginal);
 		try {
 			OPSUtils.getPatentFamily(tokenaccess, publiction, patentIDModified);
-			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified);
+			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified,updateAbstractWithClaimsAndDescription);
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e) {
 			return false;

@@ -15,11 +15,12 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class EPOReaderTest {
 	
+	private static String accessTokenEPO = "LLCAsGwQHRQAi9sKU3L83tMcKszoVnhi:q9sxdjCvGbLDsWrc";
 
+	
 	@Test
 	public void test() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
 		IPublication publiction = new PublicationImpl();
-		String accessTokenEPO = "LLCAsGwQHRQAi9sKU3L83tMcKszoVnhi:q9sxdjCvGbLDsWrc";
 		String autentication = Utils.get64Base(accessTokenEPO);
 		String tokenaccess = null;
 		try {
@@ -28,8 +29,8 @@ public class EPOReaderTest {
 				| ResponseHandlingException e) {
 			tokenaccess = null;
 		}
-		String patentID = "CN205586194U";
-		OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentID);
+		String patentID = "EP2746277";
+		OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentID,false);
 		System.out.println(publiction.getTitle());
 		System.out.println(publiction.getAuthors());
 		System.out.println(publiction.getAbstractSection());

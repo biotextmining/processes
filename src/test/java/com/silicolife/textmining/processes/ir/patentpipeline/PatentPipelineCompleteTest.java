@@ -87,7 +87,7 @@ public class PatentPipelineCompleteTest {
 		IIRPatentMetainformationRetrievalSource wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
 		patentPipeline.addPatentsMetaInformationRetrieval(wipoMetaInformationRetrieval);
 		
-		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
+		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS,false);
 		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
 		patentPipeline.addPatentsMetaInformationRetrieval(opsMetaInformationretrieval);
 		

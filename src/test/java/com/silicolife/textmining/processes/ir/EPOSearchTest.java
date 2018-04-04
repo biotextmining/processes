@@ -30,8 +30,8 @@ public class EPOSearchTest {
 				| ResponseHandlingException e) {
 			tokenaccess = null;
 		}
-		String patentID = "	CN105079057";
-		OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentID);
+		String patentID = "	EP2746277";
+		OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentID,true);
 		System.out.println(publiction.getTitle());
 		System.out.println(publiction.getAuthors());
 		System.out.println(publiction.getAbstractSection());

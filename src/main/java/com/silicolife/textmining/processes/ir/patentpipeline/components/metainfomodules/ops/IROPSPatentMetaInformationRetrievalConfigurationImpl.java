@@ -7,14 +7,26 @@ public class IROPSPatentMetaInformationRetrievalConfigurationImpl extends IRPate
 	
 	private String accessToken;
 	
-	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken) {
+	private boolean isAbstarctIncludeClaimsAndDescription;
+	
+	
+	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken,boolean isAbstarctIncludeClaimsAndDescription) {
 		super(proxy);
 		this.accessToken=accessToken;
+		this.isAbstarctIncludeClaimsAndDescription = isAbstarctIncludeClaimsAndDescription;
+	}
+	
+	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken) {
+		this(proxy, accessToken, false);
 	}
 
 	@Override
 	public String getAccessToken() {
 		return accessToken;
+	}
+
+	public boolean isAbstarctIncludeClaimsAndDescription() {
+		return isAbstarctIncludeClaimsAndDescription;
 	}
 
 }
