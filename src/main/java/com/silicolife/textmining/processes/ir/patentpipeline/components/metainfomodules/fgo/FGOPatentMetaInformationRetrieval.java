@@ -26,12 +26,18 @@ public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	public final static String fgoProcessID = "fgo.searchpatentmetainformation";
 	public final static String fgoName= "FGO Crawling";
 	
-	private int delayseconds = 2;
+	private int delaysecondsBetweenStepsSeconds = 2;
 
 
 	public FGOPatentMetaInformationRetrieval()
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
 		super(null);
+	}
+	
+	public FGOPatentMetaInformationRetrieval(int delaysecondsBetweenStepsSeconds)
+			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
+		super(null);
+		this.delaysecondsBetweenStepsSeconds=delaysecondsBetweenStepsSeconds;
 	}
 
 	@Override
@@ -45,7 +51,7 @@ public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			{
 				IPublication publication = mapPatentIDPublication.get(patentID);
 				updatePublication(mapPatentIDPublication,publication, patentEntity);
-				FGOAPI.delay(delayseconds);
+				FGOAPI.delay(delaysecondsBetweenStepsSeconds);
 			}
 		}
 	}
