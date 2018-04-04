@@ -8,7 +8,6 @@ import java.util.Random;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
-import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
@@ -29,6 +28,10 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	private final static int minWaitTime=100;
 	private final static int maxWaitTime=800;
 
+	private Long lastTimeThatGetAutentication;
+
+	private String tokenaccess;
+
 	public OPSPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
 		super(configuration);
@@ -36,38 +39,38 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
-		long t1 = System.currentTimeMillis();
 		IIROPSPatentMetaInformationRetrievalConfiguration configuration = (IIROPSPatentMetaInformationRetrievalConfiguration) getConfiguration();
-		String autentication = Utils.get64Base(configuration.getAccessToken());
 		boolean updateAbstarctWitClaimsAndDescription = configuration.isAbstarctIncludeClaimsAndDescription();
-		String tokenaccess;
-		try {
-			tokenaccess = OPSUtils.postAuth(autentication);
-			Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
-			while(iterator.hasNext() && !stop)
-			{
-				String patentID = iterator.next();
-				long t2 = System.currentTimeMillis();
-				if(((float)(t2-t1)/1000)>=900){//15min
-					try {
-						Thread.sleep(5000);
-						tokenaccess=OPSUtils.loginOPS(autentication);
-						t1=System.currentTimeMillis();
-					} catch (InterruptedException e) {
-						throw new ANoteException(e);
-					}
-				}
+		testIfautenticationIFneeded();
+		Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+		while(iterator.hasNext() && !stop)
+		{
+			testIfautenticationIFneeded();
+			String patentID = iterator.next();
+			if(configuration.isWaitingTimeBetweenSteps())
 				waitARandomTime();
-				List<String> possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
-//				for(String patentIDAlternative :PublicationImpl.getPublicationExternalIDSetForSource(publication, PublicationSourcesDefaultEnum.patent.toString()))
-//				{
-//					possiblePatentIDs.addAll(PatentPipelineUtils.createPatentIDPossibilities(patentIDAlternative));
-//				}
-				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID,possiblePatentIDs, updateAbstarctWitClaimsAndDescription);
+			List<String> possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+			searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID,possiblePatentIDs, updateAbstarctWitClaimsAndDescription);
+		}
+	}
+
+	public void testIfautenticationIFneeded() throws ANoteException
+	{
+		IIROPSPatentMetaInformationRetrievalConfiguration configuration = (IIROPSPatentMetaInformationRetrievalConfiguration) getConfiguration();
+		if(lastTimeThatGetAutentication==null)
+		{
+			lastTimeThatGetAutentication = System.currentTimeMillis();
+		}
+		long nowTime = System.currentTimeMillis();
+		if(((float)(nowTime-lastTimeThatGetAutentication)/1000)>=900){//15min
+			try {
+				Thread.sleep(2000);
+				String autentication = Utils.get64Base(configuration.getAccessToken());
+				tokenaccess=OPSUtils.loginOPS(autentication);
+				lastTimeThatGetAutentication=System.currentTimeMillis();
+			} catch (InterruptedException e) {
+				throw new ANoteException(e);
 			}
-		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
-				| ResponseHandlingException e1) {
-			throw new ANoteException(new InternetConnectionProblemException(e1));
 		}
 	}
 

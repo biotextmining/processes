@@ -6,5 +6,6 @@ public interface IIROPSPatentMetaInformationRetrievalConfiguration extends IIRPa
 	
 	public String getAccessToken();
 	public boolean isAbstarctIncludeClaimsAndDescription();
+	public boolean isWaitingTimeBetweenSteps();
 
 }
