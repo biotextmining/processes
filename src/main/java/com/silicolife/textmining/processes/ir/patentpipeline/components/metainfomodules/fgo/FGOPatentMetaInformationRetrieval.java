@@ -25,7 +25,7 @@ public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	
 	public final static String fgoProcessID = "fgo.searchpatentmetainformation";
 	public final static String fgoName= "FGO Crawling";
-	
+		
 	private int delaysecondsBetweenStepsSeconds = 2;
 
 
@@ -77,6 +77,7 @@ public class FGOPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 			cal.setTime(patentEntity.getDate());
 			int year = cal.get(Calendar.YEAR);
 			publication.setYeardate(String.valueOf(year));
+			publication.setFullDate(FGOParser.dt.format(patentEntity.getDate()));
 		}
 		if(publication.getExternalLink().isEmpty() && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
 			publication.setExternalLink(patentEntity.getLink());

@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.pubchem;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -26,10 +27,21 @@ public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformat
 
 	public final static String pubchemProcessID = "pubchem.searchpatentmetainformation";
 	public final static String pubchemName= "PubChem Crawling";
+	
+	public static SimpleDateFormat dt = new SimpleDateFormat("yyyyy-MM-dd"); 
+
+	
+	public int delayTimeBetweenSteps = 2;
 
 	public PubchemPatentMetaInformationRetrieval()
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
 		super(null);
+	}
+	
+	public PubchemPatentMetaInformationRetrieval(int delayTimeBetweenSteps)
+			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
+		super(null);
+		this.delayTimeBetweenSteps = delayTimeBetweenSteps;
 	}
 
 	@Override
@@ -48,7 +60,7 @@ public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformat
 					updatePublication(mapPatentIDPublication,publication, patentEntity);
 					break;
 				}
-				PubchemPatentRetrievalAPI.delay(2);			
+				PubchemPatentRetrievalAPI.delay(delayTimeBetweenSteps);			
 			}
 		}		
 	}
@@ -74,6 +86,7 @@ public class PubchemPatentMetaInformationRetrieval extends AIRPatentMetaInformat
 			cal.setTime(patentEntity.getDate());
 			int year = cal.get(Calendar.YEAR);
 			publication.setYeardate(String.valueOf(year));
+			publication.setFullDate(dt.format(patentEntity.getDate()));
 		}
 		if(publication.getExternalLink().isEmpty() && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
 			publication.setExternalLink(patentEntity.getLink());

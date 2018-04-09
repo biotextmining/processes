@@ -1,6 +1,7 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -24,6 +25,9 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 	
 	public final static String patentrepositoryName = "Patent Repository from SilicoLife and CEB (UMinho)";
 	public final static String patentrepositoryProcessID = "patentrepository.searchpatentmetainformation";
+	
+	public static SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd"); 
+
 
 	public PatentRepositoryPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -103,6 +107,7 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			cal.setTime(patentEntity.getDate());
 			int year = cal.get(Calendar.YEAR);
 			publication.setYeardate(String.valueOf(year));
+			publication.setFullDate(dt.format(patentEntity.getDate()));
 		}
 		if((publication.getExternalLink() == null ||publication.getExternalLink().isEmpty()) && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
 			publication.setExternalLink(patentEntity.getLink());
