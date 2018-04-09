@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
 
 public class FGOParser {
 
-	private static SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd"); 
+	public static SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd"); 
 	private static Set<String> removeSourceOtherPatentIds;
 	private static String link = "https://www.google.com/patents/";
 
@@ -170,9 +170,20 @@ public class FGOParser {
 		{
 			out.add(nodeMeta.text().trim());
 		}
+//		if(out.isEmpty())
+//			out = getClassificationFromStyleScope(document);
 		return out;
 	}
-
+	
+//	private static Set<String> getClassificationFromStyleScope(Document document) {
+//		Set<String> out = new HashSet<>();
+//		Elements nodesMeta = document.select("a[id='style-scope state-modifier']");
+//		for(Element nodeMeta:nodesMeta)
+//		{
+//			out.add(nodeMeta.text().trim());
+//		}
+//		return out;
+//	}
 	private static List<String> getPatentOtherIds(Document document) {
 		List<String> out = new ArrayList<>();
 		Elements nodesMeta = document.select("span*[class=patent-bibdata-value] > a[href^=/patents/]");
@@ -216,7 +227,8 @@ public class FGOParser {
 			try {
 
 				String dateStr = elementMeta.attr("content");
-				if(elementMeta.attr("scheme").isEmpty())
+				String scheme = elementMeta.attr("scheme");
+				if(scheme!=null && !scheme.isEmpty() && scheme.equals("dateSubmitted"))
 				{
 					date = dt.parse(dateStr);
 					return date;
