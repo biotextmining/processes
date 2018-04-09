@@ -59,19 +59,27 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		IIROPSPatentMetaInformationRetrievalConfiguration configuration = (IIROPSPatentMetaInformationRetrievalConfiguration) getConfiguration();
 		if(lastTimeThatGetAutentication==null)
 		{
+			getLogInToken(configuration);
 			lastTimeThatGetAutentication = System.currentTimeMillis();
 		}
-		long nowTime = System.currentTimeMillis();
-		if(((float)(nowTime-lastTimeThatGetAutentication)/1000)>=900){//15min
-			try {
-				Thread.sleep(2000);
-				String autentication = Utils.get64Base(configuration.getAccessToken());
-				tokenaccess=OPSUtils.loginOPS(autentication);
-				lastTimeThatGetAutentication=System.currentTimeMillis();
-			} catch (InterruptedException e) {
-				throw new ANoteException(e);
+		else
+		{
+			long nowTime = System.currentTimeMillis();
+			if(((float)(nowTime-lastTimeThatGetAutentication)/1000)>=900){//15min
+				try {
+					Thread.sleep(2000);
+					getLogInToken(configuration);
+					lastTimeThatGetAutentication=System.currentTimeMillis();
+				} catch (InterruptedException e) {
+					throw new ANoteException(e);
+				}
 			}
 		}
+	}
+
+	private void getLogInToken(IIROPSPatentMetaInformationRetrievalConfiguration configuration) {
+		String autentication = Utils.get64Base(configuration.getAccessToken());
+		tokenaccess=OPSUtils.loginOPS(autentication);
 	}
 
 

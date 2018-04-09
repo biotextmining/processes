@@ -91,6 +91,8 @@ public class OPSPatentUpdateHandler implements ResponseHandler<Boolean>{
 		String date = OPSSearchHandler.getDate(item);
 		if(publication.getYeardate().isEmpty())
 			publication.setYeardate(date);
+		if(publication.getFulldate().isEmpty())
+			publication.setFullDate(date);
 		String abstractSection = OPSSearchHandler.getAbstract(item);
 		abstractSection = NormalizationForm.removeOffsetProblemSituation(abstractSection);
 		if(publication.getAbstractSection().isEmpty())

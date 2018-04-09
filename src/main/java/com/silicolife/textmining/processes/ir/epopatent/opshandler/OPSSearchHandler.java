@@ -180,7 +180,10 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 				for(int j=0;j<classificationsipcrChilds.getLength();j++)
 				{
 					Node classificationsipcrChild = classificationsipcrChilds.item(j);
-					out.add(classificationsipcrChild.getTextContent().trim());
+					String classification = classificationsipcrChild.getTextContent().trim();
+					if(classification.endsWith("A I"))
+						classification = classification.substring(0,classification.length()-3);
+					out.add(classification);
 				}
 			}	
 		}
@@ -300,7 +303,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 							String inventorType = inventor.getAttributes().getNamedItem("data-format").getNodeValue();
 							if(inventorType.equals("epodoc"))
 							{
-								authors = authors + inventor.getTextContent() + ", ";
+								authors = authors + inventor.getTextContent().trim() + ", ";
 							}
 						}
 						if(authors.isEmpty())
