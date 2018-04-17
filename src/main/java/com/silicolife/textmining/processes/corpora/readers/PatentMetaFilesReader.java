@@ -32,7 +32,7 @@ public class PatentMetaFilesReader {
 	public List<IPublication> getPatent(InputStream inStream,File metFileName) throws ANoteException{
 		try {
 			List<IPublication> out = new ArrayList<>();
-			IPublication pub = PublicaitonMetaInfomration(inStream);
+			IPublication pub = getPublicaitonMetaInfomration(inStream);
 			String fulltextFilepath = metFileName.getParentFile().getAbsolutePath() + "/" + FilenameUtils.removeExtension(metFileName.getName())+ ".txt";
 			File fulltextFilepathFile = new File(fulltextFilepath);
 			String fullTextContent = FileHandling.getFileContent(fulltextFilepathFile);
@@ -45,7 +45,7 @@ public class PatentMetaFilesReader {
 		}
 	}
 
-	private IPublication PublicaitonMetaInfomration(InputStream inStream) throws IOException {
+	private IPublication getPublicaitonMetaInfomration(InputStream inStream) throws IOException {
 		Properties prop = new Properties();
 		prop.load(inStream);
 		String patentUsptoID = prop.getProperty("PatentID");
