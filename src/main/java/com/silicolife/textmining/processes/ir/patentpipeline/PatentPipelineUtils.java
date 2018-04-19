@@ -176,11 +176,11 @@ public class PatentPipelineUtils {
 	public static String deleteSectionNumbers(String patentID){
 		String newPatentID = patentID;
 		try{
-			if(patentID.matches(".*[A-Z]{1}")){
+			if(patentID.matches(".*[A-Z]{1}$")){
 				newPatentID=patentID.substring(0, patentID.length()-1);
 			}
 			else{
-				if(patentID.matches(".*[A-Z]{1}[1-9]{1}")){
+				if(patentID.matches(".*[A-Z]{1}[1-9]{1}$")){
 					newPatentID=patentID.substring(0,patentID.length()-2);
 				}
 			}

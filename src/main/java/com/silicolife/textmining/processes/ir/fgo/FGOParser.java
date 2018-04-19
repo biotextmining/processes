@@ -14,6 +14,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
+
 public class FGOParser {
 
 	public static SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd"); 
@@ -190,6 +192,7 @@ public class FGOParser {
 		for(Element elementMeta:nodesMeta)
 		{
 			String cadidatePatentId = elementMeta.text();
+			cadidatePatentId = PatentPipelineUtils.deleteSectionNumbers(cadidatePatentId);
 			if(!getRemovedSourceOtherIds().contains(cadidatePatentId))
 			{
 				out.add(cadidatePatentId);

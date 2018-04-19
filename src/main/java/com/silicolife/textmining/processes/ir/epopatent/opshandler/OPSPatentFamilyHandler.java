@@ -19,6 +19,7 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationSource
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.utils.http.ResponseHandler;
 import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
@@ -56,8 +57,8 @@ public class OPSPatentFamilyHandler implements ResponseHandler<String>{
 
 	
 	private void updatePublication(Node item){
-		Set<String> patentFamilySet = getSetEpoDoc(item);
-		if (patentFamilySet.size()>0){
+		Set<String> patentFamilySet = getPatentFamilyIds(item);
+		if (!patentFamilySet.isEmpty()){
 			for (String patentID:patentFamilySet){
 				if (!verifyExternalIDSource(patentID)){
 					IPublicationExternalSourceLink e = new PublicationExternalSourceLinkImpl(patentID, PublicationSourcesDefaultEnum.patent.name());
@@ -79,7 +80,7 @@ public class OPSPatentFamilyHandler implements ResponseHandler<String>{
 	}
 
 
-	private Set<String> getSetEpoDoc(Node item) {
+	private Set<String> getPatentFamilyIds(Node item) {
 		Set<String> epoDocList = new HashSet<>();
 		NodeList patentData = item.getChildNodes();
 
@@ -109,7 +110,9 @@ public class OPSPatentFamilyHandler implements ResponseHandler<String>{
 
 									if(documentidChild.getNodeName().equals("doc-number"))
 									{
-										epoDocList.add(documentidChild.getTextContent());
+										String candidatePatentID = documentidChild.getTextContent();
+										candidatePatentID = PatentPipelineUtils.deleteSectionNumbers(candidatePatentID);
+										epoDocList.add(candidatePatentID);
 									}
 								}
 							}
