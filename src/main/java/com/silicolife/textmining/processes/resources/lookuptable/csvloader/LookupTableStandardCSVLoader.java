@@ -16,7 +16,7 @@ import com.silicolife.textmining.core.datastructures.general.SourceImpl;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
 import com.silicolife.textmining.core.datastructures.report.resources.ResourceUpdateReportImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryLoaderHelp;
-import com.silicolife.textmining.core.datastructures.resources.lookuptable.loader.csvstandard.ColumnNames;
+import com.silicolife.textmining.core.datastructures.resources.export.ResourceExportColumnEnum;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.generic.CSVFileConfigurations;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -126,20 +126,20 @@ public class LookupTableStandardCSVLoader extends DictionaryLoaderHelp implement
 	}
 	
 	private List<IExternalID> getExternalIds(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		if(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.externalID)==null)
+		if(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString())==null)
 		{
 			return new ArrayList<IExternalID>();
 		}
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.externalID).getColumnNumber()];
-		if(value.equals(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.externalID).getDefaultValue().getValue()))
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getColumnNumber()];
+		if(value.equals(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getDefaultValue().getValue()))
 		{
 			return new ArrayList<IExternalID>();
 		}
-		String[] extIDs = value.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.externalID).getDelimiter().getValue());
+		String[] extIDs = value.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getDelimiter().getValue());
 		List<IExternalID> listExtID = new ArrayList<IExternalID>();
 		for(String extID:extIDs)
 		{
-			String[] ex = extID.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.externalID).getSubDelimiter().getValue());
+			String[] ex = extID.split(csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.externalID.toString()).getSubDelimiter().getValue());
 			if(ex.length>1)
 			{
 				String id = ex[0].replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
@@ -151,13 +151,13 @@ public class LookupTableStandardCSVLoader extends DictionaryLoaderHelp implement
 	}
 	
 	private String getClass(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.classe).getColumnNumber()];
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.classe.toString()).getColumnNumber()];
 		value = value.replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
 		return value;
 	}
 
 	protected String getTerm(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.term).getColumnNumber()];
+		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ResourceExportColumnEnum.term.toString()).getColumnNumber()];
 		if(value!=null)
 			value = value.replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
 		return value;
