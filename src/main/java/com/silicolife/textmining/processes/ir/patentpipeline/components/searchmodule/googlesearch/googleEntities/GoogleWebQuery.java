@@ -25,6 +25,7 @@ public class GoogleWebQuery {
 	private String APIKey;
 	private String customSearchEngineID;
 	private HashMap<String,String>extraParams;
+	private int timeout = 20000;
 
 	/**
 	 * Create a GoogleSearch with the specified api and cx
@@ -113,6 +114,8 @@ public class GoogleWebQuery {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
+			conn.setReadTimeout(timeout );
+			conn.setConnectTimeout(timeout);
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					(conn.getInputStream())));
 			GoogleResults results = new Gson().fromJson(br, GoogleResults.class);

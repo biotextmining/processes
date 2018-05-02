@@ -20,6 +20,7 @@ public class FGOAPI {
 
 	private final static boolean _AddSynonymsToQuery = true;
 	private final static boolean _UseGoogleCustomSearchAPI = false;
+	private static int timeout = 20000;
 
 	public static String getPatentTextHTML(String patentID){
 		try {
@@ -117,6 +118,9 @@ public class FGOAPI {
 
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("User-Agent", USER_AGENT);
+		conn.setConnectTimeout(timeout );
+		conn.setReadTimeout(timeout);
+
 		int respCode = conn.getResponseCode();
 
 		if (respCode != 200) {
@@ -152,6 +156,8 @@ public class FGOAPI {
 		conn.setRequestProperty("User-Agent", USER_AGENT);
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+		conn.setConnectTimeout(timeout );
+		conn.setReadTimeout(timeout);
 		conn.setDoOutput(true);
 
 		conn.getOutputStream().write(postDataBytes);

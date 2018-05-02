@@ -14,6 +14,9 @@ import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfo
 
 public class PatentRepositoryAPI {
 	
+	private static int timeout = 60000;
+
+	
 	public static Set<String> getPatentIdsGivenTextQuery(String url,String query) throws MalformedURLException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		URL u = new URL(url + "/search/patentkeywords/");
@@ -23,6 +26,8 @@ public class PatentRepositoryAPI {
 		String type = "application/json";
 		conn.setRequestProperty( "Content-Type", type );
 		conn.setRequestProperty( "Content-Length", String.valueOf(query.length()));
+		conn.setConnectTimeout(timeout);
+		conn.setReadTimeout(timeout);
 		OutputStream os = conn.getOutputStream();
 		os.write(query.getBytes());
 		@SuppressWarnings("unchecked")
@@ -33,8 +38,15 @@ public class PatentRepositoryAPI {
 	public static PatentEntity getPatentMetaInformationByID(String url,String patentID) throws MalformedURLException, IOException
 	{
 		String urlGetPatentInformation = url + "/patent/metainformation/" + patentID;
-		InputStream imputstream = new URL(urlGetPatentInformation).openStream();
-		ObjectMapper objectMapper = new ObjectMapper();
+		URL urlURL = new URL(urlGetPatentInformation);
+		HttpURLConnection huc = (HttpURLConnection) urlURL.openConnection();
+	    HttpURLConnection.setFollowRedirects(false);
+	    huc.setConnectTimeout(timeout);
+	    huc.setReadTimeout(timeout);
+	    huc.setRequestMethod("GET");
+	    huc.connect();
+	    InputStream imputstream = huc.getInputStream();
+	    ObjectMapper objectMapper = new ObjectMapper();
 		PatentEntity result = objectMapper.readValue(imputstream,PatentEntity.class);
 		return result;
 	}
@@ -42,7 +54,14 @@ public class PatentRepositoryAPI {
 	public static String getPatentFullText(String url,String patentID) throws MalformedURLException, IOException
 	{
 		String urlGetPatentFullText = url + "/patent/fulltext/" + patentID;
-		InputStream imputstream = new URL(urlGetPatentFullText).openStream();
+		URL urlURL = new URL(urlGetPatentFullText);
+		HttpURLConnection huc = (HttpURLConnection) urlURL.openConnection();
+	    HttpURLConnection.setFollowRedirects(false);
+	    huc.setConnectTimeout(timeout);
+	    huc.setReadTimeout(timeout);
+	    huc.setRequestMethod("GET");
+	    huc.connect();
+	    InputStream imputstream = huc.getInputStream();
 		String result = FileHandling.convertImputStream(imputstream);
 		return result;
 	}

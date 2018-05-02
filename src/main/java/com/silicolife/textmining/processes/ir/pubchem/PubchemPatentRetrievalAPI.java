@@ -11,7 +11,8 @@ public class PubchemPatentRetrievalAPI {
 	private static String generalPatentJsonLink = "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/patent/";
 	private static String classificationPatentJsonLink = "https://pubchem.ncbi.nlm.nih.gov/classification/cgi/classifications.fcgi?format=json&hid=";
 	private static String classificationPatentJsonLinkEnd = "&search_uid=89960&search_uid_type=pid&search_max=10&search_type=tree&search_start=0";
-
+	private static int timeout = 20000;
+	
 
 	public static String getPatentJson(String patentID){
 		try {
@@ -37,6 +38,8 @@ public class PubchemPatentRetrievalAPI {
 
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("User-Agent", USER_AGENT);
+		conn.setConnectTimeout(timeout );
+		conn.setReadTimeout(timeout);
 		int respCode = conn.getResponseCode();
 
 		if (respCode != 200) {
