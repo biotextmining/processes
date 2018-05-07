@@ -57,10 +57,10 @@ public class PUGRestUtils {
 
 	public static Map<String, Set<String>> getPatentIDsUsingCID(String identifier) throws ANoteException{
 		HTTPClient client = new HTTPClient();
+		client.setTimeout(60000);
 		String urlPatentsForAID= generalURL + SEPARATOR + database + SEPARATOR 
 				+ PUGRestInputEnum.compoundIdentifier.toString() + SEPARATOR + identifier
 				+ SEPARATOR + operationPatentIDs + SEPARATOR + outputFormat;
-		System.out.println(urlPatentsForAID);
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			Map<String, Set<String>> mapPubchemIDPatentIDs = client.get(urlPatentsForAID,headers, new PUGRestPatentIDSHandler());

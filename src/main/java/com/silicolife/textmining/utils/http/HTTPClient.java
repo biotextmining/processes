@@ -26,6 +26,11 @@ public class HTTPClient {
 		this.readTimeout = 20000;
 	}
 	
+	public void setTimeout(int readTimeoutMiliseconds)
+	{
+		this.readTimeout = readTimeoutMiliseconds;
+	}
+	
 	public <T> T get(String url, Map<String, String> headers, ResponseHandler<T> responseHandler) throws ConnectionException, RedirectionException, ClientErrorException, ServerErrorException, ResponseHandlingException  {
 		HttpURLConnection conn = null;
 		try {
