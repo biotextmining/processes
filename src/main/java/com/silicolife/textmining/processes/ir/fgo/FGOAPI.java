@@ -20,11 +20,21 @@ public class FGOAPI {
 
 	private final static boolean _AddSynonymsToQuery = true;
 	private final static boolean _UseGoogleCustomSearchAPI = false;
-	private static int timeout = 20000;
+	private static int timeout = 30000;
 
 	public static String getPatentTextHTML(String patentID){
 		try {
 			return fetch("https://www.google.com/patents/" + patentID+ "?cl=en&hl=en");
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	public static String getPatentTextHTMLAlternative(String patentID){
+		try {
+			String url = "https://patents.google.com/patent/" + patentID;
+			String response = fetch2(url);
+			return response;
 		} catch (IOException e) {
 			return null;
 		}
@@ -124,6 +134,36 @@ public class FGOAPI {
 		int respCode = conn.getResponseCode();
 
 		if (respCode != 200) {
+			throw new IOException("StatusCode = " + respCode + " - GET returned not OK.\n" + url);
+		}
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		StringBuffer resp = new StringBuffer();
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			resp.append(inputLine);
+		in.close();
+
+		return resp.toString();
+	}
+	
+	protected static String fetch2(String link) throws IOException {
+		URL url = new URL(link);
+		String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.76 Safari/537.36";
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("User-Agent", USER_AGENT);
+		conn.setConnectTimeout(timeout );
+		conn.setReadTimeout(timeout);
+
+		int respCode = conn.getResponseCode();
+
+		if(respCode == 302 )
+		{
+			System.out.println("Redirect");
+		}
+		else if (respCode != 200) {
 			throw new IOException("StatusCode = " + respCode + " - GET returned not OK.\n" + url);
 		}
 
