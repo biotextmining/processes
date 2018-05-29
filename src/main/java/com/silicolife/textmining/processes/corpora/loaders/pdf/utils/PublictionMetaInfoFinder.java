@@ -60,6 +60,7 @@ public class PublictionMetaInfoFinder {
 				List<IPublicationEditable> listDocumentDOI= searchInformationOnDatabase(documentSet,PublicationSourcesDefaultEnum.DOI.name(),doiDocID,max);
 				listDocuments.addAll(listDocumentDOI);
 			} catch (ANoteException e) {
+				
 			} 
 		}
 		position = max - documentSet.size();
@@ -90,7 +91,7 @@ public class PublictionMetaInfoFinder {
 			} 
 			else if((pubmed!=null && !pubmed.isEmpty()) && !stop)// For PMID
 			{
-				PMIDSearch.getPublicationByPMID(edited);	
+				tryupdateBaseOnPubmed(edited);	
 			}
 			else
 			{
@@ -107,6 +108,13 @@ public class PublictionMetaInfoFinder {
 			postion++;
 		}
 		return listDocuments;
+	}
+
+	private void tryupdateBaseOnPubmed(IPublicationEditable edited) {
+		try {
+			PMIDSearch.getPublicationByPMID(edited);
+		} catch (InternetConnectionProblemException e) {
+		}
 	}
 
 	private List<IPublicationEditable> searchInformationOnDatabase(Set<IPublication> documentSet,String source,Map<String, Long> sourceIDDocID, int max) throws ANoteException {
