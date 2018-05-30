@@ -26,15 +26,8 @@ import com.silicolife.textmining.core.interfaces.resource.dictionary.IDicionaryF
 import com.silicolife.textmining.core.interfaces.resource.dictionary.IDictionary;
 import com.silicolife.textmining.core.interfaces.resource.dictionary.configuration.IDictionaryLoaderConfiguration;
 
-/**
- * @note2
- * 
- * @author Hugo Costa
- *
- */
-
 public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDicionaryFlatFilesLoader{
-	
+
 	private static Pattern full = Pattern.compile("Full=(.+?)\\s*;");
 	private static Pattern shortName = Pattern.compile("Short=(.+?)\\s*;");
 	private static Pattern name = Pattern.compile("Name=(.+?)\\s*;");
@@ -44,40 +37,39 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 	public final static String uniprot = "UniProt";
 	private boolean cancel = false;
 	public final static String protein = "Protein";
-	
+
 	public static final String propertyOrganism = "organism";
 
 	public UniProtFlatFileLoader()
 	{
 		super(uniprot);
 	}
-	
+
 	public IResourceUpdateReport loadTerms(IDictionaryLoaderConfiguration configuration) throws ANoteException, IOException {
 		super.setResource(configuration.getDictionary());
 		File file = configuration.getFlatFile();	
-		Properties properties = configuration.getProperties();
-		boolean loadExternalIDs = configuration.loadExternalIDs();
 		cancel = false;
 		getReport().addClassesAdding(1);
 		getReport().updateFile(file);
+		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
+		processFile(configuration);
+		cleanCache();
+		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
+		getReport().setTime(endTime-startTime);
+		return getReport();
+	}
+
+	private void processFile(IDictionaryLoaderConfiguration configuration)
+			throws FileNotFoundException, IOException, ANoteException {
+		String organism = getOrganism(configuration);		
+		BufferedReader br = new BufferedReader(new FileReader(configuration.getFlatFile()));
+		int total = FileHandling.getFileLines(configuration.getFlatFile());
+		int lineNumber=0;
+		boolean isOrganism = false;
+		List<IExternalID> externalIDs = new ArrayList<IExternalID>();
+		Set<String> termSynomns = new HashSet<String>();
 		String line = new String();
 		String term = new String();
-		Set<String> termSynomns = new HashSet<String>();
-		FileReader fr;
-		boolean isOrganism = false;
-		BufferedReader br;
-		String organism="";
-		ExternalIDImpl ext;
-		if(properties.containsKey(propertyOrganism))
-		{
-			organism = properties.getProperty(propertyOrganism);
-		}		
-		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
-		fr = new FileReader(file);
-		br = new BufferedReader(fr);
-		List<IExternalID> externalIDs = new ArrayList<IExternalID>();
-		int total = FileHandling.getFileLines(file);
-		int lineNumber=0;
 		while((line = br.readLine())!=null && !cancel)
 		{	
 			if(!cancel && line.startsWith("//"))
@@ -95,30 +87,21 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 			{
 				isOrganism = organismMatching(organism, line);
 			}
-			else if(!cancel && line.startsWith("GN"))
-			{
-				term = findTErmAndSyn(line, term, termSynomns);
-			}
 			else if(!cancel && line.startsWith("DE"))
 			{
-				findSyn(line, termSynomns);
+				String cadidateTerm = findPreferNameAndSynonyms(line, termSynomns);
+				if(cadidateTerm!=null && term.isEmpty())
+				{
+					term = cadidateTerm.trim();
+					termSynomns.remove(term);
+				}
 			}
-			else if(loadExternalIDs && !cancel && line.startsWith("ID"))
+			else if(configuration.loadExternalIDs() && !cancel && line.startsWith("ID"))
 			{
 				Matcher m = externalID.matcher(line);
 				if(!cancel && m.find())
 				{
-					ext = new ExternalIDImpl(m.group(1).trim(),  new SourceImpl(uniprot));
-					externalIDs.add(ext);
-				}
-			}
-			else if(loadExternalIDs && !cancel && line.startsWith("DR"))
-			{
-				String[] linediv = line.split("\\s");
-				if(linediv.length>4)
-				{
-					ext = new ExternalIDImpl(linediv[4].replace(";", ""),  new SourceImpl(linediv[3].replace(";", "")));
-					externalIDs.add(ext);
+					externalIDs.add(new ExternalIDImpl(m.group(1).trim(),  new SourceImpl(uniprot)));
 				}
 			}
 			if(!cancel && isBatchSizeLimitOvertaken())
@@ -132,6 +115,9 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 			}	
 			lineNumber++;	
 		}
+	}
+
+	private void cleanCache() throws ANoteException {
 		if(!cancel)
 		{
 			IResourceManagerReport reportBatchInserted = super.executeBatch();
@@ -141,39 +127,44 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 		{
 			getReport().setcancel();
 		}
-		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
-		getReport().setTime(endTime-startTime);
-		return getReport();
 	}
-	
-	private void findSyn(String line, Set<String> termSynomns) {
+
+	private String getOrganism(IDictionaryLoaderConfiguration configuration) {
+		String organism = new String();
+		Properties properties = configuration.getProperties();
+		if(properties.containsKey(propertyOrganism))
+		{
+			return properties.getProperty(propertyOrganism).trim();
+		}
+		return organism;
+	}
+
+	private String findPreferNameAndSynonyms(String line, Set<String> termSynomns) {
+		String term = null;
+		line = line.replaceAll("\\{.*\\}", "").trim();
 		Matcher m1;
 		Matcher m2;
 		m1 = full.matcher(line);
 		while(m1.find())
 		{
 			String prot = m1.group(1);
-//			if(line.contains("Uncharacterized")){}
-//			else
-			{
-				termSynomns.add(prot);
-			}
+			term = prot;
+			termSynomns.add(prot);	
 		}
-		
+
 		m2 = shortName.matcher(line);
 		while(m2.find())
 		{
 			String prot = m2.group(1);
-//			if(line.contains("Uncharacterized")){}
-//			else
-			{
-				termSynomns.add(prot);
-			}
+			termSynomns.add(prot);
 		}
+		return term;
 	}
 
-	private String findTErmAndSyn(String line, String term,
-			Set<String> termSynomns) {
+	private String findPreferTermAndSynonyms(String line,Set<String> termSynomns) {
+		// references to ECO or Pubmed
+		String term = null;
+		line = line.replaceAll("\\{.*\\}", "").trim();
 		String auxTerm;
 		Matcher m1;
 		Matcher m2;
@@ -195,7 +186,7 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 		}
 		return term;
 	}
-	
+
 	private boolean organismMatching(String organism, String line) {
 		boolean isOrganism;
 		if(line.contains(organism))
@@ -208,11 +199,11 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 		}
 		return isOrganism;
 	}
-	
+
 	public boolean checkFile(File file) {
 		return checkUniprotFile(file);
 	}
-	
+
 	public static boolean checkUniprotFile(File file)
 	{
 		if(!file.isFile())
@@ -224,7 +215,7 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 		try {
 			fr = new FileReader(file);
 			br = new BufferedReader(fr);
-			
+
 			String line;
 			int i=0;
 			Matcher m;
@@ -237,7 +228,7 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 				}
 				i++;
 			}
-			
+
 		} catch (FileNotFoundException e) {
 			return false;
 		} catch (IOException e) {
@@ -245,7 +236,7 @@ public class UniProtFlatFileLoader extends DictionaryLoaderHelp implements IDici
 		}
 		return false;
 	}
-	
+
 	public IDictionary getDictionary() {
 		return (IDictionary) getResource();
 	}
