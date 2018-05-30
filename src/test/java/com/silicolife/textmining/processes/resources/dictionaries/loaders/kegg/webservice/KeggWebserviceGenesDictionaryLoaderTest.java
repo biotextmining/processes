@@ -24,7 +24,7 @@ public class KeggWebserviceGenesDictionaryLoaderTest {
 		IResource<IResourceElement> resource = createDictionary("Kegg","");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		KeggWebserviceGenesDictionaryLoader loader = new KeggWebserviceGenesDictionaryLoader();
-		String organism = "eco";
+		String organism = "sce";
 		IDictionaryLoaderConfiguration keggLoaderConfiguration = new KeggWebserviceGenesDictionaryLoaderConfigurationImpl(dictionary, true, organism  );
 		loader.loadTerms(keggLoaderConfiguration );
 	}

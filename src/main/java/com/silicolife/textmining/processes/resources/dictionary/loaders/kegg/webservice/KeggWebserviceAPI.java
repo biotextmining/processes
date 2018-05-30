@@ -51,7 +51,7 @@ public class KeggWebserviceAPI {
 		if(namesStreamSplited.length > 1)
 		{
 			String namesStream = namesStreamSplited[1];
-			String[] names = namesStream.split(";");
+			String[] names = namesStream.split("[;,]");
 			for(String name:names)
 				out.add(name.trim());
 		}

@@ -55,6 +55,9 @@ public class KeggWebserviceGenesDictionaryLoader extends DictionaryLoaderHelp im
 					term = synonyms.get(0);
 					synonyms.remove(0);
 				}
+				// Add bnumber only in ecoli
+				if(keggOrganism.equals("eco"))
+					synonyms.add(keggGeneID);
 				step++;
 				List<IExternalID> externalIDs = new ArrayList<>();
 				externalIDs.add(new ExternalIDImpl(keggGeneID, new SourceImpl(keggSource)));	
