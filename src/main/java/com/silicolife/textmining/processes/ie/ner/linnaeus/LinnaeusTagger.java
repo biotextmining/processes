@@ -2,14 +2,16 @@ package com.silicolife.textmining.processes.ie.ner.linnaeus;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -76,9 +78,9 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 	public static final String linneausTagger = "Linnaeus Tagger";
 	public static final String abreviation = "Abbreviation";
 	public static final String disambiguation = "Disambiguation";
-	
+
 	final static Logger nerlogger = LoggerFactory.getLogger(LinnaeusTagger.class);
-	
+
 	private boolean stop = false;
 
 	public static final IProcessOrigin linnausOrigin= new ProcessOriginImpl(GenerateRandomId.generateID(),linneausTagger);
@@ -126,7 +128,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 				run = false;
 		}
 	}
-	
+
 	protected LinnauesExecutionData loadExecutionData(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException
 	{
 		nerlogger.info("Start to get resources elements on DB");
@@ -141,43 +143,43 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		nerlogger.info("Finished to get resources elements on DB");
 		return new LinnauesExecutionData(elementsToNER, rules, elements, resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs, mapPossibleResourceIDsToTermString, stopwords);
 	}
-	
-//	public void resumeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException {
-//		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess(),ProcessRunStatusConfigurationEnum.resume);
-//		long startime = GregorianCalendar.getInstance().getTimeInMillis();
-//		nerlogger.info("Start to get resources elements on DB");
-//		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
-//		HandRules rules = new HandRules(elementsToNER);
-//		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
-//		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
-//		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
-//		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
-//		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
-//		Set<String> stopwords = loadStopWords(linnauesConfiguration);
-//		Matcher matcher = getMatcher(linnauesConfiguration,elements);
-//		nerlogger.info("Finished to get resources elements on DB");		
-//		int size = (int) (long) publicationsPaginator.getPublicationsCount();
-//		int counter = 0; 
-//		while(publicationsPaginator.hasNextDocumentSetPage()){
-//			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
-//			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, configuration.getIEProcess());
-//			
-//			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
-//					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
-//					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
-//		}
-//		if(stop)
-//		{
-//			report.setcancel();
-//		}
-//	}
+
+	//	public void resumeNER(INERConfiguration configuration,INERProcessReport report,ICorpusPublicationPaginator publicationsPaginator,INERPosProccessAddEntities nerPosProccessAddEntities) throws ANoteException {
+	//		INERLinnaeusConfiguration linnauesConfiguration = (INERLinnaeusConfiguration) convertProcessToConfiguration(configuration.getIEProcess(),ProcessRunStatusConfigurationEnum.resume);
+	//		long startime = GregorianCalendar.getInstance().getTimeInMillis();
+	//		nerlogger.info("Start to get resources elements on DB");
+	//		ElementToNer elementsToNER = getElementsToNER(linnauesConfiguration);
+	//		HandRules rules = new HandRules(elementsToNER);
+	//		List<IEntityAnnotation> elements = elementsToNER.getTermsByAlphabeticOrder(linnauesConfiguration.getCaseSensitiveEnum());
+	//		Map<Long, Long> resourceMapClass = elementsToNER.getResourceMapClass();
+	//		Map<Long, IResourceElement> resourceIDMapResource = elementsToNER.getMapResourceIDsToResourceElements();
+	//		Map<String, Set<Long>> maplowerCaseToPossibleResourceIDs = elementsToNER.getMaplowerCaseToPossibleResourceIDs();
+	//		Map<Long, String> mapPossibleResourceIDsToTermString = elementsToNER.getMapPossibleResourceIDsToTermString();
+	//		Set<String> stopwords = loadStopWords(linnauesConfiguration);
+	//		Matcher matcher = getMatcher(linnauesConfiguration,elements);
+	//		nerlogger.info("Finished to get resources elements on DB");		
+	//		int size = (int) (long) publicationsPaginator.getPublicationsCount();
+	//		int counter = 0; 
+	//		while(publicationsPaginator.hasNextDocumentSetPage()){
+	//			IDocumentSet documentSet = publicationsPaginator.nextDocumentSetPage();
+	//			DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, configuration.getIEProcess());
+	//			
+	//			counter = executeLinneausForDocumentSet(linnauesConfiguration, configuration.getIEProcess(), nerPosProccessAddEntities, startime, elementsToNER, rules,
+	//					resourceMapClass, resourceIDMapResource, maplowerCaseToPossibleResourceIDs,
+	//					mapPossibleResourceIDsToTermString, stopwords, matcher, report, documents, size, counter);
+	//		}
+	//		if(stop)
+	//		{
+	//			report.setcancel();
+	//		}
+	//	}
 
 	private DocumentIterator getDocumentIterator(INERConfiguration configuration, IIEProcess processToRun,
 			IDocumentSet documentSet) throws ANoteException {
 		DocumentIterator documents = new PublicationIt(configuration.getCorpus(), documentSet, processToRun);
 		return documents;
 	}
-	
+
 	protected  ElementToNer getElementsToNER(INERLinnaeusConfiguration linnauesConfiguration) throws ANoteException {
 		ElementToNer elementsToNER = new ElementToNer(linnauesConfiguration.getResourceToNER(), linnauesConfiguration.isNormalized());
 		elementsToNER.processingINfo();
@@ -187,12 +189,12 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 	private Integer executeLinneausForDocumentSet(INERLinnaeusConfiguration linnauesConfiguration, IIEProcess processToRun,INERPosProccessAddEntities nerPosProccessAddEntities,
 			long startime,LinnauesExecutionData linnaeusExecutionData, Matcher matcher, INERProcessReport report,
 			DocumentIterator documents, Integer publicationsSize, Integer counter) throws ANoteException {
-		
+
 		ConcurrentMatcher tm = new ConcurrentMatcher(matcher,documents);
 		IteratorBasedMaster<TaggedDocument> master = new IteratorBasedMaster<TaggedDocument>(tm,linnauesConfiguration.getNumberOfThreads());
 		Thread threadmaster = new Thread(master);
 		threadmaster.start();
-		
+
 		while (master.hasNext() && !stop){
 			TaggedDocument td = master.next();
 			report.incrementDocument();
@@ -245,7 +247,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		}
 		return stopwords;
 	}
-	
+
 	protected void addMatchesToAnnotationPositions(INERLinnaeusConfiguration linnauesConfiguration,
 			LinnauesExecutionData linnauesExecutionData , TaggedDocument td,
 			AnnotationPositions positions) throws ANoteException {
@@ -513,11 +515,11 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		{
 			System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 			nerlogger.info((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-//			if(step%1000==0)
-//			{
-//				Runtime.getRuntime().gc();
-//				System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
-//			}
+			//			if(step%1000==0)
+			//			{
+			//				Runtime.getRuntime().gc();
+			//				System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+			//			}
 		}
 	}
 
@@ -577,7 +579,7 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 	}
 
 
-	
+
 	public INERConfiguration getProcessConfiguration(IIEProcess ieprocess,ProcessRunStatusConfigurationEnum processStatus) throws ANoteException{
 		ICorpus corpus = ieprocess.getCorpus();
 		Map<String, Pattern> patterns = null;
@@ -592,13 +594,41 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 		int sizeOfSmallWordsToBeNotAnnotated = 0;
 
 		Properties propertiesToConvert = ieprocess.getProperties();
-		Map<Long, Set<Long>> mapResourceIDToClassesID = new HashMap<>();
+		SortedSet<ResourceElementToRunOrder> resourceElementOrderSet = new TreeSet<>();
 		for( Object key : propertiesToConvert.keySet()){
 			String keyString = String.valueOf(key);
+			int order = 100;
 			Long resourceID = null;
-			try{
-				resourceID = Long.valueOf(keyString);
-			}catch(Exception e){}
+			if(keyString.startsWith("ResourceElementID :"))
+			{
+				String resourceElementIdAndPossibleOrder = keyString.substring("ResourceElementID :".length());
+				if(resourceElementIdAndPossibleOrder.contains(", order :"))
+				{
+					String[] resourceIdAndOrder = resourceElementIdAndPossibleOrder.split(", order :");
+					if(resourceIdAndOrder.length==2)
+					{
+						try{
+							resourceID = Long.valueOf(resourceIdAndOrder[0].trim());
+						}catch(Exception e){}
+
+						try{
+							order = Integer.valueOf(resourceIdAndOrder[1].trim());
+						}catch(Exception e){}
+					}
+				}
+				else
+				{
+					try{
+						resourceID = Long.valueOf(resourceElementIdAndPossibleOrder.trim());
+					}catch(Exception e){}
+				}
+			}
+			else
+			{
+				try{
+					resourceID = Long.valueOf(keyString);
+				}catch(Exception e){}
+			}
 			if(resourceID != null){
 				Object classes = propertiesToConvert.get(key);
 				String classesString = String.valueOf(classes);
@@ -607,21 +637,22 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 				for(String klassID : classesIdString){
 					klassIDs.add(Long.valueOf(klassID));
 				}
-				mapResourceIDToClassesID.put(resourceID, klassIDs);
+				ResourceElementToRunOrder resourceElementOrder = new ResourceElementToRunOrder(resourceID, order, klassIDs);
+				resourceElementOrderSet.add(resourceElementOrder);
 			}else{
 				Object value = propertiesToConvert.get(key);
 				if(keyString.equals(LinnaeusTagger.abreviation))
 					useabreviation = Boolean.valueOf(String.valueOf(value));
-				
+
 				if(keyString.equals(LinnaeusTagger.disambiguation))
 					disambiguationEnum = Disambiguation.valueOf(String.valueOf(value));
 
 				if(keyString.equals(GlobalNames.casesensitive))
 					caseSensitiveEnum = NERCaseSensativeEnum.valueOf(String.valueOf(value));
-				
+
 				if(keyString.equals(GlobalNames.normalization))
 					normalized = Boolean.valueOf(String.valueOf(value));
-				
+
 				if(keyString.equals(GlobalNames.useOtherResourceInformationInRules))
 					usingOtherResourceInfoToImproveRuleAnnotations = true;
 				if(keyString.equals(GlobalNames.numberThreads))
@@ -635,21 +666,82 @@ public class LinnaeusTagger  extends ANERLexicalResources{
 					sizeOfSmallWordsToBeNotAnnotated = Integer.valueOf(String.valueOf(value));
 			}
 		}
-		
-		ResourcesToNerAnote resourceToNER = getResourcesToNERForConfiguration(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated, mapResourceIDToClassesID);
+
+		ResourcesToNerAnote resourceToNER = getResourcesToNERForConfiguration(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated, resourceElementOrderSet);
 		return new NERLinnaeusConfigurationImpl(corpus,processStatus, patterns, resourceToNER, useabreviation, disambiguationEnum, caseSensitiveEnum, normalized, numThreads, stopwords, preprocessing, usingOtherResourceInfoToImproveRuleAnnotations,sizeOfSmallWordsToBeNotAnnotated);
 	}
 
 	private ResourcesToNerAnote getResourcesToNERForConfiguration(NERCaseSensativeEnum caseSensitiveEnum,
-			boolean usingOtherResourceInfoToImproveRuleAnnotations, int sizeOfSmallWordsToBeNotAnnotated, Map<Long, Set<Long>> mapResourceIDToClassesID) throws ANoteException {
+			boolean usingOtherResourceInfoToImproveRuleAnnotations, int sizeOfSmallWordsToBeNotAnnotated, SortedSet<ResourceElementToRunOrder> resourceElementOrderSet) throws ANoteException {
 		ResourcesToNerAnote resourceToNER = new ResourcesToNerAnote(caseSensitiveEnum, usingOtherResourceInfoToImproveRuleAnnotations, sizeOfSmallWordsToBeNotAnnotated);
-		for(Long resource : mapResourceIDToClassesID.keySet()){
-			
-			IResource<IResourceElement> resElem = InitConfiguration.getDataAccess().getResourceByID(resource);
-			Set<Long> selectedClass = mapResourceIDToClassesID.get(resource);
+		for(ResourceElementToRunOrder resource : resourceElementOrderSet){
+
+			IResource<IResourceElement> resElem = InitConfiguration.getDataAccess().getResourceByID(resource.getResourceElementId());
+			Set<Long> selectedClass = resource.getClasses();
 			Set<Long> classContent = selectedClass;
 			resourceToNER.add(resElem, classContent, selectedClass);
 		}
 		return resourceToNER;
+	}
+
+	public class ResourceElementToRunOrder implements Comparable<ResourceElementToRunOrder>,Comparator<ResourceElementToRunOrder>
+	{
+		private Integer order;
+		private Long resourceElementId;
+		private Set<Long> classes;
+
+		public ResourceElementToRunOrder(Long resourceElementId,Integer order,Set<Long> classes)
+		{
+			this.resourceElementId=resourceElementId;
+			this.order=order;
+			this.classes = classes;
+		}
+
+		public Integer getOrder() {
+			return order;
+		}
+
+		public Long getResourceElementId() {
+			return resourceElementId;
+		}
+
+		public Set<Long> getClasses() {
+			return classes;
+		}
+
+		@Override
+		public int compare(ResourceElementToRunOrder o1, ResourceElementToRunOrder o2) {
+			int orderCompare = o1.getOrder().compareTo(o2.getOrder());
+			if(orderCompare!=0)
+				return orderCompare*-1;
+			return o1.getResourceElementId().compareTo(o2.getResourceElementId());
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ResourceElementToRunOrder other = (ResourceElementToRunOrder) obj;
+			if (order == null) {
+				if (other.order != null)
+					return false;
+			} else if (!order.equals(other.order))
+				return false;
+			if (resourceElementId == null) {
+				if (other.resourceElementId != null)
+					return false;
+			} else if (!resourceElementId.equals(other.resourceElementId))
+				return false;
+			return true;
+		}
+
+		@Override
+		public int compareTo(ResourceElementToRunOrder o) {
+			return compare(this,o);
+		}
 	}
 }
