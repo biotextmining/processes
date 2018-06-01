@@ -24,11 +24,11 @@ public class UniProtFlatFileLoaderTest {
 	@Test
 	public void importAll() throws InvalidDatabaseAccess, ANoteException, IOException {
 		DatabaseConnectionInit.init("localhost","3306","resources_test","root","admin");
-		IResource<IResourceElement> resource = createDictionary("Uniport - Test 4","30-05-2018");
+		IResource<IResourceElement> resource = createDictionary("Uniport","");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		UniProtFlatFileLoader loader = new UniProtFlatFileLoader();
 		Properties properties = new Properties();
-		String filepath = "C:\\Users\\Hugo Costa\\Desktop//uniprot_sprot.dat";
+		String filepath = "filepath";
 		File file = new File(filepath );
 		IDictionaryLoaderConfiguration configuration = new DictionaryLoaderConfigurationImpl("Uniprot", dictionary, file , properties , true);
 		IResourceUpdateReport report = loader.loadTerms(configuration );
@@ -40,12 +40,12 @@ public class UniProtFlatFileLoaderTest {
 	
 	public void importByOrganism() throws InvalidDatabaseAccess, ANoteException, IOException {
 		DatabaseConnectionInit.init("localhost","3306","resources_test","root","admin");
-		IResource<IResourceElement> resource = createDictionary("Uniport","30-05-2018");
+		IResource<IResourceElement> resource = createDictionary("Uniport","");
 		IDictionary dictionary = new DictionaryImpl(resource);
 		UniProtFlatFileLoader loader = new UniProtFlatFileLoader();
 		Properties properties = new Properties();
 		properties.setProperty(UniProtFlatFileLoader.propertyOrganism, "Escherichia coli");
-		String filepath = "C:\\Users\\Hugo Costa\\Desktop//uniprot_sprot.dat";
+		String filepath = "filepath";
 		File file = new File(filepath );
 		IDictionaryLoaderConfiguration configuration = new DictionaryLoaderConfigurationImpl("Uniprot", dictionary, file , properties , true);
 		IResourceUpdateReport report = loader.loadTerms(configuration );

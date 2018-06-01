@@ -20,7 +20,7 @@ public class KeggWebserviceGenesDictionaryLoader extends DictionaryLoaderHelp im
 
 	private boolean cancel;
 	private static String keggSource = "Kegg";
-	private static String klass = "genes";
+	private static String klass = "Gene";
 
 
 	public KeggWebserviceGenesDictionaryLoader() {
