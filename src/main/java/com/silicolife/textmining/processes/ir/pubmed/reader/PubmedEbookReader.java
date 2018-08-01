@@ -109,8 +109,7 @@ public class PubmedEbookReader {
 		}
 	}
 	
-	private String processAbstract(List<IPublicationField> fullTextfields,
-			Element elements) throws ANoteException{
+	private String processAbstract(List<IPublicationField> fullTextfields,Element elements) throws ANoteException{
 		NodeList node = elements.getElementsByTagName("AbstractText");
 		String abstractText = new String();
 		Set<String> publicationFiledsAlreayAdded = new HashSet<>();
@@ -128,7 +127,7 @@ public class PubmedEbookReader {
 				int endindex = abstractText.length();
 				if(node.item(i).getAttributes().getNamedItem("Label")!=null)
 				{
-					String field = node.item(i).getAttributes().getNamedItem("Label").getTextContent();
+					String field = node.item(i).getAttributes().getNamedItem("Label").getTextContent().trim();
 					if(!field.isEmpty() && !publicationFiledsAlreayAdded.contains(field))
 					{
 						if(field.length()>250)
