@@ -359,4 +359,16 @@ public class PubChemAPI {
 		return out;
 	}
 	
+	/**
+	 * Method that return Pubchem Ids associated with CAS
+	 * 
+	 * @param smiles
+	 * @return
+	 * @throws ANoteException 
+	 */
+	public static Set<String> getPubChemCIDsByCAS(String cas) throws ANoteException {
+		Set<String> out = PUGRestUtils.getPubchemIdsGivenCAS(cas);	
+		return out;
+	}
+	
 }

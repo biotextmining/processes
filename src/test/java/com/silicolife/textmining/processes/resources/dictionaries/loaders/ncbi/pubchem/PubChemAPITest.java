@@ -3,6 +3,7 @@ package com.silicolife.textmining.processes.resources.dictionaries.loaders.ncbi.
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -274,7 +275,7 @@ public class PubChemAPITest {
 		assertTrue(true);
 	}
 	
-	@Test
+//	@Test
 	public void getExternalIdsByPubChemCID() throws ANoteException
 	{
 		String cid = "15342072";
@@ -333,6 +334,15 @@ public class PubChemAPITest {
 	{
 		String smiles = "COC1=C(C=CC(=C1)C=O)O1";
 		List<String> result = PubChemAPI.getPubChemCIDsBySmiles(smiles);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+	@Test
+	public void getPubchemIdsByCAS() throws ANoteException
+	{
+		String cas = "7785-26-4";
+		Set<String> result = PubChemAPI.getPubChemCIDsByCAS(cas);
 		System.out.println(result);
 		assertTrue(true);
 	}

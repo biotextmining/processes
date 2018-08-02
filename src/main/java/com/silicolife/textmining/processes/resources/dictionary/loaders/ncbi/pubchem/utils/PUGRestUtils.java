@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -48,12 +49,29 @@ public class PUGRestUtils {
 	private static String operationCanonicalSmiles="property/CanonicalSMILES";
 	private static String operationXrefsSBUR="xrefs/SBURL";
 	private static String operationNCBITaxonomyIDs="xrefs/TaxonomyID";
+	private static String operationCASID="xref/RegistryID";
+
 
 	private static String outputFormat=PUGRestOutputEnum.xml.toString(); //xml,json,csv,sdf,txt,png
 	private static String outputFormatJson=PUGRestOutputEnum.json.toString(); //xml,json,csv,sdf,txt,png
 
 	private static String fastidentityString="fastidentity";
 	
+	public static Set<String> getPubchemIdsGivenCAS(String cas)  throws ANoteException{
+		HTTPClient client = new HTTPClient();
+		client.setTimeout(60000);
+		String urlPubchemIdsForCAS= generalURL + SEPARATOR + database + SEPARATOR 
+			    + operationCASID + SEPARATOR + cas + SEPARATOR + outputFormat;
+		Map<String, String> headers = new HashMap<String, String>();
+		System.out.println(urlPubchemIdsForCAS);
+		try {
+			List<String> pubchemIds = client.get(urlPubchemIdsForCAS,headers, new PUGRestPubChemIDHandler());
+			return new HashSet<>(pubchemIds);
+		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
+				| ResponseHandlingException e) {
+			throw new ANoteException(e);
+		}
+	}
 
 	public static Map<String, Set<String>> getPatentIDsUsingCID(String identifier) throws ANoteException{
 		HTTPClient client = new HTTPClient();
