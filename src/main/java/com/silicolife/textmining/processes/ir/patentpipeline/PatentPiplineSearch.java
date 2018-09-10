@@ -476,8 +476,8 @@ public class PatentPiplineSearch extends IRProcessImpl implements IIRSearch{
 	protected void memoryAndProgress(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 		logger.info((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-		Runtime.getRuntime().gc();
-		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+//		Runtime.getRuntime().gc();
+//		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
 	}
 
 

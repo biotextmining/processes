@@ -178,8 +178,8 @@ public class PatentPipeline {
 	protected void memoryProgressAndTime(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 		logger.info((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-		Runtime.getRuntime().gc();
-		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+//		Runtime.getRuntime().gc();
+//		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
 	}
 
 	public IIRPatentMetaInformationRetrievalReport executePatentRetrievalMetaInformationStep(Set<String> patentIds,IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
