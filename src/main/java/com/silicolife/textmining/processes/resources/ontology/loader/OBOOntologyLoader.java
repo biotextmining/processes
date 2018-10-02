@@ -29,11 +29,11 @@ import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.core.report.resources.IResourceUpdateReport;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
-import com.silicolife.textmining.core.interfaces.resource.ontologies.IOntologyLoader;
+import com.silicolife.textmining.core.interfaces.resource.ontologies.IOntologyOBOLoader;
 import com.silicolife.textmining.core.interfaces.resource.ontologies.configuration.IOntologyLoaderConfiguration;
 
 
-public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntologyLoader{
+public class OBOOntologyLoader extends DictionaryLoaderHelp implements IOntologyOBOLoader{
 	
 	private BufferedReader br;
 	private boolean cancel = false;
