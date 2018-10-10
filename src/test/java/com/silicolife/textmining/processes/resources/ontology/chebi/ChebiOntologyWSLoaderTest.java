@@ -36,9 +36,22 @@ public class ChebiOntologyWSLoaderTest {
 	}
 	
 	@Test
-	public void loader() throws ANoteException, IOException, InvalidDatabaseAccess {
+	public void createAndloader() throws ANoteException, IOException, InvalidDatabaseAccess {
 		DatabaseConnectionInit.init("localhost","3306","testChebi","root","admin");
 		IResource<IResourceElement> ontology = createOntology("Chebi Ontology","");		
+		ChebiOntologyWSLoader chebiOntologyWSLoader = new ChebiOntologyWSLoader();
+		IOntologyLoaderConfiguration configuration = new OntologyLoaderConfigurationImpl(ontology, null, true, true);
+		IResourceUpdateReport report = chebiOntologyWSLoader.processOntologyFile(configuration );
+		System.out.println("Terms Added : "+report.getTermsAdding());
+		System.out.println("Synonyms Added : "+report.getSynonymsAdding());
+		System.out.println("External Ids Added : "+report.getExternalIDs());
+	}
+	
+	@Test
+	public void loader() throws ANoteException, IOException, InvalidDatabaseAccess {
+		DatabaseConnectionInit.init("localhost","3306","testChebi","root","admin");
+		long id = 3136834027775882053L;
+		IResource<IResourceElement> ontology = new OntologyImpl(id , "", "", true)	;
 		ChebiOntologyWSLoader chebiOntologyWSLoader = new ChebiOntologyWSLoader();
 		IOntologyLoaderConfiguration configuration = new OntologyLoaderConfigurationImpl(ontology, null, true, true);
 		IResourceUpdateReport report = chebiOntologyWSLoader.processOntologyFile(configuration );
