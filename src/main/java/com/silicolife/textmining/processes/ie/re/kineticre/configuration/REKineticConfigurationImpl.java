@@ -28,6 +28,11 @@ public class REKineticConfigurationImpl extends REConfigurationImpl implements I
 		this.advancedConfigurations=advancedConfigurations;
 	}
 	
+	public REKineticConfigurationImpl(ICorpus corpus, IIEProcess entityProcess,
+			ProcessRunStatusConfigurationEnum createnew, IREKineticREConfiguration configuration) {
+		// TODO Auto-generated constructor stub
+	}
+
 	private static IIEProcess build(ICorpus corpus)
 	{
 		String name = KineticREtriples.kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date());

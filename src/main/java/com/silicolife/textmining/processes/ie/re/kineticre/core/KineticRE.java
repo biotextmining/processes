@@ -75,7 +75,6 @@ public class KineticRE implements IREProcess {
 		super();
 	}
 
-
 	public IREProcessReport executeRE(IREConfiguration configuration) throws ANoteException,InvalidConfigurationException {
 		validateConfiguration(configuration);
 		IREKineticREConfiguration reConfiguration = (IREKineticREConfiguration) configuration;
@@ -107,7 +106,6 @@ public class KineticRE implements IREProcess {
 		return report;
 	}
 
-
 	private IIEProcess build(IREConfiguration configuration, IREKineticREConfiguration reConfiguration) {
 		IIEProcess reProcess = configuration.getIEProcess();
 		reProcess.setName(KineticRE.kineticREDescrition+" "+Utils.SimpleDataFormat.format(new Date()));
@@ -117,7 +115,6 @@ public class KineticRE implements IREProcess {
 		return reProcess;
 	}
 
-	
 	private Properties generateConfiguration(IREKineticREConfiguration reConfiguration) {
 		Properties properties = new Properties();
 		properties.put(KineticREGroupsEnum.Units.toString(), classesTOString(reConfiguration.getUnitsClasses()));
@@ -138,7 +135,6 @@ public class KineticRE implements IREProcess {
 			return result;
 		return result.substring(0,result.length()-1);
 	}
-
 
 	protected void memoryAndProgress(int step, int total,long startime) {
 		if(step%50==0)
@@ -169,7 +165,6 @@ public class KineticRE implements IREProcess {
 		return eventsDoc;
 	}
 
-
 	private void processDocumentSentence(IREKineticREConfiguration reConfiguration, List<IEntityAnnotation> entitiesdoc,
 			List<IEventAnnotation> eventsDoc, ISentence sentence, AnoteClassInDocument organismInDocument,AnoteClassInDocument enzymesInDocument, AnoteClassInDocument metabolitesInDocument) {
 		List<IEntityAnnotation> sentenceEntities = getSentenceEntities(entitiesdoc, sentence);
@@ -196,8 +191,172 @@ public class KineticRE implements IREProcess {
 		// Special cases
 		List<ValueUnitSimpleOrComplex> valueUnitSimpleOrComplexList = new ArrayList<>();
 		Set<ValueUnitBasedRelation> alreadyUsed = new HashSet<>();
+
+		System.out.println("frase: " + sent);
+		System.out.println("tamanho lista pares: " + listPairsValueUnit.size());
+		//case 1_3: vu1, vu2, vu3, vu4 and vu5
+		if(listPairsValueUnit.size() > 4) {
+			//System.out.println("Entrei nos VU-VUs -> " + sent + "-> " + valuesSent.size() + "\n");
+			for(int i=4;i<listPairsValueUnit.size();i++) {
+				ValueUnitBasedRelation before_4 = listPairsValueUnit.get(i-4);
+				ValueUnitBasedRelation before_3 = listPairsValueUnit.get(i-3);
+				ValueUnitBasedRelation before_2 = listPairsValueUnit.get(i-2);
+				ValueUnitBasedRelation before = listPairsValueUnit.get(i-1);
+				ValueUnitBasedRelation now = listPairsValueUnit.get(i);
+				int start = (int) (before.getUnit().getEndOffset() -  sent.getStartOffset());
+				int end = (int) (now.getValue().getStartOffset() -  sent.getStartOffset());
+				String sentence = sent.getText();
+				if(end-start < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+					String substringSentence = sentence.substring(start, end).toLowerCase();
+					if(KineticREUtils.hasPairConnector(substringSentence)) {
+						int start_1 = (int) (before_2.getUnit().getEndOffset() -  sent.getStartOffset());
+						int end_1 = (int) (before.getValue().getStartOffset() -  sent.getStartOffset());
+						//String sentence = sent.getText();
+						if(end_1-start_1 < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+							String substringSentence_1 = sentence.substring(start_1, end_1).toLowerCase();
+							if(KineticREUtils.hasPairConnector(substringSentence_1)) {
+								int start_2 = (int) (before_3.getUnit().getEndOffset() -  sent.getStartOffset());
+								int end_2 = (int) (before_2.getValue().getStartOffset() -  sent.getStartOffset());
+								//String sentence = sent.getText();
+								if(end_2-start_2 < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+									String substringSentence_2 = sentence.substring(start_2, end_2).toLowerCase();
+									if(KineticREUtils.hasPairConnector(substringSentence_2)) {
+										int start_3 = (int) (before_4.getUnit().getEndOffset() -  sent.getStartOffset());
+										int end_3 = (int) (before_3.getValue().getStartOffset() -  sent.getStartOffset());
+										//String sentence = sent.getText();
+										if(end_3-start_3 < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+											String substringSentence_3 = sentence.substring(start_3, end_3).toLowerCase();
+											if(KineticREUtils.hasPairConnector(substringSentence_3)) {
+												List<ValueUnitBasedRelation> list = new ArrayList<>();
+												list.add(before_4);
+												list.add(before_3);
+												list.add(before_2);
+												list.add(before);
+												list.add(now);
+												valueUnitSimpleOrComplexList.add(new ValueUnitSimpleOrComplex(list));
+												alreadyUsed.add(before_4);
+												alreadyUsed.add(before_3);
+												alreadyUsed.add(before_2);
+												alreadyUsed.add(before);
+												alreadyUsed.add(now);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//case 1_2: vu1, vu2, vu3 and vu4
+		else if(listPairsValueUnit.size() > 3) {
+			for(int i=3;i<listPairsValueUnit.size();i++) {
+				ValueUnitBasedRelation before_3 = listPairsValueUnit.get(i-3);
+				ValueUnitBasedRelation before_2 = listPairsValueUnit.get(i-2);
+				ValueUnitBasedRelation before = listPairsValueUnit.get(i-1);
+				ValueUnitBasedRelation now = listPairsValueUnit.get(i);
+				int start = (int) (before.getUnit().getEndOffset() -  sent.getStartOffset());
+				int end = (int) (now.getValue().getStartOffset() -  sent.getStartOffset());
+				String sentence = sent.getText();
+				if(end-start < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+					String substringSentence = sentence.substring(start, end).toLowerCase();
+					if(KineticREUtils.hasPairConnector(substringSentence)) {
+						int start_1 = (int) (before_2.getUnit().getEndOffset() -  sent.getStartOffset());
+						int end_1 = (int) (before.getValue().getStartOffset() -  sent.getStartOffset());
+						//String sentence = sent.getText();
+						if(end_1-start_1 < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+							String substringSentence_1 = sentence.substring(start_1, end_1).toLowerCase();
+							if(KineticREUtils.hasPairConnector(substringSentence_1)) {
+								int start_2 = (int) (before_3.getUnit().getEndOffset() -  sent.getStartOffset());
+								int end_2 = (int) (before_2.getValue().getStartOffset() -  sent.getStartOffset());
+								//String sentence = sent.getText();
+								if(end_2-start_2 < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+									String substringSentence_2 = sentence.substring(start_2, end_2).toLowerCase();
+									if(KineticREUtils.hasPairConnector(substringSentence_2)) {
+										List<ValueUnitBasedRelation> list = new ArrayList<>();
+										list.add(before_3);
+										list.add(before_2);
+										list.add(before);
+										list.add(now);
+										valueUnitSimpleOrComplexList.add(new ValueUnitSimpleOrComplex(list));
+										alreadyUsed.add(before_3);
+										alreadyUsed.add(before_2);
+										alreadyUsed.add(before);
+										alreadyUsed.add(now);	
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//case 1_1: vu1, vu2 and vu3
+		else if(listPairsValueUnit.size() > 2) {
+			for(int i=2;i<listPairsValueUnit.size();i++) {
+				ValueUnitBasedRelation before_2 = listPairsValueUnit.get(i-2);
+				ValueUnitBasedRelation before = listPairsValueUnit.get(i-1);
+				ValueUnitBasedRelation now = listPairsValueUnit.get(i);
+				int start = (int) (before.getUnit().getEndOffset() -  sent.getStartOffset());
+				int end = (int) (now.getValue().getStartOffset() -  sent.getStartOffset());
+				String sentence = sent.getText();
+				if(end-start < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+					String substringSentence = sentence.substring(start, end).toLowerCase();
+					if(KineticREUtils.hasPairConnector(substringSentence)) {
+						int start_1 = (int) (before_2.getUnit().getEndOffset() -  sent.getStartOffset());
+						int end_1 = (int) (before.getValue().getStartOffset() -  sent.getStartOffset());
+						//String sentence = sent.getText();
+						if(end_1-start_1 < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+							String substringSentence_1 = sentence.substring(start_1, end_1).toLowerCase();
+							if(KineticREUtils.hasPairConnector(substringSentence_1)) {
+								List<ValueUnitBasedRelation> list = new ArrayList<>();
+								list.add(before_2);
+								list.add(before);
+								list.add(now);
+								valueUnitSimpleOrComplexList.add(new ValueUnitSimpleOrComplex(list));
+								alreadyUsed.add(before_2);
+								alreadyUsed.add(before);
+								alreadyUsed.add(now);	
+							}
+						}
+					}
+				}
+			}
+		}	
+		// case 1_0: vu1 and vu2
+		else {
+			for(int i=1;i<listPairsValueUnit.size();i++) {
+				ValueUnitBasedRelation before = listPairsValueUnit.get(i-1);
+				ValueUnitBasedRelation now = listPairsValueUnit.get(i);
+				int start = (int) (before.getUnit().getEndOffset() -  sent.getStartOffset());
+				int end = (int) (now.getValue().getStartOffset() -  sent.getStartOffset());
+				String sentence = sent.getText();
+				if(end-start < configuration.getAdvancedConfiguration().getMaxDistanceBetweenTwoVUPairsWithAndInside()) {
+					String substringSentence = sentence.substring(start, end).toLowerCase();
+					//if((substringsentence.contains(" and ") || substringsentence.contains(" or ") || substringsentence.contains(" vs ") || substringsentence.contains(" , ")) && !(substringsentence.contains(")") && substringsentence.contains("("))) {
+					if(KineticREUtils.hasPairConnector(substringSentence)) {
+						List<ValueUnitBasedRelation> list = new ArrayList<>();
+						list.add(before);
+						list.add(now);
+						valueUnitSimpleOrComplexList.add(new ValueUnitSimpleOrComplex(list));
+						alreadyUsed.add(before);
+						alreadyUsed.add(now);
+					}
+				}
+			}
+		}
+
+		//System.out.println("tamanho lista values: " + valuesSent.size());
+		//Case 2 -> Vs - VU
+		calculateComplexVVU(listPairsValueUnit, valueUnitSimpleOrComplexList, alreadyUsed, valuesSent, sent);
 		
-		// Case 1
+		//Case 3: adicionar os pares simples
+		calculateSimplePairs(listPairsValueUnit, valueUnitSimpleOrComplexList, alreadyUsed);
+		
+		return valueUnitSimpleOrComplexList;
+		
+/*		// Case 1
 		for(int i=1;i<listPairsValueUnit.size();i++) {
 			ValueUnitBasedRelation before = listPairsValueUnit.get(i-1);
 			ValueUnitBasedRelation now = listPairsValueUnit.get(i);
@@ -253,7 +412,74 @@ public class KineticRE implements IREProcess {
 			}
 		}
 		return valueUnitSimpleOrComplexList;
+*/
+	}
+	
+	private void calculateComplexVVU(List<ValueUnitBasedRelation> listPairsValueUnit,
+			List<ValueUnitSimpleOrComplex> valueUnitSimpleOrComplexList, Set<ValueUnitBasedRelation> alreadyUsed, List<IEntityAnnotation> valuesSent, ISentence sent) {
+		for(ValueUnitBasedRelation pair : listPairsValueUnit) {
+			//only using the ones that were not used yet;
+			if(!alreadyUsed.contains(pair)) {
+				List<ValueUnitSimpleOrComplex> complexVVUlist = getVVUcomplex(pair, valuesSent, sent);
+				if(complexVVUlist != null) {
+					alreadyUsed.add(pair);
+					valueUnitSimpleOrComplexList.addAll(complexVVUlist);	
+				}
+			}	
+		}
+	}
 
+	private List<ValueUnitSimpleOrComplex> getVVUcomplex(ValueUnitBasedRelation pair, List<IEntityAnnotation> valuesSent, ISentence sent) {
+		List<IEntityAnnotation> valuesSentLeftPair = new ArrayList<>();
+		List<ValueUnitSimpleOrComplex> listComplex = new ArrayList<>();
+		//cria lista de valores à Esquerda de um Par
+		for(IEntityAnnotation value : valuesSent) {
+			if(value.getEndOffset() < pair.getValue().getStartOffset()) {
+				valuesSentLeftPair.add(value);
+			}
+		}
+		if(!valuesSentLeftPair.isEmpty()) {
+			int endPoint = (int) (pair.getValue().getStartOffset() - sent.getStartOffset());
+			List<ValueUnitBasedRelation> list = new ArrayList<>();
+
+			for(int i=valuesSentLeftPair.size()-1; i>=0; i--) {
+				int startPoint = (int) (valuesSentLeftPair.get(i).getEndOffset() - sent.getStartOffset());
+				String sentence = sent.getText();
+				String substringSentence = sentence.substring(startPoint, endPoint).toLowerCase();
+				if(KineticREUtils.hasPairConnector(substringSentence)) {	
+					ValueUnitBasedRelation newPair = new ValueUnitBasedRelation(valuesSentLeftPair.get(i), pair.getUnit());
+					list.add(newPair);
+					endPoint = (int) (valuesSentLeftPair.get(i).getStartOffset() - sent.getStartOffset());
+				}
+				else {
+					if(list.isEmpty())
+						return null;
+					list.add(pair);
+					//listComplex.add(new ValueUnitSimpleOrComplex(pair));
+					listComplex.add(new ValueUnitSimpleOrComplex(list));
+					return listComplex;
+				}
+			}
+			if(list.isEmpty())
+				return null;
+			list.add(pair);
+			//listComplex.add(new ValueUnitSimpleOrComplex(pair));
+			listComplex.add(new ValueUnitSimpleOrComplex(list));
+			return listComplex;
+		}
+		return null;
+	}
+
+	private void calculateSimplePairs(List<ValueUnitBasedRelation> listPairsValueUnit,List<ValueUnitSimpleOrComplex> valueUnitSimpleOrComplexList, Set<ValueUnitBasedRelation> alreadyUsed) {
+		for(ValueUnitBasedRelation pair : listPairsValueUnit) {
+			if(!alreadyUsed.contains(pair)) {
+				ValueUnitBasedRelation now = pair;
+				List<ValueUnitBasedRelation> list = new ArrayList<>();
+				list.add(now);
+				valueUnitSimpleOrComplexList.add(new ValueUnitSimpleOrComplex(list));
+				alreadyUsed.add(now);
+			}
+		}
 	}
 
 	private void insertAnnotationsInDatabse(IIEProcess process,IREProcessReport report,IAnnotatedDocument annotDoc,List<IEntityAnnotation> entitiesList,List<IEventAnnotation> relationsList) throws ANoteException {
@@ -318,7 +544,7 @@ public class KineticRE implements IREProcess {
 			boolean hasKparamAtleft = false;
 			KparamValueUnitSimpleOrComplex tripleToAdd = null;
 			for(int j=0; j<kparamSent.size(); j++) {
-				if(kparamSent.get(j).getStartOffset() > simpleORcomplexPair.getStartRelation() && kparamSent.get(j).getEndOffset() < simpleORcomplexPair.getEndRelation())  {
+				if(kparamSent.get(j).getStartOffset() >= simpleORcomplexPair.getStartRelation() && kparamSent.get(j).getEndOffset() <= simpleORcomplexPair.getEndRelation())  {
 					if(kparamSent.get(j).getEndOffset() < simpleORcomplexPair.getStartIndex()) {
 						hasKparamAtleft = true;
 						tripleToAdd = new KparamValueUnitSimpleOrComplex(simpleORcomplexPair, kparamSent.get(j));
@@ -373,7 +599,6 @@ public class KineticRE implements IREProcess {
 		return results;
 	}
 
-	
 	private void addMetabolites(ISentence sent, AnoteClassInDocument metabolitesInDocument,
 			ValueUnitBasedRelation simpleComplexPair, List<IEntityAnnotation> left, List<IEntityAnnotation> right, IEventProperties eventProperties) {
 		List<IEntityAnnotation> metabolites = calculateMetabolitesToRelation(sent,metabolitesInDocument,eventProperties);
@@ -406,7 +631,6 @@ public class KineticRE implements IREProcess {
 		}
 	}
 
-
 	private void addOrganism(ISentence sent, AnoteClassInDocument organismInDocument,
 			ValueUnitBasedRelation simpleComplexPair, List<IEntityAnnotation> left, List<IEntityAnnotation> right, IEventProperties eventProperties) {
 		List<IEntityAnnotation> organisms = calculateorganismToRelation(sent,organismInDocument,eventProperties);
@@ -422,7 +646,6 @@ public class KineticRE implements IREProcess {
 			}
 		}
 	}
-
 
 	private void addKineticParameter(KparamValueUnitSimpleOrComplex tripleSC, ValueUnitBasedRelation simpleComplexPair,
 			List<IEntityAnnotation> left, List<IEntityAnnotation> right) {
@@ -470,7 +693,6 @@ public class KineticRE implements IREProcess {
 		return new ArrayList<>();
 	}
 
-
 	private List<IEntityAnnotation> calculateorganismToRelation(ISentence sentence, AnoteClassInDocument organismInDocument, IEventProperties eventProperties) {
 		List<IEntityAnnotation> organismsInSentence = organismInDocument.getEntityFilterByClassInSentence(sentence);
 		if(!organismsInSentence.isEmpty())
@@ -494,7 +716,6 @@ public class KineticRE implements IREProcess {
 
 		return new ArrayList<>(organismAnnotation);
 	}
-
 
 	// Função que buscar entidades de uma frase. (@return Lista das Entidades numa frase)
 	protected List<IEntityAnnotation> getSentenceEntities(List<IEntityAnnotation> listEntitiesSortedByOffset, ISentence sentence) {
