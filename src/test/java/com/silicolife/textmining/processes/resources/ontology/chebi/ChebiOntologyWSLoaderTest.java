@@ -50,7 +50,7 @@ public class ChebiOntologyWSLoaderTest {
 	@Test
 	public void loader() throws ANoteException, IOException, InvalidDatabaseAccess {
 		DatabaseConnectionInit.init("localhost","3306","testChebi","root","admin");
-		long id = 3136834027775882053L;
+		long id = 3755728197151750794L;
 		IResource<IResourceElement> ontology = new OntologyImpl(id , "", "", true)	;
 		ChebiOntologyWSLoader chebiOntologyWSLoader = new ChebiOntologyWSLoader();
 		IOntologyLoaderConfiguration configuration = new OntologyLoaderConfigurationImpl(ontology, null, true, true);

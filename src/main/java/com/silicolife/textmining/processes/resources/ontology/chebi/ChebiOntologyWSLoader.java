@@ -41,28 +41,29 @@ import uk.ac.ebi.chebi.webapps.chebiWS.model.StarsCategory;
 public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOntologyLoader{
 
 	private boolean debug = true;
-	
+
 	private boolean cancel = false;
 	private ChebiWebServiceClient chebiClient;
-	
+
 	private static String defaultClass = "Chebi Ontology";
 	private static String metaboliteClass = "metabolite";
 	private static String drugClass = "drug";
+	private static String organicMoleculeClass = "organic_molecule";
 
-	
+
 	private static String source = "ChEBI";
 	private static String chebiMetaboliteId = "CHEBI:25212";
 	private static String chebiDrugId = "CHEBI:23888";
-
+	private static String organicMoleculeId = "CHEBI:50860";
 
 	private static int maxStepsInGrapth = 8;
 
-	
+
 	private Set<String> synonymExclusionSources;
 
 	private int startpoint = 0;
 
-	
+
 	public ChebiOntologyWSLoader() {
 		super("Chebi Ontology (web-service)");
 		chebiClient = new ChebiWebServiceClient();
@@ -80,7 +81,7 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 			Map<String, Entity> mapChebiIdEntity = new HashMap<>();
 			Map<String,IResourceElement> ontologyIDDatabaseIndex = new HashMap<String, IResourceElement>();
 			// Add root elemement
-			IAnoteClass klass = new AnoteClass(defaultClass);
+			IAnoteClass klass = new AnoteClass(metaboliteClass);
 			getReport().addClassesAdding(2);
 			IResourceElement root = new ResourceElementImpl("root",klass,new ArrayList<IExternalID>(),new ArrayList<String>(),0,true);
 			this.addElementToBatch(root);
@@ -110,9 +111,9 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 			point ++;
 		}
 	}
-	
+
 	private void porcessRelations(Entity entity,Map<String, IResourceElement> ontologyIDDatabaseIndex2,Map<String, IResourceElement> ontologyIDDatabaseIndex, IResourceElement root) throws ANoteException {
-		
+
 		IResourceElement sun = ontologyIDDatabaseIndex.get(entity.getChebiId());
 		List<OntologyDataItem> allEntityRelations = entity.getOntologyParents();
 		List<OntologyDataItem> isAEntityRelations = onlyIsARelations(allEntityRelations);
@@ -125,7 +126,7 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 			processIsA(sun,ontologyIDDatabaseIndex, "is_a",isAEntityRelations);
 		}
 	}
-	
+
 	private void processIsA(IResourceElement sun, Map<String, IResourceElement> ontologyIDDatabaseIndex, String relationType,List<OntologyDataItem> isAEntityRelations) throws ANoteException {
 		for(OntologyDataItem isA:isAEntityRelations)
 		{
@@ -158,15 +159,20 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 			IResourceElement resourceElemnt = convertEntityIntoIResourceElement(chebiComplete);
 			ontologyIDDatabaseIndex.put(chebiId,resourceElemnt);
 			mapChebiIdEntity.put(chebiId, chebiComplete);
-			if(isMetabolite(chebiComplete))
-			{
-				resourceElemnt.setTermClass(new AnoteClass(metaboliteClass));
-			}
-			else if(isDrug(chebiComplete))
-			{
-				resourceElemnt.setTermClass(new AnoteClass(drugClass));
-
-			}
+//			if(isMetabolite(chebiComplete))
+//			{
+//				resourceElemnt.setTermClass(new AnoteClass(metaboliteClass));
+//			}
+//			else if(isDrug(chebiComplete))
+//			{
+//				resourceElemnt.setTermClass(new AnoteClass(drugClass));
+//
+//			}
+//			else if(isOrganicMolecule(chebiComplete))
+//			{
+//				resourceElemnt.setTermClass(new AnoteClass(organicMoleculeClass));
+//
+//			}
 			super.addElementToBatch(resourceElemnt);
 			if(point % 100 == 0 )
 			{
@@ -184,6 +190,11 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 			IResourceManagerReport reportBatchInserted = super.executeBatchWithoutValidation();
 			super.updateReport(reportBatchInserted,report);			
 		}		
+	}
+
+
+	private boolean isOrganicMolecule(Entity chebiComplete) {
+		return isClass(chebiComplete,organicMoleculeId);
 	}
 
 
@@ -206,6 +217,15 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 				{
 					ontologyDataItemHasRole.add(ontologyDataItem);
 				}
+			}
+			if(ontologyDataItemHasRole.isEmpty())
+			{
+				for (OntologyDataItem ontologyDataItem : parents.getListElement()) {
+					if(ontologyDataItem.getType().equals("is a"))
+					{
+						ontologyDataItemHasRole.add(ontologyDataItem);
+					}
+				}	
 			}
 			if(!ontologyDataItemHasRole.isEmpty())
 			{
@@ -232,18 +252,19 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 		}
 		if(ontologyDataItem.getChebiId().equals(chebiMetaboliteId))
 		{
+			candidateApplicaitonNames.add(ontologyDataItem.getChebiId());
 			return candidateApplicaitonNames;
 		}
 		List<OntologyDataItem> parents = chebiClient.getOntologyParents(ontologyDataItem.getChebiId()).getListElement();
 		candidateApplicaitonNames.add(ontologyDataItem.getChebiId());
 		List<String> out = new ArrayList<>();
 		for (OntologyDataItem ontologyDataIt : parents) {
-			if(ontologyDataIt.getType().equals("is a"))
+			if(ontologyDataIt.getType().equals("is a") || ontologyDataIt.getType().equals("has role"))
 				out.addAll(getApplications(ontologyDataIt, ++deep, candidateApplicaitonNames,chebiMetaboliteId));
 		}
 		return out;
 	}
-	
+
 	private IResourceElement convertEntityIntoIResourceElement(Entity chebiComplete) {
 		String term = chebiComplete.getChebiAsciiName();
 		String chebiId = chebiComplete.getChebiId().substring(6);
@@ -261,13 +282,13 @@ public class ChebiOntologyWSLoader extends DictionaryLoaderHelp implements IOnto
 		ISource sourceChebi = new SourceImpl(source);
 		externalIDs.add(new ExternalIDImpl(chebiId, sourceChebi));
 		// Other Chebi Ids
-//		List<String> secondaruChebiIds = chebiComplete.getSecondaryChEBIIds();
-//		for (String econdaruChebiId : secondaruChebiIds) {
-//			externalIDs.add(new ExternalIDImpl(econdaruChebiId.substring(6), sourceChebi));
-//		}
+		//		List<String> secondaruChebiIds = chebiComplete.getSecondaryChEBIIds();
+		//		for (String econdaruChebiId : secondaruChebiIds) {
+		//			externalIDs.add(new ExternalIDImpl(econdaruChebiId.substring(6), sourceChebi));
+		//		}
 		// Other External Ids besides Chebi
-//		chebiComplete.getDatabaseLinks();
-		IAnoteClass termClass = new AnoteClass(defaultClass);
+		//		chebiComplete.getDatabaseLinks();
+		IAnoteClass termClass = new AnoteClass(metaboliteClass);
 		IResourceElement out = new ResourceElementImpl(term,termClass,externalIDs,synonyms, 0,true);
 		return out;
 	}
