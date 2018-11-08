@@ -51,7 +51,7 @@ public class VariantDictionaryMatcher extends Matcher implements Sizeable {
 	/** the identifier for this particular matcher; dictionary terms will only be loaded from the database where this tag matches a tag column */
 	private String tag;
 
-//	private final Pattern tokenizationPattern = Pattern.compile("(?:[a-zA-Z]+)|(?:[0-9])|(?:[\\S])"); //original
+	//	private final Pattern tokenizationPattern = Pattern.compile("(?:[a-zA-Z]+)|(?:[0-9])|(?:[\\S])"); //original
 	private final Pattern tokenizationPattern = Pattern.compile("(?:[a-zA-Z0-9]+)|(?:[\\S])");
 
 	private boolean ignoreCase;
@@ -333,7 +333,7 @@ public class VariantDictionaryMatcher extends Matcher implements Sizeable {
 	public List<Mention> match(String text, Document doc) {
 		if (terms == null || termToIdsMap == null)
 			init();
-		
+
 		List<Mention> matches = new ArrayList<Mention>();
 
 		String matchText = this.ignoreCase ? text.toLowerCase() : text;
@@ -343,13 +343,13 @@ public class VariantDictionaryMatcher extends Matcher implements Sizeable {
 
 		List<Pair<Integer>> tokenLocations = new ArrayList<Pair<Integer>>();
 
-//		int prev = -1;
+		//		int prev = -1;
 		while (splitter.find()){
-//			if (prev != -1 && Character.isLetterOrDigit(matchText.charAt(prev))){
-//				tokenLocations.add(new Pair<Integer>(prev, splitter.start()));
-//			}
-//
-//			prev = splitter.start();
+			//			if (prev != -1 && Character.isLetterOrDigit(matchText.charAt(prev))){
+			//				tokenLocations.add(new Pair<Integer>(prev, splitter.start()));
+			//			}
+			//
+			//			prev = splitter.start();
 			tokenLocations.add(new Pair<Integer>(splitter.start(),splitter.end()));
 		}
 
@@ -358,14 +358,24 @@ public class VariantDictionaryMatcher extends Matcher implements Sizeable {
 			List<Integer> foundMatches = getMatchIds(tokenLocations, i, matchText);
 
 			for (int fm : foundMatches){
-				String term = ignoreCase ? text.substring(p.getX(), p.getX() + terms[fm].length()) : terms[fm];
-				Mention m = new Mention(termToIdsMap[fm].clone(), p.getX(), p.getX() + term.length(), term);
-				m.setDocid(docid);
-				matches.add(m);
+				if(p.getX() > text.length() || p.getX() + terms[fm].length() > text.length())
+				{
+					System.out.println("ERROR : "+docid);
+					System.out.println("ERROR : "+text);
+					System.out.println("ERROR : "+p.getX() +  "-" + p.getX() + terms[fm].length());
+					System.out.println("ERROR : "+terms[fm]);
+				}
+				else
+				{
+					String term = ignoreCase ? text.substring(p.getX(), p.getX() + terms[fm].length()) : terms[fm];
+					Mention m = new Mention(termToIdsMap[fm].clone(), p.getX(), p.getX() + term.length(), term);
+					m.setDocid(docid);
+					matches.add(m);
+				}
 			}
 		}
 
-		
+
 		return matches;
 	}
 
@@ -433,7 +443,7 @@ public class VariantDictionaryMatcher extends Matcher implements Sizeable {
 					break;
 				}
 			}
-//			System.out.println(term);
+			//			System.out.println(term);
 			//Since we're still in the do-while loop, we have either:
 			//1) found an exact match, or
 			//2) found a term in the dictionary starting with the substring we're currently looking at.
