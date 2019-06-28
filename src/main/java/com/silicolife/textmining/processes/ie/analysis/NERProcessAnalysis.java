@@ -1,74 +1,57 @@
-package com.silicolife.textmining.processes.ie.ner.analysis;
+package com.silicolife.textmining.processes.ie.analysis;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.analysis.StatisticsImpl;
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationType;
-import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
-import com.silicolife.textmining.core.interfaces.core.analysis.IAnnotatedDocumentStatistics;
 import com.silicolife.textmining.core.interfaces.core.analysis.IStatistics;
 import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
-import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
-import com.silicolife.textmining.core.interfaces.core.document.IDocumentSet;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
-import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.core.document.IPublicationFilter;
 import com.silicolife.textmining.core.interfaces.core.general.classe.IAnoteClass;
 import com.silicolife.textmining.core.interfaces.process.IE.IIEProcess;
 import com.silicolife.textmining.core.interfaces.resource.IResourceElement;
 
-public class NERProcessAnalysis {
+public class NERProcessAnalysis extends AProcessAnalysis {
 
-	private IIEProcess nerProcess;
-	private ICorpus corpus;
-	private Long publicationsCount;
-	private static Integer documentBatch = 1000;
-	private static Logger log = Logger.getLogger(NERProcessAnalysis.class.getName());
 
 	public NERProcessAnalysis(IIEProcess nerProcess) {
-		this.nerProcess = nerProcess;
-		this.corpus = nerProcess.getCorpus();
-		this.publicationsCount = null;
+		super(nerProcess);
 	}
-	
-	public Long countDocuments() throws ANoteException {
-		if(publicationsCount== null)
-			this.publicationsCount = InitConfiguration.getDataAccess().getCorpusPublicationsCount(corpus);
-		return this.publicationsCount;
-	}
-	
+
 	public Long countNERAnnotations() throws ANoteException {
-		return InitConfiguration.getDataAccess().countAnnotationsByAnnotationType(nerProcess, AnnotationType.ner);
+		return InitConfiguration.getDataAccess().countAnnotationsByAnnotationType(this.getProcess(), AnnotationType.ner);
+	}
+	
+	public Long countPublicationsWithNERAnnotationsByResourceElement(IResourceElement resourceElement) throws ANoteException {
+		return InitConfiguration.getDataAccess().countDocumentsWithResourceElementByAnnotationTypeInProcess(resourceElement, this.getProcess(), AnnotationType.re);
 	}
 	
 	public Map<IAnoteClass, Long> countNERAnoteClassInProcess() throws ANoteException{
-		return InitConfiguration.getDataAccess().countAnnotationsByClassInProcess(nerProcess);
+		return InitConfiguration.getDataAccess().countEntityAnnotationsByClassInProcess(this.getProcess());
 	}
 	
-	public Map<IAnnotatedDocument, IAnnotatedDocumentStatistics> getAllStatisticsByDocument() throws ANoteException{
-		Map<IAnnotatedDocument, IAnnotatedDocumentStatistics> map = new HashMap<>();
-		int i = 0;
-		Long size = countDocuments();
-		while(i<=size) {
-			
-			IDocumentSet docs = InitConfiguration.getDataAccess().getCorpusPublicationsPaginated(corpus, i, i+documentBatch);
-			for(IPublication doc:docs) {
-				IAnnotatedDocument anot = new AnnotatedDocumentImpl(doc, nerProcess, corpus);
-				IAnnotatedDocumentStatistics stats = anot.getStatistics();
-				map.put(anot, stats);
-			}
-			i+=documentBatch;
-			log.info("Processed statistics of "+ String.valueOf(i) + " documents");
-		}
-
-		return map;
+	public Map<IResourceElement,Long> countDocumentsAnnotatedByResourceElementsInProcess() throws ANoteException{
+		return InitConfiguration.getDataAccess().countDocumentsWithEntityAnnotationsByResourceElementInProcess(this.getProcess());
 	}
 	
 	public Map<IResourceElement, Long> countNERAnoteResourcesAnnotatedInProcess() throws ANoteException{
-		return InitConfiguration.getDataAccess().countAnnotationsByResourceElementInProcess(nerProcess);
+		return InitConfiguration.getDataAccess().countEntityAnnotationsByResourceElementInProcess(this.getProcess());
+	}
+	
+	public List<IPublication> getPublicationsFilteredByEntityResourceElement(Set<IResourceElement> resourceElements, IPublicationFilter pubFilter) throws ANoteException{
+		List<IPublication> pubs = new ArrayList<>();
+		List<Long> publicationIds = InitConfiguration.getDataAccess().getPublicationsIdsByResourceElementsFilteredByPublicationFilter(resourceElements, pubFilter);
+		for(Long documentID : publicationIds) 
+			pubs.add(InitConfiguration.getDataAccess().getPublication(documentID));
+		
+		return pubs;
+			
 	}
 
 	
