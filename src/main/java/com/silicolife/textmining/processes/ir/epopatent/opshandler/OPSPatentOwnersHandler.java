@@ -85,6 +85,8 @@ public class OPSPatentOwnersHandler implements ResponseHandler<String>{
 								applicants= applicants + applicant.getTextContent() + ", ";
 							}
 						}
+						if(applicants.isEmpty())
+							return applicants;
 						return applicants.substring(0, applicants.length()-2);
 					}
 				}

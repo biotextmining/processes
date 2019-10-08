@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
+import com.silicolife.textmining.core.datastructures.documents.lables.PublicationLabelImpl;
 import com.silicolife.textmining.core.datastructures.textprocessing.NormalizationForm;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
@@ -28,6 +29,7 @@ import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicati
 import com.silicolife.textmining.core.interfaces.core.document.structure.IPublicationField;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.epopatent.configuration.OPSConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.utils.http.ResponseHandler;
 import com.silicolife.textmining.utils.http.exceptions.ResponseHandlingException;
 
@@ -78,30 +80,92 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 		IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(epodocID, PublicationSourcesDefaultEnum.patent.name());
 		publicationExternalIDSource.add(externalID);
 		List<IPublicationField> publicationFields = new ArrayList<IPublicationField>();
-		List<IPublicationLabel> publicationLabels = new ArrayList<IPublicationLabel>();
+		List<IPublicationLabel> publicationLabels = getLabels(item);
 		String notes = getNotes(item);
 		String relativePath = new String();
-		IPublication pub = new PublicationImpl(title, authors, "Patent", date,date,"", "", "", "","", abstractSection, extenalLink, true,notes,
-				relativePath,publicationExternalIDSource,publicationFields,publicationLabels);
+		String type = "Patent";
+		String category = "EPO Patent";
+		IPublication pub = new PublicationImpl(title, authors,category , date,date,"", "", "", "","", abstractSection, extenalLink, true,notes,
+				relativePath,type,publicationExternalIDSource,publicationFields,publicationLabels);
 		return pub;
+	}
+	
+	public static List<IPublicationLabel> getLabels(Node item) {
+		List<IPublicationLabel> out = new ArrayList<>();
+		Set<String> classificationsIPC = getClassificationIPCR(item);
+		for(String classificationIPC:classificationsIPC)
+			out.add(new PublicationLabelImpl(PatentPipelineUtils.labelIPCStart+": " + classificationIPC));
+		return out;
+	}
+
+
+	public static String getApplicants(Node item){//method to return applicants from patent bibliographic data
+		String applicants = new String();
+		Node bibliographicDate = item.getFirstChild();
+		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
+		for(int i=0;i<bibliographicDateChilds.getLength();i++)
+		{
+			Node bibliographicDateChild = bibliographicDateChilds.item(i);
+			String nodeNAme = bibliographicDateChild.getNodeName();
+			if(nodeNAme.equals("parties"))
+			{
+				Node partiesNode = bibliographicDateChild;
+				NodeList partiesChilds = partiesNode.getChildNodes();
+				for(int j=0;j<partiesChilds.getLength();j++)
+				{
+					Node partiesChild = partiesChilds.item(j);
+					String partiesChildNodeName = partiesChild.getNodeName();
+					if(partiesChildNodeName.equals("applicants"))
+					{
+						Node applicnts = partiesChild;
+						NodeList applicantList = applicnts.getChildNodes();
+						for(int k=0;k<applicantList.getLength();k++)
+						{
+							Node applicant = applicantList.item(k);
+							String inventorType = applicant.getAttributes().getNamedItem("data-format").getNodeValue();
+							if(inventorType.equals("epodoc"))
+							{
+								applicants= applicants + applicant.getTextContent() + ", ";
+							}
+						}
+						if(applicants.isEmpty())
+							return new String(); 
+						return applicants.substring(0, applicants.length()-2);
+					}
+				}
+			}	
+		}
+		return applicants;
 	}
 
 
 
 	private String getNotes(Node item) {
+		String notesClassification = getNotesClassification(item);
+		String owners = getApplicants(item);
+		if(owners.isEmpty())
+			return notesClassification.trim();
+		return (notesClassification + " [ Owners: "+ owners + "]");
+		
+	}
+
+
+	public static String getNotesClassification(Node item) {
 		Set<String> classificationIPCRSet = getClassificationIPCR(item);
 		if(classificationIPCRSet.isEmpty())
 			return new String();
-		String notes = "Classification IPCR : ";
+		String notes = "[ Classification IPCR: ";
 		for(String classificationIPCR:classificationIPCRSet)
 		{
 			notes = notes + classificationIPCR +  " , ";
 		}
-		return notes;
+		if(!notes.endsWith(", "))
+			return new String();
+		return notes.substring(0, notes.length()-3) + "]";
 	}
 
 
-	private Set<String> getClassificationIPCR(Node item) {
+	public static Set<String> getClassificationIPCR(Node item) {
 		Set<String> out = new HashSet<>();
 		Node bibliographicDate = item.getFirstChild();
 		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
@@ -116,7 +180,10 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 				for(int j=0;j<classificationsipcrChilds.getLength();j++)
 				{
 					Node classificationsipcrChild = classificationsipcrChilds.item(j);
-					out.add(classificationsipcrChild.getTextContent().trim());
+					String classification = classificationsipcrChild.getTextContent().trim();
+					if(classification.endsWith("A I"))
+						classification = classification.substring(0,classification.length()-3);
+					out.add(classification);
 				}
 			}	
 		}
@@ -124,7 +191,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 	}
 
 
-	private String getExternalLink(Node item) {
+	public static String getExternalLink(Node item) {
 		String externalLink = new String();
 		Node bibliographicDate = item.getFirstChild();
 		Node publicationReference = bibliographicDate.getFirstChild();
@@ -147,12 +214,11 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 				return OPSConfiguration.opsStartLink+"CC="+documentProperties.getProperty("country")+"&NR="+documentProperties.getProperty("doc-number")+documentProperties.getProperty("kind");
 			}
 		}
-		
 		return externalLink;
 	}
 
 
-	private String getAbstract(Node item) {
+	public static String getAbstract(Node item) {
 		String abstractText = new String();
 		NodeList extchangeDocumentChilds = item.getChildNodes();
 		for(int i=0;i<extchangeDocumentChilds.getLength();i++)
@@ -184,7 +250,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 	}
 
 
-	private String getDate(Node item) {
+	public static String getDate(Node item) {
 		String date = new String();
 		Node bibliographicDate = item.getFirstChild();
 		Node publicationReference = bibliographicDate.getFirstChild();
@@ -211,7 +277,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 	}
 
 
-	private String getAuthors(Node item) {
+	public static String getAuthors(Node item) {
 		String authors = new String();
 		Node bibliographicDate = item.getFirstChild();
 		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
@@ -237,9 +303,11 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 							String inventorType = inventor.getAttributes().getNamedItem("data-format").getNodeValue();
 							if(inventorType.equals("epodoc"))
 							{
-								authors = authors + inventor.getTextContent() + ", ";
+								authors = authors + inventor.getTextContent().trim() + ", ";
 							}
 						}
+						if(authors.isEmpty())
+							return new String();
 						return authors.substring(0, authors.length()-2);
 					}
 				}
@@ -249,7 +317,7 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 	}
 
 
-	private String getTitle(Node item) {
+	public static String getTitle(Node item) {
 		String title = new String();
 		Node bibliographicDate = item.getFirstChild();
 		NodeList bibliographicDateChilds = bibliographicDate.getChildNodes();
@@ -281,9 +349,9 @@ public class OPSSearchHandler  implements ResponseHandler<List<IPublication>>{
 		}
 		return title;
 	}
+	
 
-
-	private String getEpoDoc(Node item) {
+	public static String getEpoDoc(Node item) {
 		String epoDoc = new String();
 		Node bibliographicDate = item.getFirstChild();
 		Node publicationReference = bibliographicDate.getFirstChild();

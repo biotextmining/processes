@@ -62,7 +62,7 @@ public class CHEMDNERCorpusLoader implements ICorpusEntityLoader{
 				List<IPublicationExternalSourceLink> publicationExternalIDSource = new ArrayList<>();
 				IPublicationExternalSourceLink externalID = new PublicationExternalSourceLinkImpl(patentID, "PATENT");
 				publicationExternalIDSource.add(externalID);
-				IPublication pub = new PublicationImpl(title, "", "", "", "", "", "", "", "", "", text, "", false, "", "", publicationExternalIDSource , new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
+				IPublication pub = new PublicationImpl(title, "", "", "", "", "", "", "", "", "", text, "", false, "", "","", publicationExternalIDSource , new ArrayList<IPublicationField>(), new ArrayList<IPublicationLabel>());
 				getDocuments().add(pub);
 
 			}

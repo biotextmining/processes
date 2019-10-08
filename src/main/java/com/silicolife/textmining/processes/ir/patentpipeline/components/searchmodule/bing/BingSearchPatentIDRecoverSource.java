@@ -39,7 +39,7 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 			query.setQuery(queryBuilder(bingURL+newQuery));
 			int stopNumber =query.getNumberOfResults();//stop the cicle
 			int index = 0;
-			while (index<stopNumber) {
+			while (index<stopNumber && !stop) {
 				//Thread.sleep(2000);//pausar durante dois segundos
 
 				Set<String> urls = query.doQuery();
@@ -49,7 +49,6 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 				}
 				query.nextPage();
 				index+=query.getPerPage();
-				
 			}
 		}catch(Exception e){
 			if (autenticated){
@@ -115,7 +114,6 @@ public class BingSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource {
 					}
 				}
 			}catch(Exception e){
-				//				throw new ANoteException("There's a problem with input query. Try to change it!"); dont do anything and try the next link
 			}
 		} 
 		return PatentID;

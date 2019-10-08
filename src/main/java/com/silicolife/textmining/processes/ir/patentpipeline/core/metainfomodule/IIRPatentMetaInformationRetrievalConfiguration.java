@@ -11,5 +11,6 @@ public interface IIRPatentMetaInformationRetrievalConfiguration {
 	 * @return
 	 */
 	public IProxy getProxy();
+	
 
 }

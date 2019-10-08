@@ -3,15 +3,18 @@ package com.silicolife.textmining.processes.corpora.loaders;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.corpora.CorpusImpl;
+import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.DataProcessStatusEnum;
+import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.implementation.utils.ProcessStatusResourceTypesEnum;
 import com.silicolife.textmining.core.datastructures.documents.PDFtoText;
+import com.silicolife.textmining.core.datastructures.general.DataProcessStatusImpl;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
-import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
 import com.silicolife.textmining.core.datastructures.report.corpora.CorpusCreateReportImpl;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
@@ -20,6 +23,7 @@ import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANote
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.CorpusTextType;
 import com.silicolife.textmining.core.interfaces.core.document.corpus.ICorpus;
+import com.silicolife.textmining.core.interfaces.core.general.IDataProcessStatus;
 import com.silicolife.textmining.core.interfaces.core.report.corpora.ICorpusCreateReport;
 
 public class CorpusCreation {
@@ -28,7 +32,84 @@ public class CorpusCreation {
 	{
 
 	}
-
+	
+	
+	public ICorpusCreateReport createCorpusByIds(ICorpusCreateConfiguration configuration
+			,ICorpus newCorpus, IDataProcessStatus dataprocessStatus) throws ANoteException
+	{
+						createCorpusOnDatabase(newCorpus);
+			InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, false);
+			Set<Long> documentIds = configuration.getDocumentsIDs();
+			int step = 0;
+			int total = documentIds.size();
+			dataprocessStatus.setStatus(DataProcessStatusEnum.running);
+			for(Long publicationId:documentIds) {
+				IPublication publication = InitConfiguration.getDataAccess().getPublication(publicationId);
+				if(publication!=null)
+				{
+					InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
+				}
+				step++;
+				float progress = memoryAndProgressOut(step,total);
+				if(progress!=-1) {
+					dataprocessStatus.setProgress(progress);
+					dataprocessStatus.setUpdateDate(new Date());
+					InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+				}
+				memoryAndProgress(step,total);
+			}
+			InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, true);
+			ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocumentsIDs().size());
+			dataprocessStatus.setStatus(DataProcessStatusEnum.finished);
+			dataprocessStatus.setProgress(100);
+			Date finishDate = new Date();
+			dataprocessStatus.setFinishedDate(finishDate);
+			dataprocessStatus.setUpdateDate(finishDate);
+			//dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+configuration.getDocumentsIDs().size()+ " documents added");
+			dataprocessStatus.setReport(configuration.htmlReport(total));
+			InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+			return report;
+	}
+	
+	public int createCorpusByLuceneSearch(ICorpusCreateConfiguration configuration, 
+			ICorpus newCorpus,IDataProcessStatus dataprocessStatus, int step, int total) throws ANoteException
+	{
+		
+		if(step ==0) {
+		createCorpusOnDatabase(newCorpus);
+		InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, false);
+		
+		}
+		dataprocessStatus.setStatus(DataProcessStatusEnum.running);
+		Set<IPublication> documents = configuration.getDocuments();
+		for(IPublication publication : documents) {
+			if(publication!=null)
+			{
+				InitConfiguration.getDataAccess().addCorpusPublication(newCorpus, publication);
+			}
+			step++;
+			float progress = memoryAndProgressOut(step,total);
+			if(progress!=-1) {
+				dataprocessStatus.setProgress(progress);
+				dataprocessStatus.setUpdateDate(new Date());
+				InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+			}
+			memoryAndProgress(step,total);
+		}
+		if(step == total) {
+		InitConfiguration.getDataAccess().updateCorpusStatus(newCorpus, true);
+		//ICorpusCreateReport report = new CorpusCreateReportImpl(newCorpus, configuration.getCorpusTextType(),configuration.getDocumentsIDs().size());
+		dataprocessStatus.setStatus(DataProcessStatusEnum.finished);
+		dataprocessStatus.setProgress(100);
+		Date finishDate = new Date();
+		dataprocessStatus.setFinishedDate(finishDate);
+		dataprocessStatus.setUpdateDate(finishDate);
+		//dataprocessStatus.setReport("Corpus "+ newCorpus.getDescription()+" "+total+ " documents added");
+		dataprocessStatus.setReport(configuration.htmlReport(total));
+		InitConfiguration.getDataAccess().updateDataProcessStatus(dataprocessStatus);
+		}
+		return step;
+	}
 
 	public ICorpusCreateReport createCorpus(ICorpusCreateConfiguration configuration) throws ANoteException
 	{
@@ -88,7 +169,7 @@ public class CorpusCreation {
 		}
 		// PDF is availbale and Full text are not available yet, transform it to string and insert it in publication object
 		if(publication.isPDFAvailable() && publication.getFullTextContent().isEmpty()) {
-			String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
+			String saveDocDirectoty = (String) InitConfiguration.getPropertyValueFromInitOrProperties(GeneralDefaultSettings.PDFDOCDIRECTORY);
 			// Get PDF to text from PDF file
 			String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
 			publication.setFullTextContent(fullTextContent);
@@ -130,6 +211,14 @@ public class CorpusCreation {
 		{
 			System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 		}
+	}
+	
+	protected float memoryAndProgressOut(int step, int total) {
+		if(step%10==0)
+		{
+			return (float) ((double)step/ (double) total * 100);
+		}
+		else return -1;
 	}
 
 }

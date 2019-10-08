@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -7,7 +8,6 @@ import java.util.Random;
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
-import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
@@ -26,7 +26,11 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 	public final static String opsName= "Open Patent Services API from EPO";
 
 	private final static int minWaitTime=100;
-	private final static int maxWaitTime=1500;
+	private final static int maxWaitTime=800;
+
+	private Long lastTimeThatGetAutentication;
+
+	private String tokenaccess;
 
 	public OPSPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
 			throws WrongIRPatentMetaInformationRetrievalConfigurationException {
@@ -35,34 +39,47 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
-		long t1 = System.currentTimeMillis();
-		String autentication = Utils.get64Base(((IIROPSPatentMetaInformationRetrievalConfiguration)getConfiguration()).getAccessToken());
-		String tokenaccess;
-		try {
-			tokenaccess = OPSUtils.postAuth(autentication);
-
-			for(String patentID:mapPatentIDPublication.keySet())
-			{
-				long t2 = System.currentTimeMillis();
-				if(((float)(t2-t1)/1000)>=900){//15min
-					try {
-						Thread.sleep(5000);
-						tokenaccess=OPSUtils.loginOPS(autentication);
-						t1=System.currentTimeMillis();
-					} catch (InterruptedException e) {
-						throw new ANoteException(e);
-					}
-				}
+		IIROPSPatentMetaInformationRetrievalConfiguration configuration = (IIROPSPatentMetaInformationRetrievalConfiguration) getConfiguration();
+		boolean updateAbstarctWitClaimsAndDescription = configuration.isAbstarctIncludeClaimsAndDescription();
+		testIfautenticationIFneeded();
+		Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+		while(iterator.hasNext() && !stop)
+		{
+			testIfautenticationIFneeded();
+			String patentID = iterator.next();
+			if(configuration.isWaitingTimeBetweenSteps())
 				waitARandomTime();
-				List<String> possiblePatentIDs;
-				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
-				searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID, possiblePatentIDs);
-
-			}
-		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
-				| ResponseHandlingException e1) {
-			throw new ANoteException(new InternetConnectionProblemException(e1));
+			List<String> possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+			searchInAllPatents(mapPatentIDPublication, tokenaccess, patentID,possiblePatentIDs, updateAbstarctWitClaimsAndDescription);
 		}
+	}
+
+	public void testIfautenticationIFneeded() throws ANoteException
+	{
+		IIROPSPatentMetaInformationRetrievalConfiguration configuration = (IIROPSPatentMetaInformationRetrievalConfiguration) getConfiguration();
+		if(lastTimeThatGetAutentication==null)
+		{
+			getLogInToken(configuration);
+			lastTimeThatGetAutentication = System.currentTimeMillis();
+		}
+		else
+		{
+			long nowTime = System.currentTimeMillis();
+			if(((float)(nowTime-lastTimeThatGetAutentication)/1000)>=900){//15min
+				try {
+					Thread.sleep(2000);
+					getLogInToken(configuration);
+					lastTimeThatGetAutentication=System.currentTimeMillis();
+				} catch (InterruptedException e) {
+					throw new ANoteException(e);
+				}
+			}
+		}
+	}
+
+	private void getLogInToken(IIROPSPatentMetaInformationRetrievalConfiguration configuration) {
+		String autentication = Utils.get64Base(configuration.getAccessToken());
+		tokenaccess=OPSUtils.loginOPS(autentication);
 	}
 
 
@@ -78,11 +95,10 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 
 
 	private boolean searchInAllPatents(Map<String, IPublication> mapPatentIDPublication, String tokenaccess,
-			String patentID, List<String> possiblePatentIDs) {
+			String patentID, List<String> possiblePatentIDs,boolean updateAbstractWithClaimsAndDescription) {
 		boolean informationdownloaded =false;
-		//		if (!verifyPublicationMetadataDownload(mapPatentIDPublication, patentID)){
 		for (String id:possiblePatentIDs){
-			informationdownloaded = tryUpdatePatentMetaInformation(mapPatentIDPublication, patentID, id, tokenaccess);
+			informationdownloaded = tryUpdatePatentMetaInformation(mapPatentIDPublication, patentID, id, tokenaccess,updateAbstractWithClaimsAndDescription);
 			if (informationdownloaded){
 				return true;
 			}
@@ -103,11 +119,11 @@ public class OPSPatentMetaInformationRetrieval extends AIRPatentMetaInformationR
 		}
 	}
 
-	private boolean tryUpdatePatentMetaInformation(Map<String, IPublication> mapPatentIDPublication, String patentIDOriginal, String patentIDModified, String tokenaccess){
+	private boolean tryUpdatePatentMetaInformation(Map<String, IPublication> mapPatentIDPublication, String patentIDOriginal, String patentIDModified, String tokenaccess, boolean updateAbstractWithClaimsAndDescription){
 		IPublication publiction = mapPatentIDPublication.get(patentIDOriginal);
 		try {
 			OPSUtils.getPatentFamily(tokenaccess, publiction, patentIDModified);
-			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified);
+			OPSUtils.updatePatentMetaInformation(tokenaccess, publiction, patentIDModified,updateAbstractWithClaimsAndDescription);
 		} catch (RedirectionException | ClientErrorException | ServerErrorException | ConnectionException
 				| ResponseHandlingException e) {
 			return false;

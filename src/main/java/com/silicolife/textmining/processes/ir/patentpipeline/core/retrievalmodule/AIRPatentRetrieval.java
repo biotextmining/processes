@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule;
 
+import java.io.File;
 import java.net.Proxy.Type;
 
 import com.silicolife.textmining.core.interfaces.core.configuration.IProxy;
@@ -69,6 +70,15 @@ public abstract class  AIRPatentRetrieval implements IIRPatentRetrieval{
 //			System.setProperty("http.proxyHost",null);
 //			System.setProperty("http.proxyPort",null);
 		}
+	}
+	
+	protected boolean verifyPDFAlreadyDownloaded(String filePathway){
+		File file=new File(filePathway);
+		if(file.exists() && file.isFile()){
+			return true;
+		}
+		return false;
+
 	}
 
 }

@@ -6,10 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,12 +57,15 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 
 public class OPSUtils {
 
-	private static String version = "3.1";
+	private static String version = "3.2";
 	private static String autenticationURL = "https://ops.epo.org/" + version + "/auth/accesstoken";
-	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio/?q=";
+//	private static String searchURL = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio";
+	private static String searchURLGet = "http://ops.epo.org/" + version + "/rest-services/published-data/search/biblio?";
 	private static String publicationDetails = "http://ops.epo.org/" + version + "/rest-services/published-data/publication/epodoc/";
 	private static String generalURL = "http://ops.epo.org/" + version + "/rest-services/";
 	private static String publicationFamily = "http://ops.epo.org/" + version + "/rest-services/family/publication/epodoc/";
+
+	private static Set<String> excludePatentStartLetterSet;
 
 	private static HTTPClient client = new HTTPClient();
 
@@ -77,8 +84,17 @@ public class OPSUtils {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
-		List<IPublication> pubs = client.get(searchURL + query, headers, new OPSSearchHandler());
-		return pubs;
+		String linkEnds = "q="+query;
+		try {
+			List<IPublication> pubs = client.get(searchURLGet+linkEnds, headers, new OPSSearchHandler());
+			return pubs;
+		} catch (ClientErrorException e) {
+			if(e.getMessage().startsWith("404"))
+			{
+				return new ArrayList<IPublication>();
+			}
+			throw e;
+		}
 	}
 
 
@@ -98,7 +114,7 @@ public class OPSUtils {
 	}
 
 
-	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
+	public static void updatePatentMetaInformation(String tokenaccess,IPublication publiction,String patentID,boolean updateAbstarctWithClaimsAndDescription) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException
 	{
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
@@ -109,7 +125,8 @@ public class OPSUtils {
 		client.get(urlPatentDescritpion, headers, new OPSPatentUpdateHandler(publiction));
 		// Try to add claims and description to abstract
 		if (!publiction.getNotes().startsWith("NF")){//STATUS - not found
-			updateAbstractwithDescritionandclaims(tokenaccess, publiction);
+			if(updateAbstarctWithClaimsAndDescription)
+				updateAbstractwithDescritionandclaims(tokenaccess, publiction);
 		}
 		else{
 			publiction.setNotes(publiction.getNotes().substring(2, publiction.getNotes().length()));//return to the previous note state
@@ -132,17 +149,41 @@ public class OPSUtils {
 	public static Set<String> getSearchPatentIds(String tokenaccess,String query, int step) throws ConnectionException, RedirectionException,
 	ClientErrorException, ServerErrorException, ResponseHandlingException {
 		Map<String, String> headers = new HashMap<String, String>();
+		
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
 		}
 		headers.put("X-OPS-Range", step + "-" + (step + OPSConfiguration.STEP - 1));
-		Set<String> patentIds = client.get(searchURL + query, headers, new OPSPatentIDSearchHandler());
-		return patentIds;
+		String linkEnds = "q="+query;
+		try {
+			Set<String> pubs = client.get(searchURLGet+linkEnds, headers, new OPSPatentIDSearchHandler());
+			return pubs;
+		} catch (ClientErrorException e) {
+			if(e.getMessage().startsWith("404"))
+			{
+				return new HashSet<>();
+			}
+			throw e;
+		}
 	}
 
-	public static int getSearchResults(String query) throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException {
+	public static int getSearchResults(String tokenaccess,String query) throws RedirectionException, ServerErrorException, ConnectionException, ResponseHandlingException, ClientErrorException {
 		Map<String, String> headers = new HashMap<String, String>();
-		Integer result = client.get(searchURL + query, headers, new OPSSearchResultHandler());
+		if (tokenaccess != null) {
+			headers.put("Authorization", "Bearer " + tokenaccess);
+		}
+		String linkEnds = "q="+query;
+		Integer result;
+		try {
+			System.out.println(searchURLGet + linkEnds);
+			result = client.get(searchURLGet + linkEnds, headers, new OPSSearchResultHandler());
+		} catch (ClientErrorException e) {
+			if(e.getMessage().startsWith("404"))
+			{
+				return 0;
+			}
+			throw e;
+		}
 		return result;
 	}
 
@@ -291,7 +332,11 @@ public class OPSUtils {
 	}
 
 
-	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID, File outDir) throws COSVisitorException, RedirectionException, ClientErrorException, ServerErrorException, IOException, ConnectionException, ResponseHandlingException, InterruptedException {
+		return getPatentFullTextPDFUsingPatentID(tokenaccess,patentID ,outDir.getPath(),null);
+	}
+
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,Long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);
@@ -322,13 +367,18 @@ public class OPSUtils {
 				}
 			}
 		}
-
-		String docPDFFinal = path +"/" + pubID + ".pdf";
+		String docPDFFinal;
+		if(pubID!=null)
+		{
+			docPDFFinal = path +"/" + pubID + ".pdf";
+		}
+		else
+		{
+			docPDFFinal = path +"/" + patentID + ".pdf";
+		}
 		merger.setDestinationFileName(docPDFFinal);
 		merger.mergeDocuments();
-
 		recursiveDelete(docPath.toFile());
-
 		return new File(docPDFFinal);
 	}
 
@@ -382,51 +432,46 @@ public class OPSUtils {
 	public static String queryBuilder(String query)
 	{
 		query = tranform(query);
-		query = query.replaceAll("\\?", "%3F");
-		query = query.replaceAll("@", "%40");
-		query = query.replaceAll("#", "%23");
-		query = query.replaceAll("%", "%25");
-		query = query.replaceAll("\\$", "%24");
-		query = query.replaceAll("&", "%26");
-		query = query.replaceAll("\\+", "%2B");
-		query = query.replaceAll(",", "%2C");
-		query = query.replaceAll(":", "%3A");
-		query = query.replaceAll(" ", "%20");
-		query = query.replaceAll("=", "%3D");
-		query = query.replaceAll("\"", "%22");
-		query = query.replaceAll("<", "%3C");
-		query = query.replaceAll(">", "%3E");
-		query = query.replaceAll("\\{", "%7B");
-		query = query.replaceAll("\\}", "%7D");
-		query = query.replaceAll("\\|", "%7C");
-		query = query.replaceAll("\\^", "%5E");
-		query = query.replaceAll("~", "%7E");
-		query = query.replaceAll("\\[", "%5B");
-		query = query.replaceAll("\\]", "%5D");
-		query = query.replaceAll("`", "%60");
-		return query.toLowerCase();
+		//		query = query.replaceAll("\\?", "%3F");
+		//		query = query.replaceAll("@", "%40");
+		//		query = query.replaceAll("#", "%23");
+		//		query = query.replaceAll("%", "%25");
+		//		query = query.replaceAll("\\$", "%24");
+		//		query = query.replaceAll("&", "%26");
+		//		query = query.replaceAll("\\+", "%2B");
+		//		query = query.replaceAll(",", "%2C");
+		//		query = query.replaceAll(":", "%3A");
+		//		query = query.replaceAll(" ", "%20");
+		//		query = query.replaceAll("=", "%3D");
+		//		query = query.replaceAll("\"", "%22");
+		//		query = query.replaceAll("<", "%3C");
+		//		query = query.replaceAll(">", "%3E");
+		//		query = query.replaceAll("\\{", "%7B");
+		//		query = query.replaceAll("\\}", "%7D");
+		//		query = query.replaceAll("\\|", "%7C");
+		//		query = query.replaceAll("\\^", "%5E");
+		//		query = query.replaceAll("~", "%7E");
+		//		query = query.replaceAll("\\[", "%5B");
+		//		query = query.replaceAll("\\]", "%5D");
+		//		query = query.replaceAll("`", "%60");
+		try {
+			query=URLEncoder.encode(query,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return query;
 	}
 
 	private static String tranform(String keywords) {
 		keywords = keywords.trim();
-		String[] keywordsParts = keywords.split("AND|OR");
-		for(String part : keywordsParts)
-		{
-			part = part.trim();
-			//			String partLower = part.toLowerCase();
-			if(!part.isEmpty())
-			{
-				keywords = keywords.replace(part, "\""+part+"\"");
-			}
-		}
 		keywords = keywords.replace("AND"," AND ");
 		keywords = keywords.replace("OR"," OR ");
 		keywords = keywords.replace("\"\"", "\"");
 		keywords = keywords.replace("  ", " ");
 		return keywords;
 	}
-	
-	
+
+
 	public static String loginOPS(String authentication){
 		String tokenaccess=null;
 		try {
@@ -437,4 +482,37 @@ public class OPSUtils {
 		}
 		return tokenaccess;
 	}
+
+	public static boolean isAcceptablePatentLanguage(String patentID)
+	{
+		if(excludePatentStartLetterSet==null)
+			createExcluseStartSettings();
+		for(String excludePatentStartLetter:excludePatentStartLetterSet)
+		{
+			if(patentID.startsWith(excludePatentStartLetter))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static void createExcluseStartSettings() {
+		excludePatentStartLetterSet = new HashSet<>();
+		excludePatentStartLetterSet.add("JP");
+		excludePatentStartLetterSet.add("CN");
+		excludePatentStartLetterSet.add("RU");
+		excludePatentStartLetterSet.add("DE");
+		excludePatentStartLetterSet.add("TW");
+		excludePatentStartLetterSet.add("KR");
+		excludePatentStartLetterSet.add("FR");
+		excludePatentStartLetterSet.add("CH");
+		excludePatentStartLetterSet.add("FI");
+		excludePatentStartLetterSet.add("MX");
+		excludePatentStartLetterSet.add("ES");
+		excludePatentStartLetterSet.add("DK");
+		excludePatentStartLetterSet.add("HRP");
+		excludePatentStartLetterSet.add("CZ");
+	}
+
 }

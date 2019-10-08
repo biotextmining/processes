@@ -1,26 +1,32 @@
 package com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
+import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
+import com.silicolife.textmining.core.datastructures.documents.lables.PublicationLabelImpl;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
+import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.AIRPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
+import com.silicolife.textmining.processes.ir.patentrepository.PatentRepositoryAPI;
 
 public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMetaInformationRetrieval{
 	
 	public final static String patentrepositoryName = "Patent Repository from SilicoLife and CEB (UMinho)";
 	public final static String patentrepositoryProcessID = "patentrepository.searchpatentmetainformation";
-	private static String url = "patent/metainformation";
+	
+	public static SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd"); 
 
 
 	public PatentRepositoryPatentMetaInformationRetrieval(IIRPatentMetaInformationRetrievalConfiguration configuration)
@@ -30,14 +36,23 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
-
-		for(String patentID:mapPatentIDPublication.keySet())
+		Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+		while(iterator.hasNext() && !stop)
 		{
-			PatentEntity patentEntity = searchPatentEntity(patentID);
-			if(patentEntity!=null)
+			List<String> patentIds = new ArrayList<>();
+			String patentIDPrimary = iterator.next();
+			IPublication publication = mapPatentIDPublication.get(patentIDPrimary);
+			patentIds.add(patentIDPrimary);
+			patentIds.addAll(PublicationImpl.getPublicationExternalIDSetForSource(publication, PublicationSourcesDefaultEnum.patent.toString()));
+			for(String patentID:patentIds)
 			{
-				IPublication publication = getPublicationToChange(patentID,mapPatentIDPublication,patentEntity);
-				updatePublication(mapPatentIDPublication,publication, patentEntity);
+				PatentEntity patentEntity = searchPatentEntity(patentID);
+				if(patentEntity!=null)
+				{
+					publication = getPublicationToChange(patentIDPrimary,mapPatentIDPublication,patentEntity);
+					updatePublication(mapPatentIDPublication,publication, patentEntity);
+					break;
+				}
 			}
 		}
 	}
@@ -46,15 +61,11 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 	{
 		try {
 			IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration conf = (IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration) getConfiguration();
-			String urlGetPatentInformation = conf.getPatentRepositoryServerBasedUrl() + "/" + url +"/" + patentID;
-			InputStream imputstream = new URL(urlGetPatentInformation).openStream();
-			ObjectMapper objectMapper = new ObjectMapper();
-			PatentEntity result = objectMapper.readValue(imputstream,PatentEntity.class);
+			PatentEntity result = PatentRepositoryAPI.getPatentMetaInformationByID(conf.getPatentRepositoryServerBasedUrl(), patentID);
 			return result;
 		} catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	
 	private IPublication getPublicationToChange(String patentID,Map<String, IPublication> mapPatentIDPublication,PatentEntity patentEntity)
@@ -75,6 +86,8 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 	
 	public void updatePublication(Map<String, IPublication> mapPatentIDPublication,IPublication publication,PatentEntity patentEntity)
 	{
+		if(publication.getPublicationExternalIDSource()==null)
+			publication.setPublicationExternalIDSource(new ArrayList<>());
 		publication.getPublicationExternalIDSource().add(new PublicationExternalSourceLinkImpl(patentEntity.getId(), PublicationSourcesDefaultEnum.patent.toString()));
 		if(publication.getTitle().isEmpty() && patentEntity.getTitle()!=null && !patentEntity.getTitle().isEmpty())
 			publication.setTitle(patentEntity.getTitle());
@@ -94,20 +107,34 @@ public class PatentRepositoryPatentMetaInformationRetrieval extends AIRPatentMet
 			cal.setTime(patentEntity.getDate());
 			int year = cal.get(Calendar.YEAR);
 			publication.setYeardate(String.valueOf(year));
+			publication.setFullDate(dt.format(patentEntity.getDate()));
 		}
-		if(publication.getExternalLink().isEmpty() && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
+		if((publication.getExternalLink() == null ||publication.getExternalLink().isEmpty()) && patentEntity.getLink()!=null && !patentEntity.getLink().isEmpty())
 			publication.setExternalLink(patentEntity.getLink());
 		String notes = publication.getNotes();
 		if(patentEntity.getOwners()!=null && !patentEntity.getOwners().isEmpty())
 		{
-			notes = notes + " Owners: "+convertListStringIntoString(patentEntity.getOwners());
+			notes = notes + "[ Owners: "+convertListStringIntoString(patentEntity.getOwners()) + "]";
 		}
-		if(patentEntity.getClassifications()!=null && patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
+		if(!notes.contains("Classification") && patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
 		{
-			notes = notes + " Classification: "+convertListStringIntoString(patentEntity.getClassifications());
-
+			notes = notes + "[ Classification IPC: "+convertListStringIntoString(patentEntity.getClassifications()) + "]";
 		}
-		publication.setNotes(notes);
+		if(patentEntity.getClassifications()!=null &&!patentEntity.getClassifications().isEmpty())
+		{
+			List<IPublicationLabel> labelsToAdd = new ArrayList<>();
+			for(String classification:patentEntity.getClassifications())
+			{
+				String labelClassification = PatentPipelineUtils.labelIPCStart+ ": "+classification.trim();
+				labelsToAdd.add(new PublicationLabelImpl(labelClassification));
+			}
+			labelsToAdd =  PublicationImpl.getNotExistentLabels(publication,labelsToAdd);
+			if(publication.getPublicationLabels()==null)
+				publication.setPublicationLabels(labelsToAdd);
+			else
+				publication.getPublicationLabels().addAll(labelsToAdd);
+		}
+		publication.setNotes(notes);	
 	}
 	
 	private String convertListStringIntoString(List<String> in)

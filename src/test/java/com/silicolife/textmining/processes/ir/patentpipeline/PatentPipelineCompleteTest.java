@@ -6,10 +6,17 @@ import com.silicolife.textmining.core.interfaces.core.configuration.IProxy;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.IROPSPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.ops.OPSPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.patentrepository.PatentRepositoryPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.pubchem.PubchemPatentMetaInformationRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.IRWIPOPatentMetaInformationRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.metainfomodules.wipo.WIPOPatentMetaInformationRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.fgo.FGOPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.IROPSPatentRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.ops.OPSPatentRetrieval;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.patentrepository.IRPatentRepositoryPatentRetrievalConfigurationImpl;
+import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.patentrepository.PatentRepositoryPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.wipo.IRWIPOPatentRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.retrievalmodules.wipo.WIPOPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.components.searchmodule.bing.BingSearchPatentIDRecoverSource;
@@ -26,6 +33,7 @@ import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.WrongIRPatentMetaInformationRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrieval;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IIRPatentRetrievalConfiguration;
+import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.IRPatentRetrievalConfigurationImpl;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.retrievalmodule.WrongIRPatentRetrievalConfigurationException;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalModuleConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.searchmodule.IIRPatentIDRetrievalSource;
@@ -43,6 +51,13 @@ public class PatentPipelineCompleteTest {
 		String customSearchID = "customSearchID";
 		String usernameWIPO = "username";
 		String pwdWIPO = "pwd";
+		String patentRepositoryURL = "patentRepositoryURL";
+		String patentRepositoryUser = "patentRepositoryUser";
+		String patentRepositoryPassword = "patentRepositoryPassword";		
+		String userPassword = "patentrepositoryPwd";
+		String patentRepositoryServerBasedUrl = "patentrepositoryURL";
+		String userName = "patentrepositoryUser";
+		
 		String outputDir = "src/test/resource";
 		IProxy proxy = null;
 		PatentPipeline patentPipeline = new PatentPipeline();
@@ -72,13 +87,20 @@ public class PatentPipelineCompleteTest {
 		IIRPatentMetainformationRetrievalSource wipoMetaInformationRetrieval = new WIPOPatentMetaInformationRetrieval(configurationWIPO);
 		patentPipeline.addPatentsMetaInformationRetrieval(wipoMetaInformationRetrieval);
 		
-		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS);
+		IIRPatentMetaInformationRetrievalConfiguration configurationOPS=new IROPSPatentMetaInformationRetrievalConfigurationImpl(proxy, accessTokenOPS,false);
 		IIRPatentMetainformationRetrievalSource opsMetaInformationretrieval = new OPSPatentMetaInformationRetrieval(configurationOPS);
 		patentPipeline.addPatentsMetaInformationRetrieval(opsMetaInformationretrieval);
 		
+		IIRPatentRepositoryPatentMetaInformationRetrievalConfiguration configurationPatentRepository = new IRPatentRepositoryPatentMetaInformationRetrievalConfigurationImpl(proxy, patentRepositoryURL, patentRepositoryUser, patentRepositoryPassword);
+		IIRPatentMetainformationRetrievalSource patentRepository = new PatentRepositoryPatentMetaInformationRetrieval(configurationPatentRepository);
+		patentPipeline.addPatentsMetaInformationRetrieval(patentRepository);
+		
+		IIRPatentMetainformationRetrievalSource pubchemMetaInformation = new PubchemPatentMetaInformationRetrieval();
+		patentPipeline.addPatentsMetaInformationRetrieval(pubchemMetaInformation);
+
+
 		//Step 3 - Retrieved PDF
 
-		
 		IIRPatentRetrievalConfiguration configuration = new IRWIPOPatentRetrievalConfigurationImpl(usernameWIPO, pwdWIPO, outputDir, proxy );
 		IIRPatentRetrieval WIPOpatentRetrievalProcess = new WIPOPatentRetrieval(configuration);
 		patentPipeline.addPatentIDRetrieval(WIPOpatentRetrievalProcess);
@@ -86,16 +108,17 @@ public class PatentPipelineCompleteTest {
 		IIRPatentRetrievalConfiguration configuration2 = new IROPSPatentRetrievalConfigurationImpl(outputDir, proxy, accessTokenOPS);
 		IIRPatentRetrieval OPSpatentRetrievalProcess = new OPSPatentRetrieval(configuration2 );
 		patentPipeline.addPatentIDRetrieval(OPSpatentRetrievalProcess);
+
+		IIRPatentRetrievalConfiguration configurationPatentRepositoryREtrieval = new IRPatentRepositoryPatentRetrievalConfigurationImpl(proxy, outputDir, patentRepositoryServerBasedUrl, userName, userPassword);
+		IIRPatentRetrieval patentRetrievalProcessPatentRepository = new PatentRepositoryPatentRetrieval(configurationPatentRepositoryREtrieval );
+		patentPipeline.addPatentIDRetrieval(patentRetrievalProcessPatentRepository);
 		
+		IIRPatentRetrievalConfiguration configurationFGOREtrieval = new IRPatentRetrievalConfigurationImpl(outputDir, proxy);
+		IIRPatentRetrieval patentRetrievalProcessFGO = new FGOPatentRetrieval(configurationFGOREtrieval);
+		patentPipeline.addPatentIDRetrieval(patentRetrievalProcessFGO);
 		
-		
-		//String path = "D:/Desktop/ATCC 55618 OR Actinobacillus succinogenes OR CCUG 43843 OR CIP 106512 OR strain 130Z.txt";
-		//String path="src/test/resources/data/teste_ids_google.txt";
-//		patentPipeline.runPipelineWithpatentIdsFromFile(patentPipeline.patentIDsloaderFromFile(path));
-		patentPipeline.runCompletePipeline(patentPipelineSearchConfiguration);
-		
-//		patentPipeline.applyOCRengine();
-//		patentPipeline.saveTXTwithPatentsText("teste02_real.txt");
+		// Run 
+		patentPipeline.runCompletePipeline(patentPipelineSearchConfiguration);	
 	}
 
 }

@@ -675,7 +675,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			if(!cancel)
 				insertQueryPublications(query, publicationToAdd);
 			// Update Publication data (In memory)
-			System.out.println(publicationToAdd.size()+ " " + abstractsAvailable);
 			addToCounts(publicationToAdd.size(), abstractsAvailable);
 			query.setPublicationsSize(query.getPublicationsSize()+publicationToAdd.size());
 			query.setAvailableAbstracts(query.getAvailableAbstracts()+abstractsAvailable);
@@ -683,7 +682,6 @@ public class PubMedSearch extends IRProcessImpl implements IIRSearch{
 			// Update date
 			query.setDate(new Date());
 			updateQueryOnDatabase(query);
-			System.out.println(query.getPublicationsSize());
 			memoryAndProgress(i+PubMedConfiguration.blockSearchSize,nPubs);
 		}
 		return report;

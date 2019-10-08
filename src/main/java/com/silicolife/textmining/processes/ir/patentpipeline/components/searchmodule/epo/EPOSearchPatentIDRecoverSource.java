@@ -39,8 +39,15 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 		try {
 			String tokenaccess = Utils.get64Base(((IIRPatentIDRecoverEPOSearchConfiguration)getConfiguration()).getAccessToken());
 			autentication = OPSUtils.postAuth(tokenaccess);
-			results = OPSUtils.getSearchResults(query);
+			results = OPSUtils.getSearchResults(autentication,query);
 		} catch (RedirectionException | ClientErrorException| ServerErrorException | ConnectionException| ResponseHandlingException e) {
+			if(e instanceof ClientErrorException)
+			{
+				if(e.getMessage().contains("Entity Too Large"))
+				{
+					return new HashSet<String>();
+				}
+			}
 			throw new ANoteException(new InternetConnectionProblemException(e));
 		}
 		if(results > OPSConfiguration.MAX_RESULTS)
@@ -57,7 +64,6 @@ public class EPOSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource{
 					| ServerErrorException | ConnectionException
 					| ResponseHandlingException e) {
 				break;//query limits reached (verification is made previously)
-//				throw new ANoteException(new InternetConnectionProblemException(e));
 			}
 			patentIDs.addAll(patentIDsReturned);
 			memoryAndProgressAndTime(step + OPSConfiguration.STEP,results+1,startTime);

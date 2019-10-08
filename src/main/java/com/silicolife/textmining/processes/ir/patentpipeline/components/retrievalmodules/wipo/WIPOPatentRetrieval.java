@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -43,8 +44,10 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 	@Override
 	public IIRPatentRetrievalReport retrievedPatents(Set<String> patentsIds) throws ANoteException {
 		IRPatentRetrievalReport report= new IRPatentRetrievalReport ();//Open the report class
-		for(String patentID:patentsIds)
+		Iterator<String> iterator = patentsIds.iterator();
+		while(iterator.hasNext() && !stop)
 		{
+			String patentID = iterator.next();
 			try {
 				getPatentDocumentOCRBYID(patentID);
 				report.addRetrievedPatents(patentID);
@@ -68,17 +71,6 @@ public class WIPOPatentRetrieval extends AIRPatentRetrieval{
 		}
 		return report;
 	}
-
-
-	private boolean verifyPDFAlreadyDownloaded(String filePathway){
-		File file=new File(filePathway);
-		if(file.exists() && file.isFile()){
-			return true;
-		}
-		return false;
-
-	}
-
 
 	private void getPatentDocumentOCRBYID(String patentID)throws UnknownApplicationException_Exception,UnknownDocumentException_Exception, IOException, DocumentException {
 		List<Doc> retour = serviceHelper.getStub().getAvailableDocuments(patentID);

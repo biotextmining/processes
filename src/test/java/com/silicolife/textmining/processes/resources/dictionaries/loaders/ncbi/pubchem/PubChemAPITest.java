@@ -3,10 +3,12 @@ package com.silicolife.textmining.processes.resources.dictionaries.loaders.ncbi.
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.pubchem.PubChemAPI;
 
 public class PubChemAPITest {
@@ -165,7 +167,7 @@ public class PubChemAPITest {
 		assertTrue(true);
 	}
 	
-	@Test
+//	@Test
 	public void getPubChemCIDByCompundName() throws ANoteException
 	{
 		String compoundName = "2-amino-3-oxo-3h-phenoxazine-1,9-dicarboxylic acid";
@@ -198,6 +200,150 @@ public class PubChemAPITest {
 		String cid = "118367700005";
 		List<String> names = PubChemAPI.getPubChemNamesByCID(cid);
 		System.out.println(names.toString());
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubChemCIDsByInchi() throws ANoteException
+	{
+		String inchi = "InChI=1S/C8H8O3/c1-11-8-4-6(5-9)2-3-7(8)10/h2-5,10H,1H3";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchi(inchi);
+		System.out.println(result.toString());
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubChemCIDsByInchiNotFound() throws ANoteException
+	{
+		String inchi = "InChI=1S/C8H8O3/c1-11-8-4-6(5-9)2-3-7(8)10/h2-5,10H,1H";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchi(inchi);
+		System.out.println(result.toString());
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getInchiByPubChemCID() throws ANoteException
+	{
+		String cid = "1183";
+		String result = PubChemAPI.getInchiByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getInchiByPubChemCIDNotFound() throws ANoteException
+	{
+		String cid = "118367700005";
+		String result = PubChemAPI.getInchiByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getInchiKeyByPubChemCID() throws ANoteException
+	{
+		String cid = "1183";
+		String result = PubChemAPI.getInchiKeyByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getInchiKeyByPubChemCIDNotFound() throws ANoteException
+	{
+		String cid = "118367700005";
+		String result = PubChemAPI.getInchiKeyByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getCanonicalSmilesByPubChemCID() throws ANoteException
+	{
+		String cid = "1183";
+		String result = PubChemAPI.getCanonicalSmilesByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getCanonicalSmilesByPubChemCIDNotFound() throws ANoteException
+	{
+		String cid = "118367700005";
+		String result = PubChemAPI.getCanonicalSmilesByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getExternalIdsByPubChemCID() throws ANoteException
+	{
+		String cid = "15342072";
+		List<IExternalID> result = PubChemAPI.getExternalIdsByPubchemID(cid);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubchemIdsByInhi() throws ANoteException
+	{
+		String inchi = "InChI=1S/C8H8O3/c1-11-8-4-6(5-9)2-3-7(8)10/h2-5,10H,1H3";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchi(inchi);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubchemIdsByInhiNotFound() throws ANoteException
+	{
+		String inchi = "InChI=1S/C8H8O3/c1-11-8-4-6(5-9)2-3-7(8)10/h2-5,10H,1H";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchi(inchi);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubchemIdsByInchiKey() throws ANoteException
+	{
+		String inchikey = "MWOOGOJBHIARFG-UHFFFAOYSA-N";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchiKey(inchikey);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubchemIdsByInchiKeyNotFound() throws ANoteException
+	{
+		String inchikey = "MWOOGOJBHIARFG-UHFFFAOYSA-N23";
+		List<String> result = PubChemAPI.getPubChemCIDsByInchiKey(inchikey);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubchemIdsBySmiles() throws ANoteException
+	{
+		String smiles = "COC1=C(C=CC(=C1)C=O)O";
+		List<String> result = PubChemAPI.getPubChemCIDsBySmiles(smiles);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+//	@Test
+	public void getPubchemIdsBySmilesNotFound() throws ANoteException
+	{
+		String smiles = "COC1=C(C=CC(=C1)C=O)O1";
+		List<String> result = PubChemAPI.getPubChemCIDsBySmiles(smiles);
+		System.out.println(result);
+		assertTrue(true);
+	}
+	
+	@Test
+	public void getPubchemIdsByCAS() throws ANoteException
+	{
+		String cas = "7785-26-4";
+		Set<String> result = PubChemAPI.getPubChemCIDsByCAS(cas);
+		System.out.println(result);
 		assertTrue(true);
 	}
 }

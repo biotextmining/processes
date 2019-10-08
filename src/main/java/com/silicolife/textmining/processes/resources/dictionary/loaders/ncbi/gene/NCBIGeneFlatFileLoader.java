@@ -175,14 +175,14 @@ public class NCBIGeneFlatFileLoader extends DictionaryLoaderHelp implements IDic
 				String geneid = columns[csvConfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(columnIDName).getColumnNumber()];
 				String syns = columns[csvConfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(columntermSynonym).getColumnNumber()];
 				String otherSynonym = columns[csvConfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(columnOtherDesignations).getColumnNumber()];
-				String externalIDs = columns[csvConfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(columnTermExternalDatabaseIDs).getColumnNumber()];
+//				String externalIDs = columns[csvConfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(columnTermExternalDatabaseIDs).getColumnNumber()];
 				Set<String> termSynomns = parseSynonyms(syns);
 				Set<String> otherSynonyms = parseOtherSynonyms(otherSynonym);
 				termSynomns.addAll(otherSynonyms);
 				List<IExternalID> externalDs = new ArrayList<>();
 				if(importExternlIDs)
 				{
-					externalDs = parseExternalIDs(externalIDs);
+//					externalDs = parseExternalIDs(externalIDs);
 					ISource source = new SourceImpl(GlobalSources.entrezgene);
 					externalDs.add(new ExternalIDImpl(geneid, source));
 				}

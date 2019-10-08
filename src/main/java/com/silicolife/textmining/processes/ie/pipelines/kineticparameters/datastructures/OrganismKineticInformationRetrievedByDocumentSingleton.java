@@ -9,10 +9,10 @@ import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotati
 import com.silicolife.textmining.core.interfaces.core.annotation.IEventAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
+import com.silicolife.textmining.processes.ie.ner.linnaeus.LinnaeusTaggerByDocument;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.configuration.INERLinnaeusConfiguration;
 import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.INERREProcessByDocument;
 import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.steps.KineticREByDocument;
-import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.steps.LinnaeusTaggerByDocument;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticREConfiguration;
 
 public  class  OrganismKineticInformationRetrievedByDocumentSingleton implements INERREProcessByDocument{

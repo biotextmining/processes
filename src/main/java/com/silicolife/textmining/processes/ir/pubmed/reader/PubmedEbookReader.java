@@ -52,7 +52,7 @@ public class PubmedEbookReader {
 
 				List<IPublicationField> fullTextfields = new ArrayList<IPublicationField>();
 				String abstractText = processAbstract(fullTextfields, elements);
-				String type = "Book "+processSimpleElementTagName(elements, "PublicationType");
+				String category = "Book "+processSimpleElementTagName(elements, "PublicationType");
 
 				List<IPublicationLabel> labels = new ArrayList<IPublicationLabel>();
 				processMeshTerms(elements, labels, "Keyword");
@@ -95,12 +95,12 @@ public class PubmedEbookReader {
 					System.out.println("Date : "+date);
 					date = date.substring(0, 24);
 				}
-
+				String type = "Book";
 				String yearDate = new String();
 				if(date.length()>3)
 					yearDate = date.substring(0,4);
-				IPublication pub = new PublicationImpl(title, authorList, type, yearDate, date, status, journal, volume,
-						issues, pages, abstractText, PubmedReader.pubmedLink+pubmedID, false, new String(), new String(), externalIDsSource, fullTextfields , labels );
+				IPublication pub = new PublicationImpl(title, authorList, category, yearDate, date, status, journal, volume,
+						issues, pages, abstractText, PubmedReader.pubmedLink+pubmedID, false, new String(), new String(),type, externalIDsSource, fullTextfields , labels );
 				publicationsResulty.add(pub);
 			}
 			return publicationsResulty;
@@ -109,8 +109,7 @@ public class PubmedEbookReader {
 		}
 	}
 	
-	private String processAbstract(List<IPublicationField> fullTextfields,
-			Element elements) throws ANoteException{
+	private String processAbstract(List<IPublicationField> fullTextfields,Element elements) throws ANoteException{
 		NodeList node = elements.getElementsByTagName("AbstractText");
 		String abstractText = new String();
 		Set<String> publicationFiledsAlreayAdded = new HashSet<>();
@@ -128,7 +127,7 @@ public class PubmedEbookReader {
 				int endindex = abstractText.length();
 				if(node.item(i).getAttributes().getNamedItem("Label")!=null)
 				{
-					String field = node.item(i).getAttributes().getNamedItem("Label").getTextContent();
+					String field = node.item(i).getAttributes().getNamedItem("Label").getTextContent().trim();
 					if(!field.isEmpty() && !publicationFiledsAlreayAdded.contains(field))
 					{
 						if(field.length()>250)

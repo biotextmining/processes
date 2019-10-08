@@ -43,7 +43,7 @@ public class PDFDirectoryCorpusLoaders implements ICorpusPDFDirectory{
 					IPublication document =  new PublicationImpl(
 							"", "", "", "", "",
 							"", "", "", "", "", "",
-							"", false, "", "",
+							"", false, "", "","",
 							publicationExternalIDSource ,
 							publicationFields ,
 							publicationLabels );

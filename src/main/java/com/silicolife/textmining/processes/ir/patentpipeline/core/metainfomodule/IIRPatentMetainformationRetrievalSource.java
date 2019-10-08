@@ -32,4 +32,10 @@ public interface IIRPatentMetainformationRetrievalSource {
 	
 	public String getSourceName();
 
+	/**
+	 * cancel operation
+	 * 
+	 */
+	public void stop();
+
 }

@@ -7,14 +7,37 @@ public class IROPSPatentMetaInformationRetrievalConfigurationImpl extends IRPate
 	
 	private String accessToken;
 	
-	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken) {
+	private boolean abstarctIncludeClaimsAndDescription;
+	private boolean waitingTimeBetweenSteps;
+
+	
+	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken,boolean abstarctIncludeClaimsAndDescription,boolean waitingTimeBetweenSteps) {
 		super(proxy);
 		this.accessToken=accessToken;
+		this.abstarctIncludeClaimsAndDescription = abstarctIncludeClaimsAndDescription;
+		this.waitingTimeBetweenSteps = waitingTimeBetweenSteps;
+	}
+	
+	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken,boolean abstarctIncludeClaimsAndDescription) {
+		this(proxy, accessToken, abstarctIncludeClaimsAndDescription,true);
+	}
+	
+	public IROPSPatentMetaInformationRetrievalConfigurationImpl(IProxy proxy,String accessToken) {
+		this(proxy, accessToken, false,true);
 	}
 
 	@Override
 	public String getAccessToken() {
 		return accessToken;
+	}
+
+	public boolean isAbstarctIncludeClaimsAndDescription() {
+		return abstarctIncludeClaimsAndDescription;
+	}
+
+	@Override
+	public boolean isWaitingTimeBetweenSteps() {
+		return waitingTimeBetweenSteps;
 	}
 
 }

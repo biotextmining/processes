@@ -18,7 +18,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationEditable;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
 import com.silicolife.textmining.core.interfaces.process.IR.exception.InternetConnectionProblemException;
-import com.silicolife.textmining.processes.ir.pubmed.newstretegy.utils.NewPMSearch;
+import com.silicolife.textmining.processes.ir.pubmed.utils.PMSearch;
 
 public class PDFBoxMetaDataFinder {
 	
@@ -39,7 +39,7 @@ public class PDFBoxMetaDataFinder {
 		String doi = PublicationImpl.getPublicationExternalIDForSource(pubEdit, PublicationSourcesDefaultEnum.DOI.name());
 		if(doi!=null && !doi.isEmpty())
 		{
-			List<IPublication> list = NewPMSearch.getPublicationByQuery(doi+"[doi] ");
+			List<IPublication> list = PMSearch.getPublicationByQuery(doi+"[doi] ");
 			if(list!=null && !list.isEmpty())
 			{
 				updatePublicationInformation(pubEdit, list);
@@ -48,7 +48,7 @@ public class PDFBoxMetaDataFinder {
 			{
 				do {
 					doi = doi.substring(0, doi.length()-1);
-					list = NewPMSearch.getPublicationByQuery(doi+"[doi] ");
+					list = PMSearch.getPublicationByQuery(doi+"[doi] ");
 					if(list!=null && !list.isEmpty())
 					{
 						updatePublicationInformation(pubEdit, list);

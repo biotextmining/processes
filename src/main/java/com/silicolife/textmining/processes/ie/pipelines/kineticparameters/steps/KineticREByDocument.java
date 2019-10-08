@@ -6,7 +6,7 @@ import com.silicolife.textmining.core.interfaces.core.annotation.IEntityAnnotati
 import com.silicolife.textmining.core.interfaces.core.annotation.IEventAnnotation;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IAnnotatedDocument;
-import com.silicolife.textmining.processes.ie.pipelines.kineticparameters.interfaces.IREProcessByDocument;
+import com.silicolife.textmining.core.interfaces.process.IE.re.IREProcessByDocument;
 import com.silicolife.textmining.processes.ie.re.kineticre.configuration.IREKineticREConfiguration;
 import com.silicolife.textmining.processes.ie.re.kineticre.core.KineticRE;
 

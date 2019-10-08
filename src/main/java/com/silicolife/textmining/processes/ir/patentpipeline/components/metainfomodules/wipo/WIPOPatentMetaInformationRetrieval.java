@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,17 +47,19 @@ public class WIPOPatentMetaInformationRetrieval extends AIRPatentMetaInformation
 
 	@Override
 	public void retrievePatentsMetaInformation(Map<String, IPublication> mapPatentIDPublication) throws ANoteException {
-		for(String patentID:mapPatentIDPublication.keySet())
+		Iterator<String> iterator = mapPatentIDPublication.keySet().iterator();
+		while(iterator.hasNext() && !stop)
 		{
+			String patentID = iterator.next();
 			IPublication publication = mapPatentIDPublication.get(patentID);
 			List<Doc> retour;
 			try {
 				retour = serviceHelper.getStub().getAvailableDocuments(patentID);
-				for (int count=0; count<retour.size(); count++) {
+				for (int count=0; count<retour.size() && !stop; count++) {
 					Doc doc = retour.get(count);
 					List<String> pagesList = null;
 					pagesList = serviceHelper.getStub().getDocumentTableOfContents(doc.getDocId());
-					for (int i=0; i<pagesList.size(); i++) {
+					for (int i=0; i<pagesList.size() && !stop; i++) {
 						if (pagesList.get(i).endsWith(".xml")){//verify xml existence
 							DataHandler page = serviceHelper.getStub().getDocumentContentPage(doc.getDocId(), pagesList.get(i));
 							SAXParserFactory spf = SAXParserFactory.newInstance();//Using sax parser in order to read inputstream.

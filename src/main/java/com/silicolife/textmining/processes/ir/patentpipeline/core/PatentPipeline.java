@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +14,14 @@ import org.apache.log4j.Logger;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
+import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalOptions;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.document.IPublication;
 import com.silicolife.textmining.core.interfaces.core.document.IPublicationExternalSourceLink;
+import com.silicolife.textmining.core.interfaces.core.document.labels.IPublicationLabel;
 import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineException;
+import com.silicolife.textmining.processes.ir.patentpipeline.PatentPipelineUtils;
 import com.silicolife.textmining.processes.ir.patentpipeline.configuration.IIRPatentPipelineSearchConfiguration;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetaInformationRetrievalReport;
 import com.silicolife.textmining.processes.ir.patentpipeline.core.metainfomodule.IIRPatentMetainformationRetrievalSource;
@@ -36,6 +40,10 @@ public class PatentPipeline {
 	private List<IIRPatentIDRetrievalSource> patentIDrecoverSourceList;
 	private List<IIRPatentMetainformationRetrievalSource> patentMetaInformationRetrievelSourceList;
 	private List<IIRPatentRetrieval> patentRetrievalProcessList;
+
+	private boolean isrunning = false;
+	private boolean stop = false;
+
 
 	public PatentPipeline()
 	{
@@ -115,9 +123,10 @@ public class PatentPipeline {
 		{
 			throw new WrongIRPatentIDRecoverConfigurationException("Query can not be null or empty");
 		}
+		isrunning = true;
 		logger.info("Patent Complete pipeline started");
 		Set<String> patentIds = executePatentIDSearchStep(configuration);
-		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds);
+		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds,configuration);
 		IIRPatentRetrievalReport reportDownload = executePatentRetrievalPDFStep(reportMetaInformation.getMapPatentIDPublication());
 		printReport(reportDownload);
 		return reportMetaInformation.getMapPatentIDPublication();
@@ -133,9 +142,11 @@ public class PatentPipeline {
 		}
 		logger.info("Patent Ids Retrieval Step");
 		Set<String> patentIds = new HashSet<>();
-		for(IIRPatentIDRetrievalSource patentSource:patentIDrecoverSourceList)
+		Iterator<IIRPatentIDRetrievalSource> iterator = patentIDrecoverSourceList.iterator();
+		while(iterator.hasNext() && !stop)
 		{
-			logger.info(patentSource.getSourceName());
+			IIRPatentIDRetrievalSource patentSource = iterator.next();
+			logger.info(patentSource .getSourceName());
 			Set<String> patentsSource = patentSource.retrievalPatentIds(configuration);
 			patentIds.addAll(patentsSource);
 			step+=1;
@@ -155,10 +166,11 @@ public class PatentPipeline {
 	 */
 	public Map<String, IPublication> runMetaInformationPipeline(IIRPatentPipelineSearchConfiguration configuration) throws ANoteException, WrongIRPatentIDRecoverConfigurationException
 	{
+		isrunning = true;
 		logger.info("Patent Retrieval IDs pipeline started");
 		Set<String> patentIds = executePatentIDSearchStep(configuration);
 		logger.info("Patent Metainformation pipeline started");
-		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds);
+		IIRPatentMetaInformationRetrievalReport reportMetaInformation = executePatentRetrievalMetaInformationStep(patentIds,configuration);
 		return reportMetaInformation.getMapPatentIDPublication();
 	}
 
@@ -166,44 +178,128 @@ public class PatentPipeline {
 	protected void memoryProgressAndTime(int step, int total, long startTime) {
 		System.out.println((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
 		logger.info((GlobalOptions.decimalformat.format((double)step/ (double) total * 100)) + " %...");
-		Runtime.getRuntime().gc();
-		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
+//		Runtime.getRuntime().gc();
+//		System.out.println((Runtime.getRuntime().totalMemory()- Runtime.getRuntime().freeMemory())/(1024*1024) + " MB ");
 	}
 
-
-//	public IIRPatentMetaInformationRetrievalReport executePatentRetrievalMetaInformationStep(Set<String> patentIds) throws ANoteException {
-//		logger.info("Meta Information find Step");
-//		Map<String, IPublication> mapPatentIDPublication = createSimplePublicationMaps(patentIds);
-//		runMetaInformationForTheGivenSources(mapPatentIDPublication);
-//		IIRPatentMetaInformationRetrievalReport report = new IRPatentMetaInformationRetrievalReportImpl();
-//		report.setMapPatentIDPublication(mapPatentIDPublication);
-//		int previousMapSize = mapPatentIDPublication.size();
-//		Map<String, IPublication> newMap = verifyMetadataAndCreateNewMap(mapPatentIDPublication);
-//		while (newMap.size()<previousMapSize && (((double)newMap.size()/(double)previousMapSize)<=0.9)){
-//			runMetaInformationForTheGivenSources(newMap);
-//			report.updateMapPatentIDPublication(newMap);
-//			previousMapSize=newMap.size();
-//			newMap=verifyMetadataAndCreateNewMap(newMap);	
-//		}
-//		return report;
-//	}
-
-	
-	public IIRPatentMetaInformationRetrievalReport executePatentRetrievalMetaInformationStep(Set<String> patentIds) throws ANoteException {
+	public IIRPatentMetaInformationRetrievalReport executePatentRetrievalMetaInformationStep(Set<String> patentIds,IIRPatentPipelineSearchConfiguration configuration) throws ANoteException {
+		isrunning = true;
 		logger.info("Meta Information find Step");
 		Map<String, IPublication> mapPatentIDPublication = createSimplePublicationMaps(patentIds);
 		runMetaInformationForTheGivenSources(mapPatentIDPublication);
-		IIRPatentMetaInformationRetrievalReport report = new IRPatentMetaInformationRetrievalReportImpl();
-		report.setMapPatentIDPublication(mapPatentIDPublication);
-		return report;
+		// Filter results
+		return filterResults(mapPatentIDPublication, configuration);
+	}
+
+	public IIRPatentMetaInformationRetrievalReport executePatentRetrievalMetaInformationStep(Set<String> patentIds) throws ANoteException {
+		return this.executePatentRetrievalMetaInformationStep(patentIds,null);
 	}
 	
-	
+	public IPublication executePatentRetrievalMetaInformationStep(String patentID) throws ANoteException
+	{
+		Set<String> patentIds = new HashSet<>();
+		patentIds.add(patentID);
+		IIRPatentMetaInformationRetrievalReport report = this.executePatentRetrievalMetaInformationStep(patentIds,null);
+		return report.getMapPatentIDPublication().get(patentID);
+	}
+
+	private IIRPatentMetaInformationRetrievalReport filterResults(Map<String, IPublication> mapPatentIDPublication,IIRPatentPipelineSearchConfiguration configuration)
+	{
+		IIRPatentMetaInformationRetrievalReport report = new IRPatentMetaInformationRetrievalReportImpl();
+		if(configuration==null || configuration.getPatentClassificationIPCAllowed()==null && configuration.getYearMin() == null && configuration.getYearMax()==null)
+		{
+			report.setMapPatentIDPublication(mapPatentIDPublication);
+		}
+		else
+		{
+			Map<String, IPublication> mapPatentIDPublicationToAdd = new HashMap<>();
+			Map<String, IPublication> mapPatentIDPublicationToExcluded = new HashMap<>();
+			for(String patentID:mapPatentIDPublication.keySet())
+			{
+				IPublication patent = mapPatentIDPublication.get(patentID);
+				// valid Patent according to patent search filters
+				if(validPatentAccordingToSearchConfiguration(patent, configuration))
+				{
+					mapPatentIDPublicationToAdd.put(patentID, patent);
+				}
+				else
+				{
+					mapPatentIDPublicationToExcluded.put(patentID, patent);
+				}
+			}
+			report.setMapPatentIDPublication(mapPatentIDPublicationToAdd);
+			report.setMapPatentIDPublicationExcluded(mapPatentIDPublicationToExcluded);
+		}
+		return report;
+	}
+
+	public static boolean validPatentAccordingToSearchConfiguration(IPublication patent,IIRPatentPipelineSearchConfiguration configuration)
+	{
+		if(!validateMinYear(patent.getYeardate(),configuration.getYearMin()))
+		{
+			return false;
+		}
+		if(!validateMaxYear(patent.getYeardate(),configuration.getYearMax()))
+		{
+			return false;
+		}
+		if(!validateAllowedClassification(patent.getPublicationLabels(),configuration.getPatentClassificationIPCAllowed()))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean validateMinYear(String yeardate, Integer yearMin) {
+		if(yearMin==null)
+			return true;
+		if(yeardate==null || yeardate.isEmpty() || !Utils.isIntNumber(yeardate))
+			return false;
+		return Integer.valueOf(yeardate) >= yearMin;
+	}
+
+	private static boolean validateMaxYear(String yeardate, Integer yearMax) {
+		if(yearMax==null)
+			return true;
+		if(yeardate==null || yeardate.isEmpty() || !Utils.isIntNumber(yeardate))
+			return false;
+		return Integer.valueOf(yeardate) <= yearMax;
+	}
+
+	private static boolean validateAllowedClassification(List<IPublicationLabel> publicationLabels,
+			Set<String> patentClassificationIPCAllowed) {
+		if(patentClassificationIPCAllowed==null || patentClassificationIPCAllowed.isEmpty())
+			return true;
+		if(publicationLabels==null || publicationLabels.isEmpty())
+			return false;
+		for(IPublicationLabel label:publicationLabels)
+		{
+			if(label.getLabel().startsWith(PatentPipelineUtils.labelIPCStart))
+			{
+				String classification = label.getLabel().replaceAll(PatentPipelineUtils.labelIPCStart, "").replaceAll(":", "").trim();
+				if(!classification.isEmpty())
+				{
+					for(String classificationAllowed:patentClassificationIPCAllowed)
+					{
+						if(classification.startsWith(classificationAllowed))
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+
 	public static Map<String, IPublication> createSimplePublicationMaps(Set<String> patentIds) {
 		Map<String, IPublication> mapPatentIDPublication = new HashMap<>();
 		for(String patentID:patentIds)
 		{
-			mapPatentIDPublication.put(patentID, new PublicationImpl());
+			IPublication pub = new PublicationImpl();
+			pub.setType("Patent");
+			mapPatentIDPublication.put(patentID, pub);
 			IPublicationExternalSourceLink e = new PublicationExternalSourceLinkImpl(patentID, PublicationSourcesDefaultEnum.patent.name());
 			mapPatentIDPublication.get(patentID).getPublicationExternalIDSource().add(e );
 		}
@@ -214,28 +310,24 @@ public class PatentPipeline {
 		int step = 0;
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		int totalSize=patentMetaInformationRetrievelSourceList.size();
-		for(IIRPatentMetainformationRetrievalSource patentMetaInformationRetrievelSource:patentMetaInformationRetrievelSourceList)
+		Iterator<IIRPatentMetainformationRetrievalSource> iterator = patentMetaInformationRetrievelSourceList.iterator();
+		while(iterator.hasNext() && !stop)
 		{
-			logger.info(patentMetaInformationRetrievelSource.getSourceName());
+			IIRPatentMetainformationRetrievalSource patentMetaInformationRetrievelSource = iterator.next();
+			logger.info(patentMetaInformationRetrievelSource .getSourceName());
 			patentMetaInformationRetrievelSource.retrievePatentsMetaInformation(mapPatentIDPublication);
 			step++;
 			memoryProgressAndTime(step, totalSize, startTime);
 		}
 	}
 
-	private Map<String, IPublication> verifyMetadataAndCreateNewMap(Map<String, IPublication> mapPatentIDPublication){
-		Set<String> patentIDs = mapPatentIDPublication.keySet();
-		HashMap<String, IPublication> newPatentIDPublication = new HashMap<>();
-		for (int patIndex = 0; patIndex < patentIDs.size(); patIndex++) {
-			String patentID = (String) patentIDs.toArray()[patIndex];
-			if ((mapPatentIDPublication.get(patentID).getTitle()==null||mapPatentIDPublication.get(patentID).getTitle().isEmpty())||
-					((mapPatentIDPublication.get(patentID).getAbstractSection()==null||mapPatentIDPublication.get(patentID).getAbstractSection().isEmpty())&&
-							(mapPatentIDPublication.get(patentID).getAuthors()==null||mapPatentIDPublication.get(patentID).getAuthors().isEmpty())&&
-							(mapPatentIDPublication.get(patentID).getYeardate()==null||mapPatentIDPublication.get(patentID).getYeardate().isEmpty()))){//empty publication
-				newPatentIDPublication.put(patentID, mapPatentIDPublication.get(patentID));
-			}
+	public void runMetaInformationForTheGivenSourcesLogOff (Map<String, IPublication> mapPatentIDPublication) throws ANoteException{
+		Iterator<IIRPatentMetainformationRetrievalSource> iterator = patentMetaInformationRetrievelSourceList.iterator();
+		while(iterator.hasNext() && !stop)
+		{
+			IIRPatentMetainformationRetrievalSource patentMetaInformationRetrievelSource = iterator.next();
+			patentMetaInformationRetrievelSource.retrievePatentsMetaInformation(mapPatentIDPublication);
 		}
-		return newPatentIDPublication;
 	}
 
 	/**
@@ -245,13 +337,15 @@ public class PatentPipeline {
 	 * 
 	 */	
 	public IIRPatentRetrievalReport executePatentRetrievalPDFStep (Map<String, IPublication> mapPatentIDPublication) throws ANoteException{
-
+		isrunning = true;
 		IRPatentRetrievalReport finalReport= new IRPatentRetrievalReport ();//Open the report class
 		Set<String> patentsIDs = mapPatentIDPublication.keySet();
 		Set<String> retrievedPatents=new HashSet<>();
 		Set<String> notRetrievedPatents=new HashSet<>();
-		for (IIRPatentRetrieval patentRetrievalProcess:patentRetrievalProcessList)
+		Iterator<IIRPatentRetrieval> iterator = patentRetrievalProcessList.iterator();
+		while(iterator.hasNext() && !stop)
 		{	
+			IIRPatentRetrieval patentRetrievalProcess = iterator.next();
 			IIRPatentRetrievalReport result = patentRetrievalProcess.retrievedPatents(patentsIDs);
 			retrievedPatents.addAll(result.getRetrievedPatents());
 			patentsIDs.removeAll(result.getRetrievedPatents());
@@ -264,10 +358,30 @@ public class PatentPipeline {
 
 	}
 
+
 	protected void printReport(IIRPatentRetrievalReport report){
 		logger.info("Retrieved PatentIds:\n"+report.getRetrievedPatents().toString());
 		logger.info("Not Retrieved PatentIds:\n"+report.getNotRetrievedPatents().toString());
 		logger.info("Percentage of Total Retrieved Patents:\n"+((float)report.getRetrievedPatents().size()/(float)(report.getNotRetrievedPatents().size()+report.getRetrievedPatents().size()))*100+"%");
+	}
+
+	public void stop() {
+		stop = true;
+		if(isrunning)
+		{
+			for(IIRPatentIDRetrievalSource searchIds:patentIDrecoverSourceList)
+			{
+				searchIds.stop();
+			}
+			for(IIRPatentMetainformationRetrievalSource metaInfo:patentMetaInformationRetrievelSourceList)
+			{
+				metaInfo.stop();
+			}
+			for(IIRPatentRetrieval pdfretrieval:patentRetrievalProcessList)
+			{
+				pdfretrieval.stop();
+			}
+		}
 	}
 
 

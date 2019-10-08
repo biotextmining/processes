@@ -1,10 +1,6 @@
 package com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +8,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.ArgParser;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.Loggers;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.Misc;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.MyConnection;
 import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.dataholders.Document;
@@ -41,161 +36,7 @@ import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.docum
 
 public class DocumentParser {
 
-	private static void runSeparated(DocumentIterator documents, File outputDir, int report, Logger logger){
-		if (outputDir == null)
-			throw new IllegalStateException("Need to specify an output base directory after the runSeparated command");
 
-		int c = 0;
-
-		while (documents.hasNext()){
-			Document doc = documents.next();
-
-			if (doc != null){
-				if (doc.getID() == null)
-					throw new IllegalStateException("ID not set");
-
-				String id = doc.getID();
-
-				boolean pmc = id.startsWith("PMC");
-
-				String first = ("0000" + id).substring(id.length()+4-2,id.length()+4);
-				String second = ("0000" + id).substring(id.length()+4-4,id.length()+4-2);
-
-				File dir = new File(outputDir, first);
-
-				if (!dir.exists())
-					dir.mkdir();
-
-				if (!pmc){
-					dir = new File(dir, second);
-
-					if (!dir.exists())
-						dir.mkdir();
-				}
-
-				File outFile = new File(dir, id.replace(File.separatorChar, '_') + ".txt");
-
-				doc.saveToTextFile(outFile, false);
-
-				if (report != -1 && ++c % report == 0)
-					logger.info("%t: Stored " + c + " documents.\n");
-			}
-		}		
-	}
-
-	private static void run(DocumentIterator documents, File outputDir, boolean simplify, int report){
-		int c = 0;
-		for (Document d : documents){
-			if (d.getID() == null)
-				throw new IllegalStateException("ID not set");
-
-			if (outputDir != null){
-				//				System.out.print("Saving document with ID " + doc.getID() + ", year "  + doc.getYear() + "... ");
-
-				File outFile = new File(outputDir,d.getID().replace(File.separatorChar, '_') + ".txt");
-
-				d.saveToTextFile(outFile, simplify);
-				//doc.saveToTextFile(filename + ".txt.tokens",true);
-
-				if (report != -1 && ++c % report == 0)
-					System.out.println("Stored " + c + " documents.");
-			} else {
-				System.out.println(d.getID());
-				d.print();
-			}
-		}		
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		ArgParser ap = new ArgParser(args);
-
-		Logger logger = Loggers.getDefaultLogger(ap);
-		int report = ap.getInt("report", -1);
-
-		if (ap.containsKey("help") || args.length == 0){
-			System.out.println("documentparser.jar [--properties <conf file>]");
-			System.out.println(getDocumentHelpMessage());
-			System.out.println("[--outDir <export directory> [--simplify]]");
-			System.out.println("[--getPubYears <output file> [--report <report interval>]]");
-			System.exit(0);
-		}
-
-		if (ap.containsKey("outDir")){
-			//save documents in text format to a directory, one file per document
-			DocumentIterator documents = getDocuments(ap, logger);
-			File outDir = ap.getFile("outDir");
-			run(documents, outDir, ap.containsKey("simplify"), report);
-		}
-
-		if (ap.containsKey("outSeparated")){
-			//save documents in text format to a directory, one file per document
-			//the files will be saved in a hierarchical directory structure to avoid having too many
-			//files in the same directory which would slow the filesystem down.
-			DocumentIterator documents = getDocuments(ap, logger);
-			File outBaseDir = ap.getFile("outSeparated");
-
-			runSeparated(documents,outBaseDir, report, logger);
-		}
-
-		if (ap.containsKey("print")){
-			//will print the documents to STDOUT. Mostly meant for debugging document parsing methods.
-			DocumentIterator documents = getDocuments(ap, logger);
-			for (Document d : documents)
-				d.print();
-		}
-
-		if (ap.containsKey("saveToDB")){
-			//saves the text of parsed documents to a database (can later be loaded with --databaseDocs)
-			String table = ap.get("saveToDB");
-			DocumentIterator documents = getDocuments(ap, logger);
-			Connection conn = com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.SQL.connectMySQL(ap, logger, "articles");
-			logger.info("%t: Processing...\n");
-			saveToDB(documents, conn, logger, table, report, ap.containsKey("clear"));
-			logger.info("%t: Completed.\n");
-		}
-
-		if (ap.containsKey("buildDescriptions")){
-			DocumentIterator documents = getDocuments(ap, logger);
-			buildDescriptions(documents, logger, ap.getFile("buildDescriptions"), ap.getInt("report", -1));
-		}
-	}
-
-	private static void buildDescriptions(DocumentIterator documents, Logger logger, File outFile, int report) {
-		try{
-			BufferedWriter outStream = new  BufferedWriter(new FileWriter(outFile));
-			int c = 0;
-			outStream.write("#ID\tdescription\tyear\n");
-			for (Document d : documents){
-				String year = d.getYear() != null && d.getYear().length() == 4 ? d.getYear() : "0";
-				outStream.write(d.getID() + "\t" + d.getDescription() + "\t" + year + "\n");
-
-				if (report != -1 && ++c % report == 0)
-					logger.info("%t: Processed " + c + " documents.\n");
-			}
-			logger.info("%t: Completed.\n");
-			outStream.close();
-		} catch (Exception e){
-			System.err.println(e);
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
-	private static void saveToDB(DocumentIterator documents, Connection conn, Logger logger, String table, int report, boolean clear) {
-		PreparedStatement pstmt = Document.prepareInsertStatements(conn, table, clear);
-
-		int c = 0;
-		for (Document d : documents){
-			if (d != null)
-				d.saveToDB(pstmt);
-
-			if (report != -1 && ++c % report == 0)
-				logger.info("%t: Saved " + c + " documents to DB.\n");
-		}
-	}
 
 	/**
 	 * @param ap an ArgParser object, containing user-supplied arguments used to determine how to load the documents

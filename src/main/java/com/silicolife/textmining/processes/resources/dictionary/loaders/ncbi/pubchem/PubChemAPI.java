@@ -7,10 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
+import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
 import com.silicolife.textmining.processes.resources.dictionary.loaders.ncbi.pubchem.utils.PUGRestUtils;
 
 public class PubChemAPI {
-	
+
 	/**
 	 * Method that return a list of Patent Id associated with  PubChem ID (CID)
 	 * 
@@ -87,7 +88,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of Pubmed Id associated with  PubChem ID (CID)
 	 * 
@@ -106,7 +107,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of Publications Id associated with PubChem SMILES Entity
 	 * 
@@ -125,7 +126,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 
 	/**
 	 * Method that return a list of Patent Id associated with PubChem InchIKey Entity 
@@ -145,7 +146,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of Publications Id associated with PubChem Compound Name
 	 * Important Note that compound name could be ambiguous and the result are a combination of multiple Pubchem Entities 
@@ -165,7 +166,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem ID (CID)
 	 * 
@@ -184,7 +185,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem SMILES Entity
 	 * 
@@ -203,7 +204,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem InchIKey Entity 
 	 * 
@@ -222,7 +223,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return a list of NCBI Taxonomy Id associated with PubChem Compound Name
 	 * Important Note that compound name could be ambiguous and the result are a combination of multiple Pubchem Entities 
@@ -242,7 +243,7 @@ public class PubChemAPI {
 		List<String> out = new ArrayList<>(tmpOut);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return the PubChem CIDs associated with PubChem Compound Name.
 	 * 
@@ -255,7 +256,7 @@ public class PubChemAPI {
 		List<String> out = PUGRestUtils.getPubChemCIDByCompoundName(compoundName);
 		return out;
 	}
-	
+
 	/**
 	 * Method that return all names associated to Pubchem CID ( Position Zero refer to prefer name)
 	 * 
@@ -268,4 +269,106 @@ public class PubChemAPI {
 		List<String> out = PUGRestUtils.getPubChemNamesByCID(cid);
 		return out;
 	}
+
+	/**
+	 * Method that return the PubChem CIDs associated with Inchie. 
+	 * 
+	 * @param inchi - IUPAC International Chemical Identifier
+	 * @return
+	 * @throws ANoteException
+	 */
+	public static List<String> getPubChemCIDsByInchi(String inchi) throws ANoteException
+	{
+		List<String> out = PUGRestUtils.getPubChemCIDByInchi(inchi);
+		return out;
+	}
+	
+	/**
+	 * Method that return the Inchi associated with Pubchem CID. 
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException Inchi not found
+	 */
+	public static String getInchiByPubchemID(String pubchemID) throws ANoteException
+	{
+		String out = PUGRestUtils.getInchiByPubchemCID(pubchemID);
+		return out;
+	}
+	
+	/**
+	 *  Method that return the InchiKey associated with Pubchem CID.
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException InchiKey not found
+	 */
+	public static String getInchiKeyByPubchemID(String pubchemID) throws ANoteException
+	{
+		String out = PUGRestUtils.getInchiKeyByPubchemCID(pubchemID);
+		return out;
+	}
+	
+	/**
+	 *  Method that return the Canonical associated with Pubchem CID.
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException Canonical Smiles not found
+	 */
+	public static String getCanonicalSmilesByPubchemID(String pubchemID) throws ANoteException
+	{
+		String out = PUGRestUtils.getCanonicalSmilesyByPubchemCID(pubchemID);
+		return out;
+	}
+	
+	/**
+	 * Method that return external Ids associated to Pubchem CID
+	 * 
+	 * @param pubchemID
+	 * @return
+	 * @throws ANoteException
+	 */
+	public static List<IExternalID> getExternalIdsByPubchemID(String pubchemID) throws ANoteException
+	{
+		List<IExternalID> out = PUGRestUtils.getExternalIdsGivenPubchemCID(pubchemID);
+		return out;
+	}
+
+	/**
+	 * Method that return Pubchem Ids associated with inchikey
+	 * 
+	 * @param inchi
+	 * @return
+	 * @throws ANoteException 
+	 */
+	public static List<String> getPubChemCIDsByInchiKey(String inchikey) throws ANoteException {
+		List<String> out = PUGRestUtils.getPubChemCIDByInchiKey(inchikey);
+		return out;
+	}
+
+	/**
+	 * Method that return Pubchem Ids associated with Smiles
+	 * 
+	 * @param smiles
+	 * @return
+	 * @throws ANoteException 
+	 */
+	public static List<String> getPubChemCIDsBySmiles(String smiles) throws ANoteException {
+		List<String> out = PUGRestUtils.getPubChemCIDBySmiles(smiles);
+		return out;
+	}
+	
+	/**
+	 * Method that return Pubchem Ids associated with CAS
+	 * 
+	 * @param smiles
+	 * @return
+	 * @throws ANoteException 
+	 */
+	public static Set<String> getPubChemCIDsByCAS(String cas) throws ANoteException {
+		Set<String> out = PUGRestUtils.getPubchemIdsGivenCAS(cas);	
+		return out;
+	}
+	
 }

@@ -102,8 +102,10 @@ public class SpringerSearchHandler  implements ResponseHandler<List<IPublication
 		publicationExternalIDSource.add(externalID);
 		List<IPublicationField> publicationFields = new ArrayList<IPublicationField>();
 		List<IPublicationLabel> publicationLabels = new ArrayList<IPublicationLabel>();
-		IPublication pub = new PublicationImpl(title, authors, "", yeardate,date,"", journal, volume, issue,pages, abstractSection, extenalLink, openAcess,new String(),
-				new String(),publicationExternalIDSource,publicationFields,publicationLabels);
+		String category = "Spring Publication";
+		String type = "Publication";
+		IPublication pub = new PublicationImpl(title, authors, category, yeardate,date,"", journal, volume, issue,pages, abstractSection, extenalLink, openAcess,new String(),
+				new String(),type,publicationExternalIDSource,publicationFields,publicationLabels);
 		return pub;
 	}
 

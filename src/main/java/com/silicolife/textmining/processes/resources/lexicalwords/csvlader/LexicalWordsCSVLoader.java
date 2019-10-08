@@ -8,15 +8,18 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.silicolife.textmining.core.datastructures.dataaccess.database.schema.TableResourcesElements;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;
 import com.silicolife.textmining.core.datastructures.report.resources.ResourceUpdateReportImpl;
 import com.silicolife.textmining.core.datastructures.resources.dictionary.loaders.DictionaryLoaderHelp;
-import com.silicolife.textmining.core.datastructures.resources.lookuptable.loader.csvstandard.ColumnNames;
+import com.silicolife.textmining.core.datastructures.resources.export.ResourceExportColumnEnum;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.datastructures.utils.generic.CSVFileConfigurations;
+import com.silicolife.textmining.core.datastructures.utils.generic.ColumnDelemiterDefaultValue;
+import com.silicolife.textmining.core.datastructures.utils.generic.ColumnParameters;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.layer.resources.IResourceManagerReport;
 import com.silicolife.textmining.core.interfaces.core.general.IExternalID;
@@ -121,7 +124,11 @@ public class LexicalWordsCSVLoader extends DictionaryLoaderHelp implements IReso
 
 
 	protected String getTerm(String[] lin,CSVFileConfigurations csvfileconfigurations) {
-		String value = lin[csvfileconfigurations.getColumsDelemiterDefaultValue().getColumnNameColumnParameters().get(ColumnNames.term).getColumnNumber()];
+		ColumnDelemiterDefaultValue delimiter = csvfileconfigurations.getColumsDelemiterDefaultValue();
+		Map<String, ColumnParameters> nameMap = delimiter.getColumnNameColumnParameters();
+		ColumnParameters column = nameMap.get(ResourceExportColumnEnum.term.toString());
+		int index = column.getColumnNumber();
+		String value = lin[index];
 		if(value!=null)
 			value = value.replace(csvfileconfigurations.getTextDelimiter().getValue(),"");
 		return value;

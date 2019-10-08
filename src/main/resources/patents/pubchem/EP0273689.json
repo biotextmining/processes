@@ -1,0 +1,195 @@
+{
+	"Record": {
+		"RecordAccession": "EP0273689",
+		"RecordType": "Patent",
+		"Reference": [
+			{
+				"Description": "DERIVATIVES OF N-(2-ALKYL-3-MERCAPTO-GLUTARYL) ALPHA-AMINO ACIDS AND THEIR USE AS COLLAGENASE INHIBITORS",
+				"ReferenceNumber": 1,
+				"SourceID": "EP0273689",
+				"SourceName": "EPO",
+				"URL": "http://worldwide.espacenet.com/publicationDetails/biblio?CC=EP&FT=D&NR=0273689B1&KC=B1"
+			},
+			{
+				"Description": "Data compiled by or deposited in PubChem",
+				"ReferenceNumber": 2,
+				"SourceID": "PubChem",
+				"SourceName": "PubChem",
+				"URL": "https://pubchem.ncbi.nlm.nih.gov"
+			},
+			{
+				"Description": "The World Intellectual Property Organization (WIPO) International Patent Classification (IPC), established by the Strasbourg Agreement 1971, provides for a hierarchical system of language independent symbols for the classification of patents and utility models according to the different areas of technology to which they pertain.",
+				"ReferenceNumber": 3,
+				"SourceID": "IPC",
+				"SourceName": "WIPO",
+				"URL": "http://www.wipo.int/classifications/ipc/",
+				"Name": "International Patent Classification"
+			}
+		],
+		"Section": [
+			{
+				"Description": "Primary identifier assigned to this document.",
+				"TOCHeading": "Primary Patent Identifier",
+				"Information": [
+					{
+						"ReferenceNumber": 1,
+						"StringValue": "EP0273689",
+						"URL": "http://worldwide.espacenet.com/publicationDetails/biblio?CC=EP&FT=D&NR=0273689B1&KC=B1",
+						"Name": "Primary Patent Identifier"
+					}
+				]
+			},
+			{
+				"Description": "The date on which a patent application was filed to the patent office.",
+				"TOCHeading": "Patent Submission Date",
+				"Information": [
+					{
+						"DateValue": "1988/07/06",
+						"ReferenceNumber": 1,
+						"Name": "Patent Submission Date"
+					}
+				]
+			},
+			{
+				"Description": "The date on which a patent was granted for an invention.",
+				"TOCHeading": "Patent Grant Date",
+				"Information": [
+					{
+						"DateValue": "1991/11/27",
+						"ReferenceNumber": 1,
+						"Name": "Patent Grant Date"
+					}
+				]
+			},
+			{
+				"Description": "Patent title.",
+				"TOCHeading": "Patent Title",
+				"Information": [
+					{
+						"ReferenceNumber": 1,
+						"StringValue": "DERIVATIVES OF N-(2-ALKYL-3-MERCAPTO-GLUTARYL) ALPHA-AMINO ACIDS AND THEIR USE AS COLLAGENASE INHIBITORS",
+						"Name": "Patent Title"
+					}
+				]
+			},
+			{
+				"Description": "A concise statement of the technical disclosure of an invention.",
+				"TOCHeading": "Patent Abstract",
+				"Information": [
+					{
+						"ReferenceNumber": 1,
+						"StringValue": "Novel compounds of the formula (I), processes for their preparation and their use as collagenase inhibitors are described: <CHEM> in which R1 is hydroxy; alkoxy; aryloxy; aralkyloxy; -NR6R7 where R6 and R7 are hydrogen or alkyl, or R6 and R7 together with the N-atom to which they are bonded form a 5- to 7-membered ring with an optional heteroatom; -NHCH(R8)COR9 where R8 is hydrogen; alkyl optionally substituted by hydroxy, alkoxy, -NR6R7, quanidine, CO2H, CONH2, SH, or S-alkyl; or CH2-AR where Ar is optionally substituted aryl; and R9 is hydroxy, alkoxy or -NR6R7. R2 is hydrogen or acyl. R3 is C3-6 alkyl. R4 is hydrogen; alkyl; -CH2R10 where R10 is optionally substituted phenyl or heteroaryl; or -CH(R12)O-R11 where R11 is hydrogen; alkyl; or -CH2Ph where Ph is optionally substituted phenyl; and R12 is hydrogen or alkyl. R5 is hydrogen; alkyl; or -CH(R13)COR14 where R13 is hydrogen or alkyl; and R14 is hydroxy, alkoxy or -NR6R7.",
+						"Name": "Patent Abstract"
+					}
+				]
+			},
+			{
+				"Description": "Authoritative URL for the complete patent document.",
+				"TOCHeading": "Patent URL",
+				"Information": [
+					{
+						"ReferenceNumber": 1,
+						"StringValue": "http://worldwide.espacenet.com/publicationDetails/biblio?CC=EP&FT=D&NR=0273689B1&KC=B1",
+						"Name": "Patent URL"
+					}
+				]
+			},
+			{
+				"Description": "Other identifiers used for the patent document. \nUsually, a patent identifier is suffixed with a \"kind code\" (A1, A2, B1, B2, etc), which indicates the kind of patent \ndocument (e.g., patent application, patent grant, revision, and so on).  Patent identifiers with the same numerical \nnumber suffixed with different kind codes usually refer to different documents for the same invention.  \nRefer to these document to see the meanings of individual kind codes. USPTO: \nhttps://www.uspto.gov/learning-and-resources/support-centers/electronic-business-center/kind-codes-included-uspto-patent\nEPO:\nhttps://register.epo.org/help?topic=kindcodes\nWIPO:\nhttp://www.wipo.int/export/sites/www/standards/en/pdf/07-03-02.pdf",
+				"TOCHeading": "Patent Identifier Synonyms",
+				"Information": [
+					{
+						"ReferenceNumber": 2,
+						"StringValueList": [
+							"EP0273689.A2.19880706",
+							"EP0273689.A3.19890712",
+							"EP0273689.B1.19911127",
+							"EP0273689A2",
+							"EP0273689A3",
+							"EP0273689B1"
+						],
+						"Name": "Patent Identifier Synonyms"
+					}
+				]
+			},
+			{
+				"Description": "What organization(s) applied for the patent.",
+				"TOCHeading": "Patent Applicant",
+				"Information": [
+					{
+						"ReferenceNumber": 1,
+						"StringValueList": [
+							"BEECHAM GROUP PLC [GB]"
+						],
+						"Name": "Patent Applicant"
+					}
+				]
+			},
+			{
+				"Description": "Who is listed as inventor(s) in the patent.",
+				"TOCHeading": "Patent Inventor",
+				"Information": [
+					{
+						"ReferenceNumber": 1,
+						"StringValueList": [
+							"HUGHES IAN",
+							"MARKWELL ROGER EDWARD",
+							"SMITH STEPHEN ALLEN"
+						],
+						"Name": "Patent Inventor"
+					}
+				]
+			},
+			{
+				"Description": "Classification codes for this patent.",
+				"TOCHeading": "Patent Classification",
+				"Section": [
+					{
+						"Description": "WIPO IPC tree",
+						"TOCHeading": "WIPO IPC",
+						"Information": [
+							{
+								"NumValue": 58,
+								"ReferenceNumber": 3,
+								"URL": "https://pubchem.ncbi.nlm.nih.gov/classification/#hid=58",
+								"Name": "HID"
+							}
+						]
+					}
+				]
+			},
+			{
+				"Description": "Links to records in PubChem associated with this patent.",
+				"TOCHeading": "Patent Chemicals",
+				"Section": [
+					{
+						"Description": "Links to PubChem Compound records mentioned in this patent.",
+						"TOCHeading": "PubChem Compounds",
+						"Information": [
+							{
+								"Table": {
+									"ExternalTableName": "compound"
+								},
+								"ReferenceNumber": 2,
+								"Name": "PubChem Compounds"
+							}
+						]
+					},
+					{
+						"Description": "Links to PubChem Substance records mentioned in this patent.",
+						"TOCHeading": "PubChem Substances",
+						"Information": [
+							{
+								"Table": {
+									"ExternalTableName": "substance"
+								},
+								"ReferenceNumber": 2,
+								"Name": "PubChem Substances"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

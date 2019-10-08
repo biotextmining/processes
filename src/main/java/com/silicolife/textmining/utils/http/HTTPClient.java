@@ -26,6 +26,11 @@ public class HTTPClient {
 		this.readTimeout = 20000;
 	}
 	
+	public void setTimeout(int readTimeoutMiliseconds)
+	{
+		this.readTimeout = readTimeoutMiliseconds;
+	}
+	
 	public <T> T get(String url, Map<String, String> headers, ResponseHandler<T> responseHandler) throws ConnectionException, RedirectionException, ClientErrorException, ServerErrorException, ResponseHandlingException  {
 		HttpURLConnection conn = null;
 		try {
@@ -33,6 +38,7 @@ public class HTTPClient {
 			conn = (HttpURLConnection) u.openConnection();
 			conn.setRequestMethod(GET);
 			conn.setReadTimeout(readTimeout);
+			conn.setConnectTimeout(readTimeout);
 			for(String key : headers.keySet())
 				conn.setRequestProperty(key, headers.get(key));
 			
@@ -69,6 +75,7 @@ public class HTTPClient {
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			conn.setReadTimeout(readTimeout);
+			conn.setConnectTimeout(readTimeout);
 			conn.setRequestMethod(POST);
 			conn.setInstanceFollowRedirects(false);
 			conn.setUseCaches(false);

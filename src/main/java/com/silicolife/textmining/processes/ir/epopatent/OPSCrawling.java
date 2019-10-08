@@ -3,7 +3,10 @@ package com.silicolife.textmining.processes.ir.epopatent;
 import java.io.File;
 import java.io.IOException;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 
@@ -39,12 +42,12 @@ import com.silicolife.textmining.utils.http.exceptions.ServerErrorException;
 public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 
 	public static IPublicationExternalSourceLink type = new PublicationExternalSourceLinkImpl("-1",PublicationSourcesDefaultEnum.patent.name());
-	private boolean cancel ;
+	private boolean stop ;
 	private ISimpleTimeLeft progress;
 	private Integer startRange;
 	private Integer endRAnge;
 	private Long startTime;
-	private static long reconnectiontimeSeconds = 900;
+	private static long reconnectiontimeSeconds = 1900;
 
 
 	public OPSCrawling()
@@ -54,12 +57,12 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 
 	@Override
 	public IIRCrawlingProcessReport getFullText(List<IPublication> publications) throws ANoteException {
+		String tokenaccess = null;
 		String saveDocDirectory = InitConfiguration.getPropertyValueFromInitOrProperties(GeneralDefaultSettings.PDFDOCDIRECTORY).toString();
 		if(saveDocDirectory==null)
 		{
 			throw new ANoteException("To Add A document user needs to configure Docs Directory (General.PDFDirectoryDocuments) in settings");
 		}
-		String tokenaccess = null;
 		String autentication = InitConfiguration.getPropertyValueFromInitOrProperties(PatentSearchDefaultSettings.ACCESS_TOKEN).toString();
 		if(autentication!=null)
 		{
@@ -70,7 +73,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			throw new ANoteException("To Add a document user needs to configure ACCESS_TOKEN (PatentSearchDefaultSettings.ACCESS_TOKEN)");
 		}
 
-		cancel = false;
+		stop = false;
 		long start = GregorianCalendar.getInstance().getTimeInMillis();
 		if(this.startTime!=null){
 			start = startTime;
@@ -86,21 +89,17 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			total = endRAnge;
 		}
 		IIRCrawlingProcessReport report = new IRCrawlingReportImpl();
-		List<String> possiblePatentIDs;
 		long startControlTime = System.currentTimeMillis();
-		for(IPublication pub:publications)
+		Iterator<IPublication> iterator = publications.iterator();
+		while(iterator.hasNext() && !stop)
 		{
-			String patentID = PublicationImpl.getPublicationExternalIDForSource(pub, PublicationSourcesDefaultEnum.patent.name());
-			if(cancel)
-			{
-				report.setcancel();
-				break;
-			}
+			IPublication pub = iterator.next();
+			Set<String> patentIDs = PublicationImpl.getPublicationExternalIDSetForSource(pub, PublicationSourcesDefaultEnum.patent.name());
 			if(pub.isPDFAvailable())
 			{
 				report.addFileAlreadyDownloaded(pub);
 			}
-			else if(patentID==null)
+			else if(patentIDs.isEmpty())
 			{
 				report.addFileNotDownloaded(pub);
 			}
@@ -117,8 +116,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 						throw new ANoteException(e);
 					}
 				}
-
-				possiblePatentIDs = PatentPipelineUtils.createPatentIDPossibilities(patentID);
+				Set<String> possiblePatentIDs = calculateAllPossiblePatentIds(patentIDs);
 				File fileDownloaded = searchINallpatentIds(saveDocDirectory, tokenaccess, possiblePatentIDs, pub);
 				if (fileDownloaded==null){
 					report.addFileNotDownloaded(pub);
@@ -132,7 +130,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 			step++;
 		}
 
-		if(cancel)
+		if(stop)
 			report.setcancel();
 		long endTime = GregorianCalendar.getInstance().getTimeInMillis();
 		report.setTime(endTime-start);
@@ -140,16 +138,30 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		return report;
 	}
 
+	private Set<String> calculateAllPossiblePatentIds(Set<String> patentIDs) {
+		Set<String> possiblePatentIDs = new HashSet<>();
+		for(String patentID :patentIDs)
+		{
+			possiblePatentIDs.addAll(PatentPipelineUtils.createPatentIDPossibilities(patentID));
+		}
+		return possiblePatentIDs;
+	}
+
 	private File searchINallpatentIds(String saveDocDirectory, String tokenaccess,
-			List<String> possiblePatentIDs, IPublication pub) throws ANoteException {
+			Set<String> possiblePatentIDs, IPublication pub) throws ANoteException {
 		File fileDownloaded;
-		for (String id:possiblePatentIDs){
-			fileDownloaded =getPDFAndUpdateReportUsingPatentID(tokenaccess, id, saveDocDirectory, pub.getId());
-			if(fileDownloaded != null)
+		for (String patentID:possiblePatentIDs){
+			// Try to discard all not English downloads
+			if(OPSUtils.isAcceptablePatentLanguage(patentID))
 			{
-				pub.setRelativePath(fileDownloaded.getName());
-				InitConfiguration.getDataAccess().updatePublication(pub);
-				return fileDownloaded;
+				// Try Download
+				fileDownloaded =getPDFAndUpdateReportUsingPatentID(tokenaccess, patentID, saveDocDirectory, pub.getId());
+				if(fileDownloaded != null)
+				{
+					pub.setRelativePath(fileDownloaded.getName());
+					InitConfiguration.getDataAccess().updatePublication(pub);
+					return fileDownloaded;
+				}
 			}
 		}
 		return null;
@@ -208,12 +220,9 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		return 0;
 	}
 
-
-	@Override
 	public void stop() {
-		cancel = true;		
+		stop = true;		
 	}
-
 
 	@Override
 	public IProcessOrigin getProcessOrigin() {

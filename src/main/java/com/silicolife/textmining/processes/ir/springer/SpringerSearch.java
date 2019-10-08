@@ -81,8 +81,7 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 		super();
 	}
 	
-	@Override
-	public int getExpectedQueryResults(String query)throws InternetConnectionProblemException {
+	private int getExpectedQueryResults(String query)throws InternetConnectionProblemException {
 		try {
 
 			return SpringerSearchUtils.getSearchResults(query,autentication);
@@ -96,7 +95,6 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 		cancel = false;
 		validateConfiguration(configuration2);
 		IIRSpringerSearchConfiguration configurationSpringSearch = (IIRSpringerSearchConfiguration) configuration2;
-//		if(configurationSpringSearch instanceof IIRSpringerSearchConfiguration)
 		{
 			String autenticationProp = ((IIRSpringerSearchConfiguration) configuration2).getAuthentication();
 			if(autenticationProp!=null && !autenticationProp.isEmpty())
@@ -113,14 +111,6 @@ public class SpringerSearch  extends IRProcessImpl implements IIRSearch{
 				}
 			}
 		}
-//		else
-//		{
-//			this.autentication = PropertiesManager.getPManager().getProperty(SpringerSearchDefaultSettings.ACCESS_TOKEN).toString();
-//			if(!autentication.isEmpty())
-//			{
-//				configurationSpringSearch.getProperties().put(SpringerSearchDefaultSettings.ACCESS_TOKEN, autentication);
-//			}
-//		}
 		long startTime = GregorianCalendar.getInstance().getTimeInMillis();
 		Date date = new Date();
 		String name = generateQueryName(configurationSpringSearch,date);

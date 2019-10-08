@@ -19,7 +19,6 @@ import com.silicolife.textmining.core.datastructures.documents.PublicationSource
 import com.silicolife.textmining.core.datastructures.documents.structure.PublicationFieldImpl;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.init.general.GeneralDefaultSettings;
-import com.silicolife.textmining.core.datastructures.init.propertiesmanager.PropertiesManager;
 import com.silicolife.textmining.core.datastructures.utils.conf.GlobalNames;
 import com.silicolife.textmining.core.interfaces.core.corpora.ICorpusCreateConfiguration;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -96,7 +95,7 @@ public class CorpusCreationInBatch {
 				// PDF is availbale and Full text are not available yet
 				if(publication.isPDFAvailable() && getPublicationFullTextOnDatabase(publication).isEmpty())
 				{
-					String saveDocDirectoty = (String) PropertiesManager.getPManager().getProperty(GeneralDefaultSettings.PDFDOCDIRECTORY);
+					String saveDocDirectoty = (String) InitConfiguration.getPropertyValueFromInitOrProperties(GeneralDefaultSettings.PDFDOCDIRECTORY);
 					// Get PDF to text from PDF file
 					String fullTextContent = PDFtoText.convertPDFDocument(saveDocDirectoty + "//" + publication.getRelativePath());
 					publication.setFullTextContent(fullTextContent);

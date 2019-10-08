@@ -17,6 +17,7 @@ import com.silicolife.textmining.core.interfaces.core.document.IPublicationExter
 
 public class PatentPipelineUtils {
 
+	public static String labelIPCStart = "Classification IPC";
 
 	private static int verifySectionNumbers(String patentID){
 		if(patentID.matches(".*[A-Z]{1}")){
@@ -30,55 +31,62 @@ public class PatentPipelineUtils {
 
 
 	public static List<String> createPatentIDPossibilities(String patentID){
-		List<String> patentIDs=new ArrayList<>();
+		Set<String> patentIDs=new HashSet<>();
 		//the patentID itself
-		patentIDs.add(patentID);
-		String newPatentID=PatentPipelineUtils.deleteSectionNumbers(patentID);//if patentID has section letters, they will be deleted
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-
-		newPatentID=PatentPipelineUtils.deleteChar0(newPatentID, 0);//uses the previous transformation and delete the central 0.
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-
-		if(PatentPipelineUtils.verifyYearPresence(newPatentID)){//last transformation. with previous two transformations, the year is converted for two numbers type
+		patentIDs.add(patentID.trim());
+		//if patentID has section letters, they will be deleted
+		String newPatentID=PatentPipelineUtils.deleteSectionNumbers(patentID);
+		patentIDs.add(newPatentID.trim());
+		//uses the previous transformation and delete the central 0.
+		newPatentID=PatentPipelineUtils.deleteChar0(newPatentID, 0);
+		patentIDs.add(newPatentID.trim());
+		// Add Zero After Initial Letter
+		String addZeroPatent = addZeroAfterInitialLetters(patentID);
+		patentIDs.add(addZeroPatent.trim());
+		//last transformation. with previous two transformations, the year is converted for two numbers type
+		if(PatentPipelineUtils.verifyYearPresence(newPatentID)){
 			try {
 				newPatentID=PatentPipelineUtils.transformYear(newPatentID);
 				String newPatOnlyWithouYear=PatentPipelineUtils.transformYear(patentID);//year transformation only 
-				if (!patentIDs.contains(newPatentID)){
-					patentIDs.add(newPatentID);
-				}
-				if (!patentIDs.contains(newPatOnlyWithouYear)){
-					patentIDs.add(newPatOnlyWithouYear);
-				}
+				patentIDs.add(newPatentID.trim());
+				patentIDs.add(newPatOnlyWithouYear.trim());
 			} catch (ParseException e) {
 			}
 		}
-
-		newPatentID=PatentPipelineUtils.deleteChar0(newPatentID, -1);//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
-
+		//for some cases there are only 5five numbers after 0 and not 6 (WO1995006739A1) normally associated with old years
+		newPatentID=PatentPipelineUtils.deleteChar0(newPatentID, -1);
+		patentIDs.add(newPatentID.trim());
+		//delete central 0 transformation only 
 		int lettersOfSection = PatentPipelineUtils.verifySectionNumbers(patentID);
-		newPatentID=PatentPipelineUtils.deleteChar0(patentID, lettersOfSection);//delete central 0 transformation only 
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
+		newPatentID=PatentPipelineUtils.deleteChar0(patentID, lettersOfSection);
+		patentIDs.add(newPatentID.trim());
+		//special case with five numbers after 0 without year association
+		newPatentID=PatentPipelineUtils.deleteChar0(patentID, lettersOfSection-1);
+		patentIDs.add(newPatentID.trim());
+		//delete section numbers on special case (last chance)
+		newPatentID=PatentPipelineUtils.deleteSectionNumbers(newPatentID);
+		patentIDs.add(newPatentID.trim());
+		// remove all the zeros before initial letter until non zero number (Example US08071587 -> US8071587)
+		newPatentID=PatentPipelineUtils.deleteInitialZeros(newPatentID);
+		patentIDs.add(newPatentID.trim());
+		return new ArrayList<>(patentIDs);
+	}
 
-		newPatentID=PatentPipelineUtils.deleteChar0(patentID, lettersOfSection-1);//special case with five numbers after 0 without year association
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
 
-		newPatentID=PatentPipelineUtils.deleteSectionNumbers(newPatentID);//delete section numbers on special case (last chance)
-		if (!patentIDs.contains(newPatentID)){
-			patentIDs.add(newPatentID);
-		}
+	public static String deleteInitialZeros(String patentID) {
+		String out = patentID;
+		out = out.replaceAll("([A-Za-z]+)0{1,4}(.+)", "$1$2");
+		return out;
+	}
 
-		return patentIDs;
+
+	public static String addZeroAfterInitialLetters(String patentID) {
+		String out = patentID;
+		if(patentID.length() > 2 && patentID.charAt(2) != '0')
+		{
+			out = patentID.substring(0, 2) + '0' + patentID.substring(2);
+		}
+		return out;
 	}
 
 
@@ -113,7 +121,7 @@ public class PatentPipelineUtils {
 	private static String deleteChar0(String patentID,int lettersOfSection){
 		String newPatentID = patentID;
 		try{
-			if(patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
+			if(patentID.charAt(2)!='0' && patentID.charAt(patentID.length()-7-(lettersOfSection))=='0'){//some patents have a "0" on middle with 6 numbers after
 				newPatentID=patentID.substring(0,patentID.length()-7-(lettersOfSection)).concat(patentID.substring(patentID.length()-6-(lettersOfSection),patentID.length()));
 			}
 		}
@@ -160,14 +168,14 @@ public class PatentPipelineUtils {
 	}
 
 
-	private static String deleteSectionNumbers(String patentID){
+	public static String deleteSectionNumbers(String patentID){
 		String newPatentID = patentID;
 		try{
-			if(patentID.matches(".*[A-Z]{1}")){
+			if(patentID.matches(".*[A-Z]{1}$")){
 				newPatentID=patentID.substring(0, patentID.length()-1);
 			}
 			else{
-				if(patentID.matches(".*[A-Z]{1}[1-9]{1}")){
+				if(patentID.matches(".*[A-Z]{1}[1-9]{1}$")){
 					newPatentID=patentID.substring(0,patentID.length()-2);
 				}
 			}

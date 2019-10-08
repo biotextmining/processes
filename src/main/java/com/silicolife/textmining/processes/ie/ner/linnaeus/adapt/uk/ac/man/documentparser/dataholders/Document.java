@@ -1,17 +1,6 @@
 package com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.uk.ac.man.documentparser.dataholders;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.Misc;
-import com.silicolife.textmining.processes.ie.ner.linnaeus.adapt.martin.common.SQL;
 
 public class Document implements Serializable {
 	public enum Type {RESEARCH, REVIEW, OTHER}
@@ -62,47 +51,8 @@ public class Document implements Serializable {
 		return ID;
 	}
 
-	public boolean isValid(@SuppressWarnings("unused") int start, @SuppressWarnings("unused") int end){
+	public boolean isValid(int start, @SuppressWarnings("unused") int end){
 		return true;
-	}
-
-	public String toString(){
-		return toString(false);
-	}
-
-	public String toString(boolean simplify){
-		StringBuffer res = new StringBuffer();
-
-		if (title != null)
-			res.append(title + "\n");
-
-		if (abs != null)
-			res.append(abs + "\n");
-
-		if (body != null)
-			res.append(body + "\n");
-
-//		if (rawContent != null && rawContent.length() > 0)
-//			res.append(rawContent);
-
-		String s = res.toString();
-		s = s.replaceAll("\\\\documentclass.*?\\\\end\\{document\\}", "");
-
-		if (simplify){
-			while (s.indexOf("  ") != -1){
-				s = s.replace("  ", " ");
-			}
-
-			try {
-				return new String(s.toString().getBytes("ascii"),"ascii");
-			} catch (UnsupportedEncodingException e) {
-				System.err.println(e.toString());
-				e.printStackTrace();
-				System.exit(-1);
-			}
-		}
-
-		return s.toString();
 	}
 
 	public void print(){
@@ -114,101 +64,9 @@ public class Document implements Serializable {
 		}
 	}
 	
-	public static PreparedStatement prepareInsertStatements(Connection conn, boolean clear){
-		return prepareInsertStatements(conn, "articles", clear);
-	}
-	
-	/**
-	 * @param conn the SQL connection used for the insertion
-	 * @return 0: INSERT INTO articles_raw (xml, raw_text, date_inserted)... ; 1: "INSERT INTO articles (id_art, text_title, text_abstract, text_body, text_raw, text_raw_type, year, id_issn, article_type, authors, volume, issue, pages, id_ext, source)
-	 */
-	public static PreparedStatement prepareInsertStatements(Connection conn, String table, boolean clear){
-		try{
-			if (clear){
-				conn.createStatement().execute("DROP TABLE IF EXISTS " + table);
-				
-				conn.createStatement().execute(
-				"CREATE TABLE  " + table + " ("+
-						  "`id_art` int(10) unsigned NOT NULL auto_increment,"+
-						  "`xml` mediumtext,"+
-						  "`id_ext` varchar(255) NOT NULL,"+
-						  "`source` enum('medline','pmc','elsevier','text','other') NOT NULL,"+
-						  "`date_inserted` datetime NOT NULL,"+
-						  "`text_title` varchar(4096) default NULL,"+
-						  "`text_abstract` mediumtext,"+
-						  "`text_body` mediumtext,"+
-						  "`text_raw` mediumtext,"+
-						  "`text_raw_type` enum('xml','ocr','pdf2text','text') default NULL,"+
-						  "`article_type` enum('research','review','other') default NULL,"+
-						  "`authors` mediumtext,"+
-						  "`year` varchar(255) default NULL,"+
-						  "`id_issn` varchar(255) default NULL,"+
-						  "`volume` varchar(255) default NULL,"+
-						  "`issue` varchar(255) default NULL,"+
-						  "`pages` varchar(255) default NULL,"+
-						  "PRIMARY KEY  (`id_art`),"+
-						  "KEY `index_issn` (`id_issn`),"+
-						  "KEY `index_type` (`article_type`),"+
-						  "KEY `index_id_ext` USING BTREE (`id_ext`),"+
-						  "KEY `index_src` (`source`),"+
-						  "KEY `yearIdx` (`year`),"+
-						  "KEY `type` (`article_type`)"+
-						") ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;");				
-			}
-			
-			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO " + table + " " +
-					"(xml, id_ext, source, date_inserted, text_title, text_abstract, text_body, text_raw, " +
-					"text_raw_type, article_type, authors, year, id_issn, volume, issue, pages) " +
-					"VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			
-			return pstmt;
-			
-		} catch (Exception e){
-			System.err.println(e);
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		
-		return null;
-	}
-	
-	public void saveToDB(PreparedStatement pstmt) {
-		try{
-			SQL.set(pstmt, 1, xml);
-			SQL.set(pstmt, 2, externalID != null ? externalID.getID() : null);
-			SQL.set(pstmt, 3, externalID != null && externalID.getSource() != null? externalID.getSource().toString().toLowerCase() : null);
 
-			SQL.set(pstmt, 4, title);
-			SQL.set(pstmt, 5, abs);
-			SQL.set(pstmt, 6, body);
-			SQL.set(pstmt, 7, rawContent);
-			SQL.set(pstmt, 8, raw_type != null ? raw_type.toString().toLowerCase() : null);
-			
-			SQL.set(pstmt, 9, type != null ? type.toString().toLowerCase() : null);
-			
-			if (authors != null)
-				SQL.set(pstmt, 10, Misc.implode(authors, "|"));
-			else
-				SQL.set(pstmt,10,(String)null);
-			
-			SQL.set(pstmt, 11, year);
-			SQL.set(pstmt, 12, journal != null ? journal.getISSN() : null);
-			SQL.set(pstmt, 13, volume);
-			SQL.set(pstmt, 14, issue);
-			SQL.set(pstmt, 15, pages);
-			
-			pstmt.execute();
-			/*ResultSet rs = pstmt.getGeneratedKeys();
-			rs.first();
-			int id = rs.getInt(1);
-			return id;*/
-
-		} catch (Exception e){
-			System.err.println(e);
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
+	
+	
 
 	public String getTitle() {
 		return title;
@@ -220,24 +78,6 @@ public class Document implements Serializable {
 
 	public boolean hasTitle(){
 		return title != null && title.length() > 5;
-	}
-
-	public void saveToTextFile(File file, boolean simplify){
-		try {
-			BufferedWriter outStream = new BufferedWriter(new FileWriter(file));
-
-			String str = this.toString(simplify);
-
-			outStream.write(str);
-
-			outStream.close();
-
-		} catch (Exception e){
-			System.err.println(e);
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
 	}
 
 	public String toHTML(){
@@ -269,19 +109,6 @@ public class Document implements Serializable {
 
 	public String getRawContent() {
 		return rawContent;
-	}
-
-	public HashSet<Integer> getMeshTaxIDs(HashMap<String,Integer> meshToTax){
-		/*if (meshTerms == null)
-			return null;
-
-		HashSet<Integer> res = new HashSet<Integer>();
-
-		for (int i = 0; i < meshTerms.length; i++)
-			if (meshToTax.containsKey(meshTerms[i]))
-				res.add(meshToTax.get(meshTerms[i]));
-
-		return res;*/ return null;
 	}
 
 	/**
@@ -446,5 +273,11 @@ public class Document implements Serializable {
 
 	public void setAbs(String abs) {
 		this.abs = abs;
+	}
+
+
+	@Override
+	public String toString() {
+		return body;
 	}
 }

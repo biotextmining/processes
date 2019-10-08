@@ -30,5 +30,11 @@ public interface IIRPatentRetrieval {
 	 */
 	
 	public String getSourceName();
+
+	/**
+	 * Cancel process
+	 * 
+	 */
+	public void stop();
 	
 }

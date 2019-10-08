@@ -13,8 +13,8 @@ import com.silicolife.textmining.core.datastructures.annotation.AnnotationPositi
 import com.silicolife.textmining.core.datastructures.annotation.AnnotationType;
 import com.silicolife.textmining.core.datastructures.annotation.log.AnnotationLogImpl;
 import com.silicolife.textmining.core.datastructures.annotation.re.EventAnnotationImpl;
-import com.silicolife.textmining.core.datastructures.dataaccess.database.dataaccess.CorpusProcessAnnotationLogs;
 import com.silicolife.textmining.core.datastructures.documents.AnnotatedDocumentImpl;
+import com.silicolife.textmining.core.datastructures.documents.corpus.CorpusProcessAnnotationLogs;
 import com.silicolife.textmining.core.datastructures.exceptions.process.manualcuration.ApplyManualCurationToSchemaException;
 import com.silicolife.textmining.core.datastructures.init.InitConfiguration;
 import com.silicolife.textmining.core.datastructures.language.LanguageProperties;

@@ -20,6 +20,10 @@ public class BingUtils {
 
 
 
+	private static int timeout = 20000;
+
+
+
 	public static InputStream getInputStreamJSON(URI uri, String tokenAccess) throws MalformedURLException, IOException{
 		HttpURLConnection conn;
 		InputStream result=null;
@@ -27,8 +31,9 @@ public class BingUtils {
 		conn.setRequestProperty("Ocp-Apim-Subscription-Key", tokenAccess);
 		conn.setRequestMethod("GET");
 		conn.setDoOutput(true);
+		conn.setConnectTimeout(timeout );
+		conn.setReadTimeout(timeout);
 		conn.connect();
-		conn.setReadTimeout(20000);
 		if (conn.getResponseMessage()!=null){
 			 result = conn.getInputStream();
 		}

@@ -23,7 +23,6 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 
 	public final static String googleproccessID = "google.searchpatentid";
 	public final static String googleName= "Custom Search API from Google";
-	private boolean autenticated=false;
 
 	public GoogleSearchPatentIDRecoverSource(IIRPatentIDRetrievalModuleConfiguration configuration)
 			throws WrongIRPatentIDRecoverConfigurationException {
@@ -36,56 +35,76 @@ public class GoogleSearchPatentIDRecoverSource extends AIRPatentIDRecoverSource 
 		String customSearchID = ((IIRPatentIDRecoverGoogleSearchConfiguration)getConfiguration()).getCustomSearchID();
 		Set<String> links = new HashSet<>();
 		//Create a new GoogleSearch object
-		GoogleWebQuery s = new GoogleWebQuery(tokenaccess, customSearchID);
+		GoogleWebQuery googleWebQuery = new GoogleWebQuery(tokenaccess, customSearchID);
 		String query = transformQueryToGoogleSearchOperators(configuration.getQuery());
-		s.addExtraParam("siteSearch", "www.google.com/patents");//to search only on specified sites
-		s.addExtraParam("siteSearchFilter", "i");
-		for (int i = 0; i < 91; i+=10) {
-			s.setStartIndexOfResult(i);	
+		googleWebQuery.addExtraParam("siteSearch", "www.google.com/patents");//to search only on specified sites
+		googleWebQuery.addExtraParam("siteSearchFilter", "i");
+		for (int i = 0; i < 91 && !stop; i+=10) {
+			Set<String> processPage = processGooglePage(googleWebQuery,i,query);
+			if(processPage==null)
+				break;
+			links.addAll(processPage);
 			try {
-				GoogleResults r = s.search(query);
-				autenticated=true;
-
-				//print results
-				List<Items> items=new ArrayList<Items>();//iniciar uma lista
-				items = r.getItems();
-				for(Items it:items){
-					links.add(it.getLink());
-				}
-			}
-			catch (Exception e) {
-				if (autenticated){
-					break;
-				}
-				else{
-					throw new ANoteException(e);
-				}
-
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
 			}
 		}
 		Set<String> patentidsAllCountries=patentIDExtraction(links);
 		return patentidsAllCountries;
 	}
 
+	private Set<String> processGooglePage(GoogleWebQuery googleWebQuery, int startindex,String query)
+	{
+		int numbersOfTries = 0;
+		int numbersOfTriesMax = 10;
+
+		Set<String> out = new HashSet<>();
+		while(numbersOfTries<numbersOfTriesMax)
+		{
+			googleWebQuery.setStartIndexOfResult(startindex);		
+			try {
+				GoogleResults r = googleWebQuery.search(query);
+				//print results
+				List<Items> items=new ArrayList<Items>();//iniciar uma lista
+				if(items!=null)
+				{
+					items = r.getItems();
+					if(items==null)
+						throw new ANoteException("");
+					for(Items it:items){
+						out.add(it.getLink());
+					}
+				}
+				return out;
+			} catch (ANoteException e) {
+				try {
+					Thread.sleep(numbersOfTries*1000);
+				} catch (InterruptedException e1) {
+				}
+				numbersOfTries++;
+			}			
+		}
+		return null;
+	}
 
 	public static String transformQueryToGoogleSearchOperators(String query){
 		String queryTransformed = query.trim();
-		String[] keywordsParts = queryTransformed.split("AND|OR|NOT");
-		for(String part : keywordsParts)
-		{
-			part = part.trim();
-			if(!part.isEmpty())
-			{
-				queryTransformed = queryTransformed.replace(part, "\""+part+"\"");
-			}
-		}
-		queryTransformed = queryTransformed.replace("AND"," + ");
-		queryTransformed=queryTransformed.replace("NOT", " - ");
-		queryTransformed = queryTransformed.replace("OR"," OR ");
-		queryTransformed = queryTransformed.replace("\"\"", "\"");
-		queryTransformed = queryTransformed.replace("  ", " ");
-		queryTransformed= queryTransformed.replace("+ ", "+");
-		queryTransformed= queryTransformed.replace("- ", "-");
+		//		String[] keywordsParts = queryTransformed.split("AND|OR|NOT");
+		//		for(String part : keywordsParts)
+		//		{
+		//			part = part.trim();
+		//			if(!part.isEmpty())
+		//			{
+		//				queryTransformed = queryTransformed.replace(part, "\""+part+"\"");
+		//			}
+		//		}
+		//		queryTransformed = queryTransformed.replace("AND"," + ");
+		//		queryTransformed=queryTransformed.replace("NOT", " - ");
+		//		queryTransformed = queryTransformed.replace("OR"," OR ");
+		queryTransformed = queryTransformed.replace("\"", "'");
+		//		queryTransformed = queryTransformed.replace("  ", " ");
+		//		queryTransformed= queryTransformed.replace("+ ", "+");
+		//		queryTransformed= queryTransformed.replace("- ", "-");
 		return queryTransformed;
 	}
 
