@@ -12,7 +12,7 @@
 		<repository>
 			<id>thirdparty</id>
 			<url>
-			http://mendel.di.uminho.pt:8081/nexus/content/repositories/thirdparty/
+			http:/nexus.bio.di.uminho.pt/content/repositories/thirdparty
 			</url>
 		</repository>
 		<repository>
