@@ -11,7 +11,7 @@
 	<repositories>
 		<repository>
 			<id>thirdparty</id>
-			<url>http://nexus.bio.di.uminho.pt/content/repositories/thirdparty/</url>
+			<url>https://nexus.bio.di.uminho.pt/content/repositories/thirdparty/</url>
 		</repository>
 		<repository>
 			<id>ebi</id>
