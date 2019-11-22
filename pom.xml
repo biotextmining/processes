@@ -5,7 +5,7 @@
 
 	<groupId>com.silicolife.textmining</groupId>
 	<artifactId>processes</artifactId>
-	<version>0.0.0-SNAPSHOT</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<repositories>
@@ -19,7 +19,7 @@
 		</repository>
 	</repositories>
 
-	<name>processes</name>
+	<name>${project.groupId}:${project.artifactId}</name>
 	<url>http://anote-project.org</url>
 	<description>Biomedical Text Mining - Processes library</description>
 
@@ -40,7 +40,7 @@
 		</developer>
 		<developer>
 			<name>Ruben Rodrigues</name>
-			<email>pg25227@alunos.uminho.pt</email>
+			<email>rrodrigues@ceb.uminho.pt</email>
 			<organization>University of Minho</organization>
 			<organizationUrl>https://www.uminho.pt</organizationUrl>
 		</developer>
@@ -82,21 +82,25 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.silicolife.textmining</groupId>
 			<artifactId>core</artifactId>
 			<version>1.1.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
 			<version>1.9.6</version>
 		</dependency>
+
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -111,7 +115,6 @@
 		</dependency>
 
 		<!-- WIPO Dependencies -->
-
 		<dependency>
 			<groupId>org.wipo</groupId>
 			<artifactId>patentscope</artifactId>
@@ -142,6 +145,13 @@
 			<groupId>uk.ac.ebi.chebi.webapps.chebiWS.client</groupId>
 			<artifactId>chebiWS-client</artifactId>
 			<version>2.4</version>
+		</dependency>
+
+		<!-- bioc -->
+		<dependency>
+			<groupId>com.pengyifan.bioc</groupId>
+			<artifactId>pengyifan-bioc</artifactId>
+			<version>1.0.3</version>
 		</dependency>
 	</dependencies>
 

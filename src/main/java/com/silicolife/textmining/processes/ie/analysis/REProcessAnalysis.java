@@ -33,6 +33,10 @@ public class REProcessAnalysis extends AProcessAnalysis{
 		return InitConfiguration.getDataAccess().countPublicationsWithEventsByIAnoteClasses(this.getProcess());
 	}
 	
+	public Map<ImmutablePair<IResourceElement, IResourceElement>,Long> countPublicationsWithEventsByResourceElemnts() throws ANoteException{
+		return InitConfiguration.getDataAccess().countDocumentsWithEventsByResourceElemnts(this.getProcess());
+	}
+	
 	public Long countPublicationsWithEventsByResourceElement(IResourceElement resourceElement) throws ANoteException{
 		return InitConfiguration.getDataAccess().countDocumentsWithResourceElementByAnnotationTypeInProcess(resourceElement,this.getProcess(), AnnotationType.re);
 	}

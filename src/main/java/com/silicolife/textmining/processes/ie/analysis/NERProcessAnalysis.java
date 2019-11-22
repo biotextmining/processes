@@ -28,12 +28,19 @@ public class NERProcessAnalysis extends AProcessAnalysis {
 		return InitConfiguration.getDataAccess().countAnnotationsByAnnotationType(this.getProcess(), AnnotationType.ner);
 	}
 	
+	
 	public Long countPublicationsWithNERAnnotationsByResourceElement(IResourceElement resourceElement) throws ANoteException {
 		return InitConfiguration.getDataAccess().countDocumentsWithResourceElementByAnnotationTypeInProcess(resourceElement, this.getProcess(), AnnotationType.re);
 	}
 	
 	public Map<IAnoteClass, Long> countNERAnoteClassInProcess() throws ANoteException{
 		return InitConfiguration.getDataAccess().countEntityAnnotationsByClassInProcess(this.getProcess());
+	}
+	
+	public Map<IAnoteClass, Long> countDocumentsByNERAnoteClassInProcess() throws ANoteException{
+//		return InitConfiguration.getDataAccess().count TODO
+		
+		return null;
 	}
 	
 	public Map<IResourceElement,Long> countDocumentsAnnotatedByResourceElementsInProcess() throws ANoteException{
