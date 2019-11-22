@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-
 import com.silicolife.textmining.core.datastructures.utils.Utils;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
 import com.silicolife.textmining.processes.ir.epopatent.OPSUtils;
@@ -76,7 +74,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 		for (String id:possiblePatentIDs){
 			try{
 				fileDownloaded=getPatentDocumentOCRBYID(patentID,id,tokenaccess);
-			} catch (RedirectionException  | ServerErrorException | ConnectionException | ClientErrorException | ResponseHandlingException | COSVisitorException | InterruptedException e){
+			} catch (RedirectionException  | ServerErrorException | ConnectionException | ClientErrorException | ResponseHandlingException | InterruptedException e){
 			}//dont do anything - pass to next
 			catch (IOException e){
 				throw new ANoteException(e);//file errors (file downloaded but some error happens)
@@ -86,7 +84,7 @@ public class OPSPatentRetrieval extends AIRPatentRetrieval{
 	}
 
 
-	private File getPatentDocumentOCRBYID(String patentID,String patentIDModified,String tokenaccess) throws ANoteException, RedirectionException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException, IOException, COSVisitorException, ClientErrorException {
+	private File getPatentDocumentOCRBYID(String patentID,String patentIDModified,String tokenaccess) throws ANoteException, RedirectionException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException, IOException, ClientErrorException {
 		File outDir = new File(getConfiguration().getOutputDirectory());
 		File generatedPDF = OPSUtils.getPatentFullTextPDFUsingPatentID(tokenaccess, patentID ,outDir);
 		return generatedPDF;

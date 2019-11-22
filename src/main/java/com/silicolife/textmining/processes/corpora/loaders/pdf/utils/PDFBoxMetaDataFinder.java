@@ -1,5 +1,6 @@
 package com.silicolife.textmining.processes.corpora.loaders.pdf.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,7 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
@@ -65,7 +66,7 @@ public class PDFBoxMetaDataFinder {
 		String journal = new String();;
 		String abstractText = new String();;
 		String doi = new String();;
-		PDDocument doc = PDDocument.load(pub.getSourceURL());
+		PDDocument doc = PDDocument.load(new File(pub.getSourceURL()));
 		PDDocumentInformation docInfo = doc.getDocumentInformation();
 		PDFTextStripper stripper = new PDFTextStripper();
 		String text = stripper.getText(doc);

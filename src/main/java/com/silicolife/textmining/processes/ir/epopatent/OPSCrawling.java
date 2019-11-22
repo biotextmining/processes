@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationSourcesDefaultEnum;
@@ -172,7 +170,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		File file = null;
 		try {
 			file = OPSUtils.getPatentFullTextPDF(tokenaccess,pub,saveDocDirectoty);
-		} catch (COSVisitorException | RedirectionException
+		} catch ( RedirectionException
 				| ClientErrorException | ServerErrorException
 				| ConnectionException | ResponseHandlingException e) {
 		} catch (InterruptedException e) {
@@ -186,7 +184,7 @@ public class OPSCrawling extends IRProcessImpl implements IIRCrawl{
 		File file = null;
 		try {
 			file = OPSUtils.getPatentFullTextPDFUsingPatentID(tokenaccess, patentID, saveDocDirectoty, pubID );
-		} catch (COSVisitorException | RedirectionException
+		} catch ( RedirectionException
 				| ClientErrorException | ServerErrorException
 				| ConnectionException | ResponseHandlingException e) {
 		} catch (InterruptedException e) {

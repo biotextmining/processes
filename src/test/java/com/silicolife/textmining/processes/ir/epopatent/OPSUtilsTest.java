@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.junit.Test;
 
 import com.silicolife.textmining.core.datastructures.utils.Utils;
@@ -118,7 +117,7 @@ public class OPSUtilsTest {
 	}
 	
 	@Test
-	public void getPatentFullTextPDF() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, COSVisitorException, IOException, InterruptedException
+	public void getPatentFullTextPDF() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, IOException, InterruptedException
 	{
 		String query = "PHBs";
 		String path = "src/test/resources";
@@ -130,7 +129,7 @@ public class OPSUtilsTest {
 	}
 	
 	@Test
-	public void getPatentFullTextPDFUsingPatentID() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, COSVisitorException, IOException, InterruptedException
+	public void getPatentFullTextPDFUsingPatentID() throws RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, IOException, InterruptedException
 	{
 		String query = "PHBs";
 		String path = "src/test/resources";

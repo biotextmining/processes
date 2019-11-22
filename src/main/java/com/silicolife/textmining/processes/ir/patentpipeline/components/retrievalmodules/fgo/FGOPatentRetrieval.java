@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-
 import com.lowagie.text.DocumentException;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -62,7 +60,7 @@ public class FGOPatentRetrieval extends AIRPatentRetrieval{
 					return new File(filepath);
 				}
 			}
-		} catch (IOException | COSVisitorException | DocumentException e) {
+		} catch (IOException | DocumentException e) {
 			System.out.println();
 		}
 		return null;

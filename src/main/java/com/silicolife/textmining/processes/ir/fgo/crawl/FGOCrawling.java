@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-
 import com.lowagie.text.DocumentException;
 import com.silicolife.textmining.core.datastructures.documents.PublicationExternalSourceLinkImpl;
 import com.silicolife.textmining.core.datastructures.documents.PublicationImpl;
@@ -140,7 +138,7 @@ public class FGOCrawling extends IRProcessImpl implements IIRCrawl{
 				FileHandling.createPDFFileWithText(filepath,fullTextContent);
 				return new File(filepath);
 			}
-		} catch (IOException | COSVisitorException | DocumentException e) {
+		} catch (IOException | DocumentException e) {
 		}
 		return null;
 	}

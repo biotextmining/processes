@@ -23,8 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.util.PDFMergerUtility;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -288,7 +287,7 @@ public class OPSUtils {
 		return false;
 	}
 
-	public static File getPatentFullTextPDF(String tokenaccess, IPublication pub,String path) throws COSVisitorException, IOException, RedirectionException, ClientErrorException,
+	public static File getPatentFullTextPDF(String tokenaccess, IPublication pub,String path) throws  IOException, RedirectionException, ClientErrorException,
 	ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException {
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
@@ -332,11 +331,11 @@ public class OPSUtils {
 	}
 
 
-	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID, File outDir) throws COSVisitorException, RedirectionException, ClientErrorException, ServerErrorException, IOException, ConnectionException, ResponseHandlingException, InterruptedException {
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID, File outDir) throws RedirectionException, ClientErrorException, ServerErrorException, IOException, ConnectionException, ResponseHandlingException, InterruptedException {
 		return getPatentFullTextPDFUsingPatentID(tokenaccess,patentID ,outDir.getPath(),null);
 	}
 
-	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,Long pubID) throws COSVisitorException, IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
+	public static File getPatentFullTextPDFUsingPatentID(String tokenaccess, String patentID ,String path,Long pubID) throws IOException, RedirectionException, ClientErrorException, ServerErrorException, ConnectionException, ResponseHandlingException, InterruptedException{
 		Map<String, String> headers = new HashMap<String, String>();
 		if (tokenaccess != null) {
 			headers.put("Authorization", "Bearer " + tokenaccess);

@@ -4,9 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 //clase usada para obtener el texto de un fichero pdf
 public class NewTryPDFBox {
@@ -17,9 +16,7 @@ public class NewTryPDFBox {
 		String text = null;
 		try {
 			FileInputStream in = new FileInputStream(archivo);
-			PDFParser parser = new PDFParser(in);
-			parser.parse();
-			PDDocument doc = parser.getPDDocument();
+			PDDocument doc = PDDocument.load(in);
 			if (doc != null) {
 				PDFTextStripper stripper = new PDFTextStripper();
 				text = stripper.getText(doc);

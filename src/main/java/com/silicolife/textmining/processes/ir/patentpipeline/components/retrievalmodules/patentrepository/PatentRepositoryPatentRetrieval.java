@@ -6,8 +6,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-
 import com.lowagie.text.DocumentException;
 import com.silicolife.textmining.core.datastructures.utils.FileHandling;
 import com.silicolife.textmining.core.interfaces.core.dataaccess.exception.ANoteException;
@@ -59,7 +57,7 @@ public class PatentRepositoryPatentRetrieval extends AIRPatentRetrieval{
 				FileHandling.createPDFFileWithText(filepath,fullTextContent);
 				return new File(filepath);
 			}
-		} catch (IOException | COSVisitorException | DocumentException e) {
+		} catch (IOException | DocumentException e) {
 		}
 		return null;
 	}
